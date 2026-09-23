@@ -1,10 +1,18 @@
 name: Release
 
-# Push a tag like v0.2.0 → a signed APK on the GitHub Releases page.
+# A signed APK on the GitHub Releases page, started either way:
+#  - push a tag like v0.2.0, or
+#  - Actions → Release → "Run workflow" with version 0.2.0: the workflow creates the tag on
+#    the chosen branch itself (for environments that may push branches but not tags).
 # Signing key comes from four repository secrets (see .claude/skills/release-apk).
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, without the v (e.g. 0.2.0)"
+        required: true
 
 permissions:
   contents: write
@@ -34,8 +42,26 @@ jobs:
             exit 1
           fi
 
-      - name: Version from the tag
-        run: echo "RELEASE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+      - name: Version and tag
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            version="${INPUT_VERSION#v}"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must look like 1.2.3, got '$version'"
+            exit 1
+          fi
+          if gh release view "v$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release v$version already exists"
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
+          echo "TAG=v$version" >> "$GITHUB_ENV"
 
       - run: ./gradlew -p core test
 
@@ -51,16 +77,17 @@ jobs:
           apk=android/app/build/outputs/apk/release/app-release.apk
           apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
           "$apksigner" verify --print-certs "$apk"
-          cp "$apk" "israel-transit-planner-${GITHUB_REF_NAME}.apk"
+          cp "$apk" "israel-transit-planner-${TAG}.apk"
 
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          notes="docs/releases/${GITHUB_REF_NAME}.md"
+          notes="docs/releases/${TAG}.md"
           if [ -f "$notes" ]; then flag=(--notes-file "$notes"); else flag=(--generate-notes); fi
-          gh release create "$GITHUB_REF_NAME" "israel-transit-planner-${GITHUB_REF_NAME}.apk" \
-            --title "Israel Transit Planner ${GITHUB_REF_NAME}" "${flag[@]}"
+          # --target: when started by hand the tag does not exist yet; gh creates it on this commit.
+          gh release create "$TAG" "israel-transit-planner-${TAG}.apk" \
+            --target "$GITHUB_SHA" --title "Israel Transit Planner ${TAG}" "${flag[@]}"
 
       - name: Remove the keystore
         if: always()
