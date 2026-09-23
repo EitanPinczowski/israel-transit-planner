@@ -15,13 +15,14 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [ ] Owner: send `docs/transitous-contact.md` to Transitous
 
 ## Phase 1 — MVP
-- [ ] Search box (geocode, Hebrew + English), origin = my location / long-press
-- [ ] Plan screen: itineraries list + legs drawn on the map
-- [ ] Arrive-by, preferences (max walk, max transfers, modes) in DataStore
-- [ ] Stops layer from zoom ~15, stop sheet with next departures
-- [ ] Saved places + saved trips (Room), one-tap re-plan
-- [ ] Dark map style, Hebrew RTL pass
-- [ ] Settings: traffic factor
+- [x] Search box (geocode, Hebrew + English), origin = my location, long-press = destination
+- [x] Plan screen: itineraries list + legs drawn on the map
+- [x] Arrive-by, preferences (max walk, max transfers, modes, walk speed) in DataStore
+- [x] Stops layer from zoom 15, stop sheet with next departures (real-time delay when present)
+- [x] Saved places + saved trips (DataStore JSON), one-tap re-plan
+- [x] Dark map style, Hebrew RTL strings
+- [x] Settings: traffic factor
+- [ ] Verify on a real phone against live Transitous (blocked here: network policy)
 
 ## Phase 2 — Better start
 - [ ] "Better start" tab with drive-limit slider (5–30 min), results on the map

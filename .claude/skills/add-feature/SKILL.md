@@ -18,7 +18,9 @@ description: Recipe for adding any user-visible feature end to end - core logic,
    - network via one app-wide `GuardedTransitApi(MotisClient())`.
 5. **Strings**: every visible text in BOTH `res/values/strings.xml` (English) and
    `res/values-iw/strings.xml` (Hebrew). Load `i18n-rtl`.
-6. **Settings** go in DataStore, not SharedPreferences.
+6. **Persisted user data** (settings, saved places, saved trips) is JSON in one DataStore
+   file (`data/UserStore.kt`), encoded by `core/user/UserJson` so the codec is tested.
+   Small lists only; if something grows unbounded (e.g. trip history), use Room instead.
 7. **Tick the item in `ROADMAP.md`** in the same commit.
 8. CI must be green; the `android` job's APK artifact is how the owner tries it.
 

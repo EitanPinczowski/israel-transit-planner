@@ -2,31 +2,33 @@ package il.transit.planner
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
+import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import il.transit.core.geo.BBox
+import il.transit.core.geo.LatLon
+import il.transit.core.geo.MapData
+import il.transit.planner.ui.MainScreen
+import il.transit.planner.ui.MainViewModel
+import il.transit.planner.ui.MapController
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
@@ -38,41 +40,95 @@ import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 
 /**
- * Phase-0 shell: a MapLibre map on OpenFreeMap tiles, centred on the user's location
- * once permission is granted. Planning screens arrive in phase 1 (see ROADMAP.md).
- *
- * The MapView is owned by the Activity (not by Compose) so its lifecycle calls are
- * forwarded exactly once, from the Activity's own callbacks.
+ * Hosts the map and the Compose UI. The MapView is owned here (not by Compose) so its
+ * lifecycle calls are forwarded exactly once, from the Activity's own callbacks. Map
+ * layers are driven by [MapController]; everything else is [MainViewModel] state.
  */
 class MainActivity : ComponentActivity() {
+    private val vm: MainViewModel by viewModels { MainViewModel.factory(application as TransitApp) }
+
     private lateinit var mapView: MapView
     private var map: MapLibreMap? = null
     private var style: Style? = null
+
+    /** Non-null once the style has loaded; Compose effects push layer data through it. */
+    private val controller = MutableStateFlow<MapController?>(null)
 
     private val askLocation = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         enableLocationIfAllowed()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
         mapView = MapView(this).apply { onCreate(savedInstanceState) }
-        mapView.getMapAsync { m ->
-            map = m
-            m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
-            m.setStyle(Style.Builder().fromUri(MAP_STYLE)) { s ->
-                style = s
-                enableLocationIfAllowed()
+        mapView.getMapAsync(::onMapReady)
+
+        vm.locationProvider = {
+            map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
+                ?.let { LatLon(it.latitude, it.longitude) }
+        }
+
+        setContent {
+            AppTheme {
+                val state by vm.state.collectAsState()
+                val stops by vm.stops.collectAsState()
+                val ctl by controller.collectAsState()
+
+                LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
+                LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
+                val selected = state.selectedItinerary
+                LaunchedEffect(ctl, selected) {
+                    val c = ctl ?: return@LaunchedEffect
+                    if (selected == null) {
+                        c.setRoute(MapData.EMPTY)
+                    } else {
+                        c.setRoute(MapData.itinerary(selected))
+                        val px = resources.displayMetrics.density
+                        c.fit(MapData.bounds(selected), (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
+                    }
+                }
+
+                MainScreen(state, vm) {
+                    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                }
             }
         }
-        setContent { AppTheme { MapScreen(mapView) } }
 
         if (!hasLocationPermission()) {
-            askLocation.launch(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            askLocation.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+        }
+    }
+
+    private fun onMapReady(m: MapLibreMap) {
+        map = m
+        m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
+        m.setStyle(Style.Builder().fromUri(if (isNight()) MAP_STYLE_DARK else MAP_STYLE)) { s ->
+            style = s
+            controller.value = MapController(m, s)
+            enableLocationIfAllowed()
+        }
+        m.addOnMapLongClickListener { p ->
+            vm.setDestinationFromMap(LatLon(p.latitude, p.longitude))
+            true
+        }
+        m.addOnMapClickListener { p ->
+            val hit = controller.value?.stopAt(p) ?: return@addOnMapClickListener false
+            vm.openStop(hit.first, hit.second)
+            true
+        }
+        m.addOnCameraIdleListener {
+            val b = m.projection.visibleRegion.latLngBounds
+            vm.onViewport(
+                BBox(LatLon(b.latitudeSouth, b.longitudeWest), LatLon(b.latitudeNorth, b.longitudeEast)),
+                m.cameraPosition.zoom,
             )
         }
     }
+
+    private fun isNight(): Boolean =
+        (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
     private fun hasLocationPermission() =
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -82,7 +138,7 @@ class MainActivity : ComponentActivity() {
     private fun enableLocationIfAllowed() {
         val m = map ?: return
         val s = style ?: return
-        if (!hasLocationPermission()) return
+        if (!hasLocationPermission() || m.locationComponent.isLocationComponentActivated) return
         m.locationComponent.apply {
             activateLocationComponent(LocationComponentActivationOptions.builder(this@MainActivity, s).build())
             isLocationComponentEnabled = true
@@ -102,41 +158,13 @@ class MainActivity : ComponentActivity() {
     companion object {
         private val BEER_SHEVA = LatLng(31.2622, 34.8013)
 
-        /** OpenFreeMap: free, no key, allowed in apps. Dark map style is a phase-1 item. */
+        /** OpenFreeMap: free, no key, allowed in apps. */
         const val MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
-
-        /** Transitous usage policy: link to its data sources somewhere visible. */
-        const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
+        const val MAP_STYLE_DARK = "https://tiles.openfreemap.org/styles/dark"
     }
 }
 
 @Composable
 private fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme(), content = content)
-}
-
-@Composable
-private fun MapScreen(mapView: MapView) {
-    Box(Modifier.fillMaxSize()) {
-        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
-        AttributionChip(Modifier.align(Alignment.BottomStart).navigationBarsPadding().padding(8.dp))
-    }
-}
-
-@Composable
-private fun AttributionChip(modifier: Modifier) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    Surface(
-        modifier = modifier.clickable {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.TRANSITOUS_SOURCES)))
-        },
-        shape = MaterialTheme.shapes.small,
-        tonalElevation = 2.dp,
-    ) {
-        Text(
-            stringResource(R.string.attribution),
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
-    }
 }

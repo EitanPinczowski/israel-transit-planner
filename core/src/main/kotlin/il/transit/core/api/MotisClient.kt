@@ -76,6 +76,13 @@ class MotisClient(
         }
     }
 
+    override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> {
+        val params = listOf("place" to at.comma(), "language" to language, "numResults" to max.toString())
+        return get("api/v1/reverse-geocode", params) {
+            MotisJson.decodeFromString(ListSerializer(GeocodeMatch.serializer()), it)
+        }
+    }
+
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
         val params = buildList {
             add("stopId" to stopId)

@@ -30,6 +30,9 @@ interface TransitApi {
 
     suspend fun geocode(text: String, language: String = "he", near: LatLon? = null, max: Int = 8): List<GeocodeMatch>
 
+    /** Nearest addresses/places/stops to [at], best first. Used to name a long-pressed point. */
+    suspend fun reverseGeocode(at: LatLon, language: String = "he", max: Int = 3): List<GeocodeMatch>
+
     suspend fun stopTimes(stopId: String, time: Instant? = null, n: Int = 10, language: String = "he"): StopTimesResponse
 }
 
@@ -72,8 +75,12 @@ data class PlanRequest(
         add("preTransitModes" to preTransitModes.joinToString(","))
         add("postTransitModes" to postTransitModes.joinToString(","))
         add("directModes" to directModes.joinToString(","))
-        maxPreTransitSec?.let { add("maxPreTransitTime" to it.toString()) }
-        maxPostTransitSec?.let { add("maxPostTransitTime" to it.toString()) }
+        // A walk-only access/egress leg honours the user's max-walk preference; a car leg
+        // (the special features) carries its own explicit cap instead.
+        val pre = maxPreTransitSec ?: preferences.maxWalkSec?.takeIf { preTransitModes == listOf(StreetModes.WALK) }
+        val post = maxPostTransitSec ?: preferences.maxWalkSec?.takeIf { postTransitModes == listOf(StreetModes.WALK) }
+        pre?.let { add("maxPreTransitTime" to it.toString()) }
+        post?.let { add("maxPostTransitTime" to it.toString()) }
         when {
             directOnly -> add("transitModes" to "")
             preferences.transitModes != null -> add("transitModes" to preferences.transitModes.joinToString(","))
@@ -94,6 +101,8 @@ data class Preferences(
     val pedestrianSpeedMps: Double? = null,
     /** Extra buffer added at every transfer (MOTIS takes minutes). */
     val additionalTransferSec: Int? = null,
+    /** Longest walk to the first stop / from the last stop. null = server default (15 min). */
+    val maxWalkSec: Int? = null,
 )
 
 class TransitHttpException(val code: Int, message: String, val retryAfterSec: Int? = null) :

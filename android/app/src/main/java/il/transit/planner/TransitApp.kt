@@ -1,0 +1,21 @@
+package il.transit.planner
+
+import android.app.Application
+import il.transit.core.api.GuardedTransitApi
+import il.transit.core.api.MotisClient
+import il.transit.core.api.TransitApi
+import il.transit.planner.data.UserStore
+import java.util.Locale
+
+/** Process-wide singletons. One guarded client, so the cache and the concurrency cap are shared. */
+class TransitApp : Application() {
+    val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
+    val store: UserStore by lazy { UserStore(this) }
+
+    /** Language for stop names and geocoding: Hebrew unless the phone is set to something else. */
+    val language: String
+        get() = when (Locale.getDefault().language) {
+            "iw", "he" -> "he"
+            else -> "en"
+        }
+}

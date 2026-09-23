@@ -12,6 +12,7 @@ lifecycle = "2.8.7"
 coreKtx = "1.15.0"
 maplibre = "11.8.0"
 playLocation = "21.3.0"
+datastore = "1.1.1"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -29,7 +30,9 @@ compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeB
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 maplibre-android = { module = "org.maplibre.gl:android-sdk", version.ref = "maplibre" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playLocation" }
 
 [plugins]

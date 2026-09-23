@@ -41,6 +41,9 @@ class GuardedTransitApi(
     override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int) =
         cached("geo:$text:$language:$near:$max", staticTtl) { inner.geocode(text, language, near, max) }
 
+    override suspend fun reverseGeocode(at: LatLon, language: String, max: Int) =
+        cached("rgeo:$at:$language:$max", staticTtl) { inner.reverseGeocode(at, language, max) }
+
     // Real-time departures: never cached longer than the plan TTL.
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String) =
         cached("st:$stopId:$time:$n:$language", Duration.ofSeconds(30)) { inner.stopTimes(stopId, time, n, language) }
@@ -93,6 +96,10 @@ class BudgetedTransitApi(private val inner: TransitApi, val budget: Int) : Trans
 
     override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
         take(); return inner.geocode(text, language, near, max)
+    }
+
+    override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> {
+        take(); return inner.reverseGeocode(at, language, max)
     }
 
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {

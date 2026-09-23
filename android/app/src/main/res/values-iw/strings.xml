@@ -2,4 +2,70 @@
 <resources>
     <string name="app_name">מתכנן נסיעות</string>
     <string name="attribution">ניתוב: Transitous · מפה © OpenStreetMap, OpenFreeMap</string>
+
+    <string name="from">מ־</string>
+    <string name="to">אל</string>
+    <string name="my_location">המיקום שלי</string>
+    <string name="dropped_pin">נקודה במפה</string>
+    <string name="choose_destination">לאן? (או לחיצה ארוכה על המפה)</string>
+    <string name="search_hint">כתובת, מקום או תחנה</string>
+    <string name="stop">תחנה</string>
+
+    <string name="now">עכשיו</string>
+    <string name="depart_at">יציאה</string>
+    <string name="arrive_by">הגעה עד</string>
+
+    <string name="results">מסלולים</string>
+    <string name="direct">ישיר</string>
+    <plurals name="transfers">
+        <item quantity="one">החלפה אחת</item>
+        <item quantity="two">⁨%d⁩ החלפות</item>
+        <item quantity="other">⁨%d⁩ החלפות</item>
+    </plurals>
+    <string name="minutes_short">⁨%d⁩ דק׳</string>
+    <string name="walk_minutes">הליכה ⁨%d⁩ דק׳</string>
+    <string name="board_line">⁨%1$s⁩ ב־⁨%2$s⁩ מ־%3$s</string>
+
+    <string name="kind_walk">הליכה</string>
+    <string name="kind_bus">אוטובוס</string>
+    <string name="kind_train">רכבת</string>
+    <string name="kind_light_rail">רכבת קלה</string>
+    <string name="kind_car">רכב</string>
+    <string name="kind_other">תחבורה ציבורית</string>
+
+    <string name="departures">היציאות הקרובות</string>
+    <string name="no_departures">אין יציאות בשעות הקרובות.</string>
+    <string name="late">‏+⁨%d⁩ דק׳</string>
+    <string name="on_time">בזמן</string>
+    <string name="cancelled">בוטל</string>
+
+    <string name="err_no_location">המיקום שלך עדיין לא ידוע. הפעילו מיקום או בחרו נקודת מוצא.</string>
+    <string name="err_network">אין חיבור למתכנן הנסיעות. בדקו את החיבור לאינטרנט.</string>
+    <string name="err_no_results">לא נמצאו מסלולים לשעה הזו.</string>
+    <string name="retry">נסו שוב</string>
+
+    <string name="settings">הגדרות</string>
+    <string name="done">סיום</string>
+    <string name="max_transfers">מספר החלפות מרבי</string>
+    <string name="any">ללא הגבלה</string>
+    <string name="max_walk">הליכה מרבית אל/מהתחנה</string>
+    <string name="modes">אמצעי תחבורה</string>
+    <string name="mode_all">הכול</string>
+    <string name="mode_trains">רק רכבות</string>
+    <string name="mode_no_buses">בלי אוטובוסים</string>
+    <string name="walk_speed">מהירות הליכה</string>
+    <string name="speed_slow">איטית</string>
+    <string name="speed_normal">רגילה</string>
+    <string name="speed_fast">מהירה</string>
+    <string name="traffic_factor">מקדם עומס בשעות שיא: ×⁨%s⁩</string>
+    <string name="traffic_factor_help">הניתוב החינמי מניח כבישים ריקים. זמני הנסיעה בשעות השיא (א׳–ה׳) מוכפלים במקדם הזה.</string>
+    <string name="saved">שמורים</string>
+
+    <string name="save_place">שמירת מקום</string>
+    <string name="save_trip">שמירת מסלול</string>
+    <string name="name_hint">שם (למשל: בית, אוניברסיטה)</string>
+    <string name="save">שמירה</string>
+    <string name="cancel">ביטול</string>
+    <string name="delete">מחיקה</string>
+    <string name="close">סגירה</string>
 </resources>

@@ -95,6 +95,13 @@ class FakeTransitApi : TransitApi {
 
     override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
         calls += "geocode"
+        return onGeocode(text)
+    }
+
+    var onGeocode: (String) -> List<GeocodeMatch> = { emptyList() }
+
+    override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> {
+        calls += "reverseGeocode"
         return emptyList()
     }
 
