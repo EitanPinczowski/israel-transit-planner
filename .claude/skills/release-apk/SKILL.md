@@ -5,7 +5,13 @@ description: Ship a signed APK to friends and family through GitHub Releases. Us
 
 # Releasing
 
-**A release = pushing a tag.** `git tag v0.2.0 && git push origin v0.2.0` (on `main`, CI green).
+**A release = a tag.** Two ways, both on `main` with CI green:
+- push a tag: `git tag v0.2.0 && git push origin v0.2.0`, or
+- **Actions → Release → Run workflow**, version `0.2.0` — the workflow creates the tag itself.
+  **Claude cloud sessions must use this one**: their git proxy allows branch pushes but
+  answers a tag push with HTTP 403 (seen on v0.1.0). Trigger it with the GitHub
+  `actions_run_trigger` tool (workflow `release.yml`, ref `main`, input `version`).
+It refuses a version that is not `x.y.z` or whose release already exists.
 `.github/workflows/release.yml` then: core tests → decode keystore → `assembleRelease` →
 `apksigner verify` → `gh release create` with `israel-transit-planner-v0.2.0.apk`.
 Notes come from `docs/releases/v0.2.0.md` if it exists (write it: English + Hebrew, 5 lines),
