@@ -70,6 +70,11 @@ object UserJson {
     fun decodePlaces(s: String?): List<SavedPlace> =
         s?.let { runCatching { json.decodeFromString(ListSerializer(SavedPlace.serializer()), it) }.getOrNull() }.orEmpty()
 
+    fun encodeReminder(r: il.transit.core.remind.Reminder?): String =
+        r?.let { json.encodeToString(il.transit.core.remind.Reminder.serializer(), it) } ?: ""
+    fun decodeReminder(s: String?): il.transit.core.remind.Reminder? =
+        s?.takeIf { it.isNotBlank() }?.let { runCatching { json.decodeFromString(il.transit.core.remind.Reminder.serializer(), it) }.getOrNull() }
+
     fun encodeTrips(t: List<SavedTrip>): String = json.encodeToString(ListSerializer(SavedTrip.serializer()), t)
     fun decodeTrips(s: String?): List<SavedTrip> =
         s?.let { runCatching { json.decodeFromString(ListSerializer(SavedTrip.serializer()), it) }.getOrNull() }.orEmpty()

@@ -19,6 +19,7 @@ data class TripQuery(
     val language: String = "he",
 )
 
+@kotlinx.serialization.Serializable
 data class TripResult(
     /** Transit options, earliest arrival first (latest departure first for arrive-by). */
     val itineraries: List<Itinerary>,

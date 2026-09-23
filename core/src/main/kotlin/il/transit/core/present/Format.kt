@@ -47,6 +47,8 @@ data class LegChip(
     val minutes: Int,
     val realTime: Boolean,
     val color: String,
+    /** Minutes late (negative = early) from real-time data; null without it. */
+    val delayMin: Int? = null,
 )
 
 data class ItinerarySummary(
@@ -58,9 +60,21 @@ data class ItinerarySummary(
     val chips: List<LegChip>,
     /** "line 5 at 12:14 from <stop>" — the first thing the user must not miss. */
     val firstBoarding: Boarding?,
+    /** Any transit leg carries real-time data. */
+    val hasRealTime: Boolean = false,
 )
 
-data class Boarding(val line: String?, val kind: LegKind, val time: String, val stop: String, val realTime: Boolean)
+data class Boarding(
+    val line: String?,
+    val kind: LegKind,
+    val time: String,
+    val stop: String,
+    val realTime: Boolean,
+    val delayMin: Int? = null,
+)
+
+/** Real-time delay of a leg's departure, or null when the leg has no real-time data. */
+fun legDelayMin(leg: Leg): Int? = if (leg.realTime) delayMin(leg.startTime, leg.scheduledStartTime) else null
 
 private val HHMM: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -83,10 +97,11 @@ fun summarize(it: Itinerary): ItinerarySummary {
                 minutes = minutes(leg.duration),
                 realTime = leg.realTime,
                 color = legColor(leg),
+                delayMin = if (leg.isTransit) legDelayMin(leg) else null,
             )
         }
     val board = it.firstTransitLeg?.let { l ->
-        Boarding(lineLabel(l), legKind(l.mode), hhmm(l.start), l.from.name, l.realTime)
+        Boarding(lineLabel(l), legKind(l.mode), hhmm(l.start), l.from.name, l.realTime, legDelayMin(l))
     }
     return ItinerarySummary(
         depart = hhmm(it.start),
@@ -96,6 +111,7 @@ fun summarize(it: Itinerary): ItinerarySummary {
         walkMin = minutes(it.legs.filter { l -> l.mode == StreetModes.WALK }.sumOf { l -> l.duration }),
         chips = chips,
         firstBoarding = board,
+        hasRealTime = it.legs.any { l -> l.isTransit && l.realTime },
     )
 }
 

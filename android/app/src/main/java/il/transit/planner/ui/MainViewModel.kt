@@ -22,16 +22,20 @@ import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.StopsViewport
+import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
+import il.transit.core.remind.Reminder
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserSettings
+import il.transit.planner.Reminders
 import il.transit.planner.TransitApp
+import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.UserStore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -92,6 +96,11 @@ data class UiState(
     val settings: UserSettings = UserSettings(),
     val savedPlaces: List<SavedPlace> = emptyList(),
     val savedTrips: List<SavedTrip> = emptyList(),
+    /** When the shown results were fetched (Trip tab), for "Updated 12:07". */
+    val resultsAt: Instant? = null,
+    /** Set when the results are a saved copy shown because the network failed. */
+    val offlineSince: Instant? = null,
+    val reminder: Reminder? = null,
 ) {
     /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
@@ -118,6 +127,8 @@ class MainViewModel(
     private val api: TransitApi,
     private val store: UserStore,
     private val language: String,
+    private val planCache: PlanCacheStore? = null,
+    private val reminders: Reminders? = null,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -140,6 +151,30 @@ class MainViewModel(
         viewModelScope.launch {
             combine(store.settings, store.places, store.trips) { s, p, t -> Triple(s, p, t) }.collect { (s, p, t) ->
                 _state.update { it.copy(settings = s, savedPlaces = p, savedTrips = t) }
+            }
+        }
+        viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
+    }
+
+    // --- live refresh ------------------------------------------------------------------
+
+    private var refreshJob: Job? = null
+
+    /**
+     * While the app is in front, re-plan the Trip tab every [REFRESH_MS] so delays stay
+     * current. One request each time, and only in the Trip tab: the car tabs cost up to
+     * ten requests per search, so they refresh only when asked (↻).
+     */
+    fun onVisible(visible: Boolean) {
+        refreshJob?.cancel()
+        if (!visible) return
+        refreshJob = viewModelScope.launch {
+            while (true) {
+                delay(REFRESH_MS)
+                val s = _state.value
+                if (s.mode == AppMode.TRIP && s.results != null && !s.loading && s.offlineSince == null && s.editing == null) {
+                    plan(quiet = true)
+                }
             }
         }
     }
@@ -247,7 +282,8 @@ class MainViewModel(
 
     // --- planning -----------------------------------------------------------------------
 
-    fun plan() {
+    /** [quiet]: a background refresh — keep the current results on screen and ignore failures. */
+    fun plan(quiet: Boolean = false) {
         val s = _state.value
         if (!s.readyToPlan) return
         val from = resolve(s.from)
@@ -258,7 +294,15 @@ class MainViewModel(
             return
         }
         planJob?.cancel()
-        _state.update { it.copy(loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null, selected = 0, stopSheet = null) }
+        if (!quiet) {
+            _state.update {
+                it.copy(
+                    loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null,
+                    selected = 0, stopSheet = null, offlineSince = null,
+                )
+            }
+        }
+        val cacheKey = PlanCache.key("TRIP-${s.timeMode}", from, to)
         planJob = viewModelScope.launch {
             try {
                 when (s.mode) {
@@ -267,7 +311,18 @@ class MainViewModel(
                             TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
                         )
                         val empty = r.itineraries.isEmpty() && r.walkOnly == null
-                        _state.update { it.copy(loading = false, results = r, error = if (empty) UiError.NO_RESULTS else null) }
+                        _state.update {
+                            it.copy(
+                                loading = false,
+                                results = r,
+                                resultsAt = Instant.now(),
+                                offlineSince = null,
+                                // A refresh keeps the user's selection when it still exists.
+                                selected = if (quiet) it.selected.coerceAtMost((r.itineraries.size - 1).coerceAtLeast(0)) else 0,
+                                error = if (empty) UiError.NO_RESULTS else null,
+                            )
+                        }
+                        if (!empty) planCache?.put(cacheKey, r)
                     }
                     AppMode.BETTER_START -> {
                         // A fresh budget per search: a pruning bug becomes an exception, not a flood.
@@ -319,9 +374,37 @@ class MainViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _state.update { it.copy(loading = false, error = UiError.NETWORK) }
+                if (quiet) return@launch
+                // No signal: show what this trip looked like last time, clearly marked.
+                val cached = if (s.mode == AppMode.TRIP) planCache?.get(cacheKey) else null
+                _state.update {
+                    if (cached != null) {
+                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, resultsAt = cached.savedAt)
+                    } else {
+                        it.copy(loading = false, error = UiError.NETWORK)
+                    }
+                }
             }
         }
+    }
+
+    // --- "time to leave" reminder ----------------------------------------------------------
+
+    /** Arms a reminder for the selected Trip itinerary. False if it has no transit leg. */
+    fun remindSelected(): Boolean {
+        val s = _state.value
+        val itin = s.selectedItinerary ?: return false
+        val from = resolve(s.from) ?: return false
+        val to = s.to?.let(::resolve) ?: return false
+        val r = Reminder.from(itin, from, to, s.settings) ?: return false
+        viewModelScope.launch { store.setReminder(r) }
+        reminders?.schedule(r)
+        return true
+    }
+
+    fun cancelReminder() {
+        reminders?.cancel()
+        viewModelScope.launch { store.setReminder(null) }
     }
 
     fun select(index: Int) = _state.update { it.copy(selected = index) }
@@ -441,9 +524,10 @@ class MainViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_MS = 350L
+        private const val REFRESH_MS = 120_000L
 
         fun factory(app: TransitApp) = viewModelFactory {
-            initializer { MainViewModel(app.api, app.store, app.language) }
+            initializer { MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders) }
         }
     }
 }

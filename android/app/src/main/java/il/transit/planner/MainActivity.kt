@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,8 @@ import il.transit.core.geo.MapData
 import il.transit.planner.ui.MainScreen
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
+import il.transit.planner.ui.OfflineMapManager
+import il.transit.planner.ui.ScreenActions
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
@@ -54,6 +57,14 @@ class MainActivity : ComponentActivity() {
     /** Non-null once the style has loaded; Compose effects push layer data through it. */
     private val controller = MutableStateFlow<MapController?>(null)
 
+    private lateinit var offline: OfflineMapManager
+    private var styleUrl: String = MAP_STYLE
+
+    /** Whatever the answer, arm the reminder: the alarm still works, only the banner may be blocked. */
+    private val askNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        vm.remindSelected()
+    }
+
     private val askLocation = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         enableLocationIfAllowed()
     }
@@ -64,6 +75,7 @@ class MainActivity : ComponentActivity() {
         MapLibre.getInstance(this)
         mapView = MapView(this).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
+        offline = OfflineMapManager(this)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
@@ -75,6 +87,7 @@ class MainActivity : ComponentActivity() {
                 val state by vm.state.collectAsState()
                 val stops by vm.stops.collectAsState()
                 val ctl by controller.collectAsState()
+                val offlineState by offline.state.collectAsState()
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
@@ -91,7 +104,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                MainScreen(state, vm) {
+                val actions = ScreenActions(
+                    offline = offlineState,
+                    downloadOffline = ::downloadOfflineArea,
+                    deleteOffline = offline::delete,
+                    remind = ::remind,
+                )
+                MainScreen(state, vm, actions) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
                 }
             }
@@ -102,10 +121,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun remind() {
+        val needsAsk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        if (needsAsk) askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS) else vm.remindSelected()
+    }
+
+    /** Downloads what is on screen now; the manager refuses areas larger than a city. */
+    private fun downloadOfflineArea() {
+        val m = map ?: return
+        offline.download(m.projection.visibleRegion.latLngBounds, styleUrl, resources.displayMetrics.density)
+    }
+
     private fun onMapReady(m: MapLibreMap) {
         map = m
         m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
-        m.setStyle(Style.Builder().fromUri(if (isNight()) MAP_STYLE_DARK else MAP_STYLE)) { s ->
+        styleUrl = if (isNight()) MAP_STYLE_DARK else MAP_STYLE
+        m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
             style = s
             controller.value = MapController(m, s)
             enableLocationIfAllowed()
@@ -149,8 +181,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onResume() { super.onResume(); mapView.onResume() }
-    override fun onPause() { mapView.onPause(); super.onPause() }
+    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true) }
+    override fun onPause() { vm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }

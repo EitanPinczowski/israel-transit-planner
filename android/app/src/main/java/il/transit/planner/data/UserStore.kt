@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import il.transit.core.remind.Reminder
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserJson
@@ -31,12 +32,19 @@ class UserStore(private val context: Context) {
     val places: Flow<List<SavedPlace>> = data.map { UserJson.decodePlaces(it[PLACES]) }
     val trips: Flow<List<SavedTrip>> = data.map { UserJson.decodeTrips(it[TRIPS]) }
 
+    /** The one active "time to leave" reminder, if any. */
+    val reminder: Flow<Reminder?> = data.map { UserJson.decodeReminder(it[REMINDER]) }
+
     suspend fun setSettings(s: UserSettings) {
         context.userData.edit { it[SETTINGS] = UserJson.encodeSettings(s) }
     }
 
     suspend fun setPlaces(p: List<SavedPlace>) {
         context.userData.edit { it[PLACES] = UserJson.encodePlaces(p) }
+    }
+
+    suspend fun setReminder(r: Reminder?) {
+        context.userData.edit { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
     }
 
     suspend fun setTrips(t: List<SavedTrip>) {
@@ -47,5 +55,6 @@ class UserStore(private val context: Context) {
         val SETTINGS = stringPreferencesKey("settings")
         val PLACES = stringPreferencesKey("places")
         val TRIPS = stringPreferencesKey("trips")
+        val REMINDER = stringPreferencesKey("reminder")
     }
 }

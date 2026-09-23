@@ -42,9 +42,13 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Send to driver: stop, pick-up time, leave time, Waze + Google Maps links
 
 ## Phase 5 — Real-time + offline
-- [ ] Real-time badges on legs and departures
-- [ ] Leave reminder (alarm + real-time re-check 15 min before)
-- [ ] Offline: cached plans/stops/places, offline map region download
+- [x] Real-time badges on legs and departures (+N min / ●), "Updated HH:MM" + ↻
+- [x] Trip tab refreshes every 2 min while the app is in front (quiet, keeps selection)
+- [x] Leave reminder: exact alarms, real-time re-check 15 min before, boot re-arm,
+      "trip changed" notification when the bus is gone
+- [x] Offline: last 10 Trip results cached on disk with an "offline" banner; saved places
+      and trips are local; offline map download for the current area (z10–14, ≤ ~55 km)
+- [ ] Optional: stops layer disk cache (today: in memory for a day)
 
 ## Phase 6 — On the trip
 - [ ] "Get off next stop" alert (foreground GPS only during a trip)

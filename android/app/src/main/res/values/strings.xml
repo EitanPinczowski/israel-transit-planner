@@ -101,4 +101,22 @@
     <string name="driver_leaves">Driver leaves at %1$s · round trip %2$d min</string>
     <string name="transit_all_the_way">All the way by transit: arrive %s</string>
     <string name="share_pickup">Pick me up at %1$s at %2$s (leave at %3$s)\nWaze: %4$s\nGoogle Maps: %5$s</string>
+
+    <string name="updated_at">Updated %s</string>
+    <string name="refresh">Refresh</string>
+    <string name="offline_showing">Offline — showing the result saved at %s. Times may have changed.</string>
+    <string name="late_paren">(+%d min)</string>
+    <string name="remind_me">🔔 Remind me when to leave</string>
+    <string name="reminder_set">🔔 Reminder: leave at %s (re-checked 15 min before)</string>
+    <string name="channel_reminders">Trip reminders</string>
+    <string name="notify_leave_title">Leave now</string>
+    <string name="notify_changed_title">Your trip changed</string>
+    <string name="notify_changed_text">Line %1$s from %2$s is no longer running as planned. Tap to plan again.</string>
+    <string name="offline_map">Offline map</string>
+    <string name="offline_none">No area downloaded. Move the map to your area, then download.</string>
+    <string name="offline_downloading">Downloading… %d%%</string>
+    <string name="offline_ready">Ready for offline use (%s MB)</string>
+    <string name="offline_too_big">Area too large — zoom in to about one city.</string>
+    <string name="offline_failed">Download failed. Check the connection and try again.</string>
+    <string name="offline_download">Download map of this area</string>
 </resources>

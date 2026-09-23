@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
@@ -93,8 +94,17 @@ import java.util.Locale
 
 private const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
 
+/** What only the Activity can do: permissions, the map camera, the offline store. */
+class ScreenActions(
+    val offline: OfflineState,
+    val downloadOffline: () -> Unit,
+    val deleteOffline: () -> Unit,
+    /** Asks for the notification permission if needed, then arms the reminder. */
+    val remind: () -> Unit,
+)
+
 @Composable
-fun MainScreen(state: UiState, vm: MainViewModel, map: @Composable () -> Unit) {
+fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @Composable () -> Unit) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
 
@@ -117,13 +127,13 @@ fun MainScreen(state: UiState, vm: MainViewModel, map: @Composable () -> Unit) {
             when {
                 state.stopSheet != null -> StopPanel(state.stopSheet, vm)
                 state.loading || state.hasResults || state.error != null ->
-                    ResultsPanel(state, vm, onSaveTrip = { savingTrip = true })
+                    ResultsPanel(state, vm, actions, onSaveTrip = { savingTrip = true })
                 else -> Spacer(Modifier.navigationBarsPadding())
             }
         }
     }
 
-    if (state.showSettings) SettingsDialog(state, vm)
+    if (state.showSettings) SettingsDialog(state, vm, actions)
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }
     }
@@ -340,16 +350,39 @@ private fun SavedChips(state: UiState, vm: MainViewModel) {
 // --- results ---------------------------------------------------------------------------------
 
 @Composable
-private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Unit) {
+private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActions, onSaveTrip: () -> Unit) {
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
         Column(Modifier.navigationBarsPadding().padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium)
+                    val at = state.resultsAt
+                    if (state.mode == AppMode.TRIP && at != null && !state.loading) {
+                        Text(
+                            stringResource(R.string.updated_at, hhmm(at)),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                if (state.hasResults && !state.loading) {
+                    IconButton(onClick = { vm.plan() }) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
+                }
                 if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
                     TextButton(onClick = onSaveTrip) { Text(stringResource(R.string.save_trip)) }
                 }
                 IconButton(onClick = vm::clearResults) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
+            state.offlineSince?.let { since ->
+                Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        stringResource(R.string.offline_showing, hhmm(since)),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                }
+            }
+            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -362,6 +395,23 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Un
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ReminderRow(state: UiState, vm: MainViewModel, actions: ScreenActions) {
+    val r = state.reminder
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (r != null) {
+            Text(
+                stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
+        } else if (state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null) {
+            TextButton(onClick = actions.remind) { Text(stringResource(R.string.remind_me)) }
         }
     }
 }
@@ -397,7 +447,12 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, onClick: () -> Uni
         val walk = stringResource(R.string.walk_minutes, s.walkMin)
         val board = s.firstBoarding?.let { b ->
             val line = b.line ?: kindName(b.kind)
-            stringResource(R.string.board_line, line, b.time, b.stop) + if (b.realTime) " ●" else ""
+            val live = when {
+                b.delayMin != null && b.delayMin!! > 0 -> " " + stringResource(R.string.late_paren, b.delayMin!!)
+                b.realTime -> " ●"
+                else -> ""
+            }
+            stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
     }
@@ -414,8 +469,13 @@ private fun LegChipView(c: LegChip) {
         Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, RoundedCornerShape(6.dp))
             .padding(horizontal = 6.dp, vertical = 2.dp),
     ) {
+        val live = when {
+            c.delayMin != null && c.delayMin!! > 0 -> " +${c.delayMin}"
+            c.realTime -> " ●"
+            else -> ""
+        }
         Text(
-            text + if (c.realTime) " ●" else "",
+            text + live,
             style = MaterialTheme.typography.labelMedium,
             color = if (c.kind == LegKind.WALK) MaterialTheme.colorScheme.onSurfaceVariant else Color.White,
         )
@@ -673,7 +733,7 @@ private fun DepartureView(r: DepartureRow) {
 // --- settings & dialogs --------------------------------------------------------------------------
 
 @Composable
-private fun SettingsDialog(state: UiState, vm: MainViewModel) {
+private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenActions) {
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
     AlertDialog(
@@ -730,6 +790,7 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel) {
                     )
                     Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
                 }
+                item { OfflineSection(actions) }
                 if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
                     item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
                     items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
@@ -738,6 +799,30 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel) {
             }
         },
     )
+}
+
+@Composable
+private fun OfflineSection(actions: ScreenActions) {
+    val o = actions.offline
+    Column {
+        Text(stringResource(R.string.offline_map), style = MaterialTheme.typography.labelLarge)
+        val status = when (o.status) {
+            OfflineState.Status.NONE -> stringResource(R.string.offline_none)
+            OfflineState.Status.DOWNLOADING -> stringResource(R.string.offline_downloading, o.percent)
+            OfflineState.Status.READY -> stringResource(R.string.offline_ready, String.format(Locale.US, "%.1f", o.sizeMb))
+            OfflineState.Status.TOO_BIG -> stringResource(R.string.offline_too_big)
+            OfflineState.Status.FAILED -> stringResource(R.string.offline_failed)
+        }
+        Text(status, style = MaterialTheme.typography.bodySmall)
+        Row {
+            TextButton(onClick = actions.downloadOffline, enabled = o.status != OfflineState.Status.DOWNLOADING) {
+                Text(stringResource(R.string.offline_download))
+            }
+            if (o.status == OfflineState.Status.READY) {
+                TextButton(onClick = actions.deleteOffline) { Text(stringResource(R.string.delete)) }
+            }
+        }
+    }
 }
 
 @Composable

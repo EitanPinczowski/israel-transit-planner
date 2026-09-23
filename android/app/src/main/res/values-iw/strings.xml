@@ -102,4 +102,22 @@
     <string name="driver_leaves">הנהג/ת יוצא/ת ב־\u2068%1$s\u2069 · הלוך ושוב \u2068%2$d\u2069 דק׳</string>
     <string name="transit_all_the_way">כל הדרך בתחבורה ציבורית: הגעה ב־\u2068%s\u2069</string>
     <string name="share_pickup">איסוף ב%1$s ב־%2$s (לצאת ב־%3$s)\nWaze: %4$s\nGoogle Maps: %5$s</string>
+
+    <string name="updated_at">עודכן ב־\u2068%s\u2069</string>
+    <string name="refresh">רענון</string>
+    <string name="offline_showing">אין חיבור — מוצגת התוצאה שנשמרה ב־\u2068%s\u2069. ייתכן שהזמנים השתנו.</string>
+    <string name="late_paren">(‎+\u2068%d\u2069 דק׳)</string>
+    <string name="remind_me">🔔 תזכורת מתי לצאת</string>
+    <string name="reminder_set">🔔 תזכורת: לצאת ב־\u2068%s\u2069 (נבדק שוב 15 דק׳ לפני)</string>
+    <string name="channel_reminders">תזכורות נסיעה</string>
+    <string name="notify_leave_title">הגיע הזמן לצאת</string>
+    <string name="notify_changed_title">הנסיעה שלך השתנתה</string>
+    <string name="notify_changed_text">קו %1$s מ%2$s כבר לא יוצא כמתוכנן. הקישו לתכנון מחדש.</string>
+    <string name="offline_map">מפה לא מקוונת</string>
+    <string name="offline_none">לא הורד אזור. הזיזו את המפה לאזור שלכם ואז הורידו.</string>
+    <string name="offline_downloading">מוריד… \u2068%d%%\u2069</string>
+    <string name="offline_ready">מוכן לשימוש בלי חיבור (\u2068%s\u2069 MB)</string>
+    <string name="offline_too_big">האזור גדול מדי — התקרבו לגודל של עיר אחת בערך.</string>
+    <string name="offline_failed">ההורדה נכשלה. בדקו את החיבור ונסו שוב.</string>
+    <string name="offline_download">הורדת המפה של האזור הזה</string>
 </resources>
