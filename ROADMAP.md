@@ -12,7 +12,7 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] CI: core tests, docs check, debug APK artifact
 - [ ] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
 - [ ] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes, real-time) and replace `plan_synthetic.json`
-- [ ] Owner: send `docs/transitous-contact.md` to Transitous
+- [ ] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP
 - [x] Search box (geocode, Hebrew + English), origin = my location, long-press = destination
@@ -25,11 +25,13 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [ ] Verify on a real phone against live Transitous (blocked here: network policy)
 
 ## Phase 2 — Better start
-- [ ] "Better start" tab with drive-limit slider (5–30 min), results on the map
+- [x] "Better start" tab with drive-limit slider (5–30 min), results on the map
+- [x] Falls back to `CAR` when the server refuses `CAR_DROPOFF` (budget 5, tested)
+- [x] "Send to driver": share sheet with Waze + Google Maps links to the drop-off stop
 
 ## Phase 3 — Let me off on the way
 - [ ] Drop-off tab (A→B, C), Pareto list, detour + arrival per option
-- [ ] Send point to Waze / Google Maps via share sheet
+- [ ] Send point to Waze / Google Maps via share sheet (reuse `NavLinks`, built in phase 2)
 
 ## Phase 4 — Best pick-up point
 - [ ] Pick-up tab, driver leave-time, send point to Waze

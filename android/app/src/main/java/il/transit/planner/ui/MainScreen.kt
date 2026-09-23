@@ -63,10 +63,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import il.transit.core.api.Itinerary
+import il.transit.core.features.BetterStartResult
+import il.transit.core.features.NavLinks
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.TimeMode
+import il.transit.core.present.BetterStartRow
 import il.transit.core.present.DepartureRow
+import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
 import il.transit.core.present.LegKind
 import il.transit.core.present.hhmm
@@ -97,7 +101,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, map: @Composable () -> Unit) {
             SearchCard(state, vm, onSavePlace = { savingPlace = it })
             when {
                 state.editing != null -> SuggestionList(state, vm)
-                state.results == null && !state.loading && state.stopSheet == null -> SavedChips(state, vm)
+                !state.hasResults && !state.loading && state.stopSheet == null -> SavedChips(state, vm)
             }
         }
 
@@ -105,7 +109,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, map: @Composable () -> Unit) {
             AttributionChip(Modifier.padding(8.dp))
             when {
                 state.stopSheet != null -> StopPanel(state.stopSheet, vm)
-                state.loading || state.results != null || state.error != null ->
+                state.loading || state.hasResults || state.error != null ->
                     ResultsPanel(state, vm, onSaveTrip = { savingTrip = true })
                 else -> Spacer(Modifier.navigationBarsPadding())
             }
@@ -127,6 +131,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, map: @Composable () -> Unit) {
 private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) -> Unit) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+            ModeRow(state, vm)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     PlaceRow(R.string.from, placeLabel(state.from), state.editing == Field.FROM) { vm.startEditing(Field.FROM) }
@@ -161,8 +166,37 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                 )
             } else {
                 TimeRow(state, vm)
+                if (state.mode == AppMode.BETTER_START) DriveLimitSlider(state, vm)
             }
         }
+    }
+}
+
+@Composable
+private fun ModeRow(state: UiState, vm: MainViewModel) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        FilterChip(state.mode == AppMode.TRIP, { vm.setMode(AppMode.TRIP) }, label = { Text(stringResource(R.string.mode_trip)) })
+        FilterChip(
+            state.mode == AppMode.BETTER_START,
+            { vm.setMode(AppMode.BETTER_START) },
+            label = { Text(stringResource(R.string.mode_better_start)) },
+        )
+    }
+}
+
+@Composable
+private fun DriveLimitSlider(state: UiState, vm: MainViewModel) {
+    // Local while dragging; the search runs once, when the finger lifts.
+    var value by remember(state.maxDriveMin) { mutableStateOf(state.maxDriveMin.toFloat()) }
+    Column {
+        Text(stringResource(R.string.drive_up_to, value.toInt()), style = MaterialTheme.typography.labelLarge)
+        Slider(
+            value = value,
+            onValueChange = { value = (Math.round(it / 5f) * 5).toFloat() },
+            onValueChangeFinished = { vm.setMaxDrive(value.toInt()) },
+            valueRange = 5f..30f,
+            steps = 4,
+        )
     }
 }
 
@@ -209,11 +243,13 @@ private fun TimeRow(state: UiState, vm: MainViewModel) {
             onClick = { pickTime(TimeMode.DEPART_AT) },
             label = { Text(timeLabel(R.string.depart_at, state, TimeMode.DEPART_AT)) },
         )
-        FilterChip(
-            selected = state.timeMode == TimeMode.ARRIVE_BY,
-            onClick = { pickTime(TimeMode.ARRIVE_BY) },
-            label = { Text(timeLabel(R.string.arrive_by, state, TimeMode.ARRIVE_BY)) },
-        )
+        if (state.mode == AppMode.TRIP) {
+            FilterChip(
+                selected = state.timeMode == TimeMode.ARRIVE_BY,
+                onClick = { pickTime(TimeMode.ARRIVE_BY) },
+                label = { Text(timeLabel(R.string.arrive_by, state, TimeMode.ARRIVE_BY)) },
+            )
+        }
     }
 }
 
@@ -275,7 +311,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Un
         Column(Modifier.navigationBarsPadding().padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-                if (state.to is PlaceRef.Point && state.results != null) {
+                if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
                     TextButton(onClick = onSaveTrip) { Text(stringResource(R.string.save_trip)) }
                 }
                 IconButton(onClick = vm::clearResults) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
@@ -283,6 +319,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Un
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
+                state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
                         ItineraryCard(itin, selected = i == state.selected) { vm.select(i) }
@@ -363,6 +400,64 @@ private fun kindName(k: LegKind): String = stringResource(
 
 private fun parseColor(hex: String): Color =
     runCatching { Color(android.graphics.Color.parseColor(hex)) }.getOrDefault(Color.Gray)
+
+// --- better start ---------------------------------------------------------------------------------
+
+@Composable
+private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainViewModel) {
+    val context = LocalContext.current
+    LazyColumn(Modifier.heightIn(max = 340.dp)) {
+        if (result.options.isEmpty()) {
+            item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
+        }
+        itemsIndexed(result.options) { i, option ->
+            val row = remember(option, result.baseline) { betterStartRow(option.payload, result.baseline) }
+            val shareText = stringResource(
+                R.string.share_dropoff,
+                row.stop,
+                NavLinks.waze(option.payload.dropOffAt),
+                NavLinks.googleMaps(option.payload.dropOffAt),
+            )
+            BetterStartCard(row, selected = i == state.selected, onClick = { vm.select(i) }) {
+                val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, shareText)
+                context.startActivity(Intent.createChooser(send, null))
+            }
+        }
+        result.baseline?.let { b ->
+            item {
+                Text(
+                    stringResource(R.string.without_ride, hhmm(b.end)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
+    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+        Text(stringResource(R.string.drive_to, row.driveMin, row.stop), style = MaterialTheme.typography.titleSmall)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("${row.depart}–${row.arrive}", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            val gains = listOfNotNull(
+                row.savedMin?.takeIf { it > 0 }?.let { stringResource(R.string.saves_min, it) },
+                row.transfersSaved?.takeIf { it > 0 }?.let { stringResource(R.string.fewer_transfers) },
+            )
+            if (gains.isNotEmpty()) Text(gains.joinToString(" · "), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
+            row.summary.chips.forEach { LegChipView(it) }
+        }
+        if (row.tight) Text(stringResource(R.string.tight_warning), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        if (selected) {
+            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
+        }
+    }
+}
 
 // --- stop departures --------------------------------------------------------------------------
 

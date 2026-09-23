@@ -154,6 +154,36 @@ class PresentationTest {
     }
 }
 
+class BetterStartPresentationTest {
+    @Test fun `nav links use fixed decimals`() {
+        val at = LatLon(31.2622, 34.8093)
+        assertEquals("https://waze.com/ul?ll=31.262200,34.809300&navigate=yes", il.transit.core.features.NavLinks.waze(at))
+        assertEquals(
+            "https://www.google.com/maps/dir/?api=1&destination=31.262200,34.809300&travelmode=driving",
+            il.transit.core.features.NavLinks.googleMaps(at),
+        )
+    }
+
+    @Test fun `better-start row reports minutes and transfers saved against the baseline`() {
+        val home = place("home", LatLon(31.26, 34.78))
+        val station = place("באר שבע צפון", LatLon(31.262, 34.809))
+        val ta = place("תל אביב", LatLon(32.08, 34.79))
+        val itin = itinerary(
+            leg(StreetModes.CAR_DROPOFF, home, station, NOON, NOON.plusSeconds(420)),
+            leg("REGIONAL_RAIL", station, ta, NOON.plusSeconds(600), NOON.plusSeconds(4200)),
+        )
+        val baseline = itinerary(leg("BUS", home, ta, NOON, NOON.plusSeconds(5280)), transfers = 1)
+        val opt = il.transit.core.features.BetterStartOption(itin, 420, "באר שבע צפון", station.latLon, tight = false)
+        val row = il.transit.core.present.betterStartRow(opt, baseline)
+        assertEquals(7, row.driveMin)
+        assertEquals("12:00", row.depart)
+        assertEquals("13:10", row.arrive)
+        assertEquals(18, row.savedMin)
+        assertEquals(1, row.transfersSaved)
+        assertNull(il.transit.core.present.betterStartRow(opt, null).savedMin)
+    }
+}
+
 class MapDataTest {
     @Test fun `itinerary GeoJSON has a line per leg in lon-lat order plus stop points`() {
         val a = place("A", LatLon(31.0, 34.0))

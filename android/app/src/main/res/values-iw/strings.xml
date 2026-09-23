@@ -68,4 +68,16 @@
     <string name="cancel">ביטול</string>
     <string name="delete">מחיקה</string>
     <string name="close">סגירה</string>
+
+    <string name="mode_trip">מסלול</string>
+    <string name="mode_better_start">נקודת יציאה טובה</string>
+    <string name="drive_up_to">מישהו מסיע אותי עד \u2068%d\u2069 דק׳</string>
+    <string name="drive_to">🚗 \u2068%1$d\u2069 דק׳ עד %2$s</string>
+    <string name="saves_min">חוסך \u2068%d\u2069 דק׳</string>
+    <string name="fewer_transfers">פחות החלפות</string>
+    <string name="tight_warning">⚠ החיבור צפוף אם יש עומס בכבישים</string>
+    <string name="without_ride">בלי הסעה: הגעה ב־\u2068%s\u2069</string>
+    <string name="no_better_start">אין נקודת יציאה מהירה יותר בטווח \u2068%d\u2069 דק׳ נסיעה — נסעו כרגיל.</string>
+    <string name="send_to_driver">שליחה לנהג/ת</string>
+    <string name="share_dropoff">נקודת הורדה: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
 </resources>

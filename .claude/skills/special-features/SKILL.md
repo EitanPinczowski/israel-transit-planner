@@ -14,7 +14,11 @@ for the trade-off to be visible (e.g. "+4 min for the driver, arrive 18:40" vs "
 Someone drops you (and leaves) at a stop within the slider limit. One walk-only baseline
 plus one `plan` per rung of `capLadder()` with `preTransitModes=CAR_DROPOFF`. The ladder
 (⅓, ⅔, full limit; rungs < 3 min dropped) is what turns MOTIS's (time, transfers) answer
-into a driver-time trade-off. Options must beat the baseline by `minGainMin` (5) or with
+into a driver-time trade-off. The widest rung runs first and alone: it is also the probe
+for `CAR_DROPOFF` support — on HTTP 400 the search switches to `CAR` for every rung and
+reports `usedMode`. Hence `BUDGET = 5` (baseline + refused probe + 3 rungs), pinned by a
+test. Any other error propagates; a 500 must never be read as "mode unsupported".
+Options must beat the baseline by `minGainMin` (5) or with
 fewer transfers. The cap is divided by the traffic factor because MOTIS measures free
 flow. `tight` = the traffic-adjusted drive eats the slack before the first departure.
 
@@ -28,6 +32,11 @@ You ride A→B and need C. Steps and their request cost (total pinned by `BUDGET
 5. one `plan` s→C per candidate within the detour limit (≤ 4)
 6. baselines: ride to B then transit, and transit from A (2)
 If the car route fails, only the transit-from-A baseline is returned — never an error.
+
+## Sending the point to the driver (`NavLinks.kt`)
+Waze (`waze.com/ul?ll=…&navigate=yes`) and Google Maps directions URLs, fixed six decimals
+in `Locale.US`. Plain links via Android's share sheet — no SDK, no key. Drop-off and
+pick-up tabs reuse them.
 
 ## Best pick-up (`PickUp.kt`)
 Mirror of better start on the arrival side: `postTransitModes=CAR` with a cap ladder.

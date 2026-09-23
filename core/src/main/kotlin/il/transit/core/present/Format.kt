@@ -137,3 +137,30 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
         instant = at,
     )
 }
+
+/** One "better start" option, ready to display. Savings are null without a baseline. */
+data class BetterStartRow(
+    val driveMin: Int,
+    val stop: String,
+    val depart: String,
+    val arrive: String,
+    /** Minutes earlier than the no-ride baseline (may be ≤ 0 when the gain is fewer transfers). */
+    val savedMin: Int?,
+    val transfersSaved: Int?,
+    val tight: Boolean,
+    val summary: ItinerarySummary,
+)
+
+fun betterStartRow(o: il.transit.core.features.BetterStartOption, baseline: Itinerary?): BetterStartRow {
+    val it = o.itinerary
+    return BetterStartRow(
+        driveMin = minutes(o.driveSec),
+        stop = o.dropOffStopName,
+        depart = hhmm(it.start),
+        arrive = hhmm(it.end),
+        savedMin = baseline?.let { b -> minutes((b.end.epochSecond - it.end.epochSecond).toInt()) },
+        transfersSaved = baseline?.let { b -> b.transfers - it.transfers },
+        tight = o.tight,
+        summary = summarize(it),
+    )
+}

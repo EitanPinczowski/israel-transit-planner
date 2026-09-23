@@ -156,6 +156,41 @@ class BetterStartTest {
         assertEquals("Be'er Sheva North", opt.dropOffStopName)
         assertEquals(350, opt.driveSec)
         assertFalse(opt.tight)
+        assertEquals(StreetModes.CAR_DROPOFF, result.usedMode)
+    }
+
+    @Test fun `falls back to CAR when the server refuses CAR_DROPOFF, within budget`() = runTest {
+        val fake = FakeTransitApi().apply {
+            onPlan = { req ->
+                when {
+                    req.maxPreTransitSec == null -> PlanResponse()
+                    StreetModes.CAR_DROPOFF in req.preTransitModes ->
+                        throw il.transit.core.api.TransitHttpException(400, "unknown mode CAR_DROPOFF")
+                    else -> PlanResponse(listOf(viaStation(350, 500, 3000, 0)))
+                }
+            }
+        }
+        val budgeted = BudgetedTransitApi(fake, BetterStartPlanner.BUDGET)
+        val result = BetterStartPlanner(budgeted).plan(BetterStartQuery(origin, dest, NOON))
+        assertEquals(StreetModes.CAR, result.usedMode)
+        assertEquals(1, result.options.size)
+        assertEquals(station.latLon, result.options.single().payload.dropOffAt)
+        assertEquals(BetterStartPlanner.BUDGET, budgeted.used) // baseline + refused probe + 3 rungs
+        assertEquals(1, fake.planRequests.count { StreetModes.CAR_DROPOFF in it.preTransitModes })
+    }
+
+    @Test fun `other server errors are not mistaken for an unsupported mode`() = runTest {
+        val fake = FakeTransitApi().apply {
+            onPlan = { req ->
+                if (req.maxPreTransitSec == null) PlanResponse() else throw il.transit.core.api.TransitHttpException(500, "boom")
+            }
+        }
+        try {
+            BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, NOON))
+            org.junit.Assert.fail("expected the 500 to propagate")
+        } catch (e: il.transit.core.api.TransitHttpException) {
+            assertEquals(500, e.code)
+        }
     }
 
     @Test fun `flags a connection that rush-hour traffic makes tight`() = runTest {

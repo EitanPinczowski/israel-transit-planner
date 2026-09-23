@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import il.transit.core.api.BudgetedTransitApi
 import il.transit.core.api.Endpoint
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.Itinerary
 import il.transit.core.api.TransitApi
+import il.transit.core.features.BetterStartPlanner
+import il.transit.core.features.BetterStartQuery
+import il.transit.core.features.BetterStartResult
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
@@ -44,6 +48,9 @@ sealed interface PlaceRef {
 
 enum class Field { FROM, TO }
 
+/** The tabs on top of the search card. Phases 3–4 add DROP_OFF and PICK_UP. */
+enum class AppMode { TRIP, BETTER_START }
+
 enum class UiError { NO_LOCATION, NETWORK, NO_RESULTS }
 
 data class Suggestion(val name: String, val detail: String?, val at: LatLon, val saved: Boolean, val isStop: Boolean)
@@ -51,6 +58,10 @@ data class Suggestion(val name: String, val detail: String?, val at: LatLon, val
 data class StopSheet(val stopId: String, val name: String, val loading: Boolean, val rows: List<DepartureRow>, val failed: Boolean)
 
 data class UiState(
+    val mode: AppMode = AppMode.TRIP,
+    /** Better start: how far the driver is willing to go. */
+    val maxDriveMin: Int = 10,
+    val betterStart: BetterStartResult? = null,
     val from: PlaceRef = PlaceRef.MyLocation,
     val to: PlaceRef? = null,
     val editing: Field? = null,
@@ -68,9 +79,14 @@ data class UiState(
     val savedPlaces: List<SavedPlace> = emptyList(),
     val savedTrips: List<SavedTrip> = emptyList(),
 ) {
-    /** Transit options, then walking-only if offered — the list the results panel shows. */
+    /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
-        get() = results?.let { it.itineraries + listOfNotNull(it.walkOnly) }.orEmpty()
+        get() = when (mode) {
+            AppMode.TRIP -> results?.let { it.itineraries + listOfNotNull(it.walkOnly) }.orEmpty()
+            AppMode.BETTER_START -> betterStart?.options?.map { it.payload.itinerary }.orEmpty()
+        }
+
+    val hasResults: Boolean get() = results != null || betterStart != null
 
     val selectedItinerary: Itinerary? get() = options.getOrNull(selected)
 }
@@ -139,14 +155,14 @@ class MainViewModel(
         val field = _state.value.editing ?: Field.TO
         _state.update {
             val next = if (field == Field.FROM) it.copy(from = ref) else it.copy(to = ref)
-            next.copy(editing = null, query = "", suggestions = emptyList(), results = null)
+            next.copy(editing = null, query = "", suggestions = emptyList(), results = null, betterStart = null)
         }
         if (_state.value.to != null) plan()
     }
 
     /** Long-press on the map: that point becomes the destination, named once reverse geocoding answers. */
     fun setDestinationFromMap(at: LatLon) {
-        _state.update { it.copy(to = PlaceRef.Point(null, at), editing = null, results = null, stopSheet = null) }
+        _state.update { it.copy(to = PlaceRef.Point(null, at), editing = null, results = null, betterStart = null, stopSheet = null) }
         plan()
         viewModelScope.launch {
             val name = try {
@@ -165,12 +181,28 @@ class MainViewModel(
     fun swap() {
         val s = _state.value
         val to = s.to ?: return
-        _state.update { it.copy(from = to, to = s.from, results = null) }
+        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null) }
         plan()
     }
 
     fun setTime(mode: TimeMode, time: Instant?) {
         _state.update { it.copy(timeMode = mode, time = if (mode == TimeMode.NOW) null else time) }
+        if (_state.value.to != null) plan()
+    }
+
+    fun setMode(mode: AppMode) {
+        if (mode == _state.value.mode) return
+        _state.update {
+            // Better start has no arrive-by: it asks "leaving now/at T, where should I be dropped?"
+            val time = if (mode == AppMode.BETTER_START && it.timeMode == TimeMode.ARRIVE_BY) TimeMode.NOW else it.timeMode
+            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, error = null, selected = 0)
+        }
+        if (_state.value.to != null) plan()
+    }
+
+    fun setMaxDrive(min: Int) {
+        if (min == _state.value.maxDriveMin) return
+        _state.update { it.copy(maxDriveMin = min) }
         if (_state.value.to != null) plan()
     }
 
@@ -186,14 +218,34 @@ class MainViewModel(
             return
         }
         planJob?.cancel()
-        _state.update { it.copy(loading = true, error = null, results = null, selected = 0, stopSheet = null) }
+        _state.update { it.copy(loading = true, error = null, results = null, betterStart = null, selected = 0, stopSheet = null) }
         planJob = viewModelScope.launch {
             try {
-                val r = planner.plan(
-                    TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
-                )
-                val empty = r.itineraries.isEmpty() && r.walkOnly == null
-                _state.update { it.copy(loading = false, results = r, error = if (empty) UiError.NO_RESULTS else null) }
+                when (s.mode) {
+                    AppMode.TRIP -> {
+                        val r = planner.plan(
+                            TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
+                        )
+                        val empty = r.itineraries.isEmpty() && r.walkOnly == null
+                        _state.update { it.copy(loading = false, results = r, error = if (empty) UiError.NO_RESULTS else null) }
+                    }
+                    AppMode.BETTER_START -> {
+                        // A fresh budget per search: a pruning bug becomes an exception, not a flood.
+                        val budgeted = BudgetedTransitApi(api, BetterStartPlanner.BUDGET)
+                        val r = BetterStartPlanner(budgeted, s.settings.traffic()).plan(
+                            BetterStartQuery(
+                                origin = from,
+                                dest = to,
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                maxDriveMin = s.maxDriveMin,
+                                preferences = s.settings.preferences(),
+                                language = language,
+                            ),
+                        )
+                        val empty = r.options.isEmpty() && r.baseline == null
+                        _state.update { it.copy(loading = false, betterStart = r, error = if (empty) UiError.NO_RESULTS else null) }
+                    }
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -204,7 +256,7 @@ class MainViewModel(
 
     fun select(index: Int) = _state.update { it.copy(selected = index) }
 
-    fun clearResults() = _state.update { it.copy(results = null, error = null, loading = false) }
+    fun clearResults() = _state.update { it.copy(results = null, betterStart = null, error = null, loading = false) }
 
     private fun resolve(ref: PlaceRef): LatLon? = when (ref) {
         PlaceRef.MyLocation -> locationProvider()
@@ -270,7 +322,7 @@ class MainViewModel(
     }
 
     fun goTo(p: SavedPlace) {
-        _state.update { it.copy(to = PlaceRef.Point(p.name, p.latLon), editing = null, results = null) }
+        _state.update { it.copy(to = PlaceRef.Point(p.name, p.latLon), editing = null, results = null, betterStart = null) }
         plan()
     }
 

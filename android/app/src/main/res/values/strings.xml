@@ -67,4 +67,16 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="close">Close</string>
+
+    <string name="mode_trip">Trip</string>
+    <string name="mode_better_start">Better start</string>
+    <string name="drive_up_to">Someone drives me up to %d min</string>
+    <string name="drive_to">🚗 %1$d min to %2$s</string>
+    <string name="saves_min">saves %d min</string>
+    <string name="fewer_transfers">fewer transfers</string>
+    <string name="tight_warning">⚠ Tight connection if traffic is heavy</string>
+    <string name="without_ride">Without a ride: arrive %s</string>
+    <string name="no_better_start">No faster start within %d min of driving — go as usual.</string>
+    <string name="send_to_driver">Send to driver</string>
+    <string name="share_dropoff">Drop-off point: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
 </resources>

@@ -45,7 +45,7 @@ tools/    check_docs.py · plan_summary.py · record_fixture.py
 
 | Feature | Idea | Requests |
 |---|---|---|
-| Better start | `preTransitModes=CAR_DROPOFF`, cap ladder of drive limits + walk baseline | ≤ 4 |
+| Better start | `preTransitModes=CAR_DROPOFF` (falls back to `CAR` on HTTP 400), cap ladder + walk baseline | ≤ 5 |
 | Let me off on the way (A→B, reach C) | car route → corridor stops → 2 one-to-many → plan per candidate + 2 baselines | ≤ 10 (`DropOffPlanner.BUDGET`) |
 | Best pick-up point | `postTransitModes=CAR`, cap ladder + transit-only baseline | ≤ 4 |
 

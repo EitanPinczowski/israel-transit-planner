@@ -13,8 +13,10 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 1. Project must be open source and non-commercial → the repo is public, MIT.
 2. Send a real User-Agent with contact info → `MotisClient.USER_AGENT` (repo URL).
 3. Visible link to https://transitous.org/sources/ → the attribution chip on the map.
-4. Keep traffic light; **contact them before routine use of routing endpoints**. Draft:
-   `docs/transitous-contact.md`. Until they answer, keep usage to the owner's testing.
+4. Keep traffic light; **contact them before routine use of routing endpoints** — their
+   API page points to their **Matrix channel** for this. Draft: `docs/transitous-contact.md`.
+   Only the owner can send it (no Matrix access from a session). Until they answer, keep
+   usage to the owner's own testing.
 5. Don't scrape — bulk data is downloadable from them instead.
 
 ## Endpoints we use
