@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">מתכנן נסיעות</string>
+    <string name="attribution">ניתוב: Transitous · מפה © OpenStreetMap, OpenFreeMap</string>
+
+    <string name="from">מ־</string>
+    <string name="to">אל</string>
+    <string name="my_location">המיקום שלי</string>
+    <string name="dropped_pin">נקודה במפה</string>
+    <string name="choose_destination">לאן? (או לחיצה ארוכה על המפה)</string>
+    <string name="search_hint">כתובת, מקום או תחנה</string>
+    <string name="stop">תחנה</string>
+
+    <string name="now">עכשיו</string>
+    <string name="depart_at">יציאה</string>
+    <string name="arrive_by">הגעה עד</string>
+
+    <string name="results">מסלולים</string>
+    <string name="direct">ישיר</string>
+    <plurals name="transfers">
+        <item quantity="one">החלפה אחת</item>
+        <item quantity="two">⁨%d⁩ החלפות</item>
+        <item quantity="other">⁨%d⁩ החלפות</item>
+    </plurals>
+    <string name="minutes_short">⁨%d⁩ דק׳</string>
+    <string name="walk_minutes">הליכה ⁨%d⁩ דק׳</string>
+    <string name="board_line">⁨%1$s⁩ ב־⁨%2$s⁩ מ־%3$s</string>
+
+    <string name="kind_walk">הליכה</string>
+    <string name="kind_bus">אוטובוס</string>
+    <string name="kind_train">רכבת</string>
+    <string name="kind_light_rail">רכבת קלה</string>
+    <string name="kind_car">רכב</string>
+    <string name="kind_other">תחבורה ציבורית</string>
+
+    <string name="departures">היציאות הקרובות</string>
+    <string name="no_departures">אין יציאות בשעות הקרובות.</string>
+    <string name="late">‏+⁨%d⁩ דק׳</string>
+    <string name="on_time">בזמן</string>
+    <string name="cancelled">בוטל</string>
+
+    <string name="err_no_location">המיקום שלך עדיין לא ידוע. הפעילו מיקום או בחרו נקודת מוצא.</string>
+    <string name="err_network">אין חיבור למתכנן הנסיעות. בדקו את החיבור לאינטרנט.</string>
+    <string name="err_no_results">לא נמצאו מסלולים לשעה הזו.</string>
+    <string name="retry">נסו שוב</string>
+
+    <string name="settings">הגדרות</string>
+    <string name="done">סיום</string>
+    <string name="max_transfers">מספר החלפות מרבי</string>
+    <string name="any">ללא הגבלה</string>
+    <string name="max_walk">הליכה מרבית אל/מהתחנה</string>
+    <string name="modes">אמצעי תחבורה</string>
+    <string name="mode_all">הכול</string>
+    <string name="mode_trains">רק רכבות</string>
+    <string name="mode_no_buses">בלי אוטובוסים</string>
+    <string name="walk_speed">מהירות הליכה</string>
+    <string name="speed_slow">איטית</string>
+    <string name="speed_normal">רגילה</string>
+    <string name="speed_fast">מהירה</string>
+    <string name="traffic_factor">מקדם עומס בשעות שיא: ×⁨%s⁩</string>
+    <string name="traffic_factor_help">הניתוב החינמי מניח כבישים ריקים. זמני הנסיעה בשעות השיא (א׳–ה׳) מוכפלים במקדם הזה.</string>
+    <string name="saved">שמורים</string>
+
+    <string name="save_place">שמירת מקום</string>
+    <string name="save_trip">שמירת מסלול</string>
+    <string name="name_hint">שם (למשל: בית, אוניברסיטה)</string>
+    <string name="save">שמירה</string>
+    <string name="cancel">ביטול</string>
+    <string name="delete">מחיקה</string>
+    <string name="close">סגירה</string>
+
+    <string name="mode_trip">מסלול</string>
+    <string name="mode_better_start">נקודת יציאה טובה</string>
+    <string name="drive_up_to">מישהו מסיע אותי עד \u2068%d\u2069 דק׳</string>
+    <string name="drive_to">🚗 \u2068%1$d\u2069 דק׳ עד %2$s</string>
+    <string name="saves_min">חוסך \u2068%d\u2069 דק׳</string>
+    <string name="fewer_transfers">פחות החלפות</string>
+    <string name="tight_warning">⚠ החיבור צפוף אם יש עומס בכבישים</string>
+    <string name="without_ride">בלי הסעה: הגעה ב־\u2068%s\u2069</string>
+    <string name="no_better_start">אין נקודת יציאה מהירה יותר בטווח \u2068%d\u2069 דק׳ נסיעה — נסעו כרגיל.</string>
+    <string name="send_to_driver">שליחה לנהג/ת</string>
+    <string name="share_dropoff">נקודת הורדה: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
+
+    <string name="mode_drop_off">הורידו אותי בדרך</string>
+    <string name="driver_to">הנהג/ת אל</string>
+    <string name="me_to">אני אל</string>
+    <string name="choose_driver_destination">לאן הנהג/ת נוסע/ת?</string>
+    <string name="detour_up_to">הנהג/ת מוכן/ה לעקוף עד \u2068%d\u2069 דק׳</string>
+    <string name="drive_takes">הנסיעה לבדה: \u2068%d\u2069 דק׳</string>
+    <string name="no_stop_on_the_way">אין תחנה בדרך, בעיקוף של עד \u2068%d\u2069 דק׳, שעדיפה על אלה.</string>
+    <string name="get_out_at">🚗 לרדת ב%1$s · לנהג/ת ‎+\u2068%2$d\u2069 דק׳</string>
+    <string name="ride_to_end">🚗 לנסוע עד הסוף, ומשם בתחבורה ציבורית</string>
+    <string name="transit_from_start">🚌 תחבורה ציבורית מההתחלה, בלי הסעה</string>
+    <string name="you_arrive">הגעה ב־\u2068%s\u2069</string>
+
+    <string name="mode_pick_up">אספו אותי</string>
+    <string name="driver_at">הנהג/ת ב־</string>
+    <string name="pickup_drive_up_to">הנהג/ת נוסע/ת עד \u2068%d\u2069 דק׳ לכל כיוון</string>
+    <string name="no_pick_up">אין נקודת איסוף בטווח \u2068%d\u2069 דק׳ נסיעה שעדיפה על תחבורה ציבורית עד הסוף.</string>
+    <string name="picked_up_at">🚗 איסוף ב%1$s ב־\u2068%2$s\u2069</string>
+    <string name="home_at">בבית ב־\u2068%s\u2069</string>
+    <string name="driver_leaves">הנהג/ת יוצא/ת ב־\u2068%1$s\u2069 · הלוך ושוב \u2068%2$d\u2069 דק׳</string>
+    <string name="transit_all_the_way">כל הדרך בתחבורה ציבורית: הגעה ב־\u2068%s\u2069</string>
+    <string name="share_pickup">איסוף ב%1$s ב־%2$s (לצאת ב־%3$s)\nWaze: %4$s\nGoogle Maps: %5$s</string>
+
+    <string name="updated_at">עודכן ב־\u2068%s\u2069</string>
+    <string name="refresh">רענון</string>
+    <string name="offline_showing">אין חיבור — מוצגת התוצאה שנשמרה ב־\u2068%s\u2069. ייתכן שהזמנים השתנו.</string>
+    <string name="late_paren">(‎+\u2068%d\u2069 דק׳)</string>
+    <string name="remind_me">🔔 תזכורת מתי לצאת</string>
+    <string name="reminder_set">🔔 תזכורת: לצאת ב־\u2068%s\u2069 (נבדק שוב 15 דק׳ לפני)</string>
+    <string name="channel_reminders">תזכורות נסיעה</string>
+    <string name="notify_leave_title">הגיע הזמן לצאת</string>
+    <string name="notify_changed_title">הנסיעה שלך השתנתה</string>
+    <string name="notify_changed_text">קו %1$s מ%2$s כבר לא יוצא כמתוכנן. הקישו לתכנון מחדש.</string>
+    <string name="offline_map">מפה לא מקוונת</string>
+    <string name="offline_none">לא הורד אזור. הזיזו את המפה לאזור שלכם ואז הורידו.</string>
+    <string name="offline_downloading">מוריד… \u2068%d%%\u2069</string>
+    <string name="offline_ready">מוכן לשימוש בלי חיבור (\u2068%s\u2069 MB)</string>
+    <string name="offline_too_big">האזור גדול מדי — התקרבו לגודל של עיר אחת בערך.</string>
+    <string name="offline_failed">ההורדה נכשלה. בדקו את החיבור ונסו שוב.</string>
+    <string name="offline_download">הורדת המפה של האזור הזה</string>
+
+    <string name="ride_start">▶ התחלת נסיעה — רטט לפני התחנה שלי</string>
+    <string name="ride_active">📍 נסיעה פעילה — ארטוט לפני התחנה שלך</string>
+    <string name="ride_stop">עצירה</string>
+    <string name="ride_ongoing_title">נסיעה פעילה</string>
+    <string name="ride_ongoing_text">עוקב אחרי התחנה שלך: %s</string>
+    <string name="ride_get_off_title">לרדת בתחנה הבאה</string>
+    <string name="ride_change_title">להחליף בתחנה הבאה</string>
+    <string name="ride_get_off_text">התחנה הבאה: %s</string>
+    <string name="channel_ride_ongoing">נסיעה פעילה</string>
+    <string name="channel_ride_alerts">התראות ירידה</string>
+    <string name="history">היסטוריה</string>
+    <string name="history_empty">עדיין אין נסיעות. הקישו \"התחלת נסיעה\" על מסלול והוא יופיע כאן.</string>
+    <string name="history_clear">מחיקת ההיסטוריה</string>
+    <string name="stat_trips">נסיעות</string>
+    <string name="stat_week">השבוע</string>
+    <string name="stat_transit_hours">שעות בתחבורה ציבורית</string>
+    <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
+    <string name="stat_top_destination">היעד הנפוץ ביותר: %s</string>
+
+    <string name="update_available">גרסה חדשה זמינה: v\u2068%s\u2069</string>
+    <string name="update_download">הורדה</string>
+</resources>

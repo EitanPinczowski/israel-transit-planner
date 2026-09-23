@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Transit Planner</string>
+    <string name="attribution">Routing: Transitous · Map © OpenStreetMap, OpenFreeMap</string>
+
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="my_location">My location</string>
+    <string name="dropped_pin">Point on map</string>
+    <string name="choose_destination">Where to? (or long-press the map)</string>
+    <string name="search_hint">Address, place or stop</string>
+    <string name="stop">Stop</string>
+
+    <string name="now">Now</string>
+    <string name="depart_at">Depart</string>
+    <string name="arrive_by">Arrive by</string>
+
+    <string name="results">Routes</string>
+    <string name="direct">Direct</string>
+    <plurals name="transfers">
+        <item quantity="one">%d transfer</item>
+        <item quantity="other">%d transfers</item>
+    </plurals>
+    <string name="minutes_short">%d min</string>
+    <string name="walk_minutes">walk %d min</string>
+    <string name="board_line">%1$s at %2$s from %3$s</string>
+
+    <string name="kind_walk">Walk</string>
+    <string name="kind_bus">Bus</string>
+    <string name="kind_train">Train</string>
+    <string name="kind_light_rail">Light rail</string>
+    <string name="kind_car">Car</string>
+    <string name="kind_other">Transit</string>
+
+    <string name="departures">Next departures</string>
+    <string name="no_departures">No departures in the next hours.</string>
+    <string name="late">+%d min</string>
+    <string name="on_time">on time</string>
+    <string name="cancelled">cancelled</string>
+
+    <string name="err_no_location">Your location isn\'t known yet. Turn on location, or pick a starting point.</string>
+    <string name="err_network">Couldn\'t reach the trip planner. Check your connection.</string>
+    <string name="err_no_results">No routes found for this time.</string>
+    <string name="retry">Retry</string>
+
+    <string name="settings">Settings</string>
+    <string name="done">Done</string>
+    <string name="max_transfers">Max transfers</string>
+    <string name="any">Any</string>
+    <string name="max_walk">Max walk to/from stops</string>
+    <string name="modes">Transport</string>
+    <string name="mode_all">Everything</string>
+    <string name="mode_trains">Trains only</string>
+    <string name="mode_no_buses">No buses</string>
+    <string name="walk_speed">Walking speed</string>
+    <string name="speed_slow">Slow</string>
+    <string name="speed_normal">Normal</string>
+    <string name="speed_fast">Fast</string>
+    <string name="traffic_factor">Rush-hour drive factor: ×%s</string>
+    <string name="traffic_factor_help">Free map routing assumes empty roads. Drive times at Sun–Thu rush hours are multiplied by this.</string>
+    <string name="saved">Saved</string>
+
+    <string name="save_place">Save place</string>
+    <string name="save_trip">Save trip</string>
+    <string name="name_hint">Name (e.g. Home, University)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="close">Close</string>
+
+    <string name="mode_trip">Trip</string>
+    <string name="mode_better_start">Better start</string>
+    <string name="drive_up_to">Someone drives me up to %d min</string>
+    <string name="drive_to">🚗 %1$d min to %2$s</string>
+    <string name="saves_min">saves %d min</string>
+    <string name="fewer_transfers">fewer transfers</string>
+    <string name="tight_warning">⚠ Tight connection if traffic is heavy</string>
+    <string name="without_ride">Without a ride: arrive %s</string>
+    <string name="no_better_start">No faster start within %d min of driving — go as usual.</string>
+    <string name="send_to_driver">Send to driver</string>
+    <string name="share_dropoff">Drop-off point: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
+
+    <string name="mode_drop_off">Drop me off</string>
+    <string name="driver_to">Driver to</string>
+    <string name="me_to">I go to</string>
+    <string name="choose_driver_destination">Where is the driver going?</string>
+    <string name="detour_up_to">Driver accepts up to %d min detour</string>
+    <string name="drive_takes">The drive on its own: %d min</string>
+    <string name="no_stop_on_the_way">No stop on the way within a %d-min detour beats these.</string>
+    <string name="get_out_at">🚗 Get out at %1$s · driver +%2$d min</string>
+    <string name="ride_to_end">🚗 Ride all the way, then transit</string>
+    <string name="transit_from_start">🚌 Transit from the start, no ride</string>
+    <string name="you_arrive">You arrive %s</string>
+
+    <string name="mode_pick_up">Pick me up</string>
+    <string name="driver_at">Driver at</string>
+    <string name="pickup_drive_up_to">Driver drives up to %d min each way</string>
+    <string name="no_pick_up">No pick-up within %d min of the driver beats going all the way by transit.</string>
+    <string name="picked_up_at">🚗 Get picked up at %1$s at %2$s</string>
+    <string name="home_at">Home at %s</string>
+    <string name="driver_leaves">Driver leaves at %1$s · round trip %2$d min</string>
+    <string name="transit_all_the_way">All the way by transit: arrive %s</string>
+    <string name="share_pickup">Pick me up at %1$s at %2$s (leave at %3$s)\nWaze: %4$s\nGoogle Maps: %5$s</string>
+
+    <string name="updated_at">Updated %s</string>
+    <string name="refresh">Refresh</string>
+    <string name="offline_showing">Offline — showing the result saved at %s. Times may have changed.</string>
+    <string name="late_paren">(+%d min)</string>
+    <string name="remind_me">🔔 Remind me when to leave</string>
+    <string name="reminder_set">🔔 Reminder: leave at %s (re-checked 15 min before)</string>
+    <string name="channel_reminders">Trip reminders</string>
+    <string name="notify_leave_title">Leave now</string>
+    <string name="notify_changed_title">Your trip changed</string>
+    <string name="notify_changed_text">Line %1$s from %2$s is no longer running as planned. Tap to plan again.</string>
+    <string name="offline_map">Offline map</string>
+    <string name="offline_none">No area downloaded. Move the map to your area, then download.</string>
+    <string name="offline_downloading">Downloading… %d%%</string>
+    <string name="offline_ready">Ready for offline use (%s MB)</string>
+    <string name="offline_too_big">Area too large — zoom in to about one city.</string>
+    <string name="offline_failed">Download failed. Check the connection and try again.</string>
+    <string name="offline_download">Download map of this area</string>
+
+    <string name="ride_start">▶ Start trip — buzz me before my stop</string>
+    <string name="ride_active">📍 Trip in progress — I\'ll buzz before your stop</string>
+    <string name="ride_stop">Stop</string>
+    <string name="ride_ongoing_title">Trip in progress</string>
+    <string name="ride_ongoing_text">Watching for your stop: %s</string>
+    <string name="ride_get_off_title">Get off at the next stop</string>
+    <string name="ride_change_title">Change at the next stop</string>
+    <string name="ride_get_off_text">Next stop: %s</string>
+    <string name="channel_ride_ongoing">Trip in progress</string>
+    <string name="channel_ride_alerts">Get-off alerts</string>
+    <string name="history">History</string>
+    <string name="history_empty">No trips yet. Tap \"Start trip\" on a route and it will appear here.</string>
+    <string name="history_clear">Clear history</string>
+    <string name="stat_trips">trips</string>
+    <string name="stat_week">this week</string>
+    <string name="stat_transit_hours">hours on transit</string>
+    <string name="stat_saved">min saved by car + transit</string>
+    <string name="stat_top_destination">Most frequent destination: %s</string>
+
+    <string name="update_available">Update available: v%s</string>
+    <string name="update_download">Download</string>
+</resources>

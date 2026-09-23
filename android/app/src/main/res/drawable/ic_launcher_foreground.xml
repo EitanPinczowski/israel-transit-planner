@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A simple white bus on the adaptive-icon 108dp canvas (safe zone: the middle 66dp). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,32h32a6,6 0,0 1,6 6v30a4,4 0,0 1,-4 4h-36a4,4 0,0 1,-4 -4v-30a6,6 0,0 1,6 -6z" />
+    <!-- windscreen -->
+    <path
+        android:fillColor="#1E88E5"
+        android:pathData="M38,40h32v14h-32z" />
+    <!-- headlights -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M40,62h6v4h-6zM62,62h6v4h-6z" />
+    <!-- wheels -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,72h8v6a2,2 0,0 1,-2 2h-4a2,2 0,0 1,-2 -2zM62,72h8v6a2,2 0,0 1,-2 2h-4a2,2 0,0 1,-2 -2z" />
+</vector>
