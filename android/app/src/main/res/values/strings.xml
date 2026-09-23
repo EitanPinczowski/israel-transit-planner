@@ -119,4 +119,23 @@
     <string name="offline_too_big">Area too large — zoom in to about one city.</string>
     <string name="offline_failed">Download failed. Check the connection and try again.</string>
     <string name="offline_download">Download map of this area</string>
+
+    <string name="ride_start">▶ Start trip — buzz me before my stop</string>
+    <string name="ride_active">📍 Trip in progress — I\'ll buzz before your stop</string>
+    <string name="ride_stop">Stop</string>
+    <string name="ride_ongoing_title">Trip in progress</string>
+    <string name="ride_ongoing_text">Watching for your stop: %s</string>
+    <string name="ride_get_off_title">Get off at the next stop</string>
+    <string name="ride_change_title">Change at the next stop</string>
+    <string name="ride_get_off_text">Next stop: %s</string>
+    <string name="channel_ride_ongoing">Trip in progress</string>
+    <string name="channel_ride_alerts">Get-off alerts</string>
+    <string name="history">History</string>
+    <string name="history_empty">No trips yet. Tap \"Start trip\" on a route and it will appear here.</string>
+    <string name="history_clear">Clear history</string>
+    <string name="stat_trips">trips</string>
+    <string name="stat_week">this week</string>
+    <string name="stat_transit_hours">hours on transit</string>
+    <string name="stat_saved">min saved by car + transit</string>
+    <string name="stat_top_destination">Most frequent destination: %s</string>
 </resources>

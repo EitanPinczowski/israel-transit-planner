@@ -33,7 +33,12 @@ import il.transit.core.remind.Reminder
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserSettings
+import il.transit.core.history.History
+import il.transit.core.history.HistoryStats
+import il.transit.core.history.TripRecord
 import il.transit.planner.Reminders
+import il.transit.planner.Rides
+import il.transit.planner.data.HistoryStore
 import il.transit.planner.TransitApp
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.UserStore
@@ -101,7 +106,13 @@ data class UiState(
     /** Set when the results are a saved copy shown because the network failed. */
     val offlineSince: Instant? = null,
     val reminder: Reminder? = null,
+    /** A "get off at the next stop" ride is being tracked. */
+    val riding: Boolean = false,
+    val history: List<TripRecord> = emptyList(),
+    val showHistory: Boolean = false,
 ) {
+    val historyStats: HistoryStats get() = History.stats(history, Instant.now())
+
     /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
         get() = when (mode) {
@@ -129,6 +140,8 @@ class MainViewModel(
     private val language: String,
     private val planCache: PlanCacheStore? = null,
     private val reminders: Reminders? = null,
+    private val rides: Rides? = null,
+    private val historyStore: HistoryStore? = null,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -154,6 +167,13 @@ class MainViewModel(
             }
         }
         viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
+        rides?.let { r -> viewModelScope.launch { r.active.collect { a -> _state.update { it.copy(riding = a) } } } }
+        historyStore?.let { h ->
+            viewModelScope.launch {
+                h.load()
+                h.records.collect { list -> _state.update { it.copy(history = list) } }
+            }
+        }
     }
 
     // --- live refresh ------------------------------------------------------------------
@@ -402,6 +422,48 @@ class MainViewModel(
         return true
     }
 
+    // --- riding: "get off at the next stop" + history ------------------------------------------
+
+    /** Starts tracking the selected itinerary and records it in the history. */
+    fun startRide(): Boolean {
+        val s = _state.value
+        val itin = s.selectedItinerary ?: return false
+        if (itin.firstTransitLeg == null) return false
+        rides?.start(itin)
+        val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, Instant.now(), savedMinOfSelected(s))
+        viewModelScope.launch { historyStore?.add(record) }
+        return true
+    }
+
+    fun stopRide() {
+        rides?.stop()
+    }
+
+    fun showHistory(show: Boolean) = _state.update { it.copy(showHistory = show) }
+
+    fun clearHistory() = viewModelScope.launch { historyStore?.clear() }
+
+    /** "" stands for "my location"; the history screen shows it localized. */
+    private fun nameOf(ref: PlaceRef): String = when (ref) {
+        PlaceRef.MyLocation -> ""
+        is PlaceRef.Point -> ref.name.orEmpty()
+    }
+
+    /** Minutes the chosen car + transit option saves against doing it without the car. */
+    private fun savedMinOfSelected(s: UiState): Int? {
+        fun min(a: Instant, b: Instant) = ((a.epochSecond - b.epochSecond) / 60).toInt()
+        return when (s.mode) {
+            AppMode.TRIP -> null
+            AppMode.BETTER_START -> s.betterStart?.let { r -> r.options.getOrNull(s.selected)?.let { o -> r.baseline?.let { b -> min(b.end, o.arrival) } } }
+            AppMode.PICK_UP -> s.pickUp?.let { r -> r.options.getOrNull(s.selected)?.let { o -> r.baseline?.let { b -> min(b.end, o.arrival) } } }
+            AppMode.DROP_OFF -> s.dropOff?.let { r ->
+                val o = r.options.getOrNull(s.selected) ?: return@let null
+                val noCar = r.options.firstOrNull { it.payload.kind == il.transit.core.features.DropOffKind.TRANSIT_FROM_START }
+                noCar?.let { b -> min(b.arrival, o.arrival) }
+            }
+        }
+    }
+
     fun cancelReminder() {
         reminders?.cancel()
         viewModelScope.launch { store.setReminder(null) }
@@ -527,7 +589,9 @@ class MainViewModel(
         private const val REFRESH_MS = 120_000L
 
         fun factory(app: TransitApp) = viewModelFactory {
-            initializer { MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders) }
+            initializer {
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history)
+            }
         }
     }
 }

@@ -60,9 +60,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
 
-    /** Whatever the answer, arm the reminder: the alarm still works, only the banner may be blocked. */
+    /** What to do once the notification-permission prompt is answered. */
+    private var afterNotificationPrompt: () -> Unit = {}
+
+    /** Whatever the answer, carry on: alarms and rides still work, only the banners may be blocked. */
     private val askNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        vm.remindSelected()
+        afterNotificationPrompt()
     }
 
     private val askLocation = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -109,6 +112,7 @@ class MainActivity : ComponentActivity() {
                     downloadOffline = ::downloadOfflineArea,
                     deleteOffline = offline::delete,
                     remind = ::remind,
+                    startRide = ::startRide,
                 )
                 MainScreen(state, vm, actions) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
@@ -121,10 +125,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun remind() {
+    private fun remind() = withNotifications { vm.remindSelected() }
+
+    /** The ride service tracks GPS, so it also needs location. */
+    private fun startRide() {
+        if (!hasLocationPermission()) {
+            askLocation.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+            return
+        }
+        withNotifications { vm.startRide() }
+    }
+
+    private fun withNotifications(then: () -> Unit) {
         val needsAsk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        if (needsAsk) askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS) else vm.remindSelected()
+        if (needsAsk) {
+            afterNotificationPrompt = then
+            askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            then()
+        }
     }
 
     /** Downloads what is on screen now; the manager refuses areas larger than a city. */

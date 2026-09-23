@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
@@ -101,6 +102,8 @@ class ScreenActions(
     val deleteOffline: () -> Unit,
     /** Asks for the notification permission if needed, then arms the reminder. */
     val remind: () -> Unit,
+    /** Same permission dance, then starts the "get off at the next stop" ride. */
+    val startRide: () -> Unit,
 )
 
 @Composable
@@ -134,6 +137,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
     }
 
     if (state.showSettings) SettingsDialog(state, vm, actions)
+    if (state.showHistory) HistoryDialog(state, vm)
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }
     }
@@ -179,6 +183,9 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                     }
                     IconButton(onClick = { vm.showSettings(true) }) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
+                    }
+                    IconButton(onClick = { vm.showHistory(true) }) {
+                        Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.history))
                     }
                 }
             }
@@ -383,6 +390,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 }
             }
             if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
+            if (!state.loading) RideRow(state, vm, actions)
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -413,6 +421,18 @@ private fun ReminderRow(state: UiState, vm: MainViewModel, actions: ScreenAction
         } else if (state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null) {
             TextButton(onClick = actions.remind) { Text(stringResource(R.string.remind_me)) }
         }
+    }
+}
+
+@Composable
+private fun RideRow(state: UiState, vm: MainViewModel, actions: ScreenActions) {
+    when {
+        state.riding -> Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+            TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
+        }
+        state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null ->
+            TextButton(onClick = actions.startRide) { Text(stringResource(R.string.ride_start)) }
     }
 }
 
@@ -799,6 +819,63 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
             }
         },
     )
+}
+
+@Composable
+private fun HistoryDialog(state: UiState, vm: MainViewModel) {
+    val st = state.historyStats
+    AlertDialog(
+        onDismissRequest = { vm.showHistory(false) },
+        confirmButton = { TextButton(onClick = { vm.showHistory(false) }) { Text(stringResource(R.string.done)) } },
+        dismissButton = {
+            if (state.history.isNotEmpty()) TextButton(onClick = { vm.clearHistory() }) { Text(stringResource(R.string.history_clear)) }
+        },
+        title = { Text(stringResource(R.string.history)) },
+        text = {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (state.history.isEmpty()) {
+                    item { Text(stringResource(R.string.history_empty)) }
+                } else {
+                    item {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            StatTile(st.trips.toString(), stringResource(R.string.stat_trips))
+                            StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week))
+                            StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours))
+                            StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved))
+                        }
+                    }
+                    st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
+                        item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
+                    }
+                    item { HorizontalDivider() }
+                    items(state.history.take(30)) { r ->
+                        val from = r.from.ifBlank { stringResource(R.string.my_location) }
+                        val to = r.to.ifBlank { stringResource(R.string.my_location) }
+                        Column {
+                            Text("$from – $to", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            val date = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm").format(r.startedAt.atZone(ISRAEL))
+                            val saved = r.savedMin?.let { " · " + stringResource(R.string.saves_min, it) }.orEmpty()
+                            Text(
+                                "$date · " + stringResource(R.string.minutes_short, r.transitMin + r.walkMin) + saved,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
+        },
+    )
+}
+
+@Composable
+private fun StatTile(value: String, label: String) {
+    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(12.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+            Text(value, style = MaterialTheme.typography.titleLarge)
+            Text(label, style = MaterialTheme.typography.labelSmall)
+        }
+    }
 }
 
 @Composable

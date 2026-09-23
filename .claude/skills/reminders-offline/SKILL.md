@@ -23,6 +23,18 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   arms the alarm; only the banner is blocked.
 - **Trip tab only.** Car-feature legs have different "leave" semantics (the driver leaves).
 
+# "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)
+
+- Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`
+  ONCE — within 120 m of the stop before yours (if MOTIS listed intermediate stops) or 400 m
+  of your stop — then `Finished` at the destination or 30 min past planned arrival.
+- The service is a `location` foreground service that exists only during a ride; it uses
+  the platform `LocationManager` (GPS + network, 5 s / 15 m), not Play services.
+- **The `LocationListener` is an explicit object, never a lambda**: below API 29 its other
+  methods are abstract and a SAM lambda crashes with AbstractMethodError.
+- Starting a ride also writes a `TripRecord` to the history (`data/HistoryStore`,
+  `filesDir/history.json`, newest first, capped at 500 — `core/history/History.kt`).
+
 # Offline
 
 - **Trip results**: `core/plan/PlanCache` (LRU, 10) + `TripCacheJson`, persisted by

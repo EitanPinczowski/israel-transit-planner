@@ -51,9 +51,12 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [ ] Optional: stops layer disk cache (today: in memory for a day)
 
 ## Phase 6 — On the trip
-- [ ] "Get off next stop" alert (foreground GPS only during a trip)
-- [ ] Trip history + stats (incl. minutes saved by the special features)
-- [ ] Fare estimate — only after checking against the official Rav-Kav calculator
+- [x] "Get off next stop" alert: foreground GPS service only while a trip is ridden, buzzes once
+      per leg (passing the stop before yours, or 400 m out), stops itself at the end
+- [x] Trip history + stats (trips, this week, hours on transit, minutes saved by the car
+      features, top destination); local only, capped at 500
+- [ ] Fare estimate — **blocked on verification**: needs the official Rav-Kav fare calculator
+      (and live network) to check the distance bands before any price is shown
 
 ## Phase 7 — Release
 - [ ] Signed APK on GitHub Releases for friends and family

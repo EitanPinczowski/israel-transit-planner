@@ -120,4 +120,23 @@
     <string name="offline_too_big">האזור גדול מדי — התקרבו לגודל של עיר אחת בערך.</string>
     <string name="offline_failed">ההורדה נכשלה. בדקו את החיבור ונסו שוב.</string>
     <string name="offline_download">הורדת המפה של האזור הזה</string>
+
+    <string name="ride_start">▶ התחלת נסיעה — רטט לפני התחנה שלי</string>
+    <string name="ride_active">📍 נסיעה פעילה — ארטוט לפני התחנה שלך</string>
+    <string name="ride_stop">עצירה</string>
+    <string name="ride_ongoing_title">נסיעה פעילה</string>
+    <string name="ride_ongoing_text">עוקב אחרי התחנה שלך: %s</string>
+    <string name="ride_get_off_title">לרדת בתחנה הבאה</string>
+    <string name="ride_change_title">להחליף בתחנה הבאה</string>
+    <string name="ride_get_off_text">התחנה הבאה: %s</string>
+    <string name="channel_ride_ongoing">נסיעה פעילה</string>
+    <string name="channel_ride_alerts">התראות ירידה</string>
+    <string name="history">היסטוריה</string>
+    <string name="history_empty">עדיין אין נסיעות. הקישו \"התחלת נסיעה\" על מסלול והוא יופיע כאן.</string>
+    <string name="history_clear">מחיקת ההיסטוריה</string>
+    <string name="stat_trips">נסיעות</string>
+    <string name="stat_week">השבוע</string>
+    <string name="stat_transit_hours">שעות בתחבורה ציבורית</string>
+    <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
+    <string name="stat_top_destination">היעד הנפוץ ביותר: %s</string>
 </resources>

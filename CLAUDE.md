@@ -37,9 +37,11 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   present/    summaries, leg chips, colours, departure rows — all UI text logic, tested
   user/       UserSettings → MOTIS Preferences, saved places/trips, UserJson codec
   remind/     Reminder + ReminderLogic: leave time, re-check matching (tested)
+  ride/       RideTracker: "get off at the next stop" from GPS fixes (tested)
+  history/    TripRecord + History.stats (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/MapController (layers) · data/UserStore
-  remind/ (alarms, receivers, notifications) · ui/OfflineMap · data/PlanCacheStore
+  remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
 tools/    check_docs.py · plan_summary.py · record_fixture.py
 ```
 
@@ -74,6 +76,6 @@ skill that does not exist — a note nobody can find is a note nobody has.
 | `add-feature` | adding any user-visible feature end to end |
 | `i18n-rtl` | any UI text or layout (Hebrew RTL + English) |
 | `golden-trips` | checking that routing results are still sane |
-| `reminders-offline` | the "time to leave" reminder, alarms, notifications, offline cache and map |
+| `reminders-offline` | leave reminder, get-off alert, history, notifications, offline cache and map |
 | `release-apk` | shipping a signed APK to friends and family |
 | `dead-ends` | **before proposing an approach** — what was rejected and why |
