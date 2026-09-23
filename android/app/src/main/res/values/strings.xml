@@ -91,4 +91,14 @@
     <string name="ride_to_end">🚗 Ride all the way, then transit</string>
     <string name="transit_from_start">🚌 Transit from the start, no ride</string>
     <string name="you_arrive">You arrive %s</string>
+
+    <string name="mode_pick_up">Pick me up</string>
+    <string name="driver_at">Driver at</string>
+    <string name="pickup_drive_up_to">Driver drives up to %d min each way</string>
+    <string name="no_pick_up">No pick-up within %d min of the driver beats going all the way by transit.</string>
+    <string name="picked_up_at">🚗 Get picked up at %1$s at %2$s</string>
+    <string name="home_at">Home at %s</string>
+    <string name="driver_leaves">Driver leaves at %1$s · round trip %2$d min</string>
+    <string name="transit_all_the_way">All the way by transit: arrive %s</string>
+    <string name="share_pickup">Pick me up at %1$s at %2$s (leave at %3$s)\nWaze: %4$s\nGoogle Maps: %5$s</string>
 </resources>

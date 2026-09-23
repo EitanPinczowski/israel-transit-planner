@@ -67,12 +67,15 @@ import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
 import il.transit.core.features.DropOffResult
 import il.transit.core.features.NavLinks
+import il.transit.core.features.PickUpResult
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.TimeMode
 import il.transit.core.present.BetterStartRow
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.DropOffRow
+import il.transit.core.present.PickUpRow
+import il.transit.core.present.pickUpRow
 import il.transit.core.present.dropOffRow
 import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
@@ -149,7 +152,11 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                         ) { vm.startEditing(Field.DRIVER_TO) }
                         HorizontalDivider()
                     }
-                    val toLabel = if (state.mode == AppMode.DROP_OFF) R.string.me_to else R.string.to
+                    val toLabel = when (state.mode) {
+                        AppMode.DROP_OFF -> R.string.me_to
+                        AppMode.PICK_UP -> R.string.driver_at
+                        else -> R.string.to
+                    }
                     PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
@@ -183,6 +190,7 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                 when (state.mode) {
                     AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
                     AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
+                    AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
                     AppMode.TRIP -> Unit
                 }
             }
@@ -197,6 +205,7 @@ private fun ModeRow(state: UiState, vm: MainViewModel) {
             AppMode.TRIP to R.string.mode_trip,
             AppMode.BETTER_START to R.string.mode_better_start,
             AppMode.DROP_OFF to R.string.mode_drop_off,
+            AppMode.PICK_UP to R.string.mode_pick_up,
         ).forEach { (mode, label) ->
             FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(label)) })
         }
@@ -346,6 +355,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Un
                 state.error != null -> ErrorRow(state.error, vm)
                 state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
                 state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
+                state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
                         ItineraryCard(itin, selected = i == state.selected) { vm.select(i) }
@@ -542,6 +552,70 @@ private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit,
             row.summary.chips.forEach { LegChipView(it) }
         }
         if (selected && onSend != null) {
+            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
+        }
+    }
+}
+
+// --- best pick-up point --------------------------------------------------------------------------
+
+@Composable
+private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel) {
+    val context = LocalContext.current
+    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+        if (result.options.isEmpty()) {
+            item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
+        }
+        itemsIndexed(result.options) { i, option ->
+            val row = remember(option, result.baseline) { pickUpRow(option, result.baseline) }
+            val shareText = stringResource(
+                R.string.share_pickup,
+                row.stop,
+                row.pickUpTime,
+                row.driverLeaves,
+                NavLinks.waze(row.stopAt),
+                NavLinks.googleMaps(row.stopAt),
+            )
+            PickUpCard(row, selected = i == state.selected, onClick = { vm.select(i) }) {
+                val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, shareText)
+                context.startActivity(Intent.createChooser(send, null))
+            }
+        }
+        result.baseline?.let { b ->
+            item {
+                Text(
+                    stringResource(R.string.transit_all_the_way, hhmm(b.end)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
+    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+        Text(stringResource(R.string.picked_up_at, row.stop, row.pickUpTime), style = MaterialTheme.typography.titleSmall)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.home_at, row.arriveHome), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            val gains = listOfNotNull(
+                row.savedMin?.takeIf { it > 0 }?.let { stringResource(R.string.saves_min, it) },
+                row.transfersSaved?.takeIf { it > 0 }?.let { stringResource(R.string.fewer_transfers) },
+            )
+            if (gains.isNotEmpty()) Text(gains.joinToString(" · "), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+        }
+        Text(
+            stringResource(R.string.driver_leaves, row.driverLeaves, row.roundTripMin),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
+            row.summary.chips.forEach { LegChipView(it) }
+        }
+        if (selected) {
             TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
         }
     }

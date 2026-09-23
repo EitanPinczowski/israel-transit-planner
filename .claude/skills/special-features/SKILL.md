@@ -41,9 +41,11 @@ in `Locale.US`. Plain links via Android's share sheet — no SDK, no key. Drop-o
 pick-up tabs reuse them.
 
 ## Best pick-up (`PickUp.kt`)
-Mirror of better start on the arrival side: `postTransitModes=CAR` with a cap ladder.
-Driver cost = round trip (2 × the car leg); `driverLeavesAt` is worked back from the
-pick-up time.
+Mirror of better start on the arrival side: `postTransitModes=CAR` with a cap ladder,
+`BUDGET = 4`. Driver cost = round trip (2 × the car leg); `driverLeavesAt` is worked back
+from the pick-up time. Home arrival is `pickUpTime + traffic-adjusted drive`, NOT MOTIS's
+`endTime` (free flow). Same "worth it" rule as better start: ≥ `minGainMin` (5) earlier than
+transit all the way, or fewer transfers. In the app, "Driver at" is `UiState.to`.
 
 ## Traffic (`TrafficProfile`)
 Free routers assume empty roads. ×1.3 Sun–Thu 07–09 and 16–18 Israel time, else ×1.0.

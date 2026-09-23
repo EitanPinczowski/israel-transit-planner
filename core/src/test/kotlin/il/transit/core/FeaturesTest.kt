@@ -234,6 +234,29 @@ class BetterStartTest {
 }
 
 class PickUpTest {
+    @Test fun `a pick-up that saves under five minutes is not offered`() = runTest {
+        val me = LatLon(32.08, 34.78)
+        val home = LatLon(31.26, 34.79)
+        val station = place("Be'er Sheva Center", LatLon(31.243, 34.798), "bsc", listOf("RAIL"))
+        val fake = FakeTransitApi().apply {
+            onPlan = { req ->
+                if (req.maxPostTransitSec == null) {
+                    PlanResponse(listOf(itinerary(leg("BUS", place("me", me), place("home", home), NOON, NOON.plusSeconds(3700)))))
+                } else {
+                    PlanResponse(
+                        listOf(
+                            itinerary(
+                                leg("RAIL", place("me", me), station, NOON, NOON.plusSeconds(3000)),
+                                leg(StreetModes.CAR, station, place("home", home), NOON.plusSeconds(3000), NOON.plusSeconds(3600)),
+                            ),
+                        ),
+                    )
+                }
+            }
+        }
+        assertTrue(PickUpPlanner(fake).plan(PickUpQuery(me, home, NOON)).options.isEmpty())
+    }
+
     @Test fun `driver cost is the round trip and leave time is worked back from the pick-up`() = runTest {
         val me = LatLon(32.08, 34.78)
         val home = LatLon(31.26, 34.79)
@@ -254,12 +277,24 @@ class PickUpTest {
                 }
             }
         }
-        val result = PickUpPlanner(fake).plan(PickUpQuery(me, home, NOON, maxDriveMin = 15))
+        val budgeted = BudgetedTransitApi(fake, PickUpPlanner.BUDGET)
+        val result = PickUpPlanner(budgeted).plan(PickUpQuery(me, home, NOON, maxDriveMin = 15, language = "en"))
         val opt = result.options.single()
         assertEquals(1200, opt.driverCostSec)
         assertEquals("Be'er Sheva Center", opt.payload.pickUpStopName)
+        assertEquals(station.latLon, opt.payload.pickUpAt)
+        assertEquals(NOON.plusSeconds(3000), opt.payload.pickUpTime)
         assertEquals(NOON.plusSeconds(2400), opt.payload.driverLeavesAt)
+        assertEquals(NOON.plusSeconds(3600), opt.arrival) // off-peak: traffic factor 1.0
         assertEquals(NOON.plusSeconds(6000), result.baseline?.end)
+        assertTrue(fake.planRequests.all { it.language == "en" })
+
+        val row = il.transit.core.present.pickUpRow(opt, result.baseline)
+        assertEquals("12:50", row.pickUpTime)
+        assertEquals("12:40", row.driverLeaves)
+        assertEquals(20, row.roundTripMin)
+        assertEquals("13:00", row.arriveHome)
+        assertEquals(40, row.savedMin)
         assertTrue(fake.planRequests.drop(1).all { it.postTransitModes == listOf(StreetModes.CAR) })
     }
 }

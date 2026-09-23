@@ -36,7 +36,10 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Draw the car part of a drop-off option on the map (route up to the stop, purple)
 
 ## Phase 4 — Best pick-up point
-- [ ] Pick-up tab, driver leave-time, send point to Waze
+- [x] "Pick me up" tab: From = me, "Driver at" = home; one-way drive slider (5–30, default 15)
+- [x] Options show pick-up stop + time, driver's leave time and round trip, home arrival
+      (traffic-adjusted), savings vs transit all the way; only offered if ≥ 5 min or a transfer saved
+- [x] Send to driver: stop, pick-up time, leave time, Waze + Google Maps links
 
 ## Phase 5 — Real-time + offline
 - [ ] Real-time badges on legs and departures

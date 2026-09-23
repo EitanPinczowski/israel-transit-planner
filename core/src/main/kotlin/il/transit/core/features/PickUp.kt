@@ -28,11 +28,18 @@ data class PickUpQuery(
     val maxDriveMin: Int = 15,
     val preferences: Preferences = Preferences(),
     val carMode: String = StreetModes.CAR,
+    /** An option must get you home this much earlier than transit alone, or with fewer transfers. */
+    val minGainMin: Int = 5,
+    val language: String = "he",
 )
 
 data class PickUpOption(
     val itinerary: Itinerary,
     val pickUpStopName: String,
+    /** Where the driver waits — what "send to driver" links to. */
+    val pickUpAt: LatLon,
+    /** When you get there by transit, i.e. when the driver must be there. */
+    val pickUpTime: Instant,
     /** One-way, traffic-adjusted. The driver's cost is twice this. */
     val driveSec: Int,
     /** When the driver should leave home to be there as you arrive. */
@@ -50,14 +57,27 @@ class PickUpPlanner(
     private val traffic: TrafficProfile = TrafficProfile(),
 ) {
     suspend fun plan(q: PickUpQuery): PickUpResult = coroutineScope {
-        val baseReq = PlanRequest(Endpoint.Coord(q.me), Endpoint.Coord(q.home), q.departAt, preferences = q.preferences)
+        val baseReq = PlanRequest(
+            Endpoint.Coord(q.me),
+            Endpoint.Coord(q.home),
+            q.departAt,
+            preferences = q.preferences,
+            language = q.language,
+        )
         val baselineJob = async { best(api.plan(baseReq).itineraries) }
         val caps = capLadder((q.maxDriveMin * 60 / traffic.factorAt(q.departAt)).toInt())
         val jobs = caps.map { cap ->
             async { api.plan(baseReq.copy(postTransitModes = listOf(q.carMode), maxPostTransitSec = cap)).itineraries }
         }
         val options = jobs.awaitAll().flatten().mapNotNull { it.toOption() }
-        PickUpResult(baselineJob.await(), paretoFront(options))
+        val baseline = baselineJob.await()
+        val gainSec = q.minGainMin * 60L
+        val worthIt = options.filter { o ->
+            baseline == null ||
+                o.arrival.plusSeconds(gainSec) <= baseline.end ||
+                (o.transfers < baseline.transfers && !o.arrival.isAfter(baseline.end))
+        }
+        PickUpResult(baseline, paretoFront(worthIt))
     }
 
     private fun Itinerary.toOption(): Option<PickUpOption>? {
@@ -65,10 +85,16 @@ class PickUpPlanner(
         if (lastTransitLeg == null) return null
         val drive = traffic.adjust(car.duration, car.start)
         return Option(
-            PickUpOption(this, car.from.name, drive, car.start.minusSeconds(drive.toLong())),
+            PickUpOption(this, car.from.name, car.from.latLon, car.start, drive, car.start.minusSeconds(drive.toLong())),
             driverCostSec = 2 * drive,
-            arrival = end,
+            // MOTIS times the drive home at free flow; the traffic-adjusted time is the honest one.
+            arrival = car.start.plusSeconds(drive.toLong()),
             transfers = transfers,
         )
+    }
+
+    companion object {
+        /** 1 baseline + 3 rungs. */
+        const val BUDGET = 4
     }
 }

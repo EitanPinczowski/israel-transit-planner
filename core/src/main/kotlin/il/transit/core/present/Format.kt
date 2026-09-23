@@ -193,3 +193,33 @@ fun dropOffRow(o: il.transit.core.features.DropOffOption): DropOffRow = DropOffR
     transfers = o.transit.transfers,
     summary = summarize(o.transit),
 )
+
+/** One "best pick-up point" option, ready to display. Savings are null without a baseline. */
+data class PickUpRow(
+    val stop: String,
+    val stopAt: il.transit.core.geo.LatLon,
+    /** When you reach the stop = when the driver must be there. */
+    val pickUpTime: String,
+    val driverLeaves: String,
+    /** Driver's round trip home → stop → home. */
+    val roundTripMin: Int,
+    val arriveHome: String,
+    val savedMin: Int?,
+    val transfersSaved: Int?,
+    val summary: ItinerarySummary,
+)
+
+fun pickUpRow(o: il.transit.core.features.Option<il.transit.core.features.PickUpOption>, baseline: Itinerary?): PickUpRow {
+    val p = o.payload
+    return PickUpRow(
+        stop = p.pickUpStopName,
+        stopAt = p.pickUpAt,
+        pickUpTime = hhmm(p.pickUpTime),
+        driverLeaves = hhmm(p.driverLeavesAt),
+        roundTripMin = minutes(o.driverCostSec),
+        arriveHome = hhmm(o.arrival),
+        savedMin = baseline?.let { b -> minutes((b.end.epochSecond - o.arrival.epochSecond).toInt()) },
+        transfersSaved = baseline?.let { b -> b.transfers - o.transfers },
+        summary = summarize(p.itinerary),
+    )
+}
