@@ -1,0 +1,59 @@
+{
+  "_comment": "SYNTHETIC — hand-written in the MOTIS v6 /plan schema. Replace with a recorded Transitous response (tools/record_fixture.py) in the phase-0 spike.",
+  "requestParameters": {},
+  "debugOutput": {},
+  "from": {"name": "START", "lat": 31.262, "lon": 34.801, "vertexType": "NORMAL"},
+  "to": {"name": "END", "lat": 32.0839, "lon": 34.7983, "vertexType": "NORMAL"},
+  "direct": [],
+  "itineraries": [
+    {
+      "id": "it-1",
+      "duration": 5820,
+      "startTime": "2026-09-23T09:02:00Z",
+      "endTime": "2026-09-23T10:39:00Z",
+      "transfers": 0,
+      "legs": [
+        {
+          "mode": "WALK",
+          "from": {"name": "START", "lat": 31.262, "lon": 34.801, "vertexType": "NORMAL"},
+          "to": {"name": "באר שבע צפון/אוניברסיטה", "stopId": "il-mot_17038", "lat": 31.2622, "lon": 34.8093, "vertexType": "TRANSIT", "departure": "2026-09-23T09:14:00Z", "scheduledDeparture": "2026-09-23T09:14:00Z", "modes": ["REGIONAL_RAIL"]},
+          "duration": 540,
+          "startTime": "2026-09-23T09:02:00Z",
+          "endTime": "2026-09-23T09:11:00Z",
+          "scheduledStartTime": "2026-09-23T09:02:00Z",
+          "scheduledEndTime": "2026-09-23T09:11:00Z",
+          "realTime": false,
+          "scheduled": true,
+          "distance": 790.5,
+          "legGeometry": {"points": "_zk|{@kbx`aA??", "precision": 6, "length": 2},
+          "steps": []
+        },
+        {
+          "mode": "REGIONAL_RAIL",
+          "from": {"name": "באר שבע צפון/אוניברסיטה", "stopId": "il-mot_17038", "lat": 31.2622, "lon": 34.8093, "vertexType": "TRANSIT", "departure": "2026-09-23T09:14:00Z"},
+          "to": {"name": "תל אביב - סבידור מרכז", "stopId": "il-mot_17022", "lat": 32.0839, "lon": 34.7983, "vertexType": "TRANSIT", "arrival": "2026-09-23T10:39:00Z"},
+          "duration": 5100,
+          "startTime": "2026-09-23T09:14:00Z",
+          "endTime": "2026-09-23T10:39:00Z",
+          "scheduledStartTime": "2026-09-23T09:14:00Z",
+          "scheduledEndTime": "2026-09-23T10:37:00Z",
+          "realTime": true,
+          "scheduled": true,
+          "headsign": "נהריה",
+          "routeShortName": "",
+          "displayName": "רכבת ישראל",
+          "agencyName": "רכבת ישראל",
+          "tripId": "20260923_1234",
+          "routeType": 2,
+          "intermediateStops": [
+            {"name": "קרית גת", "stopId": "il-mot_17100", "lat": 31.6036, "lon": 34.7773, "vertexType": "TRANSIT"}
+          ],
+          "legGeometry": {"points": "_zk|{@kbx`aA??", "precision": 6, "length": 2},
+          "someFutureField": {"ignored": true}
+        }
+      ]
+    }
+  ],
+  "previousPageCursor": "p",
+  "nextPageCursor": "n"
+}

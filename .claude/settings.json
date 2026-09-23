@@ -1,0 +1,31 @@
+{
+  "$comment": [
+    "Committed project settings. Personal overrides go in settings.local.json (git-ignored).",
+    "guard.py blocks commands that commit secrets or hide a failing test; session_start.py",
+    "prints live state so CLAUDE.md never has to carry status; post_edit.py lints edited",
+    "Kotlin when ktlint is installed. The deny list keeps build output and big binaries out",
+    "of the context window."
+  ],
+  "permissions": {
+    "deny": [
+      "Read(**/build/**)",
+      "Read(**/.gradle/**)",
+      "Read(**/*.apk)",
+      "Read(**/*.pmtiles)",
+      "Read(**/*.jks)",
+      "Read(**/keystore.properties)",
+      "Read(gradle/wrapper/gradle-wrapper.jar)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_start.py\"", "timeout": 15 } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [ { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.py\"", "timeout": 10 } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write", "hooks": [ { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_edit.py\"", "timeout": 30 } ] }
+    ]
+  }
+}
