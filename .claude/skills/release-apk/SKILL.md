@@ -1,19 +1,46 @@
 ---
 name: release-apk
-description: Ship a signed APK to friends and family through GitHub Releases. Use for "make a release", "send the app to my friends", "bump the version".
+description: Ship a signed APK to friends and family through GitHub Releases. Use for "make a release", "send the app to my friends", "bump the version", "the release workflow failed", or anything about the signing key.
 ---
 
 # Releasing
 
-1. CI green on `main`.
-2. Bump `versionCode` (+1, always) and `versionName` in `android/app/build.gradle.kts`.
-3. Signing: the release keystore lives **outside the repo** (e.g. `~/keys/transit.jks`),
-   referenced from `android/keystore.properties` (git-ignored; the guard hook refuses to
-   `git add` it or any `*.jks`). Losing the keystore means friends must uninstall to
-   update — back it up.
-4. `./gradlew -p android :app:assembleRelease` (on the owner's machine; CI does not hold
-   the key).
-5. GitHub Release tagged `vX.Y.Z` with the APK attached and 3–5 lines of Hebrew + English
-   release notes. Friends install from the release page ("install unknown apps").
-6. No Play Store: this is a private, sideloaded app. Publishing there would need a paid
-   developer account and conflicts with the free-only rule.
+**A release = pushing a tag.** `git tag v0.2.0 && git push origin v0.2.0` (on `main`, CI green).
+`.github/workflows/release.yml` then: core tests → decode keystore → `assembleRelease` →
+`apksigner verify` → `gh release create` with `israel-transit-planner-v0.2.0.apk`.
+Notes come from `docs/releases/v0.2.0.md` if it exists (write it: English + Hebrew, 5 lines),
+else GitHub's generated notes.
+
+## Versioning (android/app/build.gradle.kts)
+- `versionName` = the tag without `v`; `versionCode` = major×10000 + minor×100 + patch.
+- So tags must only go UP, and minor/patch stay below 100. A lower code will not install
+  over a higher one.
+- Local/CI builds are `0.0.0-dev` (code 1); `UpdateCheck` never nags a `-dev` build.
+
+## The signing key — the one thing that must never be lost
+- Lives in 4 **repository secrets**: `RELEASE_KEYSTORE_B64` (base64 of the .jks),
+  `RELEASE_KEYSTORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`.
+  Settings → Secrets and variables → Actions. Secrets are not visible to forks' PRs and are
+  masked in logs; the workflow deletes the decoded file in an `always()` step.
+- The owner keeps the original `.jks` + passwords backed up (password manager / cloud drive).
+  **Losing it means every friend must uninstall (losing saved places/history) to update.**
+- Never commit the keystore or passwords — the guard hook blocks `*.jks`,
+  `keystore.properties`, `.env`. Never print the secrets in a workflow step.
+- Local signed build (optional): `android/keystore.properties` (git-ignored) with
+  `storeFile=/abs/path/transit-release.jks`, `storePassword=…`, `keyAlias=transit`,
+  `keyPassword=…`, then `./gradlew -p android :app:assembleRelease`.
+
+## Creating the key (owner, once)
+```
+keytool -genkeypair -v -keystore transit-release.jks -alias transit -keyalg RSA -keysize 4096 -validity 36500
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("transit-release.jks")) | Set-Clipboard   # PowerShell
+```
+
+## Checks
+- `ci.yml` builds `assembleRelease` unsigned on every push, so release-only breaks show up
+  before tagging.
+- After a release: the Releases page has the APK; a phone on the previous version shows the
+  "Update available" banner within a day (or on next launch after 24 h) and installs over it.
+- Minify/R8 is OFF on purpose (MapLibre + kotlinx-serialization keep rules). Turning it on
+  needs a phone test of every screen first.
+- No Play Store: paid account, and USE_EXACT_ALARM would not pass Play review for this app.

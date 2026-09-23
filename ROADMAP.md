@@ -59,4 +59,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
       (and live network) to check the distance bands before any price is shown
 
 ## Phase 7 — Release
-- [ ] Signed APK on GitHub Releases for friends and family
+- [x] Tag-triggered release workflow: signed APK (key from repo secrets), `apksigner verify`,
+      GitHub Release with notes from `docs/releases/`
+- [x] Version from the tag (versionCode = major·10000 + minor·100 + patch); CI builds release unsigned
+- [x] Launcher icon; in-app "Update available" banner (GitHub Releases, once a day)
+- [x] Install guide for friends (`docs/install.md`, Hebrew + English)
+- [ ] Owner: create the key, add the 4 secrets, merge PR #1 — then tag `v0.1.0`

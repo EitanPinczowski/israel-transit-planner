@@ -8,6 +8,7 @@ import il.transit.core.api.Itinerary
 import il.transit.core.remind.Reminder
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
+import il.transit.planner.data.UpdateChecker
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
@@ -22,6 +23,7 @@ class TransitApp : Application() {
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
+    val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME) }
 
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active

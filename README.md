@@ -27,9 +27,12 @@ identifying User-Agent).
 
 ## Install
 
-Download `app-debug.apk` from the latest green run under **Actions → CI → Artifacts**,
-or a signed release from **Releases**, and open it on your phone (allow "install unknown
-apps" for your browser or file manager).
+Get the latest APK from **[Releases](https://github.com/EitanPinczowski/israel-transit-planner/releases/latest)**
+and open it on your phone — step by step, in Hebrew and English: [docs/install.md](docs/install.md).
+The app tells you when a newer version is out.
+
+Development builds: `app-debug` under **Actions → CI → Artifacts** (a debug key, so it
+cannot update a release install — uninstall first).
 
 ## Build
 

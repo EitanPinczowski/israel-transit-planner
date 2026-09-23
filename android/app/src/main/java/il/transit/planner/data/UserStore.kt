@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import il.transit.core.remind.Reminder
@@ -43,6 +44,13 @@ class UserStore(private val context: Context) {
         context.userData.edit { it[PLACES] = UserJson.encodePlaces(p) }
     }
 
+    /** When the app last asked GitHub for a newer release (epoch seconds). */
+    val lastUpdateCheck: Flow<Long?> = data.map { it[LAST_UPDATE_CHECK] }
+
+    suspend fun setLastUpdateCheck(epochSec: Long) {
+        context.userData.edit { it[LAST_UPDATE_CHECK] = epochSec }
+    }
+
     suspend fun setReminder(r: Reminder?) {
         context.userData.edit { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
     }
@@ -56,5 +64,6 @@ class UserStore(private val context: Context) {
         val PLACES = stringPreferencesKey("places")
         val TRIPS = stringPreferencesKey("trips")
         val REMINDER = stringPreferencesKey("reminder")
+        val LAST_UPDATE_CHECK = longPreferencesKey("last_update_check")
     }
 }

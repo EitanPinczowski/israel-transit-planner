@@ -139,4 +139,7 @@
     <string name="stat_transit_hours">שעות בתחבורה ציבורית</string>
     <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
     <string name="stat_top_destination">היעד הנפוץ ביותר: %s</string>
+
+    <string name="update_available">גרסה חדשה זמינה: v\u2068%s\u2069</string>
+    <string name="update_download">הורדה</string>
 </resources>

@@ -118,6 +118,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
             Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            state.update?.let { UpdateBanner(it, vm) }
             SearchCard(state, vm, onSavePlace = { savingPlace = it })
             when {
                 state.editing != null -> SuggestionList(state, vm)
@@ -143,6 +144,20 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
     }
     if (savingTrip) {
         NameDialog(R.string.save_trip, onDismiss = { savingTrip = false }) { name -> vm.saveTrip(name); savingTrip = false }
+    }
+}
+
+@Composable
+private fun UpdateBanner(latest: il.transit.core.update.LatestRelease, vm: MainViewModel) {
+    val context = LocalContext.current
+    Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.update_available, latest.version), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+            TextButton(onClick = {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(latest.apkUrl ?: latest.pageUrl)))
+            }) { Text(stringResource(R.string.update_download)) }
+            IconButton(onClick = vm::dismissUpdate) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
+        }
     }
 }
 

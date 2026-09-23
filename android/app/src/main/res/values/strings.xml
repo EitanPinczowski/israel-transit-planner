@@ -138,4 +138,7 @@
     <string name="stat_transit_hours">hours on transit</string>
     <string name="stat_saved">min saved by car + transit</string>
     <string name="stat_top_destination">Most frequent destination: %s</string>
+
+    <string name="update_available">Update available: v%s</string>
+    <string name="update_download">Download</string>
 </resources>

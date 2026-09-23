@@ -26,6 +26,8 @@ jobs:
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew -p android :app:assembleDebug
+      # Unsigned here (no secrets in CI): only proves the release build compiles.
+      - run: ./gradlew -p android :app:assembleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug

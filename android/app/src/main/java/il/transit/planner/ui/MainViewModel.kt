@@ -38,7 +38,9 @@ import il.transit.core.history.HistoryStats
 import il.transit.core.history.TripRecord
 import il.transit.planner.Reminders
 import il.transit.planner.Rides
+import il.transit.core.update.LatestRelease
 import il.transit.planner.data.HistoryStore
+import il.transit.planner.data.UpdateChecker
 import il.transit.planner.TransitApp
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.UserStore
@@ -110,6 +112,8 @@ data class UiState(
     val riding: Boolean = false,
     val history: List<TripRecord> = emptyList(),
     val showHistory: Boolean = false,
+    /** A newer release to offer, until dismissed. */
+    val update: LatestRelease? = null,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -142,6 +146,7 @@ class MainViewModel(
     private val reminders: Reminders? = null,
     private val rides: Rides? = null,
     private val historyStore: HistoryStore? = null,
+    private val updates: UpdateChecker? = null,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -168,6 +173,7 @@ class MainViewModel(
         }
         viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
         rides?.let { r -> viewModelScope.launch { r.active.collect { a -> _state.update { it.copy(riding = a) } } } }
+        updates?.let { u -> viewModelScope.launch { u.check()?.let { latest -> _state.update { it.copy(update = latest) } } } }
         historyStore?.let { h ->
             viewModelScope.launch {
                 h.load()
@@ -441,6 +447,8 @@ class MainViewModel(
 
     fun showHistory(show: Boolean) = _state.update { it.copy(showHistory = show) }
 
+    fun dismissUpdate() = _state.update { it.copy(update = null) }
+
     fun clearHistory() = viewModelScope.launch { historyStore?.clear() }
 
     /** "" stands for "my location"; the history screen shows it localized. */
@@ -590,7 +598,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history)
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates)
             }
         }
     }
