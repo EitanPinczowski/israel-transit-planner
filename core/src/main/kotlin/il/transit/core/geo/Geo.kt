@@ -84,6 +84,17 @@ object Geo {
         return best
     }
 
+    /**
+     * The start of [line] up to the vertex nearest [target], then straight on to [target]:
+     * the road driven before stopping near a point beside the route. Vertex-nearest is
+     * enough here — route polylines are dense, and this is only drawn, never measured.
+     */
+    fun pathTo(line: List<LatLon>, target: LatLon): List<LatLon> {
+        if (line.isEmpty()) return emptyList()
+        val nearest = line.indices.minBy { distanceM(line[it], target) }
+        return line.subList(0, nearest + 1) + target
+    }
+
     /** Bounding box of [points], grown by [padM] metres on every side. */
     fun bbox(points: List<LatLon>, padM: Double): BBox {
         require(points.isNotEmpty()) { "bbox of no points" }

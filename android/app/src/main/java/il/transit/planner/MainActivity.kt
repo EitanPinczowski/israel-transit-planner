@@ -79,14 +79,15 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
                 val selected = state.selectedItinerary
-                LaunchedEffect(ctl, selected) {
+                val carPath = state.selectedCarPath
+                LaunchedEffect(ctl, selected, carPath) {
                     val c = ctl ?: return@LaunchedEffect
                     if (selected == null) {
                         c.setRoute(MapData.EMPTY)
                     } else {
-                        c.setRoute(MapData.itinerary(selected))
+                        c.setRoute(MapData.itinerary(selected, carPath))
                         val px = resources.displayMetrics.density
-                        c.fit(MapData.bounds(selected), (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
+                        c.fit(carPath + MapData.bounds(selected), (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
                     }
                 }
 

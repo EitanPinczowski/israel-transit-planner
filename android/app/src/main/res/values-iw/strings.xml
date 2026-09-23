@@ -80,4 +80,16 @@
     <string name="no_better_start">אין נקודת יציאה מהירה יותר בטווח \u2068%d\u2069 דק׳ נסיעה — נסעו כרגיל.</string>
     <string name="send_to_driver">שליחה לנהג/ת</string>
     <string name="share_dropoff">נקודת הורדה: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
+
+    <string name="mode_drop_off">הורידו אותי בדרך</string>
+    <string name="driver_to">הנהג/ת אל</string>
+    <string name="me_to">אני אל</string>
+    <string name="choose_driver_destination">לאן הנהג/ת נוסע/ת?</string>
+    <string name="detour_up_to">הנהג/ת מוכן/ה לעקוף עד \u2068%d\u2069 דק׳</string>
+    <string name="drive_takes">הנסיעה לבדה: \u2068%d\u2069 דק׳</string>
+    <string name="no_stop_on_the_way">אין תחנה בדרך, בעיקוף של עד \u2068%d\u2069 דק׳, שעדיפה על אלה.</string>
+    <string name="get_out_at">🚗 לרדת ב%1$s · לנהג/ת ‎+\u2068%2$d\u2069 דק׳</string>
+    <string name="ride_to_end">🚗 לנסוע עד הסוף, ומשם בתחבורה ציבורית</string>
+    <string name="transit_from_start">🚌 תחבורה ציבורית מההתחלה, בלי הסעה</string>
+    <string name="you_arrive">הגעה ב־\u2068%s\u2069</string>
 </resources>

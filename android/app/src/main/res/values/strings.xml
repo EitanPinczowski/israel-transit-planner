@@ -79,4 +79,16 @@
     <string name="no_better_start">No faster start within %d min of driving — go as usual.</string>
     <string name="send_to_driver">Send to driver</string>
     <string name="share_dropoff">Drop-off point: %1$s\nWaze: %2$s\nGoogle Maps: %3$s</string>
+
+    <string name="mode_drop_off">Drop me off</string>
+    <string name="driver_to">Driver to</string>
+    <string name="me_to">I go to</string>
+    <string name="choose_driver_destination">Where is the driver going?</string>
+    <string name="detour_up_to">Driver accepts up to %d min detour</string>
+    <string name="drive_takes">The drive on its own: %d min</string>
+    <string name="no_stop_on_the_way">No stop on the way within a %d-min detour beats these.</string>
+    <string name="get_out_at">🚗 Get out at %1$s · driver +%2$d min</string>
+    <string name="ride_to_end">🚗 Ride all the way, then transit</string>
+    <string name="transit_from_start">🚌 Transit from the start, no ride</string>
+    <string name="you_arrive">You arrive %s</string>
 </resources>

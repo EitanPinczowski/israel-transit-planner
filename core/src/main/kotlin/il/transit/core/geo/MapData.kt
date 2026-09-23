@@ -3,6 +3,8 @@ package il.transit.core.geo
 import il.transit.core.api.Itinerary
 import il.transit.core.api.Place
 import il.transit.core.api.TransitModes
+import il.transit.core.present.LegKind
+import il.transit.core.present.defaultColor
 import il.transit.core.present.legColor
 import il.transit.core.present.legKind
 import il.transit.core.user.SavedPlace
@@ -24,8 +26,17 @@ import kotlinx.serialization.json.putJsonObject
 object MapData {
     const val EMPTY = """{"type":"FeatureCollection","features":[]}"""
 
-    /** One LineString per leg (`kind`, `color` properties) + a Point at each boarding/alighting stop. */
-    fun itinerary(it: Itinerary): String = collection {
+    /**
+     * One LineString per leg (`kind`, `color` properties) + a Point at each boarding/alighting
+     * stop. [carPath], when given, is drawn first as a CAR line: the ride before the itinerary.
+     */
+    fun itinerary(it: Itinerary, carPath: List<LatLon> = emptyList()): String = collection {
+        if (carPath.size >= 2) {
+            add(feature(lineString(carPath)) {
+                put("kind", LegKind.CAR.name)
+                put("color", defaultColor(LegKind.CAR))
+            })
+        }
         for (leg in it.legs) {
             val pts = leg.legGeometry?.let { g -> Geo.decodePolyline(g.points, g.precision) }
                 ?.takeIf { p -> p.size >= 2 }

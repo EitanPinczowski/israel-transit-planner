@@ -64,12 +64,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import il.transit.core.api.Itinerary
 import il.transit.core.features.BetterStartResult
+import il.transit.core.features.DropOffKind
+import il.transit.core.features.DropOffResult
 import il.transit.core.features.NavLinks
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.TimeMode
 import il.transit.core.present.BetterStartRow
 import il.transit.core.present.DepartureRow
+import il.transit.core.present.DropOffRow
+import il.transit.core.present.dropOffRow
 import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
 import il.transit.core.present.LegKind
@@ -136,7 +140,17 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                 Column(Modifier.weight(1f)) {
                     PlaceRow(R.string.from, placeLabel(state.from), state.editing == Field.FROM) { vm.startEditing(Field.FROM) }
                     HorizontalDivider()
-                    PlaceRow(R.string.to, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
+                    if (state.mode == AppMode.DROP_OFF) {
+                        PlaceRow(
+                            R.string.driver_to,
+                            state.driverTo?.let { placeLabel(it) },
+                            state.editing == Field.DRIVER_TO,
+                            placeholderRes = R.string.choose_driver_destination,
+                        ) { vm.startEditing(Field.DRIVER_TO) }
+                        HorizontalDivider()
+                    }
+                    val toLabel = if (state.mode == AppMode.DROP_OFF) R.string.me_to else R.string.to
+                    PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
                     TextButton(onClick = vm::swap, enabled = state.to != null) { Text("⇅") }
@@ -166,7 +180,11 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                 )
             } else {
                 TimeRow(state, vm)
-                if (state.mode == AppMode.BETTER_START) DriveLimitSlider(state, vm)
+                when (state.mode) {
+                    AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
+                    AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
+                    AppMode.TRIP -> Unit
+                }
             }
         }
     }
@@ -174,26 +192,27 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
 
 @Composable
 private fun ModeRow(state: UiState, vm: MainViewModel) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        FilterChip(state.mode == AppMode.TRIP, { vm.setMode(AppMode.TRIP) }, label = { Text(stringResource(R.string.mode_trip)) })
-        FilterChip(
-            state.mode == AppMode.BETTER_START,
-            { vm.setMode(AppMode.BETTER_START) },
-            label = { Text(stringResource(R.string.mode_better_start)) },
-        )
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        listOf(
+            AppMode.TRIP to R.string.mode_trip,
+            AppMode.BETTER_START to R.string.mode_better_start,
+            AppMode.DROP_OFF to R.string.mode_drop_off,
+        ).forEach { (mode, label) ->
+            FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(label)) })
+        }
     }
 }
 
+/** 5–30 minutes in steps of 5. Local while dragging; [onDone] (a search) runs once, on release. */
 @Composable
-private fun DriveLimitSlider(state: UiState, vm: MainViewModel) {
-    // Local while dragging; the search runs once, when the finger lifts.
-    var value by remember(state.maxDriveMin) { mutableStateOf(state.maxDriveMin.toFloat()) }
+private fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit) {
+    var value by remember(current) { mutableStateOf(current.toFloat()) }
     Column {
-        Text(stringResource(R.string.drive_up_to, value.toInt()), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(labelRes, value.toInt()), style = MaterialTheme.typography.labelLarge)
         Slider(
             value = value,
             onValueChange = { value = (Math.round(it / 5f) * 5).toFloat() },
-            onValueChangeFinished = { vm.setMaxDrive(value.toInt()) },
+            onValueChangeFinished = { onDone(value.toInt()) },
             valueRange = 5f..30f,
             steps = 4,
         )
@@ -201,14 +220,20 @@ private fun DriveLimitSlider(state: UiState, vm: MainViewModel) {
 }
 
 @Composable
-private fun PlaceRow(labelRes: Int, value: String?, active: Boolean, onClick: () -> Unit) {
+private fun PlaceRow(
+    labelRes: Int,
+    value: String?,
+    active: Boolean,
+    placeholderRes: Int = R.string.choose_destination,
+    onClick: () -> Unit,
+) {
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(48.dp))
+        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(64.dp))
         Text(
-            value ?: stringResource(R.string.choose_destination),
+            value ?: stringResource(placeholderRes),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             color = if (value == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
@@ -320,6 +345,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, onSaveTrip: () -> Un
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
                 state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
+                state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
                         ItineraryCard(itin, selected = i == state.selected) { vm.select(i) }
@@ -454,6 +480,68 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
         }
         if (row.tight) Text(stringResource(R.string.tight_warning), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         if (selected) {
+            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
+        }
+    }
+}
+
+// --- let me off on the way -----------------------------------------------------------------------
+
+@Composable
+private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel) {
+    val context = LocalContext.current
+    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+        result.directDriveSec?.let { sec ->
+            item {
+                Text(
+                    stringResource(R.string.drive_takes, Math.round(sec / 60.0).toInt()),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        if (result.options.none { it.payload.kind == DropOffKind.STOP_ON_THE_WAY }) {
+            item { Text(stringResource(R.string.no_stop_on_the_way, state.maxDetourMin), Modifier.padding(vertical = 8.dp)) }
+        }
+        itemsIndexed(result.options) { i, option ->
+            val row = remember(option) { dropOffRow(option.payload) }
+            // Locals, not row.stop/row.stopAt: no smart casts across modules.
+            val stop = row.stop
+            val at = row.stopAt
+            val shareText = if (stop != null && at != null) {
+                stringResource(R.string.share_dropoff, stop, NavLinks.waze(at), NavLinks.googleMaps(at))
+            } else {
+                null
+            }
+            DropOffCard(row, selected = i == state.selected, onClick = { vm.select(i) }, onSend = shareText?.let { text ->
+                {
+                    val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
+                    context.startActivity(Intent.createChooser(send, null))
+                }
+            })
+        }
+    }
+}
+
+@Composable
+private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit, onSend: (() -> Unit)?) {
+    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+        val title = when (row.kind) {
+            DropOffKind.STOP_ON_THE_WAY -> stringResource(R.string.get_out_at, row.stop.orEmpty(), row.detourMin)
+            DropOffKind.RIDE_TO_END -> stringResource(R.string.ride_to_end)
+            DropOffKind.TRANSIT_FROM_START -> stringResource(R.string.transit_from_start)
+        }
+        Text(title, style = MaterialTheme.typography.titleSmall)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.you_arrive, row.arrive), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            val transfers = if (row.transfers == 0) stringResource(R.string.direct) else pluralStringResource(R.plurals.transfers, row.transfers, row.transfers)
+            Text(transfers, style = MaterialTheme.typography.labelLarge)
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
+            row.summary.chips.forEach { LegChipView(it) }
+        }
+        if (selected && onSend != null) {
             TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
         }
     }

@@ -164,3 +164,32 @@ fun betterStartRow(o: il.transit.core.features.BetterStartOption, baseline: Itin
         summary = summarize(it),
     )
 }
+
+/** One "let me off on the way" option, ready to display. */
+data class DropOffRow(
+    val kind: il.transit.core.features.DropOffKind,
+    /** Where to get out; null for the two baselines. */
+    val stop: String?,
+    val stopAt: il.transit.core.geo.LatLon?,
+    /** Extra minutes for the driver (0 for the baselines). */
+    val detourMin: Int,
+    /** Minutes in the car before getting out. */
+    val rideMin: Int,
+    /** When the transit part leaves / you reach C. */
+    val depart: String,
+    val arrive: String,
+    val transfers: Int,
+    val summary: ItinerarySummary,
+)
+
+fun dropOffRow(o: il.transit.core.features.DropOffOption): DropOffRow = DropOffRow(
+    kind = o.kind,
+    stop = o.stop?.name,
+    stopAt = o.stop?.latLon,
+    detourMin = minutes(o.detourSec),
+    rideMin = minutes(o.rideSec),
+    depart = hhmm(o.transit.start),
+    arrive = hhmm(o.transit.end),
+    transfers = o.transit.transfers,
+    summary = summarize(o.transit),
+)

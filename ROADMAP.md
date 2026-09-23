@@ -30,8 +30,10 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] "Send to driver": share sheet with Waze + Google Maps links to the drop-off stop
 
 ## Phase 3 — Let me off on the way
-- [ ] Drop-off tab (A→B, C), Pareto list, detour + arrival per option
-- [ ] Send point to Waze / Google Maps via share sheet (reuse `NavLinks`, built in phase 2)
+- [x] Drop-off tab (A = from, B = driver's destination, C = mine), detour slider, Pareto list
+      with detour + arrival per option and both baselines (ride to the end / transit from the start)
+- [x] Send point to Waze / Google Maps via share sheet (`NavLinks`)
+- [x] Draw the car part of a drop-off option on the map (route up to the stop, purple)
 
 ## Phase 4 — Best pick-up point
 - [ ] Pick-up tab, driver leave-time, send point to Waze

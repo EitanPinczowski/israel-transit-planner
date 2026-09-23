@@ -80,12 +80,39 @@ class DropOffTest {
             kinds,
         )
         val s2opt = result.options.first().payload
+        // The car part runs along the route from A and ends at the stop.
+        assertEquals(a, s2opt.carPath.first())
+        assertEquals(s2.latLon, s2opt.carPath.last())
+        assertEquals(listOf(a, b), result.options.last().payload.carPath) // ride to the end: the whole route
+        assertTrue(result.options[1].payload.carPath.isEmpty()) // transit from the start: no car
         assertEquals(100 + 60, s2opt.detourSec) // 4400 + 1100 − 5400, plus the stop penalty
         assertEquals(4400, s2opt.rideSec)
         // The car route is a street-only request: no transit search on the server.
         assertTrue(fake.planRequests.first().directOnly)
         // S5 (11-min detour) must never have been planned.
         assertFalse(fake.planRequests.any { (it.from as Endpoint.Coord).at == s5.latLon })
+    }
+
+    @Test fun `passes the UI language to every transit plan`() = runTest {
+        val fake = scripted()
+        DropOffPlanner(fake).plan(DropOffQuery(a, b, c, NOON, language = "en"))
+        val transitPlans = fake.planRequests.filterNot { it.directOnly }
+        assertTrue(transitPlans.isNotEmpty())
+        assertTrue(transitPlans.all { it.language == "en" })
+    }
+
+    @Test fun `rows show the stop, detour and arrival`() = runTest {
+        val result = DropOffPlanner(scripted()).plan(DropOffQuery(a, b, c, NOON))
+        val row = il.transit.core.present.dropOffRow(result.options.first().payload)
+        assertEquals("S2", row.stop)
+        assertEquals(s2.latLon, row.stopAt)
+        assertEquals(3, row.detourMin) // 160 s
+        assertEquals(73, row.rideMin) // 4400 s
+        assertEquals("13:18", row.arrive) // NOON + 4700 s, Israel time
+        val baseline = il.transit.core.present.dropOffRow(result.options.last().payload)
+        assertEquals(DropOffKind.RIDE_TO_END, baseline.kind)
+        assertEquals(null, baseline.stop)
+        assertEquals(0, baseline.detourMin)
     }
 
     @Test fun `stays inside its request budget`() = runTest {

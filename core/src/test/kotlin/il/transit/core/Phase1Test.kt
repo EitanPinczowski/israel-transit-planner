@@ -204,6 +204,17 @@ class MapDataTest {
         assertEquals(5, MapData.bounds(it).size) // walk has no geometry (2 points) + bus polyline (3)
     }
 
+    @Test fun `a car path is drawn before the itinerary as a CAR line`() {
+        val a = place("A", LatLon(31.0, 34.0))
+        val b = place("B", LatLon(31.5, 34.5))
+        val it = itinerary(leg("BUS", a, b, NOON, NOON.plusSeconds(600)))
+        val fc = Json.parseToJsonElement(MapData.itinerary(it, listOf(LatLon(30.9, 34.0), LatLon(31.0, 34.0)))).jsonObject
+        val first = fc["features"]!!.jsonArray[0].jsonObject
+        assertEquals("CAR", first["properties"]!!.jsonObject["kind"]!!.jsonPrimitive.content)
+        assertEquals(4, fc["features"]!!.jsonArray.size) // car + bus + 2 stop points
+        assertEquals(listOf(LatLon(31.0, 34.0), LatLon(31.2, 34.2)), il.transit.core.geo.Geo.pathTo(listOf(LatLon(31.0, 34.0), LatLon(31.2, 34.2), LatLon(31.4, 34.4)), LatLon(31.2, 34.2)).take(2))
+    }
+
     @Test fun `stops viewport fetches only when zoomed in and outside what is loaded`() {
         val view = BBox(LatLon(31.25, 34.79), LatLon(31.26, 34.80))
         assertFalse(StopsViewport.needsFetch(view, 14.0, null))

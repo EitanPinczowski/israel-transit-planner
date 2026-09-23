@@ -35,6 +35,7 @@ data class DropOffQuery(
     /** Stopping, getting out, getting back into traffic. */
     val stopPenaltySec: Int = 60,
     val preferences: Preferences = Preferences(),
+    val language: String = "he",
 )
 
 enum class DropOffKind { STOP_ON_THE_WAY, RIDE_TO_END, TRANSIT_FROM_START }
@@ -47,6 +48,8 @@ data class DropOffOption(
     /** Passenger's time in the car before getting out (traffic-adjusted). */
     val rideSec: Int,
     val transit: Itinerary,
+    /** The road driven with the passenger aboard, for the map; empty for transit-from-start. */
+    val carPath: List<LatLon> = emptyList(),
 )
 
 data class DropOffResult(
@@ -109,18 +112,19 @@ class DropOffPlanner(
                             to = Endpoint.Coord(q.c),
                             time = q.departAt.plusSeconds((ride + q.stopPenaltySec).toLong()),
                             preferences = q.preferences,
+                            language = q.language,
                         ),
                     ).itineraries,
                 ) ?: return@async null
                 Option(
-                    DropOffOption(DropOffKind.STOP_ON_THE_WAY, stop, detour, ride, transit),
+                    DropOffOption(DropOffKind.STOP_ON_THE_WAY, stop, detour, ride, transit, Geo.pathTo(line, stop.latLon)),
                     driverCostSec = detour,
                     arrival = transit.end,
                     transfers = transit.transfers,
                 )
             }
         }
-        val baselineJob = async { baselinesOnly(q, (routeSec * factor).toInt()) }
+        val baselineJob = async { baselinesOnly(q, (routeSec * factor).toInt(), line) }
         val all = stopJobs.awaitAll().filterNotNull() + baselineJob.await()
         DropOffResult((routeSec * factor).toInt(), paretoFront(all), candidates.size)
     }
@@ -129,15 +133,19 @@ class DropOffPlanner(
      * The two options that need no stop: ride to B then take transit, and take transit
      * from A. Two requests. [routeSec] is null when the car route itself failed.
      */
-    private suspend fun baselinesOnly(q: DropOffQuery, routeSec: Int?): List<Option<DropOffOption>> = coroutineScope {
+    private suspend fun baselinesOnly(
+        q: DropOffQuery,
+        routeSec: Int?,
+        line: List<LatLon> = emptyList(),
+    ): List<Option<DropOffOption>> = coroutineScope {
         val rideToEnd = routeSec?.let { sec ->
             async {
-                best(api.plan(PlanRequest(Endpoint.Coord(q.b), Endpoint.Coord(q.c), q.departAt.plusSeconds(sec.toLong()), preferences = q.preferences)).itineraries)
-                    ?.let { Option(DropOffOption(DropOffKind.RIDE_TO_END, null, 0, sec, it), 0, it.end, it.transfers) }
+                best(api.plan(PlanRequest(Endpoint.Coord(q.b), Endpoint.Coord(q.c), q.departAt.plusSeconds(sec.toLong()), preferences = q.preferences, language = q.language)).itineraries)
+                    ?.let { Option(DropOffOption(DropOffKind.RIDE_TO_END, null, 0, sec, it, line), 0, it.end, it.transfers) }
             }
         }
         val fromStart = async {
-            best(api.plan(PlanRequest(Endpoint.Coord(q.a), Endpoint.Coord(q.c), q.departAt, preferences = q.preferences)).itineraries)
+            best(api.plan(PlanRequest(Endpoint.Coord(q.a), Endpoint.Coord(q.c), q.departAt, preferences = q.preferences, language = q.language)).itineraries)
                 ?.let { Option(DropOffOption(DropOffKind.TRANSIT_FROM_START, null, 0, 0, it), 0, it.end, it.transfers) }
         }
         listOfNotNull(rideToEnd?.await(), fromStart.await())

@@ -32,6 +32,8 @@ You ride A→B and need C. Steps and their request cost (total pinned by `BUDGET
 5. one `plan` s→C per candidate within the detour limit (≤ 4)
 6. baselines: ride to B then transit, and transit from A (2)
 If the car route fails, only the transit-from-A baseline is returned — never an error.
+In the app, the drop-off tab's fields map as A = "From", B = "Driver to" (`UiState.driverTo`),
+C = "I go to" (`UiState.to`); `UiState.readyToPlan` waits for all three.
 
 ## Sending the point to the driver (`NavLinks.kt`)
 Waze (`waze.com/ul?ll=…&navigate=yes`) and Google Maps directions URLs, fixed six decimals
