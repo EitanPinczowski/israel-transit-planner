@@ -1,0 +1,26 @@
+# Build output
+build/
+.gradle/
+.kotlin/
+*.apk
+*.aab
+out/
+
+# IDE / local
+.idea/
+*.iml
+local.properties
+.DS_Store
+
+# Secrets — never commit. The release keystore lives outside the repo.
+*.jks
+*.keystore
+keystore.properties
+.env
+
+# Large data, never read or committed
+*.pmtiles
+*.zip
+
+# Claude personal overrides
+.claude/settings.local.json
