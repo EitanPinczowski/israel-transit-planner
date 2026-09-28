@@ -13,6 +13,9 @@
 **עדכונים:** כשיש גרסה חדשה יופיע באפליקציה פס "גרסה חדשה זמינה" — לחצו "הורדה" והתקינו מעל הגרסה
 הקיימת. ההגדרות, המקומות השמורים וההיסטוריה נשמרים.
 
+**"האפליקציה לא הותקנה"?** כנראה שכבר מותקן בטלפון עותק ישן (גרסת בדיקה) שנחתם במפתח אחר.
+הגדרות ← אפליקציות ← הצגת כל האפליקציות ← "מתכנן נסיעות" ← הסרה, ואז התקינו שוב.
+
 **פרטיות:** אין חשבון ואין שרת משלנו. חיפושי מסלול נשלחים ל־Transitous (מתכנן נסיעות חינמי וקוד
 פתוח) והמפה מגיעה מ־OpenFreeMap. מקומות שמורים, היסטוריה ותזכורות נשמרים רק בטלפון.
 
@@ -27,6 +30,10 @@
 
 **Updates:** when a new version is out, an "Update available" banner appears in the app — tap
 Download and install over the old version. Settings, saved places and history are kept.
+
+**"App not installed"?** An older copy (usually a test build) signed with a different key is
+already on the phone. Settings → Apps → See all apps → "Transit Planner" → Uninstall, then
+install again.
 
 **Permissions, and why**
 

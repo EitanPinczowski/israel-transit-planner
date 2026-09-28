@@ -22,6 +22,9 @@ else GitHub's generated notes.
 - So tags must only go UP, and minor/patch stay below 100. A lower code will not install
   over a higher one.
 - Local/CI builds are `0.0.0-dev` (code 1); `UpdateCheck` never nags a `-dev` build.
+- Debug builds are `il.transit.planner.debug`. Before that, a sideloaded `app-debug` (debug
+  key) blocked v0.1.0 on the owner's Pixel with a bare **"App not installed"**, Android's
+  message for a signature mismatch. The APK was fine; uninstalling the old copy fixed it.
 
 ## The signing key — the one thing that must never be lost
 - Lives in 4 **repository secrets**: `RELEASE_KEYSTORE_B64` (base64 of the .jks),

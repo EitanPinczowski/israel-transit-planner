@@ -47,6 +47,12 @@ android {
     }
 
     buildTypes {
+        // A debug build is signed with a throwaway key. Under the same package id it would
+        // block the real release from installing ("App not installed"), so it gets its own.
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             // R8 off on purpose: MapLibre and kotlinx-serialization need keep rules, and a
             // few MB saved is not worth a release that crashes on reflection.
