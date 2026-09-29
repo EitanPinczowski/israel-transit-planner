@@ -78,6 +78,10 @@ import il.transit.core.present.DepartureRow
 import il.transit.core.present.DropOffRow
 import il.transit.core.present.PickUpRow
 import il.transit.core.present.pickUpRow
+import il.transit.core.present.fareLabel
+import il.transit.core.fare.FareEstimate
+import il.transit.core.fare.FareProfile
+import il.transit.core.fare.FareTable
 import il.transit.core.present.dropOffRow
 import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
@@ -414,8 +418,9 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
-                        ItineraryCard(itin, selected = i == state.selected) { vm.select(i) }
+                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile) { vm.select(i) }
                     }
+                    if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
         }
@@ -465,8 +470,8 @@ private fun ErrorRow(error: UiError, vm: MainViewModel) {
 }
 
 @Composable
-private fun ItineraryCard(itin: Itinerary, selected: Boolean, onClick: () -> Unit) {
-    val s = remember(itin) { summarize(itin) }
+private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, onClick: () -> Unit) {
+    val s = remember(itin, fareProfile) { summarize(itin, fareProfile) }
     val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
     Column(
         Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp),
@@ -477,6 +482,7 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, onClick: () -> Uni
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             s.chips.forEach { LegChipView(it) }
+            FareText(s.fare)
         }
         val transfers = if (s.transfers == 0) stringResource(R.string.direct) else pluralStringResource(R.plurals.transfers, s.transfers, s.transfers)
         val walk = stringResource(R.string.walk_minutes, s.walkMin)
@@ -491,6 +497,28 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, onClick: () -> Uni
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
     }
+}
+
+/** "≈ ₪8", isolated so Hebrew text around it cannot reorder the amount. */
+@Composable
+private fun FareText(f: FareEstimate?) {
+    if (f == null) return
+    val text = if (f.agorot == 0) stringResource(R.string.fare_free_label) else "\u2068${fareLabel(f)}\u2069"
+    Text(text, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp))
+}
+
+/** Fares are an estimate from a copied price list; the official one is a tap away. */
+@Composable
+private fun FareNote() {
+    val context = LocalContext.current
+    Text(
+        stringResource(R.string.fare_estimate_note),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.fillMaxWidth().clickable {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(FareTable.OFFICIAL_URL)))
+        }.padding(vertical = 6.dp),
+    )
 }
 
 @Composable
@@ -542,7 +570,7 @@ private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainV
             item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
         itemsIndexed(result.options) { i, option ->
-            val row = remember(option, result.baseline) { betterStartRow(option.payload, result.baseline) }
+            val row = remember(option, result.baseline, state.settings.fareProfile) { betterStartRow(option.payload, result.baseline, state.settings.fareProfile) }
             val shareText = stringResource(
                 R.string.share_dropoff,
                 row.stop,
@@ -582,6 +610,7 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             row.summary.chips.forEach { LegChipView(it) }
+            FareText(row.summary.fare)
         }
         if (row.tight) Text(stringResource(R.string.tight_warning), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         if (selected) {
@@ -609,7 +638,7 @@ private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel
             item { Text(stringResource(R.string.no_stop_on_the_way, state.maxDetourMin), Modifier.padding(vertical = 8.dp)) }
         }
         itemsIndexed(result.options) { i, option ->
-            val row = remember(option) { dropOffRow(option.payload) }
+            val row = remember(option, state.settings.fareProfile) { dropOffRow(option.payload, state.settings.fareProfile) }
             // Locals, not row.stop/row.stopAt: no smart casts across modules.
             val stop = row.stop
             val at = row.stopAt
@@ -645,6 +674,7 @@ private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit,
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             row.summary.chips.forEach { LegChipView(it) }
+            FareText(row.summary.fare)
         }
         if (selected && onSend != null) {
             TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
@@ -662,7 +692,7 @@ private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel) 
             item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
         itemsIndexed(result.options) { i, option ->
-            val row = remember(option, result.baseline) { pickUpRow(option, result.baseline) }
+            val row = remember(option, result.baseline, state.settings.fareProfile) { pickUpRow(option, result.baseline, state.settings.fareProfile) }
             val shareText = stringResource(
                 R.string.share_pickup,
                 row.stop,
@@ -709,6 +739,7 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             row.summary.chips.forEach { LegChipView(it) }
+            FareText(row.summary.fare)
         }
         if (selected) {
             TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
@@ -812,6 +843,18 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
                                 WalkSpeed.FAST -> R.string.speed_fast
                             }
                             FilterChip(s.walkSpeed == w, { set(s.copy(walkSpeed = w)) }, label = { Text(stringResource(label)) })
+                        }
+                    }
+                }
+                item {
+                    Section(R.string.fare_profile) {
+                        FareProfile.entries.forEach { f ->
+                            val label = when (f) {
+                                FareProfile.REGULAR -> R.string.fare_regular
+                                FareProfile.HALF -> R.string.fare_half
+                                FareProfile.FREE -> R.string.fare_free
+                            }
+                            FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
                         }
                     }
                 }

@@ -55,8 +55,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
       per leg (passing the stop before yours, or 400 m out), stops itself at the end
 - [x] Trip history + stats (trips, this week, hours on transit, minutes saved by the car
       features, top destination); local only, capped at 500
-- [ ] Fare estimate — **blocked on verification**: needs the official Rav-Kav fare calculator
-      (and live network) to check the distance bands before any price is shown
+- [x] Fare estimate ("≈ ₪8" on every option): straight-line distance bands, 90-min yellow
+      transfer, train column, daily cap, Regular / 50% / Free. Table copied from HopOn's
+      Rav-Pass price list (checked 2026-08-04, `fare/Fares.kt`); links to bus.gov.il
 
 ## Phase 7 — Release
 - [x] Tag-triggered release workflow: signed APK (key from repo secrets), `apksigner verify`,

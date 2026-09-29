@@ -142,4 +142,10 @@
 
     <string name="update_available">גרסה חדשה זמינה: v\u2068%s\u2069</string>
     <string name="update_download">הורדה</string>
+    <string name="fare_profile">תעריף</string>
+    <string name="fare_regular">רגיל</string>
+    <string name="fare_half" formatted="false">הנחה של 50%</string>
+    <string name="fare_free">חינם (גיל 67 ומעלה)</string>
+    <string name="fare_free_label">חינם</string>
+    <string name="fare_estimate_note">המחירים הם הערכה (לפי מחירון רב-קו) · הקישו למחירון הרשמי</string>
 </resources>
