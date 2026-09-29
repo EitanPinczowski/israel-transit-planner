@@ -3,6 +3,9 @@ package il.transit.core.present
 import il.transit.core.api.Itinerary
 import il.transit.core.api.Leg
 import il.transit.core.api.StreetModes
+import il.transit.core.fare.FareEstimate
+import il.transit.core.fare.FareEstimator
+import il.transit.core.fare.FareProfile
 import il.transit.core.features.ISRAEL
 import java.time.Duration
 import java.time.Instant
@@ -62,7 +65,17 @@ data class ItinerarySummary(
     val firstBoarding: Boarding?,
     /** Any transit leg carries real-time data. */
     val hasRealTime: Boolean = false,
+    /** Estimated fare for the chosen [FareProfile]; null for a walk-only trip. */
+    val fare: FareEstimate? = null,
 )
+
+/** "≈ ₪8", "≈ ₪14.5", "≈ ₪87.32" — always an estimate, so always "≈". */
+fun fareLabel(f: FareEstimate): String {
+    val shekels = f.agorot / 100
+    val agorot = f.agorot % 100
+    val amount = if (agorot == 0) "$shekels" else String.format(java.util.Locale.US, "%d.%02d", shekels, agorot).trimEnd('0')
+    return "≈ ₪$amount"
+}
 
 data class Boarding(
     val line: String?,
@@ -86,7 +99,7 @@ fun minutes(sec: Int): Int = Math.round(sec / 60.0).toInt()
 fun lineLabel(leg: Leg): String? =
     leg.routeShortName?.takeIf { it.isNotBlank() } ?: leg.displayName?.takeIf { it.isNotBlank() }
 
-fun summarize(it: Itinerary): ItinerarySummary {
+fun summarize(it: Itinerary, fareProfile: FareProfile = FareProfile.REGULAR): ItinerarySummary {
     val chips = it.legs
         // Transfers inside a station show up as walks of a few seconds; they are noise.
         .filter { leg -> leg.isTransit || leg.duration >= 60 }
@@ -112,6 +125,7 @@ fun summarize(it: Itinerary): ItinerarySummary {
         chips = chips,
         firstBoarding = board,
         hasRealTime = it.legs.any { l -> l.isTransit && l.realTime },
+        fare = FareEstimator.estimate(it, fareProfile),
     )
 }
 
@@ -167,7 +181,11 @@ data class BetterStartRow(
     val summary: ItinerarySummary,
 )
 
-fun betterStartRow(o: il.transit.core.features.BetterStartOption, baseline: Itinerary?): BetterStartRow {
+fun betterStartRow(
+    o: il.transit.core.features.BetterStartOption,
+    baseline: Itinerary?,
+    fareProfile: FareProfile = FareProfile.REGULAR,
+): BetterStartRow {
     val it = o.itinerary
     return BetterStartRow(
         driveMin = minutes(o.driveSec),
@@ -177,7 +195,7 @@ fun betterStartRow(o: il.transit.core.features.BetterStartOption, baseline: Itin
         savedMin = baseline?.let { b -> minutes((b.end.epochSecond - it.end.epochSecond).toInt()) },
         transfersSaved = baseline?.let { b -> b.transfers - it.transfers },
         tight = o.tight,
-        summary = summarize(it),
+        summary = summarize(it, fareProfile),
     )
 }
 
@@ -198,7 +216,7 @@ data class DropOffRow(
     val summary: ItinerarySummary,
 )
 
-fun dropOffRow(o: il.transit.core.features.DropOffOption): DropOffRow = DropOffRow(
+fun dropOffRow(o: il.transit.core.features.DropOffOption, fareProfile: FareProfile = FareProfile.REGULAR): DropOffRow = DropOffRow(
     kind = o.kind,
     stop = o.stop?.name,
     stopAt = o.stop?.latLon,
@@ -207,7 +225,7 @@ fun dropOffRow(o: il.transit.core.features.DropOffOption): DropOffRow = DropOffR
     depart = hhmm(o.transit.start),
     arrive = hhmm(o.transit.end),
     transfers = o.transit.transfers,
-    summary = summarize(o.transit),
+    summary = summarize(o.transit, fareProfile),
 )
 
 /** One "best pick-up point" option, ready to display. Savings are null without a baseline. */
@@ -225,7 +243,11 @@ data class PickUpRow(
     val summary: ItinerarySummary,
 )
 
-fun pickUpRow(o: il.transit.core.features.Option<il.transit.core.features.PickUpOption>, baseline: Itinerary?): PickUpRow {
+fun pickUpRow(
+    o: il.transit.core.features.Option<il.transit.core.features.PickUpOption>,
+    baseline: Itinerary?,
+    fareProfile: FareProfile = FareProfile.REGULAR,
+): PickUpRow {
     val p = o.payload
     return PickUpRow(
         stop = p.pickUpStopName,
@@ -236,6 +258,6 @@ fun pickUpRow(o: il.transit.core.features.Option<il.transit.core.features.PickUp
         arriveHome = hhmm(o.arrival),
         savedMin = baseline?.let { b -> minutes((b.end.epochSecond - o.arrival.epochSecond).toInt()) },
         transfersSaved = baseline?.let { b -> b.transfers - o.transfers },
-        summary = summarize(p.itinerary),
+        summary = summarize(p.itinerary, fareProfile),
     )
 }

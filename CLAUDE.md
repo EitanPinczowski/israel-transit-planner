@@ -39,6 +39,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   remind/     Reminder + ReminderLogic: leave time, re-check matching (tested)
   ride/       RideTracker: "get off at the next stop" from GPS fixes (tested)
   history/    TripRecord + History.stats (tested)
+  fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store

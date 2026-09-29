@@ -52,4 +52,7 @@ keytool -genkeypair -v -keystore transit-release.jks -alias transit -keyalg RSA 
   "Update available" banner within a day (or on next launch after 24 h) and installs over it.
 - Minify/R8 is OFF on purpose (MapLibre + kotlinx-serialization keep rules). Turning it on
   needs a phone test of every screen first.
+- Fares are a copied table (`core/.../fare/Fares.kt`, `CHECKED` date). Prices are reported
+  to rise in January 2027: before a release after that, re-read the source URL in its KDoc,
+  update the columns + `CHECKED`, and fix the pinned test in `FareTest`.
 - No Play Store: paid account, and USE_EXACT_ALARM would not pass Play review for this app.

@@ -1,6 +1,7 @@
 package il.transit.core.user
 
 import il.transit.core.api.Preferences
+import il.transit.core.fare.FareProfile
 import il.transit.core.features.TrafficProfile
 import il.transit.core.geo.LatLon
 import kotlinx.serialization.Serializable
@@ -38,6 +39,8 @@ data class UserSettings(
     val walkSpeed: WalkSpeed = WalkSpeed.NORMAL,
     /** Rush-hour multiplier for drive times; see [TrafficProfile]. */
     val peakFactor: Double = 1.3,
+    /** Which fare the estimate shows (regular, 50% discount, free). */
+    val fareProfile: FareProfile = FareProfile.REGULAR,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

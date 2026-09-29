@@ -141,4 +141,10 @@
 
     <string name="update_available">Update available: v%s</string>
     <string name="update_download">Download</string>
+    <string name="fare_profile">Fare</string>
+    <string name="fare_regular">Regular</string>
+    <string name="fare_half" formatted="false">50% discount</string>
+    <string name="fare_free">Free (67+)</string>
+    <string name="fare_free_label">Free</string>
+    <string name="fare_estimate_note">Fares are estimates (Rav-Kav price list) · tap for the official prices</string>
 </resources>
