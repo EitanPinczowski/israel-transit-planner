@@ -85,6 +85,39 @@ object Geo {
     }
 
     /**
+     * How far along [line] (metres from its start) the point of [line] nearest [p] lies —
+     * used to order and spread stops along a drive.
+     */
+    fun alongLineM(p: LatLon, line: List<LatLon>): Double {
+        if (line.size < 2) return 0.0
+        val mPerDegLat = PI * EARTH_RADIUS_M / 180
+        val mPerDegLon = mPerDegLat * cos(rad(p.lat))
+        fun xy(q: LatLon) = Pair((q.lon - p.lon) * mPerDegLon, (q.lat - p.lat) * mPerDegLat)
+        var bestDist = Double.POSITIVE_INFINITY
+        var bestAlong = 0.0
+        var walked = 0.0
+        for (i in 0 until line.size - 1) {
+            val (ax, ay) = xy(line[i])
+            val (bx, by) = xy(line[i + 1])
+            val dx = bx - ax
+            val dy = by - ay
+            val len2 = dx * dx + dy * dy
+            val t = if (len2 == 0.0) 0.0 else ((-ax * dx - ay * dy) / len2).coerceIn(0.0, 1.0)
+            val d = hypot(ax + t * dx, ay + t * dy)
+            val segM = distanceM(line[i], line[i + 1])
+            if (d < bestDist) {
+                bestDist = d
+                bestAlong = walked + t * segM
+            }
+            walked += segM
+        }
+        return bestAlong
+    }
+
+    /** Length of [line] in metres. */
+    fun lengthM(line: List<LatLon>): Double = (0 until line.size - 1).sumOf { distanceM(line[it], line[it + 1]) }
+
+    /**
      * The start of [line] up to the vertex nearest [target], then straight on to [target]:
      * the road driven before stopping near a point beside the route. Vertex-nearest is
      * enough here — route polylines are dense, and this is only drawn, never measured.

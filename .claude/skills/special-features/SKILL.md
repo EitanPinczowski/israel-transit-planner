@@ -30,13 +30,22 @@ start. (A "tight" warning used to fire on every peak option; it is gone.)
 You ride A→B and need C. Steps and their request cost (total pinned by `BUDGET = 10`):
 1. car route A→B via `directModes=CAR`, `maxDirectTime` = 4 h (1) — geometry = corridor,
    duration = baseline T. Without `maxDirectTime` MOTIS drops drives over 30 min.
-2. `map/stops` in the corridor bbox (1); drives > 15 km ask for rail-like stops only
-3. `pickCandidates`: within `corridorM` (1.5 km) of the line, rail first, then MOTIS
-   importance, ≥ `minSpacingM` (2 km) apart, at most `maxCandidates` (4)
-4. two `one-to-many` calls (A→s, s→B) (2): detour = A→s + s→B − T, ×traffic, + 60 s stop
-5. one `plan` s→C per candidate within the detour limit (≤ 4)
+2. stops: drives > 15 km use the bundled `RailStations` (0 requests); shorter drives ask
+   `map/stops` for the corridor bbox (1). Transitous ignores `modes`, so a long-drive
+   fallback (empty list) filters to rail client-side.
+3. `pickCandidates`: within `corridorM` (1.5 km) of the line, ≥ `minSpacingM` (2 km) from
+   each other and from A and B; the drive is cut into `maxCandidates` (8) equal stretches
+   and each takes its best stop (trains, then light rail, then importance). Ranking the
+   whole corridor instead bunched every pick at the busy Tel Aviv end.
+4. two `one-to-many` calls (A→s, s→B) with all 8 (2): detour = A→s + s→B − T, ×traffic,
+   + 60 s stop
+5. one `plan` s→C for at most `maxPlans` (4) stops within the detour limit, evenly
+   `spread` through route order (≤ 4)
 6. baselines: ride to B then transit, and transit from A (2)
 If the car route fails, only the transit-from-A baseline is returned — never an error.
+`RailStations` is generated: `python tools/gen_rail_stations.py` (MOT GTFS, not Transitous;
+needs network access to gtfs.mot.gov.il). Re-run when a station or line opens; the test
+pinning the Meitar → Tel Aviv picks may then need its list updated.
 In the app, the drop-off tab's fields map as A = "From", B = "Driver to" (`UiState.driverTo`),
 C = "I go to" (`UiState.to`); `UiState.readyToPlan` waits for all three.
 
