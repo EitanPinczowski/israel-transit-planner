@@ -35,6 +35,10 @@ green run is how friends test a build before a release.
 
 ## Emulator / device
 
+- The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled
+  the size (51 MB → ~half) for emulators nobody installs on. For an x86 emulator, add
+  `"x86_64"` there locally — don't commit it.
+
 - Mock GPS: emulator "…" → Location → set a point, or load a GPX route (used to test the
   "get off next stop" alert).
 - Install on a phone: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`,

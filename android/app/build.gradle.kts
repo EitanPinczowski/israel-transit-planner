@@ -33,6 +33,9 @@ android {
         targetSdk = 35
         versionCode = releaseCode
         versionName = releaseVersion
+        // Real phones are ARM. The x86 copies of MapLibre only serve emulators and roughly
+        // halve the APK's size; add "x86_64" back here to test on an emulator.
+        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
     }
 
     signingConfigs {

@@ -43,6 +43,7 @@ import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.UpdateChecker
 import il.transit.planner.TransitApp
 import il.transit.planner.data.PlanCacheStore
+import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UserStore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -147,6 +148,7 @@ class MainViewModel(
     private val rides: Rides? = null,
     private val historyStore: HistoryStore? = null,
     private val updates: UpdateChecker? = null,
+    private val stopsCache: StopsStore? = null,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -501,7 +503,7 @@ class MainViewModel(
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {
-                val found = api.stops(box, null, language)
+                val found = stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
                 loadedStops = box
                 _stops.value = MapData.stops(found)
             } catch (e: CancellationException) {
@@ -598,7 +600,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates)
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache)
             }
         }
     }

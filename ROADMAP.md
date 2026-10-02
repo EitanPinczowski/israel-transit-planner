@@ -22,7 +22,7 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Saved places + saved trips (DataStore JSON), one-tap re-plan
 - [x] Dark map style, Hebrew RTL strings
 - [x] Settings: traffic factor
-- [ ] Verify on a real phone against live Transitous (blocked here: network policy)
+- [x] Verify on a real phone against live Transitous (owner's Pixel, v0.1.0–v0.2.0)
 
 ## Phase 2 — Better start
 - [x] "Better start" tab with drive-limit slider (5–30 min), results on the map
@@ -48,7 +48,8 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
       "trip changed" notification when the bus is gone
 - [x] Offline: last 10 Trip results cached on disk with an "offline" banner; saved places
       and trips are local; offline map download for the current area (z10–14, ≤ ~55 km)
-- [ ] Optional: stops layer disk cache (today: in memory for a day)
+- [x] Stops layer disk cache: 0.01° tiles, 7-day TTL, 400-tile LRU, one request per pan
+      for the missing tiles only (`StopsTileCache`, `data/StopsStore`)
 
 ## Phase 6 — On the trip
 - [x] "Get off next stop" alert: foreground GPS service only while a trip is ridden, buzzes once
@@ -65,4 +66,4 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Version from the tag (versionCode = major·10000 + minor·100 + patch); CI builds release unsigned
 - [x] Launcher icon; in-app "Update available" banner (GitHub Releases, once a day)
 - [x] Install guide for friends (`docs/install.md`, Hebrew + English)
-- [ ] Owner: create the key, add the 4 secrets, merge PR #1 — then tag `v0.1.0`
+- [x] Owner: create the key, add the 4 secrets — v0.1.0 released 2026-09-28
