@@ -25,7 +25,7 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 |---|---|---|
 | `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
-| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. We pass `modes` (rail-like for long drives) but Transitous ignores it — filter client-side. |
+| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
 

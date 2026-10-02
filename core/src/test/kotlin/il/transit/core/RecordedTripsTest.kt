@@ -110,6 +110,30 @@ class RecordedTripsTest {
         assertEquals(DropOffPlanner.MAX_DRIVE_SEC, fake.planRequests.first().maxDirectSec)
     }
 
+    @Test fun `the bundled station list is sane`() {
+        val all = il.transit.core.geo.RailStations.ALL
+        assertTrue(all.count { "RAIL" in it.modes.orEmpty() } >= 60)
+        assertTrue(all.count { "TRAM" in it.modes.orEmpty() } >= 40)
+        assertEquals(all.size, all.mapNotNull { it.stopId }.toSet().size)
+        assertTrue(all.all { it.lat in 29.4..33.4 && it.lon in 34.2..35.9 })
+        listOf("תל אביב מרכז", "קרית גת", "להבים רהט", "קרית מלאכי", "קרליבך").forEach { name ->
+            assertTrue(name, all.any { it.name == name })
+        }
+    }
+
+    @Test fun `drop-off candidates on the real Meitar to Tel Aviv drive reach the middle of the route`() {
+        val leg = plan("plan_direct_car").direct.single().legs.single()
+        val line = il.transit.core.geo.Geo.decodePolyline(leg.legGeometry!!.points, leg.legGeometry!!.precision)
+        val q = DropOffQuery(meitar, telAviv, LatLon(31.8948, 34.8113), monday8)
+        val picked = DropOffPlanner.pickCandidates(il.transit.core.geo.RailStations.ALL, line, q).map { it.name }
+        // Before: the busiest stations won, all within a few km of Tel Aviv Center.
+        // Now: trains in route order, km 61 to km 107 of 113. (Regenerating the station
+        // list may legitimately change this; check the new list still spreads.)
+        assertEquals(listOf("קרית מלאכי", "מזכרת בתיה", "נתב''ג", "צומת חולון", "תל אביב ההגנה"), picked)
+        // The four that get planned span the drive too.
+        assertEquals(listOf("קרית מלאכי", "מזכרת בתיה", "נתב''ג", "תל אביב ההגנה"), DropOffPlanner.spread(picked, q.maxPlans))
+    }
+
     @Test fun `Friday afternoon drops the wait through Shabbat and marks Saturday-night trips`() = runTest {
         // Be'er Sheva → Tel Aviv, Friday 2026-10-09 15:00: two Friday buses, one that waits
         // 25 h through Shabbat, two on Saturday night.

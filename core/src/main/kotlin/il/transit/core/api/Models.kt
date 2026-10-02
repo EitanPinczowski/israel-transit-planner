@@ -136,6 +136,9 @@ object TransitModes {
     val RAIL_LIKE = setOf(
         "RAIL", "HIGHSPEED_RAIL", "LONG_DISTANCE", "REGIONAL_RAIL", "SUBURBAN", "SUBWAY", "TRAM", "METRO",
     )
+
+    /** Trains proper — preferred over light rail as a place to get out of a car. */
+    val HEAVY_RAIL = RAIL_LIKE - setOf("SUBWAY", "TRAM", "METRO")
 }
 
 fun parseTime(s: String): Instant = OffsetDateTime.parse(s).toInstant()
