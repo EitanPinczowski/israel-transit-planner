@@ -96,8 +96,20 @@ fun hhmm(t: Instant): String = HHMM.format(t.atZone(ISRAEL))
 
 fun minutes(sec: Int): Int = Math.round(sec / 60.0).toInt()
 
-fun lineLabel(leg: Leg): String? =
-    leg.routeShortName?.takeIf { it.isNotBlank() } ?: leg.displayName?.takeIf { it.isNotBlank() }
+fun lineLabel(leg: Leg): String? = lineLabel(leg.routeShortName, leg.displayName)
+
+/**
+ * Short line name, or null. Israel Railways routes have no short name and a display name
+ * like "באר שבע מרכז-באר שבע<->כרמיאל-כרמיאל" — too long for a chip; the train icon says enough.
+ */
+fun lineLabel(shortName: String?, displayName: String?): String? =
+    shortName?.takeIf { it.isNotBlank() } ?: displayName?.takeIf { it.isNotBlank() && "<->" !in it }
+
+/** Where the vehicle goes. Israel Railways sends the train number ("406") as the headsign. */
+fun headsignText(headsign: String?, tripTo: il.transit.core.api.Place?): String {
+    val h = headsign.orEmpty()
+    return if ((h.isBlank() || h.all { it.isDigit() }) && !tripTo?.name.isNullOrBlank()) tripTo!!.name else h
+}
 
 fun summarize(it: Itinerary, fareProfile: FareProfile = FareProfile.REGULAR): ItinerarySummary {
     val chips = it.legs
@@ -158,8 +170,8 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
     val scheduled = st.place.scheduledDeparture ?: st.place.scheduledArrival
     val at = (actual ?: scheduled)?.let { runCatching { il.transit.core.api.parseTime(it) }.getOrNull() }
     return DepartureRow(
-        line = st.routeShortName.ifBlank { st.displayName.orEmpty() },
-        headsign = st.headsign,
+        line = lineLabel(st.routeShortName, st.displayName).orEmpty(),
+        headsign = headsignText(st.headsign, st.tripTo),
         kind = legKind(st.mode),
         time = at?.let(::hhmm) ?: "",
         delayMin = if (st.realTime) delayMin(actual, scheduled) else null,

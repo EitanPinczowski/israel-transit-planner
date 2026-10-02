@@ -177,13 +177,13 @@ class BetterStartTest {
         }
         val result = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, NOON, maxDriveMin = 10))
         assertEquals(4, fake.calls.size) // baseline + 3 caps
-        assertEquals(StreetModes.CAR_DROPOFF, fake.planRequests.last().preTransitModes.single())
+        assertEquals(StreetModes.CAR, fake.planRequests.last().preTransitModes.single())
         assertEquals(1, result.options.size)
         val opt = result.options.single().payload
         assertEquals("Be'er Sheva North", opt.dropOffStopName)
         assertEquals(350, opt.driveSec)
         assertFalse(opt.tight)
-        assertEquals(StreetModes.CAR_DROPOFF, result.usedMode)
+        assertEquals(StreetModes.CAR, result.usedMode)
     }
 
     @Test fun `falls back to CAR when the server refuses CAR_DROPOFF, within budget`() = runTest {
@@ -198,7 +198,7 @@ class BetterStartTest {
             }
         }
         val budgeted = BudgetedTransitApi(fake, BetterStartPlanner.BUDGET)
-        val result = BetterStartPlanner(budgeted).plan(BetterStartQuery(origin, dest, NOON))
+        val result = BetterStartPlanner(budgeted).plan(BetterStartQuery(origin, dest, NOON, carMode = StreetModes.CAR_DROPOFF))
         assertEquals(StreetModes.CAR, result.usedMode)
         assertEquals(1, result.options.size)
         assertEquals(station.latLon, result.options.single().payload.dropOffAt)

@@ -1,0 +1,6228 @@
+{
+ "requestParameters": {},
+ "debugOutput": {
+  "algorithm": 1,
+  "direct": 10,
+  "execute_time": 28,
+  "fares": 0,
+  "fastest_direct": 0,
+  "fp_update_prevented_by_lower_bound": 0,
+  "gpu_supported": 1,
+  "gpu_used": 1,
+  "interval_extensions": 0,
+  "lb_time": 0,
+  "n_dest_offsets": 70,
+  "n_earliest_arrival_updated_by_footpath": 0,
+  "n_earliest_arrival_updated_by_route": 0,
+  "n_earliest_trip_calls": 0,
+  "n_events_skipped_by_early_termination": 0,
+  "n_execute_bwd": 8,
+  "n_execute_fwd": 5,
+  "n_footpaths_visited": 0,
+  "n_routes_visited": 0,
+  "n_routing_time": 0,
+  "n_start_offsets": 30,
+  "n_td_dest_offsets": 0,
+  "n_td_start_offsets": 0,
+  "prepare": 4,
+  "prepare_backward_WALK": 1,
+  "prepare_forward_WALK": 2,
+  "route_update_prevented_by_lower_bound": 0,
+  "search_interval_reduction_by_early_termination": 0
+ },
+ "from": {
+  "name": "START",
+  "lat": 31.262,
+  "lon": 34.801,
+  "vertexType": "NORMAL"
+ },
+ "to": {
+  "name": "END",
+  "lat": 32.0839,
+  "lon": 34.7983,
+  "vertexType": "NORMAL"
+ },
+ "direct": [],
+ "itineraries": [
+  {
+   "duration": 5700,
+   "startTime": "2026-10-05T05:00:00Z",
+   "endTime": "2026-10-05T06:35:00Z",
+   "transfers": 2,
+   "id": "Ck0hUI2XbhJDP0ApSgwCK4dmQUAyE2lsLUlzcmFlbC1NT1RfMjY2Njk5hnE3iNZCP0BBkEqxo3FmQUBI0N2M1gZQwN+M1gZaBFdBTEtgAQqTAQoBNRItMjAyNjEwMDVfMDg6MDJfaWwtSXNyYWVsLU1PVF81ODUxMTI0NTFfMDQxMDI2GhNpbC1Jc3JhZWwtTU9UXzI2NjY5IYZxN4jWQj9AKZBKsaNxZkFAMhNpbC1Jc3JhZWwtTU9UXzI3NjIyORcmUwWjQj9AQVNJnYAmZkFASMDfjNYGUPzfjNYGWgNCVVNgAQpiGhNpbC1Jc3JhZWwtTU9UXzI3NjIyIRcmUwWjQj9AKVNJnYAmZkFAMhNpbC1Jc3JhZWwtTU9UXzI3NjIzORh47j1cQj9AQRKrP8IwZkFASPzfjNYGUPTgjNYGWgRXQUxLYAEKkwEKAzM3MBIrMjAyNjEwMDVfMDg6MDBfaWwtSXNyYWVsLU1PVF8yMjIxMDQyXzAyMTAyNhoTaWwtSXNyYWVsLU1PVF8yNzYyMyEYeO49XEI/QCkSqz/CMGZBQDITaWwtSXNyYWVsLU1PVF8xMjk3NTmGxhNBnAdAQEEWinQ/p2RBQEj04IzWBlCggY3WBloDQlVTYAEKYhoTaWwtSXNyYWVsLU1PVF8xMjk3NSGGxhNBnAdAQCkWinQ/p2RBQDITaWwtSXNyYWVsLU1PVF8yOTMxMDkyychZ2AdAQEGNrtLddWRBQEiggY3WBlDMg43WBloEV0FMS2ABCpQBCgMxNzESLDIwMjYxMDA1XzA4OjU1X2lsLUlzcmFlbC1NT1RfNTEzNjU4MTdfMDMxMDI2GhNpbC1Jc3JhZWwtTU9UXzI5MzEwITLJyFnYB0BAKY2u0t11ZEFAMhNpbC1Jc3JhZWwtTU9UXzEzMzU0OV7v/nivCkBAQRv/PuPCZUFASMyDjdYGUPCGjdYGWgNCVVNgAQpNGhNpbC1Jc3JhZWwtTU9UXzEzMzU0IV7v/nivCkBAKRv/PuPCZUFAOTQRNjy9CkBAQcoyxLEuZkFASPCGjdYGUJSKjdYGWgRXQUxLYAE=",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.262,
+      "lon": 34.801,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:00:00Z",
+      "scheduledDeparture": "2026-10-05T05:00:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "מרפאות חוץ סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_26669",
+      "importance": 4.5161741581978276e-05,
+      "lat": 31.261086,
+      "lon": 34.800343,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:04:00Z",
+      "scheduledArrival": "2026-10-05T05:04:00Z",
+      "stopCode": "13949",
+      "description": "רחוב: שדרות דוד בן גוריון 3 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 240,
+     "startTime": "2026-10-05T05:00:00Z",
+     "endTime": "2026-10-05T05:04:00Z",
+     "scheduledStartTime": "2026-10-05T05:00:00Z",
+     "scheduledEndTime": "2026-10-05T05:04:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 208.0,
+     "legGeometry": {
+      "points": "{vasz@q|akaA@uCvHC??pIF??pA???pFD??bJF??lFb@??dAJ??hD`@??ExGT|BlBjCdClA??Md]",
+      "precision": 6,
+      "length": 24
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 1486123014,
+       "polyline": {
+        "points": "{vasz@q|akaA@uCvHC",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 19.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 1486123014,
+       "toOsmNode": 4938631022,
+       "polyline": {
+        "points": "amasz@kabkaApIF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 4938631022,
+       "toOsmNode": 9221930971,
+       "polyline": {
+        "points": "obasz@cabkaApA?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089430,
+       "fromOsmNode": 9221930971,
+       "toOsmNode": 9620150505,
+       "polyline": {
+        "points": "}_asz@cabkaApFD",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 20.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089417,
+       "fromOsmNode": 9620150505,
+       "toOsmNode": 1486123058,
+       "polyline": {
+        "points": "kx`sz@}`bkaAbJF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089423,
+       "fromOsmNode": 1486123058,
+       "toOsmNode": 1486123013,
+       "polyline": {
+        "points": "gm`sz@u`bkaAlFb@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 1486123013,
+       "toOsmNode": 2307765602,
+       "polyline": {
+        "points": "ye`sz@q_bkaAdAJ",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 2307765602,
+       "toOsmNode": 1486123180,
+       "polyline": {
+        "points": "sc`sz@e_bkaAhD`@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 37.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310083,
+       "fromOsmNode": 1486123180,
+       "toOsmNode": 3712274065,
+       "polyline": {
+        "points": "i~_sz@c~akaAExGT|BlBjCdClA",
+        "precision": 6,
+        "length": 5
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 49.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 3712274065,
+       "polyline": {
+        "points": "ev_sz@qjakaAMd]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "מרפאות חוץ סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_26669",
+      "importance": 4.5161741581978276e-05,
+      "lat": 31.261086,
+      "lon": 34.800343,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:04:00Z",
+      "scheduledDeparture": "2026-10-05T05:04:00Z",
+      "stopCode": "13949",
+      "description": "רחוב: שדרות דוד בן גוריון 3 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27622",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.260299999999997,
+      "lon": 34.79805000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:05:00Z",
+      "scheduledArrival": "2026-10-05T05:05:00Z",
+      "stopCode": "15332",
+      "description": "רחוב: יצחק רגר 87 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 60,
+     "startTime": "2026-10-05T05:04:00Z",
+     "endTime": "2026-10-05T05:05:00Z",
+     "scheduledStartTime": "2026-10-05T05:04:00Z",
+     "scheduledEndTime": "2026-10-05T05:05:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "מסוף חצרים",
+     "tripFrom": {
+      "name": "ת. רכבת ב''ש צפון",
+      "stopId": "il-Israel-MOT_28232",
+      "importance": 9.735934327181894e-06,
+      "lat": 31.261715,
+      "lon": 34.80923,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:02:00Z",
+      "scheduledDeparture": "2026-10-05T05:02:00Z",
+      "stopCode": "16067",
+      "description": "רחוב:   עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "מסוף חצרים",
+      "stopId": "il-Israel-MOT_49279",
+      "importance": 2.6100249669980258e-05,
+      "lat": 31.242191,
+      "lon": 34.75095,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:45:00Z",
+      "scheduledArrival": "2026-10-05T05:45:00Z",
+      "stopCode": "13302",
+      "description": "רחוב:   עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_17514",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "דן באר שבע",
+     "agencyUrl": "http://www.danbr7.co.il/",
+     "agencyFareUrl": "",
+     "agencyId": "32",
+     "tripId": "20261005_08:02_il-Israel-MOT_585112451_041026",
+     "routeShortName": "5",
+     "routeLongName": "ת. רכבת ב''ש צפון-באר שבע<->מסוף חצרים-באר שבע-20",
+     "tripShortName": "",
+     "displayName": "5",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:10591496:10591536",
+     "intermediateStops": [],
+     "legGeometry": {
+      "points": "{x_sz@ml`kaAvA|Bc@|jAIzQ?l^A`H|D?|DVj]LrDzA",
+      "precision": 6,
+      "length": 10
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27622",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.260299999999997,
+      "lon": 34.79805000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:05:00Z",
+      "departure": "2026-10-05T05:05:00Z",
+      "scheduledArrival": "2026-10-05T05:05:00Z",
+      "scheduledDeparture": "2026-10-05T05:05:00Z",
+      "stopCode": "15332",
+      "description": "רחוב: יצחק רגר 87 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:07:00Z",
+      "scheduledArrival": "2026-10-05T05:07:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 120,
+     "startTime": "2026-10-05T05:05:00Z",
+     "endTime": "2026-10-05T05:07:00Z",
+     "scheduledStartTime": "2026-10-05T05:05:00Z",
+     "scheduledEndTime": "2026-10-05T05:07:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 290.0,
+     "legGeometry": {
+      "points": "yg~rz@aa|jaAtPEjvAeBpCqB??KmH??uh@F",
+      "precision": 6,
+      "length": 8
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 202.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 3701844598,
+       "polyline": {
+        "points": "yg~rz@aa|jaAtPEjvAeBpCqB",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 364220343,
+       "fromOsmNode": 3701844598,
+       "toOsmNode": 3666511875,
+       "polyline": {
+        "points": "ezzrz@_h|jaAKmH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "מצדה",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 74.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 3666511875,
+       "polyline": {
+        "points": "qzzrz@mq|jaAuh@F",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:07:00Z",
+      "scheduledDeparture": "2026-10-05T05:07:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:16:00Z",
+      "scheduledArrival": "2026-10-05T06:16:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 4140,
+     "startTime": "2026-10-05T05:07:00Z",
+     "endTime": "2026-10-05T06:16:00Z",
+     "scheduledStartTime": "2026-10-05T05:07:00Z",
+     "scheduledEndTime": "2026-10-05T06:16:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_תחנה מרכזית",
+     "tripFrom": {
+      "name": "ת.מרכזית באר שבע/רציפים בינעירוני",
+      "stopId": "il-Israel-MOT_48114",
+      "parentId": "il-Israel-MOT_26652",
+      "importance": 3.598554394557141e-05,
+      "lat": 31.243017,
+      "lon": 34.79674000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:00:00Z",
+      "scheduledDeparture": "2026-10-05T05:00:00Z",
+      "stopCode": "13907",
+      "description": "רחוב:   עיר: באר שבע רציף: 2   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית תל אביב קומה 6/הורדה",
+      "stopId": "il-Israel-MOT_14595",
+      "importance": 0.00014359125634655356,
+      "lat": 32.055510000000005,
+      "lon": 34.780334,
+      "level": 6.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:20:00Z",
+      "scheduledArrival": "2026-10-05T06:20:00Z",
+      "stopCode": "28627",
+      "description": "רחוב: תמח''ת קומה 6 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_8171",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "מטרופולין",
+     "agencyUrl": "http://www.metropoline.com",
+     "agencyFareUrl": "",
+     "agencyId": "15",
+     "tripId": "20261005_08:00_il-Israel-MOT_2221042_021026",
+     "routeShortName": "370",
+     "routeLongName": "ת.מרכזית באר שבע/רציפים בינעירוני-באר שבע<->ת.מרכזית תל אביב קומה 6/הורדה-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "370",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:11219712:11219716",
+     "intermediateStops": [
+      {
+       "name": "מרכז אורן/יצחק רגר",
+       "stopId": "il-Israel-MOT_27649",
+       "importance": 2.6401870854897425e-05,
+       "lat": 31.272045,
+       "lon": 34.79807000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T05:11:00Z",
+       "departure": "2026-10-05T05:11:00Z",
+       "scheduledArrival": "2026-10-05T05:11:00Z",
+       "scheduledDeparture": "2026-10-05T05:11:00Z",
+       "stopCode": "15359",
+       "description": "רחוב: יצחק רגר עיר: באר שבע רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NOT_ALLOWED",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "gd|rz@up|jaAjj@X_}BhFyYu@{D?{O?{k@RaRJknAZkDH}THyPJit@Fiv@z@{SRumDvBmTLsnADwg@?{PrA_VjBuv@~LsItAyG`BwK`C}JxDuLfE{K~EoGfDwK`IiGtFgJrJqDzDePnPeEvCaMzIqO|KmJxHuJtI}M`M}SxRiKtJky@jv@{c@b`@_SfOeKtHcN|IsPzJmRxIyJlDcIjCyOrDkThDiS`BkhE~Xa|@zFwRvA{tAxIuLl@gL|@wEDwXbBaCNkqAvIo^vBoo@fEyHl@kKl@up@nEuZnBoJd@ecDnSkuBfNghCjPa^lBckBvL{z@rFwkCjPkn@~D{wBxMsk@tDesB~Mk[nB{PnAq[bBiF\\iRxA{iAjHwkCxPab@pCi{BfNqo@bEeaGv_@kFJoKfAsIjAarFv\\c^jBeg@Vms@gAmZiAcoA_N_m@_JcxAgXyoBy]yzCmh@_tBg^kxBe_@_v@oM}fBuZ{e@mIyvAwV_p@cLg^}Geb@_Iqh@{L{f@aMyzBqk@idBgc@_`Cam@_jCkp@}aBwa@ydBuc@uU}FsUsEed@_Hc[sDq{@wFqUOkHGat@l@}i@~Ca\\vCag@xHuyAjVqi@~IoARmkAnTiv@pMozBxa@}p@zKgGbAeZzEkVfEwb@nHgvA~Vk]|GkjAxRwHxAmmA`SaZbFkiBx\\oHtAqf@lIsuB~]ia@xGcBTkyAfYws@hMehBrZe_@vFca@fF_PvAsR`A{WhA{UHwPOkOe@od@{AoYgCq\\gEgxAcZui@kM{NsDgf@yH{OaCkWqCk]eAcZR_^bBwm@tMqa@bLmX`Hi{@bViYxF}OhDaMbB{StCePjAiO|@qGFmOV}OLmn@d@gi@ZqOn@iWjAud@nDye@tE}^tFiqAbQqs@`KioA|OgqAjQg|@fL_qBrXyjAtOgf@zFg[lEwj@`G_lAlQsw@jJqd@bFomE|n@m^rFqq@zQ_XxIyT~Ho[rNuWpMoHlE{XzPqRzMu\\xUyE|DaUrSwO`PcUjVcb@zi@kXh_@{dAbwAsc@dn@kbAzsAuPtUwDzEq_@xf@oJpLmNzOyOfPog@bd@aUfPgQpLm^hSgH|DoFdCkMbG{KnEsS`Ig[pJid@vLw]nFaK|A{]tEibBjNuqB~PmWzBuDBkiHjn@{nAnKkyCrXwfKfw@aW|BklA]{[sAyj@mEc^eDwa@kHa^{Jua@yMqeAed@wIcFm_DkdBgrAgt@soBogA{IqEcDaBmJmEiEsBkCkAi]mOef@wNaXuEuF{@sJmBcNoAy^aC}Uq@ur@q@cLOqiEyHwrFmIk_AqCst@kFsn@gHqrAiW_sAgc@oDeAmEyAuYqJ}TeH{C}@}JcDe]wKeq@eTivDmnAmsCe~@slAs_@st@yWqtBqp@ssAs`@}e@uJwe@sGe`@wCc]{@gk@?we@nCkVrCe_BbZsfAtS{l@lKwdAfPcqAnLesAxGiv@|@yn@_@qp@}DqJm@sr@sF_UoCyC_@s|@qLgGu@wo@mOai@mNwjAc`@g|@a^wr@ka@ou@mc@kjBksAceCyjBoLiIym@gc@i}@cj@mb@oWuWmOaO}Ii}Am~@gsAiv@igB{z@_|C}qAu_Byn@}yAsg@_cAwYc_AgXypB_i@mqCal@__UeiEajKsrBakAgTquCoi@gQcD{oAkUq^}FmxB}[gvAwQc~BoX_Z_Dsk@iHcKuAcl@oG{tD{b@akAsNy_Fyk@_s@iH_vBiW_j@oHsaAcRs^_I{l@aOoyAid@ih@cRaX{JmYgJeb@uO}{@k[un@{Pg|@uTuq@aPiaA_Pm^_Ges@sIaj@gDgh@gCqJc@ua@wB}Nc@{p@qBssDwIsIMqw@sAyO[sOa@eP]alEmJ{sF{Qgp@gCabAwDuhD}Ls\\_Bk`EuOgn@yBoxFwS}{AMkrATurAfDc_@xC{SxAuy@zH_sYnvDsi@hHopGdy@e`C~[k_BzTm_Hz|@_d@zFiwCn]cvKtwAyvAdRe}@bIkzAzGqjAhBypAe@wpA_GwaA{Jkk@yF{}AyU{`Bm`@yjA}]qjBwt@ozAak@ipFatBeiEs`Bm_Bgo@}pKocE{rCuhA_hBil@oy@wVq~@uUqy@mN_b@mGsGeA}GaAgSiCcIcAqb@wFcw@uHekAaGuZ}@edAyBgaDbC}iER_sA^{g@s@aHSkGKafAcBqn@}@auAeEmk@_CioB_JyeUemAqtB{KysIud@qpAyGkfFgYcxAeNaxA{O}wBi_@{kA}Y}qFkyAu|DohAimJkoCuz@_XcQeFqX}IynAw`@u_@gLqkAe_@iQaFaf@yN{jAiZcc@sIy{@wMmj@wFur@cGs`@_Bur@aBgMEwU?c\\Ze[r@{ZdAoSrAmF\\wk@|EgWvDwHdAud@fGmpAhSgLxAcj@~I}f@hHs_A~MuV|DwSpC_c@lGecA~MoXfEumAlQch@`I{]rFse@tJaMz@a]pCql@jEqWvBe\\vAeZr@iwAcB}PS}Ig@cI?sKSaHY{l@yG_p@wH_n@kL{aAoX}GiBmW}IoN}Fkm@uUa\\kPqJcF{KsF_h@{Zed@eZ_h@ab@ah@_c@gq@ol@goA_hAo@e@_CqB{F}EkA}@eCqBeLuJkdBc|Ac`DomCauBqgByzCwiCccLiuJ_sD{tCqeEorCayB_~AcKsHmeGwaEcXcQaoIovFsL_IsIcGocEwoCoVkPid@k[}lBsnAci@}^_DqBqCcBuUkM_R{Jcf@yWql@qVmWmJyp@cVy}Aya@gaA}OsuFqg@o|CwXisEwb@mM{A}tCi[sXaDqwAcXc{Bsc@cB[w{Aa^sRuFmy@{Tcf@sNgU}GqzCibAgtCo_Awh@{QiZoHe_AoXgaAmU_d@iKoc@yIagB}^eaAwNodC}^_h@wHcVmDubDce@wy@wKoa@cHmQeD_ZeHy_AmVey@gYsmAuk@}y@{c@ym@ob@gm@_c@eUiRej@oh@sTaUsm@os@_\\{a@gGmIqc@qq@cT{_@_D{FiBsC__@_l@ol@wcAsnAosB{yAkfCyGkLiRc\\qBmDkQuZiRk[oq@ehAke@mx@iXoe@sPu\\iJyR_OsZ{FgOeR{i@kLs\\qY{bAqL_g@cO_v@qQweAiCaMmCqRyc@goCi\\{qBk]ovBgOg~@{R{lAkTgoAiM}o@aS_x@AOmCaH_AgC_\\q{@eWqh@ua@ct@{]gg@y`@{e@cq@_p@cfAqt@}d@aUk_@cQ}UoJyL}E{]aMcGqBkl@aP_l@kMq[{Go`@cEmd@cHqg@wFqp@}G{b@aHciDe_@woBcV{AWcBM_QyBgxAsPcCWsbF}i@akH}w@{aAuP}^gHgjAqXsb@aM_f@iQyh@oTaZyNwSiKeJ{EqPuJcK{F{N_JmMgIkQcLaNmJ_q@qf@_wAkhAs\\gTo[wNsB}@mTyHiTyF{^iHsSoBoMo@_Q_@cTS{Mj@cTFsPbAeWrB{S|Di]dJo]`N}WlNmQtKgQpLsHbGuKrIySzSmWj[a]bl@e@p@eKdUeO~a@gQnn@{Inh@aKng@qKdj@uTlgAw{@~nEmh@vsCyOtw@mHx\\aUd~@}Vxx@gIdWsKlYcOv^iQtc@mShb@aTv`@om@jfAq@bAsnF~aJmxDrqGuKtUuDdHaFpJqOzVyqBldDiuAn`CepBneDaHnLiKbQaMtTgPr_@_T|i@c[~}@{T|v@s]txAyXzmAyCbLqLze@qJfYsAtD{Stf@mYjf@yWr]wPpR}aGhlFuTdSgO~Mk~@hx@_\\n_@k[be@gPd\\sNx]}M~a@_IlYoH`^yEj\\aF~`@}Br_@kAx\\Ktc@^~\\nAb`@xB`YdEd]xEd\\tLlh@fOjg@hRfh@zMbVrU~`@|Z~f@fy@bmA|Yjf@fTna@zSbe@nUlt@xI`a@dD`SbDpVlEle@lBdUXnMJxLJhWSbWs@zU_A~R_CfZgDrYiJ`l@yOhl@oIpWsKzVc[dn@_QpW_^tc@}m@~m@ku@jv@}_@n_@eRjReL`M_L`M_CxCoRzUiU`]{MrT_O`YoRtd@oVtr@qU`w@kSln@cNhd@yObc@sNz[oCpGyT~b@i]|i@wSpVwR|Tc~BtjCai@tr@up@f|@af@hs@}FxIia@rq@ob@fr@ud@jv@ed@pv@uUl_@kAhB_D`FiW~a@mwA~vBynBtvCsdA~`BahHtaLaq@thAkB~CgL`R_D~EwLjRaAbBiUn_@{b@jp@{gAlaBox@pkAchM|wRopLtyQ}`An{A}i@tz@}JlOecAr}AkVj`@cS`XaJtKoIrI{VfT}SnPkZnPc[fO{q@z[__Bfk@uPbHmkC~lAk\\nQ{E~C{ZrSmUbQyQlN{FfEgRdNySpMgNhHaRnI_QjHwP`F}OvDaNxAgHf@cHf@oKb@yNVqe@Sy][q`As@iSg@q[cAuFKeD?{Ka@u@?_s@yIqVkDyg@cKUG_h@iMyl@mNo]oKePyFoI}DeOuF}EsAsKHC~RgAvM",
+      "precision": 6,
+      "length": 950
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:16:00Z",
+      "departure": "2026-10-05T06:16:00Z",
+      "scheduledArrival": "2026-10-05T06:16:00Z",
+      "scheduledDeparture": "2026-10-05T06:16:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:21:00Z",
+      "scheduledArrival": "2026-10-05T06:21:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 300,
+     "startTime": "2026-10-05T06:16:00Z",
+     "endTime": "2026-10-05T06:21:00Z",
+     "scheduledStartTime": "2026-10-05T06:16:00Z",
+     "scheduledEndTime": "2026-10-05T06:21:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 374.0,
+     "legGeometry": {
+      "points": "iewc|@abejaAZ``@??JrE??BzC??cMs@_NgAUxDe@?kAnA??mB|m@e@zJKxB??oc@eF??gM]gGcCoO_C",
+      "precision": 6,
+      "length": 22
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 54.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 8312938433,
+       "polyline": {
+        "points": "iewc|@abejaAZ``@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 904582118,
+       "fromOsmNode": 8312938433,
+       "toOsmNode": 8312938437,
+       "polyline": {
+        "points": "mdwc|@_adjaAJrE",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 894374265,
+       "fromOsmNode": 8312938437,
+       "toOsmNode": 8312938438,
+       "polyline": {
+        "points": "adwc|@kzcjaABzC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 69.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 404325070,
+       "fromOsmNode": 8312938438,
+       "toOsmNode": 2989372367,
+       "polyline": {
+        "points": "}cwc|@oucjaAcMs@_NgAUxDe@?kAnA",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 95.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 516954917,
+       "fromOsmNode": 2989372367,
+       "toOsmNode": 13238837041,
+       "polyline": {
+        "points": "iexc|@aqcjaAmB|m@e@zJKxB",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "מיקוניס שמואל",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 66.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1532806165,
+       "fromOsmNode": 13238837041,
+       "toOsmNode": 6455492003,
+       "polyline": {
+        "points": "ijxc|@mrajaAoc@eF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 73.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 6455492003,
+       "polyline": {
+        "points": "ynyc|@syajaAgM]gGcCoO_C",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:21:00Z",
+      "scheduledDeparture": "2026-10-05T06:21:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:28:00Z",
+      "scheduledArrival": "2026-10-05T06:28:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T06:21:00Z",
+     "endTime": "2026-10-05T06:28:00Z",
+     "scheduledStartTime": "2026-10-05T06:21:00Z",
+     "scheduledEndTime": "2026-10-05T06:28:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_אזורי חן",
+     "tripFrom": {
+      "name": "חניון חולון/תחנת מוצא",
+      "stopId": "il-Israel-MOT_35500",
+      "importance": 1.530429653939791e-05,
+      "lat": 31.997018999999998,
+      "lon": 34.76277500000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:55:00Z",
+      "scheduledDeparture": "2026-10-05T05:55:00Z",
+      "stopCode": "31881",
+      "description": "רחוב:   עיר: חולון רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "מסוף אזורי חן",
+      "stopId": "il-Israel-MOT_48341",
+      "parentId": "il-Israel-MOT_14110",
+      "importance": 2.1702113372157328e-05,
+      "lat": 32.12851000000001,
+      "lon": 34.79221700000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:45:00Z",
+      "scheduledArrival": "2026-10-05T06:45:00Z",
+      "stopCode": "26643",
+      "description": "רחוב:   עיר: תל אביב יפו רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_9873",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "אגד",
+     "agencyUrl": "http://www.egged.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "3",
+     "tripId": "20261005_08:55_il-Israel-MOT_51365817_031026",
+     "routeShortName": "171",
+     "routeLongName": "חניון חולון/תחנת מוצא-חולון<->מסוף אזורי חן-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "171",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:3576751:3576796",
+     "intermediateStops": [
+      {
+       "name": "המסגר/ישראל טל",
+       "stopId": "il-Israel-MOT_13322",
+       "importance": 7.859222387196496e-05,
+       "lat": 32.063805,
+       "lon": 34.785694,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:21:00Z",
+       "departure": "2026-10-05T06:21:00Z",
+       "scheduledArrival": "2026-10-05T06:21:00Z",
+       "scheduledDeparture": "2026-10-05T06:21:00Z",
+       "stopCode": "23017",
+       "description": "רחוב: המסגר 32 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "המסגר/המלאכה",
+       "stopId": "il-Israel-MOT_29483",
+       "importance": 4.8820329539012164e-05,
+       "lat": 32.066288,
+       "lon": 34.786743,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:22:00Z",
+       "departure": "2026-10-05T06:22:00Z",
+       "scheduledArrival": "2026-10-05T06:22:00Z",
+       "scheduledDeparture": "2026-10-05T06:22:00Z",
+       "stopCode": "20356",
+       "description": "רחוב: המסגר 50 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "ת.רק''ל יהודית/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_48363",
+       "importance": 9.973604755941778e-05,
+       "lat": 32.069862,
+       "lon": 34.788124,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:23:00Z",
+       "departure": "2026-10-05T06:23:00Z",
+       "scheduledArrival": "2026-10-05T06:23:00Z",
+       "scheduledDeparture": "2026-10-05T06:23:00Z",
+       "stopCode": "20727",
+       "description": "רחוב: דרך מנחם בגין 106 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "קניון עזריאלי/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_13204",
+       "importance": 0.00022040566545911133,
+       "lat": 32.075726,
+       "lon": 34.791622000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:26:00Z",
+       "departure": "2026-10-05T06:26:00Z",
+       "scheduledArrival": "2026-10-05T06:26:00Z",
+       "scheduledDeparture": "2026-10-05T06:26:00Z",
+       "stopCode": "21669",
+       "description": "רחוב: דרך מנחם בגין 138 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "דרך נמיר/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_38947",
+       "importance": 4.1817824239842594e-05,
+       "lat": 32.080208,
+       "lon": 34.794180000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:27:00Z",
+       "departure": "2026-10-05T06:27:00Z",
+       "scheduledArrival": "2026-10-05T06:27:00Z",
+       "scheduledDeparture": "2026-10-05T06:27:00Z",
+       "stopCode": "20013",
+       "description": "רחוב: דרך נמיר עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "suzc|@}cbjaAc[aCod@_GgD{@yVaFwXaJ}L{Eg^sO_l@sVc[kIkJwB_EiA_aA{UcBa@mi@gLiPwD{EgAmq@gT_SgEaIm@aH}@mEgAkBa@gBu@kAm@sBiBcKsD_GcBaAa@qBaAgDwByLaKqLiKkGoF{DmDsNqMoBoCg@eAwA}Gw@kCWm@_CqCmEgDuEiG{P_NOMcIwE}GwDeCkAc`@cNcGwB{OcEc@OoNgD}OmEmJoCoi@yPoQkHcFqB{^qMaJkCyHwAkSmEaUaNgIsEeJgFgIgEoKoFuWsNuJgF_`@{Q_IkEgm@mVgBq@kBoAaG_DcQ{KkFgDwDqBeEiBsAm@}EiAcLcCuPoDcPgCoCc@wkA_PsTgDgUwC}Em@uOsBm@EmOiHwGeAcG_D",
+      "precision": 6,
+      "length": 95
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:28:00Z",
+      "departure": "2026-10-05T06:28:00Z",
+      "scheduledArrival": "2026-10-05T06:28:00Z",
+      "scheduledDeparture": "2026-10-05T06:28:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.0839,
+      "lon": 34.7983,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:35:00Z",
+      "scheduledArrival": "2026-10-05T06:35:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T06:28:00Z",
+     "endTime": "2026-10-05T06:35:00Z",
+     "scheduledStartTime": "2026-10-05T06:28:00Z",
+     "scheduledEndTime": "2026-10-05T06:35:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 448.0,
+     "legGeometry": {
+      "points": "q`fe|@u~ujaAkEk@??TsB??ZwC??nCsV??P_B??RcB??~CqY??bBT`BmN??vAwL??wO}C??n@_F??]G??kAY??{@S??aK_CbAiI??`ByM??dAwIqRaE??h@}E??jDe\\??D]??t@eH??D]??sMeC??NmA??|GnA",
+      "precision": 6,
+      "length": 53
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 12.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10989302973,
+       "polyline": {
+        "points": "q`fe|@u~ujaAkEk@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 6.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1116750747,
+       "fromOsmNode": 10989302973,
+       "toOsmNode": 10732308119,
+       "polyline": {
+        "points": "}ffe|@a`vjaATsB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 10732308119,
+       "toOsmNode": 13979514742,
+       "polyline": {
+        "points": "gffe|@ucvjaAZwC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 36.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 13979514742,
+       "toOsmNode": 9829192527,
+       "polyline": {
+        "points": "kefe|@mhvjaAnCsV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 9829192527,
+       "toOsmNode": 6330716848,
+       "polyline": {
+        "points": "{`fe|@a`wjaAP_B",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 6330716848,
+       "toOsmNode": 4047544611,
+       "polyline": {
+        "points": "i`fe|@acwjaARcB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 41.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 4047544611,
+       "toOsmNode": 9829267073,
+       "polyline": {
+        "points": "u_fe|@efwjaA~CqY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 30.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1351513426,
+       "fromOsmNode": 9829267073,
+       "toOsmNode": 6189286769,
+       "polyline": {
+        "points": "uzee|@w`xjaAbBT`BmN",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 21.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1541159049,
+       "fromOsmNode": 6189286769,
+       "toOsmNode": 12504012326,
+       "polyline": {
+        "points": "otee|@ooxjaAvAwL",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 31.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 12504012326,
+       "toOsmNode": 8863861313,
+       "polyline": {
+        "points": "wqee|@g}xjaAwO}C",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 8863861313,
+       "toOsmNode": 8863868621,
+       "polyline": {
+        "points": "obfe|@ebyjaAn@_F",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 2.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 617764519,
+       "fromOsmNode": 8863868621,
+       "toOsmNode": 3535755466,
+       "polyline": {
+        "points": "_afe|@eiyjaA]G",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563695,
+       "fromOsmNode": 3535755466,
+       "toOsmNode": 3579209638,
+       "polyline": {
+        "points": "}afe|@miyjaAkAY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563694,
+       "fromOsmNode": 3579209638,
+       "toOsmNode": 3947850000,
+       "polyline": {
+        "points": "idfe|@gjyjaA{@S",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204455,
+       "fromOsmNode": 3947850000,
+       "toOsmNode": 3535755467,
+       "polyline": {
+        "points": "effe|@{jyjaAaK_CbAiI",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204454,
+       "fromOsmNode": 3535755467,
+       "toOsmNode": 2684152889,
+       "polyline": {
+        "points": "cpfe|@eyyjaA`ByM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 53.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563693,
+       "fromOsmNode": 2684152889,
+       "toOsmNode": 3535755454,
+       "polyline": {
+        "points": "amfe|@_hzjaAdAwIqRaE",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1317268166,
+       "fromOsmNode": 3535755454,
+       "toOsmNode": 619160044,
+       "polyline": {
+        "points": "m~fe|@yxzjaAh@}E",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 45.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 619160044,
+       "toOsmNode": 12905620035,
+       "polyline": {
+        "points": "c}fe|@w_{jaAjDe\\",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620035,
+       "toOsmNode": 12905620033,
+       "polyline": {
+        "points": "wwfe|@}|{jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620033,
+       "toOsmNode": 12905620025,
+       "polyline": {
+        "points": "qwfe|@{}{jaAt@eH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620025,
+       "toOsmNode": 12905620024,
+       "polyline": {
+        "points": "{ufe|@ag|jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 27.0,
+       "fromLevel": 1.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144387,
+       "fromOsmNode": 12905620024,
+       "toOsmNode": 12905620028,
+       "polyline": {
+        "points": "uufe|@_h|jaAsMeC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144389,
+       "fromOsmNode": 12905620028,
+       "toOsmNode": 12905620026,
+       "polyline": {
+        "points": "idge|@el|jaANmA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 17.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 12905620026,
+       "polyline": {
+        "points": "ycge|@sn|jaA|GnA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 5100,
+   "startTime": "2026-10-05T05:21:00Z",
+   "endTime": "2026-10-05T06:46:00Z",
+   "transfers": 0,
+   "id": "Ck0hUI2XbhJDP0ApSgwCK4dmQUAyE2lsLUlzcmFlbC1NT1RfMzczMTQ5LqTDQxhDP0BByoXKv5ZnQUBIvOeM1gZQyO2M1gZaBFdBTEtgAQrdAQpA15HXkNeoINep15HXoiDXnteo15vXli3XkdeQ16gg16nXkdeiPC0+15vXqNee15nXkNecLdeb16jXnteZ15DXnBIlMjAyNjEwMDVfMDg6MjdfaWwtSXNyYWVsLU1PVF8xXzUyMTEzMhoTaWwtSXNyYWVsLU1PVF8zNzMxNCEupMNDGEM/QCnKhcq/lmdBQDITaWwtSXNyYWVsLU1PVF8zNzM1ODnSG+4jtwpAQEEaBFYOLWZBQEjI7YzWBlDsjo3WBloNUkVHSU9OQUxfUkFJTGABcQAAAAAAAAAAClYaE2lsLUlzcmFlbC1NT1RfMzczNTgh0hvuI7cKQEApGgRWDi1mQUA5NBE2PL0KQEBByjLEsS5mQUBI7I6N1gZQqI+N1gZaBFdBTEtgAWkAAAAAAAAAAA==",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.262,
+      "lon": 34.801,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:21:00Z",
+      "scheduledDeparture": "2026-10-05T05:21:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "באר שבע צפון",
+      "stopId": "il-Israel-MOT_37314",
+      "importance": 0.00021084373292978853,
+      "lat": 31.262088999999996,
+      "lon": 34.809287999999995,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:34:00Z",
+      "scheduledArrival": "2026-10-05T05:34:00Z",
+      "stopCode": "17082",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "duration": 780,
+     "startTime": "2026-10-05T05:21:00Z",
+     "endTime": "2026-10-05T05:34:00Z",
+     "scheduledStartTime": "2026-10-05T05:21:00Z",
+     "scheduledEndTime": "2026-10-05T05:34:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 873.0,
+     "legGeometry": {
+      "points": "{vasz@q|akaA??qNbA??PwN??OcM??CkC??GeH??GaP??aGA??uA???d@oYeBiE??CoF??EaU???mA??Kcc@??Kmg@EmFC{C??~B{FOcg@??IoU??AeM??AkN??MmaA???oE?uGPuEZwEb@_Fv@kFfAwEzA_GlBaHbLmY??`H}P??r@qA??sAsA??bCiG",
+      "precision": 6,
+      "length": 62
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 41.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10101116020,
+       "polyline": {
+        "points": "{vasz@q|akaA??qNbA",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 24.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154213252,
+       "fromOsmNode": 10101116020,
+       "toOsmNode": 7086094066,
+       "polyline": {
+        "points": "mfbsz@mzakaAPwN",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 21.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524997,
+       "fromOsmNode": 7086094066,
+       "toOsmNode": 9227210211,
+       "polyline": {
+        "points": "{ebsz@ejbkaAOcM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524999,
+       "fromOsmNode": 9227210211,
+       "toOsmNode": 9227210210,
+       "polyline": {
+        "points": "kfbsz@ixbkaACkC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524998,
+       "fromOsmNode": 9227210210,
+       "toOsmNode": 7086094037,
+       "polyline": {
+        "points": "ofbsz@u|bkaAGeH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 26.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 221758358,
+       "fromOsmNode": 7086094037,
+       "toOsmNode": 2307765550,
+       "polyline": {
+        "points": "wfbsz@{eckaAGaP",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 2307765550,
+       "toOsmNode": 7086094065,
+       "polyline": {
+        "points": "_gbsz@}vckaAaGA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 7086094065,
+       "toOsmNode": 1486123005,
+       "polyline": {
+        "points": "aobsz@_wckaAuA?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 1486123005,
+       "toOsmNode": 1486123012,
+       "polyline": {
+        "points": "wqbsz@_wckaAd@oYeBiE",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 1486123012,
+       "toOsmNode": 12337361402,
+       "polyline": {
+        "points": "wsbsz@ywdkaACoF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 33.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 12337361402,
+       "toOsmNode": 10120320778,
+       "polyline": {
+        "points": "{sbsz@i_ekaAEaU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10120320778,
+       "toOsmNode": 10707648487,
+       "polyline": {
+        "points": "atbsz@kuekaA?mA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 55.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10707648487,
+       "toOsmNode": 10120320780,
+       "polyline": {
+        "points": "atbsz@ywekaAKcc@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 80.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10120320780,
+       "toOsmNode": 1486123009,
+       "polyline": {
+        "points": "mtbsz@}{fkaAKmg@EmFC{C",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 75.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 1486123009,
+       "toOsmNode": 10267108894,
+       "polyline": {
+        "points": "cubsz@uphkaA~B{FOcg@",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 34.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10267108894,
+       "toOsmNode": 1491711060,
+       "polyline": {
+        "points": "sqbsz@u`jkaAIoU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 22.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 1491711060,
+       "toOsmNode": 3677360125,
+       "polyline": {
+        "points": "}qbsz@ewjkaAAeM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 3677360125,
+       "toOsmNode": 3677540944,
+       "polyline": {
+        "points": "_rbsz@kekkaAAkN",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 101.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 3677540944,
+       "toOsmNode": 4455641379,
+       "polyline": {
+        "points": "arbsz@wtkkaAMmaA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 152.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 4455641379,
+       "toOsmNode": 3715565997,
+       "polyline": {
+        "points": "orbsz@ewmkaA?oE?uGPuEZwEb@_Fv@kFfAwEzA_GlBaHbLmY",
+        "precision": 6,
+        "length": 11
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 32.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 3715565997,
+       "toOsmNode": 1491711067,
+       "polyline": {
+        "points": "oxasz@mtpkaA`H}P",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 1491711067,
+       "toOsmNode": 2971294518,
+       "polyline": {
+        "points": "moasz@kfqkaAr@qA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 6.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 293522474,
+       "fromOsmNode": 2971294518,
+       "toOsmNode": 2971295135,
+       "polyline": {
+        "points": "ymasz@}hqkaAsAsA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 37.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 2971295135,
+       "polyline": {
+        "points": "mpasz@qkqkaAbCiG",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "REGIONAL_RAIL",
+     "from": {
+      "name": "באר שבע צפון",
+      "stopId": "il-Israel-MOT_37314",
+      "importance": 0.00021084373292978853,
+      "lat": 31.262088999999996,
+      "lon": 34.809287999999995,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:34:00Z",
+      "scheduledDeparture": "2026-10-05T05:34:00Z",
+      "stopCode": "17082",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "to": {
+      "name": "תל אביב מרכז",
+      "stopId": "il-Israel-MOT_37358",
+      "importance": 0.0007779757142998278,
+      "lat": 32.083714,
+      "lon": 34.79825000000001,
+      "level": 0.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:45:00Z",
+      "scheduledArrival": "2026-10-05T06:45:00Z",
+      "stopCode": "17038",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "duration": 4260,
+     "startTime": "2026-10-05T05:34:00Z",
+     "endTime": "2026-10-05T06:45:00Z",
+     "scheduledStartTime": "2026-10-05T05:34:00Z",
+     "scheduledEndTime": "2026-10-05T06:45:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "406",
+     "tripFrom": {
+      "name": "באר שבע מרכז",
+      "stopId": "il-Israel-MOT_37312",
+      "importance": 0.00019576275371946394,
+      "lat": 31.242886,
+      "lon": 34.79854600000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:27:00Z",
+      "scheduledDeparture": "2026-10-05T05:27:00Z",
+      "stopCode": "17084",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "tripTo": {
+      "name": "כרמיאל",
+      "stopId": "il-Israel-MOT_41292",
+      "importance": 9.65762956184335e-05,
+      "lat": 32.924763,
+      "lon": 35.2948,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T08:33:00Z",
+      "scheduledArrival": "2026-10-05T08:33:00Z",
+      "stopCode": "17115",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "routeId": "il-Israel-MOT_30103",
+     "routeUrl": "",
+     "directionId": "0",
+     "routeType": 2,
+     "agencyName": "רכבת ישראל",
+     "agencyUrl": "http://www.rail.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "2",
+     "tripId": "20261005_08:27_il-Israel-MOT_1_521132",
+     "routeShortName": "",
+     "routeLongName": "באר שבע מרכז-באר שבע<->כרמיאל-כרמיאל",
+     "tripShortName": "",
+     "displayName": "באר שבע מרכז-באר שבע<->כרמיאל-כרמיאל",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:45984:46000",
+     "intermediateStops": [
+      {
+       "name": "קרית גת",
+       "stopId": "il-Israel-MOT_37316",
+       "importance": 9.353109635412693e-05,
+       "lat": 31.603525,
+       "lon": 34.777954,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T05:57:00Z",
+       "departure": "2026-10-05T05:57:00Z",
+       "scheduledArrival": "2026-10-05T05:57:00Z",
+       "scheduledDeparture": "2026-10-05T05:57:00Z",
+       "stopCode": "17080",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "לוד",
+       "stopId": "il-Israel-MOT_37338",
+       "importance": 0.0003760094987228513,
+       "lat": 31.947695,
+       "lon": 34.879158000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:22:00Z",
+       "departure": "2026-10-05T06:22:00Z",
+       "scheduledArrival": "2026-10-05T06:22:00Z",
+       "scheduledDeparture": "2026-10-05T06:22:00Z",
+       "stopCode": "17058",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "תל אביב ההגנה",
+       "stopId": "il-Israel-MOT_37292",
+       "importance": 0.0007372280233539641,
+       "lat": 32.053978,
+       "lon": 34.784839999999996,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:35:00Z",
+       "departure": "2026-10-05T06:35:00Z",
+       "scheduledArrival": "2026-10-05T06:35:00Z",
+       "scheduledDeparture": "2026-10-05T06:35:00Z",
+       "stopCode": "17104",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "השלום",
+       "stopId": "il-Israel-MOT_37350",
+       "importance": 0.000736865506041795,
+       "lat": 32.073345,
+       "lon": 34.79325500000001,
+       "level": 0.0,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:40:00Z",
+       "departure": "2026-10-05T06:40:00Z",
+       "scheduledArrival": "2026-10-05T06:40:00Z",
+       "scheduledDeparture": "2026-10-05T06:40:00Z",
+       "stopCode": "17046",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "ywasz@s{qkaAcqA|iDeIlT_CjGwMv]sF~NcOv^kGrLuG|KmGpIwGlIcHvHuHzGqMzJyMhIqZ~OeoChuAmnBxaAwaId`EcU`L}T|J{WpK}WhJc^|Kg^`Jm_@~Hu_@tGcs@`Iyt@fEueAxDyl@wBurCmGibC`A{q@bByb@dBi\\`E}gEdi@qqNllC}s@tMc_@|Ege@~Fi{@fH_a@dCga@nAkv@|@_m@w@cr@aC}f@iDcLg@whAmLedBsR{l@eF{\\iD_PuBgb@kEyBScWmCqyBsTkt@}EwLq@cKk@yJW_JG}QYif@O_WFoYReXd@gW`Aal@zCaShAcQjAinBrLqh@~CeNp@mKl@cK\\_K^iHV_NVqVXsb@QgVc@_Mm@eK]wQ_AwMgAeRgB{BWoQsBeH{@gLeBk`@gG_h@uIabA}PebA}PwUcEuU{Dil@eKsyA{V{}Bea@e~By`@ycBuYkEy@i]_Gw]uFeMaBuMcBk\\gDks@kFos@iDck@qCck@mCcwAiGkaDiOobA{EobAuEcfCkLcmG{YwMk@eTaAghAcDspAq@st@n@qt@jBssAxFcsAzFg|@xDwmEnRqyAtGsvA|FovArGebCvJyxEpSoQv@ekBhI{c@nBefAfGylBhNokB~Maf@dDoeGxd@mbEvZetAnJsi@lCui@`BiSTgj@Toe@Soe@cAke@iBeRcAcRmAyUmBqUyBkl@oGqvCc`@g{@aJ_]mCk]oBea@uAia@s@cp@Eub@l@ea@|Aqd@`C_d@rD_r@pIiq@bL}i@`Lup@nPipChu@aW`I{t@|R}l@nPyl@fPolBnh@}jBtg@e~Bho@gp@vQ_vCjx@{w@tUus@lV{kB~r@m}HtyC_fCr`AoeCh`AalGraCwt@bYgt@zXoiBrr@mtEvfBgcEb~AgyA~g@mh@hOed@pKif@dKyc@`Hua@pFqq@tGci@jDi_@nAm^z@m_@Naf@Wcf@kAiw@cEwYgC}WeCcc@gGuc@wG}t@{Oqt@gRuhBmk@_o@cTgfAw]afAa^y{Akh@ezAyg@aOkFuj@oRuJeD}XaJo\\aM}kBup@_kBup@uxBiu@amB{o@uJiDmWaJ}_B{j@m|@wWm}@qTkl@uK_KaBaZeEsUoCq{@qH_[_Bg[iAcQ_@gV[gf@Eif@ZcdAzAg}@|Aa}@|A_{Bj@sQUeN[mwAuG_~@cIkzDac@ekBaT}jByS_`AoK{_AqKy`CgXobGkq@sUeCwUcCw|@wGw{@wCwKUmj@SoTNmT^so@rBge@tCe^dDmc@`Fea@`GuQvCkTdEwN~CsK|Bg]nIsXdImWbI_a@hNkV~IeV`KqV`LyGdDcZ|Nmf@zXqCzAyb@rW{l@j_@_ShMsS~Lg{@zi@i{@ti@iVnO_VhO}aDpqBudDjtBs{@vi@{{@vh@s`@jSy`@hQiZnLmZhK_r@dRmj@dL{]pF{]lEob@pDqj@lCkWl@me@NueBoA_c@s@wb@qB{Q}@mMmAcIs@mKiA{KyA}SoCmRiDuiAgXchAwZyxBim@skAiZia@qIeOsC{QoCqVqDsOwBeO_BwWgCwQgBs\\yB_Qo@og@sAsh@e@{b@NcY\\iZbAoVhAyRpAwYrBqYvCkf@rGoTbDeT~DuRxDwZtGaZnH{TxGiThGqRtGoc@bPo]vNmTvJwPfIyWxMyj@`[{MfHm]|RagBrbAg]rQeTvKkUbKqZdNcWdK_\\~KeWxIoQ`F_V|GaQbEeSxEsPpDiO|CyMvBgTxDef@dGeg@bFwWtBe^hByVx@eS`@mSVcXPwYAmVa@wd@cAam@sDo]oC}SoBwSeC{m@mJejBs[wjCce@wdAyQsdAcRiG_AuQqCeu@yN}WkEyfBuZkb@kEcd@{GyJmBuI_BcLoCeKyCeJuC_SkG{aBsi@a`Ai[{JwB}ZuHiwAke@gbD}eAqe@cP{IiDuJaFwUyLeLwDgQ{Faj@{P_nAu_@eK_CeIiBoM_CoIuAyK_B}NkBsJ_AuLiA}Ju@}Ju@q^}AyGIgIUsH?uPEuRToTfAwThA_SzAaRjBuTrDaq@lK{dDfx@y_AzTcj@lOomAh[{jBt`@gi@nJop@nIi}@~Gge@lBmeB`CwxAjAw`@Z}eCfCsaHq@qtFl@}hBNk_C_DwcBeMwf@aGsw@qMu}Aw_@ygAqY{}D{bA_cIqxBmdBik@{~DeaBozB_cAyqF}cCuhEmkB}fOisGcfA{e@muAuw@wwAcy@_zAwbAqnAmfAqsAgtAmbAmhAwyAkcBegBimBkkAykAywAkoAylB_{AsfBscA_mIqaEqrIorDmc@sTsyB{x@ahAc^g_Cik@yuEqm@_`@{Fuw@mJ_PmB{kM_|AesPk}@oxNgg@uk@cDigA_Gw|AeIav@{DaReCA?qzGq_@gm@aFei@mGcYeE{q@}Ncp@aQ}}CalA}yAak@auB_}@ylBwo@mpFm}Aa{LqcDoeAkWqv@{NyeA}MeSsAmkAsE}eBYko@jCoTrAwRrAkwA`NmrAnRk|Fv}@yqBbXs{AvTy_BxRweAnDe`AfAmh@Uad@sBuaAoG{vAeSm`@aH{qA{^ur@iXud@gUoNuJcLyFiv@aa@muAudAkXyVssAmmA}_@g^ud@g_@awDeaDojAqaAsXmWu{EkbEas@yl@siBs}Amr@}k@if@g\\kOcKsZkOmUsMit@s[}s@eUccDwdAgbK}cD}uBuq@mvCq{@mo@iUwbBws@_oC_qAqd@mT{JwEsqOuaHq[mN}M}FcvJidEoF}Bmj@{Uk`@}N{`D}~@oo@cRea@oLo_@eMerAu]yvBcn@eqAa_@{y@qUieAe[_f@}P{b@mT{[sQiZuOuF}C{^iSuQ}Jg}@yf@}F_Dm|@me@{dAek@sp@y`@af@mWe`DefBgiCepAgz@o\\mdAo\\qr@yRaxAc\\odAwOckBcSu_CcQmhAwKcsAqRqnAc\\y[gKim@iT{f@sTabBwy@gkDoeB}vByaAwj@gNeZcGqi@yIqZuEyoAwJoXiAkP]kt@]c_@NuRd@{PhAgYdDgWbDma@nGo\\~FkRvDgYhH{~HjrB{WrHsJpCmx@lTy]hJ}QbGoTdJ_XdMoOrIkRnLaTxOsXlRoSvOsTbQi^bYwMlLcL`KsTvSwMbMoStSm`A~_Acs@ns@uDtDad@|d@msB~tBa{E~}EyGtGyIvIkHjHcH`HuJvJki@fj@cF~EgE`EoEtDcFjEcF`EkFtDmFjDyGtDqG~CkF`C}H~CuJ`DaLhDmJ|ByIpBoI|AgIhAcJbAoI|@qG`@aH^gGFgG?_IGsJW{G]eGa@qGs@oKwAgK}A}JiBiEaAgGiB{HcCqK}DkHmDuJwE{IsDoKgGsH_FyH{EmIeGsL{Ikx@wv@iNmNqHcIkGkH_GyHgG}HcJaN{HaMaOwU}Ri\\wCoGoRc`@oSog@uX{j@wLaVwMuW_MuSezAebCgGyJuF_JeGsI{J{M{v@e_AkWqZyKuOsWmb@kDqFu\\sd@uAuBoZ{a@sB{Cga@ek@_IkMeIoL}G}IoNmPyr@yv@oQgQ}J{I_K}HkM_JoL{H}PqJk_Aga@gPcGkKgDaJgBaI}A{IqAiLaAaGSyFGsJBgI\\eJv@sHx@iHnAqH`BiHpBoKpDeIrDsJ`FeIlFgIdGmGxFwGrGeGnHcHxI_H~JscCrvDoK`O}JlN_GjH{NvOcLlLi_@~_@_FdFsShSicD|_Derf@~{e@uCpCimDhjDixDtuDip@ro@qr@xt@ee@`h@cDlDosCz_D{}AnhB{pBzvBunAltAwt@~x@mW`\\ih@fu@gmBfxCmy@voAmqCnmEysA`mB_Tx[{i@zv@yb@|o@cz@brAaUp_@ow@lmAojB~sCad@z}@mNzSqKjQ_Zje@ww@xoAgoAzmBkJxNeIzLaVf_@}sCthEoi\\v{g@wZve@{b@dp@oUz]sHbKmGdI}F`HmGrHoaApfAeMdNeKlK{FhG{FhFeErD{H|FuEhDcI|E{FhDeG~CaDzAuBbAsJtEe{@x]gNzFmFxBqxAhm@waAda@yRxHyBz@aXbLwHvDgI`EkL`GeFpC{i@fZqEdCkh@hYcJ`FuKjFeIrDeMlFiEvAmF|A}J~AmHt@gIb@oHZiK^sLTgJAmCCwPMos@cAe{@oAoMQaW_@aF[mHi@kGs@wYcDkJqAaJ}A}FeAyGmAeWmFyoBya@an@oMyv@yOaY{F_f@eKuGuAuFuAeFuAcEuAcGoB{GiCgE_BuGmCiEkBwG_DqHqD}EoCgFoC}FkDkG_EkEuCqGeE{G}EaGgFcFkEkLqKqIiIcGyGmoAggBaJoKuOcQkK}KgGeFgHuFgDoC_D}BaEoC_HuE{q@w`@oFiCqE{BqEeB_YaJyFeBut@sRcGkAkFeAyFy@uEo@gIoAwHeAqJeAcSkB_Io@sIk@}G[wMm@iI_@oIUgHSuHUsIMsbAiCic@gAq^_AuL[{F]eFe@gD]sBUuCc@oDi@eEu@yDq@mCm@eF{AeM_Ea]{LmFkByDcBiFcCcGwCoIeEmFqCgEgCy`@uWgLqHcGgEkEcDmA}@iGaFuE}DsH{GyDwDyEoEsCoC{AyAiRwQaAaAqZyY{DgDwD_DoDmCgF{DsEiDuE_DaHcEuF{CgGkDuE_CqEyBeDqAgZsKuFgBqEuAoDs@mp@_JuDe@kGo@il@wFuHq@sD]}Gy@aFw@yTgE",
+      "precision": 6,
+      "length": 1019
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "תל אביב מרכז",
+      "stopId": "il-Israel-MOT_37358",
+      "importance": 0.0007779757142998278,
+      "lat": 32.083714,
+      "lon": 34.79825000000001,
+      "level": 0.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:45:00Z",
+      "departure": "2026-10-05T06:45:00Z",
+      "scheduledArrival": "2026-10-05T06:45:00Z",
+      "scheduledDeparture": "2026-10-05T06:45:00Z",
+      "stopCode": "17038",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.0839,
+      "lon": 34.7983,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:46:00Z",
+      "scheduledArrival": "2026-10-05T06:46:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 60,
+     "startTime": "2026-10-05T06:45:00Z",
+     "endTime": "2026-10-05T06:46:00Z",
+     "scheduledStartTime": "2026-10-05T06:45:00Z",
+     "scheduledEndTime": "2026-10-05T06:46:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 55.0,
+     "legGeometry": {
+      "points": "gofe|@{h|jaAqSwD??|GnA",
+      "precision": 6,
+      "length": 4
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 12905620026,
+       "polyline": {
+        "points": "gofe|@{h|jaAqSwD",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 17.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 12905620026,
+       "polyline": {
+        "points": "ycge|@sn|jaA|GnA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 5880,
+   "startTime": "2026-10-05T05:27:00Z",
+   "endTime": "2026-10-05T07:05:00Z",
+   "transfers": 1,
+   "id": "Ck0hUI2XbhJDP0ApSgwCK4dmQUAyE2lsLUlzcmFlbC1NT1RfMjc2MjM5GHjuPVxCP0BBEqs/wjBmQUBIpOqM1gZQ/O6M1gZaBFdBTEtgAQqTAQoDMzcwEisyMDI2MTAwNV8wODozMF9pbC1Jc3JhZWwtTU9UXzIyMjEwNDRfMDIxMDI2GhNpbC1Jc3JhZWwtTU9UXzI3NjIzIRh47j1cQj9AKRKrP8IwZkFAMhNpbC1Jc3JhZWwtTU9UXzEyOTc1OYbGE0GcB0BAQRaKdD+nZEFASPzujNYGUKiPjdYGWgNCVVNgAQpiGhNpbC1Jc3JhZWwtTU9UXzEyOTc1IYbGE0GcB0BAKRaKdD+nZEFAMhNpbC1Jc3JhZWwtTU9UXzI5MzEwOTLJyFnYB0BAQY2u0t11ZEFASKiPjdYGUNSRjdYGWgRXQUxLYAEKlQEKAzE3MRItMjAyNjEwMDVfMDk6MjVfaWwtSXNyYWVsLU1PVF81ODU5NTk2NDRfMDMxMDI2GhNpbC1Jc3JhZWwtTU9UXzI5MzEwITLJyFnYB0BAKY2u0t11ZEFAMhNpbC1Jc3JhZWwtTU9UXzEzMzU0OV7v/nivCkBAQRv/PuPCZUFASNSRjdYGUPiUjdYGWgNCVVNgAQpNGhNpbC1Jc3JhZWwtTU9UXzEzMzU0IV7v/nivCkBAKRv/PuPCZUFAOTQRNjy9CkBAQcoyxLEuZkFASPiUjdYGUJyYjdYGWgRXQUxLYAE=",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.262,
+      "lon": 34.801,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:27:00Z",
+      "scheduledDeparture": "2026-10-05T05:27:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:37:00Z",
+      "scheduledArrival": "2026-10-05T05:37:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 600,
+     "startTime": "2026-10-05T05:27:00Z",
+     "endTime": "2026-10-05T05:37:00Z",
+     "scheduledStartTime": "2026-10-05T05:27:00Z",
+     "scheduledEndTime": "2026-10-05T05:37:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 601.0,
+     "legGeometry": {
+      "points": "{vasz@q|akaA@uCvHC??pIF??pA???pFD??bJF??lFb@??dAJ??hD`@??ExGT|BlBjCdClA??mA`yC??jD???~mBU",
+      "precision": 6,
+      "length": 28
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 1486123014,
+       "polyline": {
+        "points": "{vasz@q|akaA@uCvHC",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 19.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 1486123014,
+       "toOsmNode": 4938631022,
+       "polyline": {
+        "points": "amasz@kabkaApIF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 4938631022,
+       "toOsmNode": 9221930971,
+       "polyline": {
+        "points": "obasz@cabkaApA?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089430,
+       "fromOsmNode": 9221930971,
+       "toOsmNode": 9620150505,
+       "polyline": {
+        "points": "}_asz@cabkaApFD",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 20.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089417,
+       "fromOsmNode": 9620150505,
+       "toOsmNode": 1486123058,
+       "polyline": {
+        "points": "kx`sz@}`bkaAbJF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089423,
+       "fromOsmNode": 1486123058,
+       "toOsmNode": 1486123013,
+       "polyline": {
+        "points": "gm`sz@u`bkaAlFb@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 1486123013,
+       "toOsmNode": 2307765602,
+       "polyline": {
+        "points": "ye`sz@q_bkaAdAJ",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 2307765602,
+       "toOsmNode": 1486123180,
+       "polyline": {
+        "points": "sc`sz@e_bkaAhD`@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 37.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310083,
+       "fromOsmNode": 1486123180,
+       "toOsmNode": 3712274065,
+       "polyline": {
+        "points": "i~_sz@c~akaAExGT|BlBjCdClA",
+        "precision": 6,
+        "length": 5
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 234.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 969855456,
+       "fromOsmNode": 3712274065,
+       "toOsmNode": 3666509849,
+       "polyline": {
+        "points": "ev_sz@qjakaAmA`yC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "שדרות דוד בן גוריון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 785887081,
+       "fromOsmNode": 3666509849,
+       "toOsmNode": 3666511860,
+       "polyline": {
+        "points": "sx_sz@op|jaAjD?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "שדרות יצחק רגר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 198.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 3666511860,
+       "polyline": {
+        "points": "gs_sz@op|jaA~mBU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:37:00Z",
+      "scheduledDeparture": "2026-10-05T05:37:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:46:00Z",
+      "scheduledArrival": "2026-10-05T06:46:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 4140,
+     "startTime": "2026-10-05T05:37:00Z",
+     "endTime": "2026-10-05T06:46:00Z",
+     "scheduledStartTime": "2026-10-05T05:37:00Z",
+     "scheduledEndTime": "2026-10-05T06:46:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_תחנה מרכזית",
+     "tripFrom": {
+      "name": "ת.מרכזית באר שבע/רציפים בינעירוני",
+      "stopId": "il-Israel-MOT_48114",
+      "parentId": "il-Israel-MOT_26652",
+      "importance": 3.598554394557141e-05,
+      "lat": 31.243017,
+      "lon": 34.79674000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:30:00Z",
+      "scheduledDeparture": "2026-10-05T05:30:00Z",
+      "stopCode": "13907",
+      "description": "רחוב:   עיר: באר שבע רציף: 2   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית תל אביב קומה 6/הורדה",
+      "stopId": "il-Israel-MOT_14595",
+      "importance": 0.00014359125634655356,
+      "lat": 32.055510000000005,
+      "lon": 34.780334,
+      "level": 6.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:50:00Z",
+      "scheduledArrival": "2026-10-05T06:50:00Z",
+      "stopCode": "28627",
+      "description": "רחוב: תמח''ת קומה 6 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_8171",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "מטרופולין",
+     "agencyUrl": "http://www.metropoline.com",
+     "agencyFareUrl": "",
+     "agencyId": "15",
+     "tripId": "20261005_08:30_il-Israel-MOT_2221044_021026",
+     "routeShortName": "370",
+     "routeLongName": "ת.מרכזית באר שבע/רציפים בינעירוני-באר שבע<->ת.מרכזית תל אביב קומה 6/הורדה-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "370",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:11219717:11219721",
+     "intermediateStops": [
+      {
+       "name": "מרכז אורן/יצחק רגר",
+       "stopId": "il-Israel-MOT_27649",
+       "importance": 2.6401870854897425e-05,
+       "lat": 31.272045,
+       "lon": 34.79807000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T05:41:00Z",
+       "departure": "2026-10-05T05:41:00Z",
+       "scheduledArrival": "2026-10-05T05:41:00Z",
+       "scheduledDeparture": "2026-10-05T05:41:00Z",
+       "stopCode": "15359",
+       "description": "רחוב: יצחק רגר עיר: באר שבע רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NOT_ALLOWED",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "gd|rz@up|jaAjj@X_}BhFyYu@{D?{O?{k@RaRJknAZkDH}THyPJit@Fiv@z@{SRumDvBmTLsnADwg@?{PrA_VjBuv@~LsItAyG`BwK`C}JxDuLfE{K~EoGfDwK`IiGtFgJrJqDzDePnPeEvCaMzIqO|KmJxHuJtI}M`M}SxRiKtJky@jv@{c@b`@_SfOeKtHcN|IsPzJmRxIyJlDcIjCyOrDkThDiS`BkhE~Xa|@zFwRvA{tAxIuLl@gL|@wEDwXbBaCNkqAvIo^vBoo@fEyHl@kKl@up@nEuZnBoJd@ecDnSkuBfNghCjPa^lBckBvL{z@rFwkCjPkn@~D{wBxMsk@tDesB~Mk[nB{PnAq[bBiF\\iRxA{iAjHwkCxPab@pCi{BfNqo@bEeaGv_@kFJoKfAsIjAarFv\\c^jBeg@Vms@gAmZiAcoA_N_m@_JcxAgXyoBy]yzCmh@_tBg^kxBe_@_v@oM}fBuZ{e@mIyvAwV_p@cLg^}Geb@_Iqh@{L{f@aMyzBqk@idBgc@_`Cam@_jCkp@}aBwa@ydBuc@uU}FsUsEed@_Hc[sDq{@wFqUOkHGat@l@}i@~Ca\\vCag@xHuyAjVqi@~IoARmkAnTiv@pMozBxa@}p@zKgGbAeZzEkVfEwb@nHgvA~Vk]|GkjAxRwHxAmmA`SaZbFkiBx\\oHtAqf@lIsuB~]ia@xGcBTkyAfYws@hMehBrZe_@vFca@fF_PvAsR`A{WhA{UHwPOkOe@od@{AoYgCq\\gEgxAcZui@kM{NsDgf@yH{OaCkWqCk]eAcZR_^bBwm@tMqa@bLmX`Hi{@bViYxF}OhDaMbB{StCePjAiO|@qGFmOV}OLmn@d@gi@ZqOn@iWjAud@nDye@tE}^tFiqAbQqs@`KioA|OgqAjQg|@fL_qBrXyjAtOgf@zFg[lEwj@`G_lAlQsw@jJqd@bFomE|n@m^rFqq@zQ_XxIyT~Ho[rNuWpMoHlE{XzPqRzMu\\xUyE|DaUrSwO`PcUjVcb@zi@kXh_@{dAbwAsc@dn@kbAzsAuPtUwDzEq_@xf@oJpLmNzOyOfPog@bd@aUfPgQpLm^hSgH|DoFdCkMbG{KnEsS`Ig[pJid@vLw]nFaK|A{]tEibBjNuqB~PmWzBuDBkiHjn@{nAnKkyCrXwfKfw@aW|BklA]{[sAyj@mEc^eDwa@kHa^{Jua@yMqeAed@wIcFm_DkdBgrAgt@soBogA{IqEcDaBmJmEiEsBkCkAi]mOef@wNaXuEuF{@sJmBcNoAy^aC}Uq@ur@q@cLOqiEyHwrFmIk_AqCst@kFsn@gHqrAiW_sAgc@oDeAmEyAuYqJ}TeH{C}@}JcDe]wKeq@eTivDmnAmsCe~@slAs_@st@yWqtBqp@ssAs`@}e@uJwe@sGe`@wCc]{@gk@?we@nCkVrCe_BbZsfAtS{l@lKwdAfPcqAnLesAxGiv@|@yn@_@qp@}DqJm@sr@sF_UoCyC_@s|@qLgGu@wo@mOai@mNwjAc`@g|@a^wr@ka@ou@mc@kjBksAceCyjBoLiIym@gc@i}@cj@mb@oWuWmOaO}Ii}Am~@gsAiv@igB{z@_|C}qAu_Byn@}yAsg@_cAwYc_AgXypB_i@mqCal@__UeiEajKsrBakAgTquCoi@gQcD{oAkUq^}FmxB}[gvAwQc~BoX_Z_Dsk@iHcKuAcl@oG{tD{b@akAsNy_Fyk@_s@iH_vBiW_j@oHsaAcRs^_I{l@aOoyAid@ih@cRaX{JmYgJeb@uO}{@k[un@{Pg|@uTuq@aPiaA_Pm^_Ges@sIaj@gDgh@gCqJc@ua@wB}Nc@{p@qBssDwIsIMqw@sAyO[sOa@eP]alEmJ{sF{Qgp@gCabAwDuhD}Ls\\_Bk`EuOgn@yBoxFwS}{AMkrATurAfDc_@xC{SxAuy@zH_sYnvDsi@hHopGdy@e`C~[k_BzTm_Hz|@_d@zFiwCn]cvKtwAyvAdRe}@bIkzAzGqjAhBypAe@wpA_GwaA{Jkk@yF{}AyU{`Bm`@yjA}]qjBwt@ozAak@ipFatBeiEs`Bm_Bgo@}pKocE{rCuhA_hBil@oy@wVq~@uUqy@mN_b@mGsGeA}GaAgSiCcIcAqb@wFcw@uHekAaGuZ}@edAyBgaDbC}iER_sA^{g@s@aHSkGKafAcBqn@}@auAeEmk@_CioB_JyeUemAqtB{KysIud@qpAyGkfFgYcxAeNaxA{O}wBi_@{kA}Y}qFkyAu|DohAimJkoCuz@_XcQeFqX}IynAw`@u_@gLqkAe_@iQaFaf@yN{jAiZcc@sIy{@wMmj@wFur@cGs`@_Bur@aBgMEwU?c\\Ze[r@{ZdAoSrAmF\\wk@|EgWvDwHdAud@fGmpAhSgLxAcj@~I}f@hHs_A~MuV|DwSpC_c@lGecA~MoXfEumAlQch@`I{]rFse@tJaMz@a]pCql@jEqWvBe\\vAeZr@iwAcB}PS}Ig@cI?sKSaHY{l@yG_p@wH_n@kL{aAoX}GiBmW}IoN}Fkm@uUa\\kPqJcF{KsF_h@{Zed@eZ_h@ab@ah@_c@gq@ol@goA_hAo@e@_CqB{F}EkA}@eCqBeLuJkdBc|Ac`DomCauBqgByzCwiCccLiuJ_sD{tCqeEorCayB_~AcKsHmeGwaEcXcQaoIovFsL_IsIcGocEwoCoVkPid@k[}lBsnAci@}^_DqBqCcBuUkM_R{Jcf@yWql@qVmWmJyp@cVy}Aya@gaA}OsuFqg@o|CwXisEwb@mM{A}tCi[sXaDqwAcXc{Bsc@cB[w{Aa^sRuFmy@{Tcf@sNgU}GqzCibAgtCo_Awh@{QiZoHe_AoXgaAmU_d@iKoc@yIagB}^eaAwNodC}^_h@wHcVmDubDce@wy@wKoa@cHmQeD_ZeHy_AmVey@gYsmAuk@}y@{c@ym@ob@gm@_c@eUiRej@oh@sTaUsm@os@_\\{a@gGmIqc@qq@cT{_@_D{FiBsC__@_l@ol@wcAsnAosB{yAkfCyGkLiRc\\qBmDkQuZiRk[oq@ehAke@mx@iXoe@sPu\\iJyR_OsZ{FgOeR{i@kLs\\qY{bAqL_g@cO_v@qQweAiCaMmCqRyc@goCi\\{qBk]ovBgOg~@{R{lAkTgoAiM}o@aS_x@AOmCaH_AgC_\\q{@eWqh@ua@ct@{]gg@y`@{e@cq@_p@cfAqt@}d@aUk_@cQ}UoJyL}E{]aMcGqBkl@aP_l@kMq[{Go`@cEmd@cHqg@wFqp@}G{b@aHciDe_@woBcV{AWcBM_QyBgxAsPcCWsbF}i@akH}w@{aAuP}^gHgjAqXsb@aM_f@iQyh@oTaZyNwSiKeJ{EqPuJcK{F{N_JmMgIkQcLaNmJ_q@qf@_wAkhAs\\gTo[wNsB}@mTyHiTyF{^iHsSoBoMo@_Q_@cTS{Mj@cTFsPbAeWrB{S|Di]dJo]`N}WlNmQtKgQpLsHbGuKrIySzSmWj[a]bl@e@p@eKdUeO~a@gQnn@{Inh@aKng@qKdj@uTlgAw{@~nEmh@vsCyOtw@mHx\\aUd~@}Vxx@gIdWsKlYcOv^iQtc@mShb@aTv`@om@jfAq@bAsnF~aJmxDrqGuKtUuDdHaFpJqOzVyqBldDiuAn`CepBneDaHnLiKbQaMtTgPr_@_T|i@c[~}@{T|v@s]txAyXzmAyCbLqLze@qJfYsAtD{Stf@mYjf@yWr]wPpR}aGhlFuTdSgO~Mk~@hx@_\\n_@k[be@gPd\\sNx]}M~a@_IlYoH`^yEj\\aF~`@}Br_@kAx\\Ktc@^~\\nAb`@xB`YdEd]xEd\\tLlh@fOjg@hRfh@zMbVrU~`@|Z~f@fy@bmA|Yjf@fTna@zSbe@nUlt@xI`a@dD`SbDpVlEle@lBdUXnMJxLJhWSbWs@zU_A~R_CfZgDrYiJ`l@yOhl@oIpWsKzVc[dn@_QpW_^tc@}m@~m@ku@jv@}_@n_@eRjReL`M_L`M_CxCoRzUiU`]{MrT_O`YoRtd@oVtr@qU`w@kSln@cNhd@yObc@sNz[oCpGyT~b@i]|i@wSpVwR|Tc~BtjCai@tr@up@f|@af@hs@}FxIia@rq@ob@fr@ud@jv@ed@pv@uUl_@kAhB_D`FiW~a@mwA~vBynBtvCsdA~`BahHtaLaq@thAkB~CgL`R_D~EwLjRaAbBiUn_@{b@jp@{gAlaBox@pkAchM|wRopLtyQ}`An{A}i@tz@}JlOecAr}AkVj`@cS`XaJtKoIrI{VfT}SnPkZnPc[fO{q@z[__Bfk@uPbHmkC~lAk\\nQ{E~C{ZrSmUbQyQlN{FfEgRdNySpMgNhHaRnI_QjHwP`F}OvDaNxAgHf@cHf@oKb@yNVqe@Sy][q`As@iSg@q[cAuFKeD?{Ka@u@?_s@yIqVkDyg@cKUG_h@iMyl@mNo]oKePyFoI}DeOuF}EsAsKHC~RgAvM",
+      "precision": 6,
+      "length": 950
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:46:00Z",
+      "departure": "2026-10-05T06:46:00Z",
+      "scheduledArrival": "2026-10-05T06:46:00Z",
+      "scheduledDeparture": "2026-10-05T06:46:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:51:00Z",
+      "scheduledArrival": "2026-10-05T06:51:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 300,
+     "startTime": "2026-10-05T06:46:00Z",
+     "endTime": "2026-10-05T06:51:00Z",
+     "scheduledStartTime": "2026-10-05T06:46:00Z",
+     "scheduledEndTime": "2026-10-05T06:51:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 374.0,
+     "legGeometry": {
+      "points": "iewc|@abejaAZ``@??JrE??BzC??cMs@_NgAUxDe@?kAnA??mB|m@e@zJKxB??oc@eF??gM]gGcCoO_C",
+      "precision": 6,
+      "length": 22
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 54.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 8312938433,
+       "polyline": {
+        "points": "iewc|@abejaAZ``@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 904582118,
+       "fromOsmNode": 8312938433,
+       "toOsmNode": 8312938437,
+       "polyline": {
+        "points": "mdwc|@_adjaAJrE",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 894374265,
+       "fromOsmNode": 8312938437,
+       "toOsmNode": 8312938438,
+       "polyline": {
+        "points": "adwc|@kzcjaABzC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 69.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 404325070,
+       "fromOsmNode": 8312938438,
+       "toOsmNode": 2989372367,
+       "polyline": {
+        "points": "}cwc|@oucjaAcMs@_NgAUxDe@?kAnA",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 95.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 516954917,
+       "fromOsmNode": 2989372367,
+       "toOsmNode": 13238837041,
+       "polyline": {
+        "points": "iexc|@aqcjaAmB|m@e@zJKxB",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "מיקוניס שמואל",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 66.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1532806165,
+       "fromOsmNode": 13238837041,
+       "toOsmNode": 6455492003,
+       "polyline": {
+        "points": "ijxc|@mrajaAoc@eF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 73.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 6455492003,
+       "polyline": {
+        "points": "ynyc|@syajaAgM]gGcCoO_C",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:51:00Z",
+      "scheduledDeparture": "2026-10-05T06:51:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:58:00Z",
+      "scheduledArrival": "2026-10-05T06:58:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T06:51:00Z",
+     "endTime": "2026-10-05T06:58:00Z",
+     "scheduledStartTime": "2026-10-05T06:51:00Z",
+     "scheduledEndTime": "2026-10-05T06:58:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_אזורי חן",
+     "tripFrom": {
+      "name": "חניון חולון/תחנת מוצא",
+      "stopId": "il-Israel-MOT_35500",
+      "importance": 1.530429653939791e-05,
+      "lat": 31.997018999999998,
+      "lon": 34.76277500000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:25:00Z",
+      "scheduledDeparture": "2026-10-05T06:25:00Z",
+      "stopCode": "31881",
+      "description": "רחוב:   עיר: חולון רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "מסוף אזורי חן",
+      "stopId": "il-Israel-MOT_48341",
+      "parentId": "il-Israel-MOT_14110",
+      "importance": 2.1702113372157328e-05,
+      "lat": 32.12851000000001,
+      "lon": 34.79221700000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:15:00Z",
+      "scheduledArrival": "2026-10-05T07:15:00Z",
+      "stopCode": "26643",
+      "description": "רחוב:   עיר: תל אביב יפו רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_9873",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "אגד",
+     "agencyUrl": "http://www.egged.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "3",
+     "tripId": "20261005_09:25_il-Israel-MOT_585959644_031026",
+     "routeShortName": "171",
+     "routeLongName": "חניון חולון/תחנת מוצא-חולון<->מסוף אזורי חן-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "171",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:3578637:3578682",
+     "intermediateStops": [
+      {
+       "name": "המסגר/ישראל טל",
+       "stopId": "il-Israel-MOT_13322",
+       "importance": 7.859222387196496e-05,
+       "lat": 32.063805,
+       "lon": 34.785694,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:51:00Z",
+       "departure": "2026-10-05T06:51:00Z",
+       "scheduledArrival": "2026-10-05T06:51:00Z",
+       "scheduledDeparture": "2026-10-05T06:51:00Z",
+       "stopCode": "23017",
+       "description": "רחוב: המסגר 32 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "המסגר/המלאכה",
+       "stopId": "il-Israel-MOT_29483",
+       "importance": 4.8820329539012164e-05,
+       "lat": 32.066288,
+       "lon": 34.786743,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:52:00Z",
+       "departure": "2026-10-05T06:52:00Z",
+       "scheduledArrival": "2026-10-05T06:52:00Z",
+       "scheduledDeparture": "2026-10-05T06:52:00Z",
+       "stopCode": "20356",
+       "description": "רחוב: המסגר 50 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "ת.רק''ל יהודית/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_48363",
+       "importance": 9.973604755941778e-05,
+       "lat": 32.069862,
+       "lon": 34.788124,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:53:00Z",
+       "departure": "2026-10-05T06:53:00Z",
+       "scheduledArrival": "2026-10-05T06:53:00Z",
+       "scheduledDeparture": "2026-10-05T06:53:00Z",
+       "stopCode": "20727",
+       "description": "רחוב: דרך מנחם בגין 106 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "קניון עזריאלי/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_13204",
+       "importance": 0.00022040566545911133,
+       "lat": 32.075726,
+       "lon": 34.791622000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:56:00Z",
+       "departure": "2026-10-05T06:56:00Z",
+       "scheduledArrival": "2026-10-05T06:56:00Z",
+       "scheduledDeparture": "2026-10-05T06:56:00Z",
+       "stopCode": "21669",
+       "description": "רחוב: דרך מנחם בגין 138 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "דרך נמיר/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_38947",
+       "importance": 4.1817824239842594e-05,
+       "lat": 32.080208,
+       "lon": 34.794180000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:57:00Z",
+       "departure": "2026-10-05T06:57:00Z",
+       "scheduledArrival": "2026-10-05T06:57:00Z",
+       "scheduledDeparture": "2026-10-05T06:57:00Z",
+       "stopCode": "20013",
+       "description": "רחוב: דרך נמיר עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "suzc|@}cbjaAc[aCod@_GgD{@yVaFwXaJ}L{Eg^sO_l@sVc[kIkJwB_EiA_aA{UcBa@mi@gLiPwD{EgAmq@gT_SgEaIm@aH}@mEgAkBa@gBu@kAm@sBiBcKsD_GcBaAa@qBaAgDwByLaKqLiKkGoF{DmDsNqMoBoCg@eAwA}Gw@kCWm@_CqCmEgDuEiG{P_NOMcIwE}GwDeCkAc`@cNcGwB{OcEc@OoNgD}OmEmJoCoi@yPoQkHcFqB{^qMaJkCyHwAkSmEaUaNgIsEeJgFgIgEoKoFuWsNuJgF_`@{Q_IkEgm@mVgBq@kBoAaG_DcQ{KkFgDwDqBeEiBsAm@}EiAcLcCuPoDcPgCoCc@wkA_PsTgDgUwC}Em@uOsBm@EmOiHwGeAcG_D",
+      "precision": 6,
+      "length": 95
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:58:00Z",
+      "departure": "2026-10-05T06:58:00Z",
+      "scheduledArrival": "2026-10-05T06:58:00Z",
+      "scheduledDeparture": "2026-10-05T06:58:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.0839,
+      "lon": 34.7983,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:05:00Z",
+      "scheduledArrival": "2026-10-05T07:05:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T06:58:00Z",
+     "endTime": "2026-10-05T07:05:00Z",
+     "scheduledStartTime": "2026-10-05T06:58:00Z",
+     "scheduledEndTime": "2026-10-05T07:05:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 448.0,
+     "legGeometry": {
+      "points": "q`fe|@u~ujaAkEk@??TsB??ZwC??nCsV??P_B??RcB??~CqY??bBT`BmN??vAwL??wO}C??n@_F??]G??kAY??{@S??aK_CbAiI??`ByM??dAwIqRaE??h@}E??jDe\\??D]??t@eH??D]??sMeC??NmA??|GnA",
+      "precision": 6,
+      "length": 53
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 12.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10989302973,
+       "polyline": {
+        "points": "q`fe|@u~ujaAkEk@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 6.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1116750747,
+       "fromOsmNode": 10989302973,
+       "toOsmNode": 10732308119,
+       "polyline": {
+        "points": "}ffe|@a`vjaATsB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 10732308119,
+       "toOsmNode": 13979514742,
+       "polyline": {
+        "points": "gffe|@ucvjaAZwC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 36.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 13979514742,
+       "toOsmNode": 9829192527,
+       "polyline": {
+        "points": "kefe|@mhvjaAnCsV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 9829192527,
+       "toOsmNode": 6330716848,
+       "polyline": {
+        "points": "{`fe|@a`wjaAP_B",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 6330716848,
+       "toOsmNode": 4047544611,
+       "polyline": {
+        "points": "i`fe|@acwjaARcB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 41.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 4047544611,
+       "toOsmNode": 9829267073,
+       "polyline": {
+        "points": "u_fe|@efwjaA~CqY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 30.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1351513426,
+       "fromOsmNode": 9829267073,
+       "toOsmNode": 6189286769,
+       "polyline": {
+        "points": "uzee|@w`xjaAbBT`BmN",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 21.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1541159049,
+       "fromOsmNode": 6189286769,
+       "toOsmNode": 12504012326,
+       "polyline": {
+        "points": "otee|@ooxjaAvAwL",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 31.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 12504012326,
+       "toOsmNode": 8863861313,
+       "polyline": {
+        "points": "wqee|@g}xjaAwO}C",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 8863861313,
+       "toOsmNode": 8863868621,
+       "polyline": {
+        "points": "obfe|@ebyjaAn@_F",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 2.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 617764519,
+       "fromOsmNode": 8863868621,
+       "toOsmNode": 3535755466,
+       "polyline": {
+        "points": "_afe|@eiyjaA]G",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563695,
+       "fromOsmNode": 3535755466,
+       "toOsmNode": 3579209638,
+       "polyline": {
+        "points": "}afe|@miyjaAkAY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563694,
+       "fromOsmNode": 3579209638,
+       "toOsmNode": 3947850000,
+       "polyline": {
+        "points": "idfe|@gjyjaA{@S",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204455,
+       "fromOsmNode": 3947850000,
+       "toOsmNode": 3535755467,
+       "polyline": {
+        "points": "effe|@{jyjaAaK_CbAiI",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204454,
+       "fromOsmNode": 3535755467,
+       "toOsmNode": 2684152889,
+       "polyline": {
+        "points": "cpfe|@eyyjaA`ByM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 53.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563693,
+       "fromOsmNode": 2684152889,
+       "toOsmNode": 3535755454,
+       "polyline": {
+        "points": "amfe|@_hzjaAdAwIqRaE",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1317268166,
+       "fromOsmNode": 3535755454,
+       "toOsmNode": 619160044,
+       "polyline": {
+        "points": "m~fe|@yxzjaAh@}E",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 45.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 619160044,
+       "toOsmNode": 12905620035,
+       "polyline": {
+        "points": "c}fe|@w_{jaAjDe\\",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620035,
+       "toOsmNode": 12905620033,
+       "polyline": {
+        "points": "wwfe|@}|{jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620033,
+       "toOsmNode": 12905620025,
+       "polyline": {
+        "points": "qwfe|@{}{jaAt@eH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620025,
+       "toOsmNode": 12905620024,
+       "polyline": {
+        "points": "{ufe|@ag|jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 27.0,
+       "fromLevel": 1.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144387,
+       "fromOsmNode": 12905620024,
+       "toOsmNode": 12905620028,
+       "polyline": {
+        "points": "uufe|@_h|jaAsMeC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144389,
+       "fromOsmNode": 12905620028,
+       "toOsmNode": 12905620026,
+       "polyline": {
+        "points": "idge|@el|jaANmA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 17.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 12905620026,
+       "polyline": {
+        "points": "ycge|@sn|jaA|GnA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 6060,
+   "startTime": "2026-10-05T05:35:00Z",
+   "endTime": "2026-10-05T07:16:00Z",
+   "transfers": 0,
+   "id": "Ck0hUI2XbhJDP0ApSgwCK4dmQUAyE2lsLUlzcmFlbC1NT1RfMzczMTQ5LqTDQxhDP0BByoXKv5ZnQUBIhO6M1gZQkPSM1gZaBFdBTEtgAQrvAQpS15HXkNeoINep15HXoiDXnteo15vXli3XkdeQ16gg16nXkdeiPC0+16rXnCDXkNeR15nXkSDXnteo15vXli3XqtecINeQ15HXmdeRINeZ16TXlRIlMjAyNjEwMDVfMDg6NDFfaWwtSXNyYWVsLU1PVF8xXzUyMTMyMhoTaWwtSXNyYWVsLU1PVF8zNzMxNCEupMNDGEM/QCnKhcq/lmdBQDITaWwtSXNyYWVsLU1PVF8zNzM1ODnSG+4jtwpAQEEaBFYOLWZBQEiQ9IzWBlD0nI3WBloNUkVHSU9OQUxfUkFJTGABcQAAAAAAAAAAClYaE2lsLUlzcmFlbC1NT1RfMzczNTgh0hvuI7cKQEApGgRWDi1mQUA5NBE2PL0KQEBByjLEsS5mQUBI9JyN1gZQsJ2N1gZaBFdBTEtgAWkAAAAAAAAAAA==",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.262,
+      "lon": 34.801,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:35:00Z",
+      "scheduledDeparture": "2026-10-05T05:35:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "באר שבע צפון",
+      "stopId": "il-Israel-MOT_37314",
+      "importance": 0.00021084373292978853,
+      "lat": 31.262088999999996,
+      "lon": 34.809287999999995,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T05:48:00Z",
+      "scheduledArrival": "2026-10-05T05:48:00Z",
+      "stopCode": "17082",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "duration": 780,
+     "startTime": "2026-10-05T05:35:00Z",
+     "endTime": "2026-10-05T05:48:00Z",
+     "scheduledStartTime": "2026-10-05T05:35:00Z",
+     "scheduledEndTime": "2026-10-05T05:48:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 873.0,
+     "legGeometry": {
+      "points": "{vasz@q|akaA??qNbA??PwN??OcM??CkC??GeH??GaP??aGA??uA???d@oYeBiE??CoF??EaU???mA??Kcc@??Kmg@EmFC{C??~B{FOcg@??IoU??AeM??AkN??MmaA???oE?uGPuEZwEb@_Fv@kFfAwEzA_GlBaHbLmY??`H}P??r@qA??sAsA??bCiG",
+      "precision": 6,
+      "length": 62
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 41.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10101116020,
+       "polyline": {
+        "points": "{vasz@q|akaA??qNbA",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 24.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154213252,
+       "fromOsmNode": 10101116020,
+       "toOsmNode": 7086094066,
+       "polyline": {
+        "points": "mfbsz@mzakaAPwN",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 21.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524997,
+       "fromOsmNode": 7086094066,
+       "toOsmNode": 9227210211,
+       "polyline": {
+        "points": "{ebsz@ejbkaAOcM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524999,
+       "fromOsmNode": 9227210211,
+       "toOsmNode": 9227210210,
+       "polyline": {
+        "points": "kfbsz@ixbkaACkC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 999524998,
+       "fromOsmNode": 9227210210,
+       "toOsmNode": 7086094037,
+       "polyline": {
+        "points": "ofbsz@u|bkaAGeH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 26.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 221758358,
+       "fromOsmNode": 7086094037,
+       "toOsmNode": 2307765550,
+       "polyline": {
+        "points": "wfbsz@{eckaAGaP",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 2307765550,
+       "toOsmNode": 7086094065,
+       "polyline": {
+        "points": "_gbsz@}vckaAaGA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 7086094065,
+       "toOsmNode": 1486123005,
+       "polyline": {
+        "points": "aobsz@_wckaAuA?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310084,
+       "fromOsmNode": 1486123005,
+       "toOsmNode": 1486123012,
+       "polyline": {
+        "points": "wqbsz@_wckaAd@oYeBiE",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 1486123012,
+       "toOsmNode": 12337361402,
+       "polyline": {
+        "points": "wsbsz@ywdkaACoF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 33.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 12337361402,
+       "toOsmNode": 10120320778,
+       "polyline": {
+        "points": "{sbsz@i_ekaAEaU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10120320778,
+       "toOsmNode": 10707648487,
+       "polyline": {
+        "points": "atbsz@kuekaA?mA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 55.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10707648487,
+       "toOsmNode": 10120320780,
+       "polyline": {
+        "points": "atbsz@ywekaAKcc@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 80.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10120320780,
+       "toOsmNode": 1486123009,
+       "polyline": {
+        "points": "mtbsz@}{fkaAKmg@EmFC{C",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 75.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 1486123009,
+       "toOsmNode": 10267108894,
+       "polyline": {
+        "points": "cubsz@uphkaA~B{FOcg@",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 34.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 154203920,
+       "fromOsmNode": 10267108894,
+       "toOsmNode": 1491711060,
+       "polyline": {
+        "points": "sqbsz@u`jkaAIoU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 22.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 1491711060,
+       "toOsmNode": 3677360125,
+       "polyline": {
+        "points": "}qbsz@ewjkaAAeM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 3677360125,
+       "toOsmNode": 3677540944,
+       "polyline": {
+        "points": "_rbsz@kekkaAAkN",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 101.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 448560729,
+       "fromOsmNode": 3677540944,
+       "toOsmNode": 4455641379,
+       "polyline": {
+        "points": "arbsz@wtkkaAMmaA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 152.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 4455641379,
+       "toOsmNode": 3715565997,
+       "polyline": {
+        "points": "orbsz@ewmkaA?oE?uGPuEZwEb@_Fv@kFfAwEzA_GlBaHbLmY",
+        "precision": 6,
+        "length": 11
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 32.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 3715565997,
+       "toOsmNode": 1491711067,
+       "polyline": {
+        "points": "oxasz@mtpkaA`H}P",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135898299,
+       "fromOsmNode": 1491711067,
+       "toOsmNode": 2971294518,
+       "polyline": {
+        "points": "moasz@kfqkaAr@qA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "גשר מקסיקו",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 6.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 293522474,
+       "fromOsmNode": 2971294518,
+       "toOsmNode": 2971295135,
+       "polyline": {
+        "points": "ymasz@}hqkaAsAsA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 37.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 2971295135,
+       "polyline": {
+        "points": "mpasz@qkqkaAbCiG",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "REGIONAL_RAIL",
+     "from": {
+      "name": "באר שבע צפון",
+      "stopId": "il-Israel-MOT_37314",
+      "importance": 0.00021084373292978853,
+      "lat": 31.262088999999996,
+      "lon": 34.809287999999995,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:48:00Z",
+      "scheduledDeparture": "2026-10-05T05:48:00Z",
+      "stopCode": "17082",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "to": {
+      "name": "תל אביב מרכז",
+      "stopId": "il-Israel-MOT_37358",
+      "importance": 0.0007779757142998278,
+      "lat": 32.083714,
+      "lon": 34.79825000000001,
+      "level": 0.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:15:00Z",
+      "scheduledArrival": "2026-10-05T07:15:00Z",
+      "stopCode": "17038",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "duration": 5220,
+     "startTime": "2026-10-05T05:48:00Z",
+     "endTime": "2026-10-05T07:15:00Z",
+     "scheduledStartTime": "2026-10-05T05:48:00Z",
+     "scheduledEndTime": "2026-10-05T07:15:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "28",
+     "tripFrom": {
+      "name": "באר שבע מרכז",
+      "stopId": "il-Israel-MOT_37312",
+      "importance": 0.00019576275371946394,
+      "lat": 31.242886,
+      "lon": 34.79854600000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:41:00Z",
+      "scheduledDeparture": "2026-10-05T05:41:00Z",
+      "stopCode": "17084",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "tripTo": {
+      "name": "תל אביב מרכז",
+      "stopId": "il-Israel-MOT_37358",
+      "importance": 0.0007779757142998278,
+      "lat": 32.083714,
+      "lon": 34.79825000000001,
+      "level": 0.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:15:00Z",
+      "scheduledArrival": "2026-10-05T07:15:00Z",
+      "stopCode": "17038",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "routeId": "il-Israel-MOT_30086",
+     "routeUrl": "",
+     "directionId": "0",
+     "routeType": 2,
+     "agencyName": "רכבת ישראל",
+     "agencyUrl": "http://www.rail.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "2",
+     "tripId": "20261005_08:41_il-Israel-MOT_1_521322",
+     "routeShortName": "",
+     "routeLongName": "באר שבע מרכז-באר שבע<->תל אביב מרכז-תל אביב יפו",
+     "tripShortName": "",
+     "displayName": "באר שבע מרכז-באר שבע<->תל אביב מרכז-תל אביב יפו",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:46593:46603",
+     "intermediateStops": [
+      {
+       "name": "להבים רהט",
+       "stopId": "il-Israel-MOT_37308",
+       "importance": 7.069210550980642e-05,
+       "lat": 31.369907,
+       "lon": 34.79804000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T05:59:00Z",
+       "departure": "2026-10-05T05:59:00Z",
+       "scheduledArrival": "2026-10-05T05:59:00Z",
+       "scheduledDeparture": "2026-10-05T05:59:00Z",
+       "stopCode": "17088",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "קרית גת",
+       "stopId": "il-Israel-MOT_37316",
+       "importance": 9.353109635412693e-05,
+       "lat": 31.603525,
+       "lon": 34.777954,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:15:00Z",
+       "departure": "2026-10-05T06:15:00Z",
+       "scheduledArrival": "2026-10-05T06:15:00Z",
+       "scheduledDeparture": "2026-10-05T06:15:00Z",
+       "stopCode": "17080",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "קרית מלאכי",
+       "stopId": "il-Israel-MOT_42419",
+       "importance": 6.612431025132537e-05,
+       "lat": 31.747335,
+       "lon": 34.82248,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:27:00Z",
+       "departure": "2026-10-05T06:27:00Z",
+       "scheduledArrival": "2026-10-05T06:27:00Z",
+       "scheduledDeparture": "2026-10-05T06:27:00Z",
+       "stopCode": "17119",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "מזכרת בתיה",
+       "stopId": "il-Israel-MOT_42418",
+       "importance": 6.612431025132537e-05,
+       "lat": 31.841507,
+       "lon": 34.85595,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:36:00Z",
+       "departure": "2026-10-05T06:36:00Z",
+       "scheduledArrival": "2026-10-05T06:36:00Z",
+       "scheduledDeparture": "2026-10-05T06:36:00Z",
+       "stopCode": "17120",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "רמלה",
+       "stopId": "il-Israel-MOT_37336",
+       "importance": 0.00012920341396238655,
+       "lat": 31.928808,
+       "lon": 34.877303999999995,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:46:00Z",
+       "departure": "2026-10-05T06:46:00Z",
+       "scheduledArrival": "2026-10-05T06:46:00Z",
+       "scheduledDeparture": "2026-10-05T06:46:00Z",
+       "stopCode": "17060",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "לוד",
+       "stopId": "il-Israel-MOT_37338",
+       "importance": 0.0003760094987228513,
+       "lat": 31.947695,
+       "lon": 34.879158000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:51:00Z",
+       "departure": "2026-10-05T06:51:00Z",
+       "scheduledArrival": "2026-10-05T06:51:00Z",
+       "scheduledDeparture": "2026-10-05T06:51:00Z",
+       "stopCode": "17058",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "תל אביב ההגנה",
+       "stopId": "il-Israel-MOT_37292",
+       "importance": 0.0007372280233539641,
+       "lat": 32.053978,
+       "lon": 34.784839999999996,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:05:00Z",
+       "departure": "2026-10-05T07:05:00Z",
+       "scheduledArrival": "2026-10-05T07:05:00Z",
+       "scheduledDeparture": "2026-10-05T07:05:00Z",
+       "stopCode": "17104",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      },
+      {
+       "name": "השלום",
+       "stopId": "il-Israel-MOT_37350",
+       "importance": 0.000736865506041795,
+       "lat": 32.073345,
+       "lon": 34.79325500000001,
+       "level": 0.0,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:10:00Z",
+       "departure": "2026-10-05T07:10:00Z",
+       "scheduledArrival": "2026-10-05T07:10:00Z",
+       "scheduledDeparture": "2026-10-05T07:10:00Z",
+       "stopCode": "17046",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "REGIONAL_RAIL"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "ywasz@s{qkaAcqA|iDeIlT_CjGwMv]sF~NcOv^kGrLuG|KmGpIwGlIcHvHuHzGqMzJyMhIqZ~OeoChuAmnBxaAwaId`EcU`L}T|J{WpK}WhJc^|Kg^`Jm_@~Hu_@tGcs@`Iyt@fEueAxDyl@wBurCmGibC`A{q@bByb@dBi\\`E}gEdi@qqNllC}s@tMc_@|Ege@~Fi{@fH_a@dCga@nAkv@|@_m@w@cr@aC}f@iDcLg@whAmLedBsR{l@eF{\\iD_PuBgb@kEyBScWmCqyBsTkt@}EwLq@cKk@yJW_JG}QYif@O_WFoYReXd@gW`Aal@zCaShAcQjAinBrLqh@~CeNp@mKl@cK\\_K^iHV_NVqVXsb@QgVc@_Mm@eK]wQ_AwMgAeRgB{BWoQsBeH{@gLeBk`@gG_h@uIod@qLsZuF{[cF{KmB{XwE}UiE{U_E}l@eKuzAqWwrCif@sgCmc@u^mGwk@sJc\\yFa]mFuMmB}MgB}\\kDgVmBgVaBio@aDio@yCae@_C_e@uByjAmF_iAqFyhAcF}iAoFipMkm@oMi@mUcAclAkDilAg@mu@r@ku@lBorAtFqrArFu|@|DuoErR_xAtGoFTmoAdF{vApGsaCxJiyEjS}P~@okB~HckBlIimBrLqkBxNmHj@u[hCeqDpXwtArKytAnKqo@`Fso@bFg`BjL}h@pCai@vAqR\\yj@\\se@Ywe@_Aoe@gBqH]oHe@cRmAk]mCk]iDo{@oKkwBeYi{@aJa]kCi]sBea@uAea@y@up@Kgc@|@ea@rAkd@fCud@vDar@jIwq@`Lqi@nLim@`OsuDncA}n@jQoj@jO{j@vOslBnh@alBhh@q|Alb@coAl]ixCdy@ix@`Var@xUilBls@s_IbzCceCd`AoeCt`AwkGnaCqt@~Xkt@|XoiBtr@stErfBabEz}Ac{Azh@yg@tN_e@fLqg@zJo`@pGga@fFsq@tGmj@jDq^lAk]t@_a@Tqc@Ymh@oAqZwAe[_CoZyBia@{Eg[sDoe@aIit@iOqr@_RseBij@yn@}ScfA{]yfAi^_{Awh@mzAgg@sNgFcU{Hw`@aN{u@gWemBcr@ojB}o@kxBcu@iyBau@mh@yQioAic@a}@mX}}@oTmj@gKoQoCaZ{Dag@uFig@yDoZyAsZeAoO]wVYwd@?gd@ZuhAvAu|@`Bq|@xAezBn@gSa@_Yo@ojAqFo~AyNozCm]akB{SmjBcTk`AkK{_AwK_aCgX}bGgq@mUiCcVcCqx@kG{x@yCg[i@c[Kc[P_[d@mi@lBge@tCi^~Cmc@dFia@`GyQxCsThEmNxCwK`Ci]rIsYpIuVfH}`@zNyVhJmVfKgVpK{HrDiY~Nmi@b^yb@rW{l@j_@_ShMsS~Lg{@zi@i{@ti@iVnO_VhO}aDpqBudDjtBs{@vi@{{@vh@s`@jSy`@hQiZnLmZhK_r@dRmj@dL{]pF{]lEob@pDqj@lCkWl@me@NueBoA_c@s@wb@qB{Q}@mMmAcIs@mKiA{KyA}SoCmRiDuiAgXchAwZyxBim@skAiZia@qIeOsC{QoCqVqDsOwBeO_BwWgCwQgBs\\yB_Qo@og@sAsh@e@{b@NcY\\iZbAoVhAyRpAwYrBqYvCkf@rGoTbDeT~DuRxDwZtGaZnH{TxGiThGqRtGoc@bPo]vNmTvJwPfIyWxMyj@`[{MfHm]|RagBrbAg]rQeTvKkUbKqZdNcWdK_\\~KeWxIoQ`F_V|GaQbEeSxEsPpDiO|CyMvBgTxDef@dGeg@bFwWtBe^hByVx@eS`@mSVcXPwYAmVa@wd@cAam@sDo]oC}SoBwSeC{m@mJejBs[wjCce@wdAyQsdAcRiG_AuQqCeu@yN}WkEyfBuZkb@kEcd@{GyJmBuI_BcLoCeKyCeJuC_SkG{aBsi@a`Ai[{JwB}ZuHiwAke@gbD}eAqe@cP{IiDuJaFwUyLeLwDgQ{Faj@{P_nAu_@eK_CeIiBoM_CoIuAyK_B}NkBsJ_AuLiA}Ju@}Ju@q^}AyGIgIUsH?uPEuRToTfAwThA_SzAaRjBuTrDaq@lK{dDfx@y_AzTcj@lOomAh[{jBt`@gi@nJop@nIi}@~Gge@lBmeB`CwxAjAw`@Z}eCfCsaHq@qtFl@}hBNk_C_DwcBeMwf@aGsw@qMu}Aw_@ygAqY{}D{bA_cIqxBmdBik@{~DeaBozB_cAyqF}cCuhEmkB}fOisGcfA{e@muAuw@wwAcy@_zAwbAqnAmfAqsAgtAmbAmhAwyAkcBegBimBkkAykAywAkoAylB_{AsfBscA_mIqaEqrIorDmc@sTsyB{x@ahAc^g_Cik@yuEqm@_`@{Fuw@mJ_PmB{kM_|AesPk}@oxNgg@uk@cDigA_GkSeAkhA_Gav@{DaReCA?qzGq_@gm@aFei@mGcYeE{q@}Ncp@aQ}}CalA}yAak@auB_}@ylBwo@mpFm}Aa{LqcDoeAkWqv@{NyeA}MeSsAmkAsE}eBYko@jCoTrAwRrAkwA`NmrAnRk|Fv}@yqBbXs{AvTy_BxRweAnDe`AfAmh@Uad@sBuaAoG{vAeSm`@aH{qA{^ur@iXud@gUoNuJcLyFiv@aa@muAudAkXyVssAmmA}_@g^ud@g_@awDeaDojAqaAsXmWu{EkbEas@yl@siBs}Amr@}k@if@g\\kOcKsZkOmUsMit@s[}s@eUccDwdAgbK}cD}uBuq@mvCq{@mo@iUwbBws@cd@eT{iBy{@qd@mT{JwEsqOuaHq[mN}M}FcvJidEoF}Bmj@{Uk`@}N{`D}~@oo@cRea@oLo_@eMerAu]yvBcn@eqAa_@{y@qUieAe[_f@}P{b@mT{[sQiZuOuF}C{^iSuQ}Jg}@yf@}F_Dm|@me@{dAek@sp@y`@af@mWe`DefBgiCepAgz@o\\mdAo\\qr@yRaxAc\\odAwOckBcSu_CcQmhAwKcsAqRqnAc\\y[gKim@iT{f@sTabBwy@gkDoeB}vByaAwj@gNeZcGqi@yIqZuEyoAwJoXiAkP]kt@]c_@NuRd@{PhAgYdDgWbDma@nGo\\~FkRvDgYhH{~HjrB{WrHsJpCmx@lTy]hJ}QbGoTdJ_XdMoOrIkRnLaTxOsXlRoSvOsTbQi^bYwMlLcL`KsTvSwMbMoStSm`A~_Acs@ns@uDtDad@|d@oSvS}~Af`Ba{E~}EyGtGyIvIkHjHcH`HuJvJki@fj@cF~EgE`EoEtDcFjEcF`EkFtDmFjDyGtDqG~CkF`C}H~CuJ`DaLhDmJ|ByIpBoI|AgIhAcJbAoI|@qG`@aH^gGFgG?_IGsJW{G]eGa@qGs@oKwAgK}A}JiBiEaAgGiB{HcCqK}DkHmDuJwE{IsDoKgGsH_FyH{EmIeGsL{Ikx@wv@iNmNqHcIkGkH_GyHgG}HcJaN{HaMaOwU}Ri\\wCoGoRc`@oSog@uX{j@wLaVwMuW_MuSezAebCgGyJuF_JeGsI{J{M{v@e_AkWqZyKuOsWmb@kDqFu\\sd@uAuBoZ{a@sB{Cga@ek@_IkMeIoL}G}IoNmPyr@yv@oQgQ}J{I_K}HkM_JoL{H}PqJk_Aga@gPcGkKgDaJgBaI}A{IqAiLaAaGSyFGsJBgI\\eJv@sHx@iHnAqH`BiHpBoKpDeIrDsJ`FeIlFgIdGmGxFwGrGeGnHcHxI_H~JscCrvDoK`O}JlN_GjH{NvOcLlLi_@~_@_FdFsShSicD|_Derf@~{e@uCpCimDhjDixDtuDip@ro@qr@xt@ee@`h@cDlDosCz_D{}AnhB{pBzvBunAltAwt@~x@mW`\\ih@fu@gmBfxCmy@voAmqCnmEysA`mB_Tx[{i@zv@yb@|o@cz@brAaUp_@ow@lmAojB~sCad@z}@mNzSqKjQ_Zje@ww@xoAgoAzmBkJxNeIzLaVf_@}sCthEoi\\v{g@wZve@{b@dp@oUz]sHbKmGdI}F`HmGrHoaApfAeMdNeKlK{FhG{FhFeErD{H|FuEhDcI|E{FhDeG~CaDzAuBbAsJtEe{@x]gNzFmFxBqxAhm@waAda@yRxHyBz@aXbLwHvDgI`EkL`GeFpC{i@fZqEdCkh@hYcJ`FuKjFeIrDeMlFiEvAmF|A}J~AmHt@gIb@oHZiK^sLTgJAmCCwPMos@cAe{@oAoMQaW_@aF[mHi@kGs@wYcDkJqAaJ}A}FeAyGmAeWmFyoBya@an@oMyv@yOaY{F_f@eKuGuAuFuAeFuAcEuAcGoB{GiCgE_BuGmCiEkBwG_DqHqD}EoCgFoC}FkDkG_EkEuCqGeE{G}EaGgFcFkEkLqKqIiIcGyGmoAggBaJoKuOcQkK}KgGeFgHuFgDoC_D}BaEoC_HuE{q@w`@oFiCqE{BqEeB_YaJyFeBut@sRcGkAkFeAyFy@uEo@gIoAwHeAqJeAcSkB_Io@sIk@}G[wMm@iI_@oIUgHSuHUsIMsbAiCic@gAq^_AuL[{F]eFe@gD]sBUuCc@oDi@eEu@yDq@mCm@eF{AeM_Ea]{LmFkByDcBiFcCcGwCoIeEmFqCgEgCy`@uWgLqHcGgEkEcDmA}@iGaFuE}DsH{GyDwDyEoEsCoC{AyAiRwQaAaAqZyY{DgDwD_DoDmCgF{DsEiDuE_DaHcEuF{CgGkDuE_CqEyBeDqAgZsKuFgBqEuAoDs@mp@_JuDe@kGo@il@wFuHq@sD]}Gy@aFw@yTgE",
+      "precision": 6,
+      "length": 1028
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "תל אביב מרכז",
+      "stopId": "il-Israel-MOT_37358",
+      "importance": 0.0007779757142998278,
+      "lat": 32.083714,
+      "lon": 34.79825000000001,
+      "level": 0.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:15:00Z",
+      "departure": "2026-10-05T07:15:00Z",
+      "scheduledArrival": "2026-10-05T07:15:00Z",
+      "scheduledDeparture": "2026-10-05T07:15:00Z",
+      "stopCode": "17038",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "REGIONAL_RAIL"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.0839,
+      "lon": 34.7983,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:16:00Z",
+      "scheduledArrival": "2026-10-05T07:16:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 60,
+     "startTime": "2026-10-05T07:15:00Z",
+     "endTime": "2026-10-05T07:16:00Z",
+     "scheduledStartTime": "2026-10-05T07:15:00Z",
+     "scheduledEndTime": "2026-10-05T07:16:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 55.0,
+     "legGeometry": {
+      "points": "gofe|@{h|jaAqSwD??|GnA",
+      "precision": 6,
+      "length": 4
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 12905620026,
+       "polyline": {
+        "points": "gofe|@{h|jaAqSwD",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 17.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 12905620026,
+       "polyline": {
+        "points": "ycge|@sn|jaA|GnA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 5880,
+   "startTime": "2026-10-05T05:57:00Z",
+   "endTime": "2026-10-05T07:35:00Z",
+   "transfers": 1,
+   "id": "Ck0hUI2XbhJDP0ApSgwCK4dmQUAyE2lsLUlzcmFlbC1NT1RfMjc2MjM5GHjuPVxCP0BBEqs/wjBmQUBIrPiM1gZQhP2M1gZaBFdBTEtgAQqTAQoDMzcwEisyMDI2MTAwNV8wOTowMF9pbC1Jc3JhZWwtTU9UXzYxMTQ1MDVfMDIxMDI2GhNpbC1Jc3JhZWwtTU9UXzI3NjIzIRh47j1cQj9AKRKrP8IwZkFAMhNpbC1Jc3JhZWwtTU9UXzEyOTc1OYbGE0GcB0BAQRaKdD+nZEFASIT9jNYGULCdjdYGWgNCVVNgAQpiGhNpbC1Jc3JhZWwtTU9UXzEyOTc1IYbGE0GcB0BAKRaKdD+nZEFAMhNpbC1Jc3JhZWwtTU9UXzI5MzEwOTLJyFnYB0BAQY2u0t11ZEFASLCdjdYGUNyfjdYGWgRXQUxLYAEKlAEKAzE3MRIsMjAyNjEwMDVfMDk6NTVfaWwtSXNyYWVsLU1PVF81MTM2NTgxNF8wMzEwMjYaE2lsLUlzcmFlbC1NT1RfMjkzMTAhMsnIWdgHQEApja7S3XVkQUAyE2lsLUlzcmFlbC1NT1RfMTMzNTQ5Xu/+eK8KQEBBG/8+48JlQUBI3J+N1gZQgKON1gZaA0JVU2ABCk0aE2lsLUlzcmFlbC1NT1RfMTMzNTQhXu/+eK8KQEApG/8+48JlQUA5NBE2PL0KQEBByjLEsS5mQUBIgKON1gZQpKaN1gZaBFdBTEtgAQ==",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.262,
+      "lon": 34.801,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T05:57:00Z",
+      "scheduledDeparture": "2026-10-05T05:57:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T06:07:00Z",
+      "scheduledArrival": "2026-10-05T06:07:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 600,
+     "startTime": "2026-10-05T05:57:00Z",
+     "endTime": "2026-10-05T06:07:00Z",
+     "scheduledStartTime": "2026-10-05T05:57:00Z",
+     "scheduledEndTime": "2026-10-05T06:07:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 601.0,
+     "legGeometry": {
+      "points": "{vasz@q|akaA@uCvHC??pIF??pA???pFD??bJF??lFb@??dAJ??hD`@??ExGT|BlBjCdClA??mA`yC??jD???~mBU",
+      "precision": 6,
+      "length": 28
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 1486123014,
+       "polyline": {
+        "points": "{vasz@q|akaA@uCvHC",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 19.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 1486123014,
+       "toOsmNode": 4938631022,
+       "polyline": {
+        "points": "amasz@kabkaApIF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 219456347,
+       "fromOsmNode": 4938631022,
+       "toOsmNode": 9221930971,
+       "polyline": {
+        "points": "obasz@cabkaApA?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089430,
+       "fromOsmNode": 9221930971,
+       "toOsmNode": 9620150505,
+       "polyline": {
+        "points": "}_asz@cabkaApFD",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 20.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089417,
+       "fromOsmNode": 9620150505,
+       "toOsmNode": 1486123058,
+       "polyline": {
+        "points": "kx`sz@}`bkaAbJF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089423,
+       "fromOsmNode": 1486123058,
+       "toOsmNode": 1486123013,
+       "polyline": {
+        "points": "gm`sz@u`bkaAlFb@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 1486123013,
+       "toOsmNode": 2307765602,
+       "polyline": {
+        "points": "ye`sz@q_bkaAdAJ",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1046089415,
+       "fromOsmNode": 2307765602,
+       "toOsmNode": 1486123180,
+       "polyline": {
+        "points": "sc`sz@e_bkaAhD`@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 37.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 135310083,
+       "fromOsmNode": 1486123180,
+       "toOsmNode": 3712274065,
+       "polyline": {
+        "points": "i~_sz@c~akaAExGT|BlBjCdClA",
+        "precision": 6,
+        "length": 5
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 234.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 969855456,
+       "fromOsmNode": 3712274065,
+       "toOsmNode": 3666509849,
+       "polyline": {
+        "points": "ev_sz@qjakaAmA`yC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "שדרות דוד בן גוריון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 785887081,
+       "fromOsmNode": 3666509849,
+       "toOsmNode": 3666511860,
+       "polyline": {
+        "points": "sx_sz@op|jaAjD?",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "שדרות יצחק רגר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 198.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 3666511860,
+       "polyline": {
+        "points": "gs_sz@op|jaA~mBU",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+      "stopId": "il-Israel-MOT_27623",
+      "importance": 5.2358562243171036e-05,
+      "lat": 31.25922,
+      "lon": 34.79836300000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:07:00Z",
+      "scheduledDeparture": "2026-10-05T06:07:00Z",
+      "stopCode": "15333",
+      "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:16:00Z",
+      "scheduledArrival": "2026-10-05T07:16:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 4140,
+     "startTime": "2026-10-05T06:07:00Z",
+     "endTime": "2026-10-05T07:16:00Z",
+     "scheduledStartTime": "2026-10-05T06:07:00Z",
+     "scheduledEndTime": "2026-10-05T07:16:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_תחנה מרכזית",
+     "tripFrom": {
+      "name": "ת.מרכזית באר שבע/רציפים בינעירוני",
+      "stopId": "il-Israel-MOT_48114",
+      "parentId": "il-Israel-MOT_26652",
+      "importance": 3.598554394557141e-05,
+      "lat": 31.243017,
+      "lon": 34.79674000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:00:00Z",
+      "scheduledDeparture": "2026-10-05T06:00:00Z",
+      "stopCode": "13907",
+      "description": "רחוב:   עיר: באר שבע רציף: 2   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית תל אביב קומה 6/הורדה",
+      "stopId": "il-Israel-MOT_14595",
+      "importance": 0.00014359125634655356,
+      "lat": 32.055510000000005,
+      "lon": 34.780334,
+      "level": 6.0,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:20:00Z",
+      "scheduledArrival": "2026-10-05T07:20:00Z",
+      "stopCode": "28627",
+      "description": "רחוב: תמח''ת קומה 6 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_8171",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "מטרופולין",
+     "agencyUrl": "http://www.metropoline.com",
+     "agencyFareUrl": "",
+     "agencyId": "15",
+     "tripId": "20261005_09:00_il-Israel-MOT_6114505_021026",
+     "routeShortName": "370",
+     "routeLongName": "ת.מרכזית באר שבע/רציפים בינעירוני-באר שבע<->ת.מרכזית תל אביב קומה 6/הורדה-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "370",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:11219842:11219846",
+     "intermediateStops": [
+      {
+       "name": "מרכז אורן/יצחק רגר",
+       "stopId": "il-Israel-MOT_27649",
+       "importance": 2.6401870854897425e-05,
+       "lat": 31.272045,
+       "lon": 34.79807000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T06:11:00Z",
+       "departure": "2026-10-05T06:11:00Z",
+       "scheduledArrival": "2026-10-05T06:11:00Z",
+       "scheduledDeparture": "2026-10-05T06:11:00Z",
+       "stopCode": "15359",
+       "description": "רחוב: יצחק רגר עיר: באר שבע רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NOT_ALLOWED",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "gd|rz@up|jaAjj@X_}BhFyYu@{D?{O?{k@RaRJknAZkDH}THyPJit@Fiv@z@{SRumDvBmTLsnADwg@?{PrA_VjBuv@~LsItAyG`BwK`C}JxDuLfE{K~EoGfDwK`IiGtFgJrJqDzDePnPeEvCaMzIqO|KmJxHuJtI}M`M}SxRiKtJky@jv@{c@b`@_SfOeKtHcN|IsPzJmRxIyJlDcIjCyOrDkThDiS`BkhE~Xa|@zFwRvA{tAxIuLl@gL|@wEDwXbBaCNkqAvIo^vBoo@fEyHl@kKl@up@nEuZnBoJd@ecDnSkuBfNghCjPa^lBckBvL{z@rFwkCjPkn@~D{wBxMsk@tDesB~Mk[nB{PnAq[bBiF\\iRxA{iAjHwkCxPab@pCi{BfNqo@bEeaGv_@kFJoKfAsIjAarFv\\c^jBeg@Vms@gAmZiAcoA_N_m@_JcxAgXyoBy]yzCmh@_tBg^kxBe_@_v@oM}fBuZ{e@mIyvAwV_p@cLg^}Geb@_Iqh@{L{f@aMyzBqk@idBgc@_`Cam@_jCkp@}aBwa@ydBuc@uU}FsUsEed@_Hc[sDq{@wFqUOkHGat@l@}i@~Ca\\vCag@xHuyAjVqi@~IoARmkAnTiv@pMozBxa@}p@zKgGbAeZzEkVfEwb@nHgvA~Vk]|GkjAxRwHxAmmA`SaZbFkiBx\\oHtAqf@lIsuB~]ia@xGcBTkyAfYws@hMehBrZe_@vFca@fF_PvAsR`A{WhA{UHwPOkOe@od@{AoYgCq\\gEgxAcZui@kM{NsDgf@yH{OaCkWqCk]eAcZR_^bBwm@tMqa@bLmX`Hi{@bViYxF}OhDaMbB{StCePjAiO|@qGFmOV}OLmn@d@gi@ZqOn@iWjAud@nDye@tE}^tFiqAbQqs@`KioA|OgqAjQg|@fL_qBrXyjAtOgf@zFg[lEwj@`G_lAlQsw@jJqd@bFomE|n@m^rFqq@zQ_XxIyT~Ho[rNuWpMoHlE{XzPqRzMu\\xUyE|DaUrSwO`PcUjVcb@zi@kXh_@{dAbwAsc@dn@kbAzsAuPtUwDzEq_@xf@oJpLmNzOyOfPog@bd@aUfPgQpLm^hSgH|DoFdCkMbG{KnEsS`Ig[pJid@vLw]nFaK|A{]tEibBjNuqB~PmWzBuDBkiHjn@{nAnKkyCrXwfKfw@aW|BklA]{[sAyj@mEc^eDwa@kHa^{Jua@yMqeAed@wIcFm_DkdBgrAgt@soBogA{IqEcDaBmJmEiEsBkCkAi]mOef@wNaXuEuF{@sJmBcNoAy^aC}Uq@ur@q@cLOqiEyHwrFmIk_AqCst@kFsn@gHqrAiW_sAgc@oDeAmEyAuYqJ}TeH{C}@}JcDe]wKeq@eTivDmnAmsCe~@slAs_@st@yWqtBqp@ssAs`@}e@uJwe@sGe`@wCc]{@gk@?we@nCkVrCe_BbZsfAtS{l@lKwdAfPcqAnLesAxGiv@|@yn@_@qp@}DqJm@sr@sF_UoCyC_@s|@qLgGu@wo@mOai@mNwjAc`@g|@a^wr@ka@ou@mc@kjBksAceCyjBoLiIym@gc@i}@cj@mb@oWuWmOaO}Ii}Am~@gsAiv@igB{z@_|C}qAu_Byn@}yAsg@_cAwYc_AgXypB_i@mqCal@__UeiEajKsrBakAgTquCoi@gQcD{oAkUq^}FmxB}[gvAwQc~BoX_Z_Dsk@iHcKuAcl@oG{tD{b@akAsNy_Fyk@_s@iH_vBiW_j@oHsaAcRs^_I{l@aOoyAid@ih@cRaX{JmYgJeb@uO}{@k[un@{Pg|@uTuq@aPiaA_Pm^_Ges@sIaj@gDgh@gCqJc@ua@wB}Nc@{p@qBssDwIsIMqw@sAyO[sOa@eP]alEmJ{sF{Qgp@gCabAwDuhD}Ls\\_Bk`EuOgn@yBoxFwS}{AMkrATurAfDc_@xC{SxAuy@zH_sYnvDsi@hHopGdy@e`C~[k_BzTm_Hz|@_d@zFiwCn]cvKtwAyvAdRe}@bIkzAzGqjAhBypAe@wpA_GwaA{Jkk@yF{}AyU{`Bm`@yjA}]qjBwt@ozAak@ipFatBeiEs`Bm_Bgo@}pKocE{rCuhA_hBil@oy@wVq~@uUqy@mN_b@mGsGeA}GaAgSiCcIcAqb@wFcw@uHekAaGuZ}@edAyBgaDbC}iER_sA^{g@s@aHSkGKafAcBqn@}@auAeEmk@_CioB_JyeUemAqtB{KysIud@qpAyGkfFgYcxAeNaxA{O}wBi_@{kA}Y}qFkyAu|DohAimJkoCuz@_XcQeFqX}IynAw`@u_@gLqkAe_@iQaFaf@yN{jAiZcc@sIy{@wMmj@wFur@cGs`@_Bur@aBgMEwU?c\\Ze[r@{ZdAoSrAmF\\wk@|EgWvDwHdAud@fGmpAhSgLxAcj@~I}f@hHs_A~MuV|DwSpC_c@lGecA~MoXfEumAlQch@`I{]rFse@tJaMz@a]pCql@jEqWvBe\\vAeZr@iwAcB}PS}Ig@cI?sKSaHY{l@yG_p@wH_n@kL{aAoX}GiBmW}IoN}Fkm@uUa\\kPqJcF{KsF_h@{Zed@eZ_h@ab@ah@_c@gq@ol@goA_hAo@e@_CqB{F}EkA}@eCqBeLuJkdBc|Ac`DomCauBqgByzCwiCccLiuJ_sD{tCqeEorCayB_~AcKsHmeGwaEcXcQaoIovFsL_IsIcGocEwoCoVkPid@k[}lBsnAci@}^_DqBqCcBuUkM_R{Jcf@yWql@qVmWmJyp@cVy}Aya@gaA}OsuFqg@o|CwXisEwb@mM{A}tCi[sXaDqwAcXc{Bsc@cB[w{Aa^sRuFmy@{Tcf@sNgU}GqzCibAgtCo_Awh@{QiZoHe_AoXgaAmU_d@iKoc@yIagB}^eaAwNodC}^_h@wHcVmDubDce@wy@wKoa@cHmQeD_ZeHy_AmVey@gYsmAuk@}y@{c@ym@ob@gm@_c@eUiRej@oh@sTaUsm@os@_\\{a@gGmIqc@qq@cT{_@_D{FiBsC__@_l@ol@wcAsnAosB{yAkfCyGkLiRc\\qBmDkQuZiRk[oq@ehAke@mx@iXoe@sPu\\iJyR_OsZ{FgOeR{i@kLs\\qY{bAqL_g@cO_v@qQweAiCaMmCqRyc@goCi\\{qBk]ovBgOg~@{R{lAkTgoAiM}o@aS_x@AOmCaH_AgC_\\q{@eWqh@ua@ct@{]gg@y`@{e@cq@_p@cfAqt@}d@aUk_@cQ}UoJyL}E{]aMcGqBkl@aP_l@kMq[{Go`@cEmd@cHqg@wFqp@}G{b@aHciDe_@woBcV{AWcBM_QyBgxAsPcCWsbF}i@akH}w@{aAuP}^gHgjAqXsb@aM_f@iQyh@oTaZyNwSiKeJ{EqPuJcK{F{N_JmMgIkQcLaNmJ_q@qf@_wAkhAs\\gTo[wNsB}@mTyHiTyF{^iHsSoBoMo@_Q_@cTS{Mj@cTFsPbAeWrB{S|Di]dJo]`N}WlNmQtKgQpLsHbGuKrIySzSmWj[a]bl@e@p@eKdUeO~a@gQnn@{Inh@aKng@qKdj@uTlgAw{@~nEmh@vsCyOtw@mHx\\aUd~@}Vxx@gIdWsKlYcOv^iQtc@mShb@aTv`@om@jfAq@bAsnF~aJmxDrqGuKtUuDdHaFpJqOzVyqBldDiuAn`CepBneDaHnLiKbQaMtTgPr_@_T|i@c[~}@{T|v@s]txAyXzmAyCbLqLze@qJfYsAtD{Stf@mYjf@yWr]wPpR}aGhlFuTdSgO~Mk~@hx@_\\n_@k[be@gPd\\sNx]}M~a@_IlYoH`^yEj\\aF~`@}Br_@kAx\\Ktc@^~\\nAb`@xB`YdEd]xEd\\tLlh@fOjg@hRfh@zMbVrU~`@|Z~f@fy@bmA|Yjf@fTna@zSbe@nUlt@xI`a@dD`SbDpVlEle@lBdUXnMJxLJhWSbWs@zU_A~R_CfZgDrYiJ`l@yOhl@oIpWsKzVc[dn@_QpW_^tc@}m@~m@ku@jv@}_@n_@eRjReL`M_L`M_CxCoRzUiU`]{MrT_O`YoRtd@oVtr@qU`w@kSln@cNhd@yObc@sNz[oCpGyT~b@i]|i@wSpVwR|Tc~BtjCai@tr@up@f|@af@hs@}FxIia@rq@ob@fr@ud@jv@ed@pv@uUl_@kAhB_D`FiW~a@mwA~vBynBtvCsdA~`BahHtaLaq@thAkB~CgL`R_D~EwLjRaAbBiUn_@{b@jp@{gAlaBox@pkAchM|wRopLtyQ}`An{A}i@tz@}JlOecAr}AkVj`@cS`XaJtKoIrI{VfT}SnPkZnPc[fO{q@z[__Bfk@uPbHmkC~lAk\\nQ{E~C{ZrSmUbQyQlN{FfEgRdNySpMgNhHaRnI_QjHwP`F}OvDaNxAgHf@cHf@oKb@yNVqe@Sy][q`As@iSg@q[cAuFKeD?{Ka@u@?_s@yIqVkDyg@cKUG_h@iMyl@mNo]oKePyFoI}DeOuF}EsAsKHC~RgAvM",
+      "precision": 6,
+      "length": 950
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "מחלף לה גווארדייה",
+      "stopId": "il-Israel-MOT_12975",
+      "importance": 4.4111875467933714e-05,
+      "lat": 32.059456,
+      "lon": 34.786354,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:16:00Z",
+      "departure": "2026-10-05T07:16:00Z",
+      "scheduledArrival": "2026-10-05T07:16:00Z",
+      "scheduledDeparture": "2026-10-05T07:16:00Z",
+      "stopCode": "21274",
+      "description": "רחוב: לה גווארדיה עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:21:00Z",
+      "scheduledArrival": "2026-10-05T07:21:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 300,
+     "startTime": "2026-10-05T07:16:00Z",
+     "endTime": "2026-10-05T07:21:00Z",
+     "scheduledStartTime": "2026-10-05T07:16:00Z",
+     "scheduledEndTime": "2026-10-05T07:21:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 374.0,
+     "legGeometry": {
+      "points": "iewc|@abejaAZ``@??JrE??BzC??cMs@_NgAUxDe@?kAnA??mB|m@e@zJKxB??oc@eF??gM]gGcCoO_C",
+      "precision": 6,
+      "length": 22
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 54.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 8312938433,
+       "polyline": {
+        "points": "iewc|@abejaAZ``@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 10.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 904582118,
+       "fromOsmNode": 8312938433,
+       "toOsmNode": 8312938437,
+       "polyline": {
+        "points": "mdwc|@_adjaAJrE",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 894374265,
+       "fromOsmNode": 8312938437,
+       "toOsmNode": 8312938438,
+       "polyline": {
+        "points": "adwc|@kzcjaABzC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 69.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 404325070,
+       "fromOsmNode": 8312938438,
+       "toOsmNode": 2989372367,
+       "polyline": {
+        "points": "}cwc|@oucjaAcMs@_NgAUxDe@?kAnA",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 95.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 516954917,
+       "fromOsmNode": 2989372367,
+       "toOsmNode": 13238837041,
+       "polyline": {
+        "points": "iexc|@aqcjaAmB|m@e@zJKxB",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "מיקוניס שמואל",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 66.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1532806165,
+       "fromOsmNode": 13238837041,
+       "toOsmNode": 6455492003,
+       "polyline": {
+        "points": "ijxc|@mrajaAoc@eF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 73.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 6455492003,
+       "polyline": {
+        "points": "ynyc|@syajaAgM]gGcCoO_C",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "המסגר/יד חרוצים",
+      "stopId": "il-Israel-MOT_29310",
+      "importance": 5.07736076542642e-05,
+      "lat": 32.06129,
+      "lon": 34.78484699999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T07:21:00Z",
+      "scheduledDeparture": "2026-10-05T07:21:00Z",
+      "stopCode": "20004",
+      "description": "רחוב: המסגר 14 עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:28:00Z",
+      "scheduledArrival": "2026-10-05T07:28:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T07:21:00Z",
+     "endTime": "2026-10-05T07:28:00Z",
+     "scheduledStartTime": "2026-10-05T07:21:00Z",
+     "scheduledEndTime": "2026-10-05T07:28:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "תל אביב יפו_אזורי חן",
+     "tripFrom": {
+      "name": "חניון חולון/תחנת מוצא",
+      "stopId": "il-Israel-MOT_35500",
+      "importance": 1.530429653939791e-05,
+      "lat": 31.997018999999998,
+      "lon": 34.76277500000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-05T06:55:00Z",
+      "scheduledDeparture": "2026-10-05T06:55:00Z",
+      "stopCode": "31881",
+      "description": "רחוב:   עיר: חולון רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "מסוף אזורי חן",
+      "stopId": "il-Israel-MOT_48341",
+      "parentId": "il-Israel-MOT_14110",
+      "importance": 2.1702113372157328e-05,
+      "lat": 32.12851000000001,
+      "lon": 34.79221700000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:45:00Z",
+      "scheduledArrival": "2026-10-05T07:45:00Z",
+      "stopCode": "26643",
+      "description": "רחוב:   עיר: תל אביב יפו רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_9873",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "אגד",
+     "agencyUrl": "http://www.egged.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "3",
+     "tripId": "20261005_09:55_il-Israel-MOT_51365814_031026",
+     "routeShortName": "171",
+     "routeLongName": "חניון חולון/תחנת מוצא-חולון<->מסוף אזורי חן-תל אביב יפו-2#",
+     "tripShortName": "",
+     "displayName": "171",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:3576659:3576704",
+     "intermediateStops": [
+      {
+       "name": "המסגר/ישראל טל",
+       "stopId": "il-Israel-MOT_13322",
+       "importance": 7.859222387196496e-05,
+       "lat": 32.063805,
+       "lon": 34.785694,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:21:00Z",
+       "departure": "2026-10-05T07:21:00Z",
+       "scheduledArrival": "2026-10-05T07:21:00Z",
+       "scheduledDeparture": "2026-10-05T07:21:00Z",
+       "stopCode": "23017",
+       "description": "רחוב: המסגר 32 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "המסגר/המלאכה",
+       "stopId": "il-Israel-MOT_29483",
+       "importance": 4.8820329539012164e-05,
+       "lat": 32.066288,
+       "lon": 34.786743,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:22:00Z",
+       "departure": "2026-10-05T07:22:00Z",
+       "scheduledArrival": "2026-10-05T07:22:00Z",
+       "scheduledDeparture": "2026-10-05T07:22:00Z",
+       "stopCode": "20356",
+       "description": "רחוב: המסגר 50 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "ת.רק''ל יהודית/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_48363",
+       "importance": 9.973604755941778e-05,
+       "lat": 32.069862,
+       "lon": 34.788124,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:23:00Z",
+       "departure": "2026-10-05T07:23:00Z",
+       "scheduledArrival": "2026-10-05T07:23:00Z",
+       "scheduledDeparture": "2026-10-05T07:23:00Z",
+       "stopCode": "20727",
+       "description": "רחוב: דרך מנחם בגין 106 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "קניון עזריאלי/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_13204",
+       "importance": 0.00022040566545911133,
+       "lat": 32.075726,
+       "lon": 34.791622000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:26:00Z",
+       "departure": "2026-10-05T07:26:00Z",
+       "scheduledArrival": "2026-10-05T07:26:00Z",
+       "scheduledDeparture": "2026-10-05T07:26:00Z",
+       "stopCode": "21669",
+       "description": "רחוב: דרך מנחם בגין 138 עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "דרך נמיר/דרך מנחם בגין",
+       "stopId": "il-Israel-MOT_38947",
+       "importance": 4.1817824239842594e-05,
+       "lat": 32.080208,
+       "lon": 34.794180000000004,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-05T07:27:00Z",
+       "departure": "2026-10-05T07:27:00Z",
+       "scheduledArrival": "2026-10-05T07:27:00Z",
+       "scheduledDeparture": "2026-10-05T07:27:00Z",
+       "stopCode": "20013",
+       "description": "רחוב: דרך נמיר עיר: תל אביב יפו רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "suzc|@}cbjaAc[aCod@_GgD{@yVaFwXaJ}L{Eg^sO_l@sVc[kIkJwB_EiA_aA{UcBa@mi@gLiPwD{EgAmq@gT_SgEaIm@aH}@mEgAkBa@gBu@kAm@sBiBcKsD_GcBaAa@qBaAgDwByLaKqLiKkGoF{DmDsNqMoBoCg@eAwA}Gw@kCWm@_CqCmEgDuEiG{P_NOMcIwE}GwDeCkAc`@cNcGwB{OcEc@OoNgD}OmEmJoCoi@yPoQkHcFqB{^qMaJkCyHwAkSmEaUaNgIsEeJgFgIgEoKoFuWsNuJgF_`@{Q_IkEgm@mVgBq@kBoAaG_DcQ{KkFgDwDqBeEiBsAm@}EiAcLcCuPoDcPgCoCc@wkA_PsTgDgUwC}Em@uOsBm@EmOiHwGeAcG_D",
+      "precision": 6,
+      "length": 95
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "ת. רכבת תל אביב - סבידור/דרך נמיר",
+      "stopId": "il-Israel-MOT_13354",
+      "importance": 0.00013983405369799584,
+      "lat": 32.083479999999994,
+      "lon": 34.79501000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:28:00Z",
+      "departure": "2026-10-05T07:28:00Z",
+      "scheduledArrival": "2026-10-05T07:28:00Z",
+      "scheduledDeparture": "2026-10-05T07:28:00Z",
+      "stopCode": "24068",
+      "description": "רחוב:   עיר: תל אביב יפו רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.0839,
+      "lon": 34.7983,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-05T07:35:00Z",
+      "scheduledArrival": "2026-10-05T07:35:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 420,
+     "startTime": "2026-10-05T07:28:00Z",
+     "endTime": "2026-10-05T07:35:00Z",
+     "scheduledStartTime": "2026-10-05T07:28:00Z",
+     "scheduledEndTime": "2026-10-05T07:35:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 448.0,
+     "legGeometry": {
+      "points": "q`fe|@u~ujaAkEk@??TsB??ZwC??nCsV??P_B??RcB??~CqY??bBT`BmN??vAwL??wO}C??n@_F??]G??kAY??{@S??aK_CbAiI??`ByM??dAwIqRaE??h@}E??jDe\\??D]??t@eH??D]??sMeC??NmA??|GnA",
+      "precision": 6,
+      "length": 53
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 12.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10989302973,
+       "polyline": {
+        "points": "q`fe|@u~ujaAkEk@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 6.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1116750747,
+       "fromOsmNode": 10989302973,
+       "toOsmNode": 10732308119,
+       "polyline": {
+        "points": "}ffe|@a`vjaATsB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 10732308119,
+       "toOsmNode": 13979514742,
+       "polyline": {
+        "points": "gffe|@ucvjaAZwC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 36.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 13979514742,
+       "toOsmNode": 9829192527,
+       "polyline": {
+        "points": "kefe|@mhvjaAnCsV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1071119776,
+       "fromOsmNode": 9829192527,
+       "toOsmNode": 6330716848,
+       "polyline": {
+        "points": "{`fe|@a`wjaAP_B",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 5.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 6330716848,
+       "toOsmNode": 4047544611,
+       "polyline": {
+        "points": "i`fe|@acwjaARcB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 41.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1536891978,
+       "fromOsmNode": 4047544611,
+       "toOsmNode": 9829267073,
+       "polyline": {
+        "points": "u_fe|@efwjaA~CqY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 30.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1351513426,
+       "fromOsmNode": 9829267073,
+       "toOsmNode": 6189286769,
+       "polyline": {
+        "points": "uzee|@w`xjaAbBT`BmN",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 21.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1541159049,
+       "fromOsmNode": 6189286769,
+       "toOsmNode": 12504012326,
+       "polyline": {
+        "points": "otee|@ooxjaAvAwL",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 31.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 12504012326,
+       "toOsmNode": 8863861313,
+       "polyline": {
+        "points": "wqee|@g}xjaAwO}C",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 957948956,
+       "fromOsmNode": 8863861313,
+       "toOsmNode": 8863868621,
+       "polyline": {
+        "points": "obfe|@ebyjaAn@_F",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 2.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 617764519,
+       "fromOsmNode": 8863868621,
+       "toOsmNode": 3535755466,
+       "polyline": {
+        "points": "_afe|@eiyjaA]G",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563695,
+       "fromOsmNode": 3535755466,
+       "toOsmNode": 3579209638,
+       "polyline": {
+        "points": "}afe|@miyjaAkAY",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563694,
+       "fromOsmNode": 3579209638,
+       "toOsmNode": 3947850000,
+       "polyline": {
+        "points": "idfe|@gjyjaA{@S",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 38.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204455,
+       "fromOsmNode": 3947850000,
+       "toOsmNode": 3535755467,
+       "polyline": {
+        "points": "effe|@{jyjaAaK_CbAiI",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 347204454,
+       "fromOsmNode": 3535755467,
+       "toOsmNode": 2684152889,
+       "polyline": {
+        "points": "cpfe|@eyyjaA`ByM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 53.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 391563693,
+       "fromOsmNode": 2684152889,
+       "toOsmNode": 3535755454,
+       "polyline": {
+        "points": "amfe|@_hzjaAdAwIqRaE",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1317268166,
+       "fromOsmNode": 3535755454,
+       "toOsmNode": 619160044,
+       "polyline": {
+        "points": "m~fe|@yxzjaAh@}E",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 45.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 619160044,
+       "toOsmNode": 12905620035,
+       "polyline": {
+        "points": "c}fe|@w_{jaAjDe\\",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620035,
+       "toOsmNode": 12905620033,
+       "polyline": {
+        "points": "wwfe|@}|{jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620033,
+       "toOsmNode": 12905620025,
+       "polyline": {
+        "points": "qwfe|@{}{jaAt@eH",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 1.0,
+       "fromLevel": 1.0,
+       "toLevel": 1.0,
+       "osmWay": 48797009,
+       "fromOsmNode": 12905620025,
+       "toOsmNode": 12905620024,
+       "polyline": {
+        "points": "{ufe|@ag|jaAD]",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "STAIRS",
+       "distance": 27.0,
+       "fromLevel": 1.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144387,
+       "fromOsmNode": 12905620024,
+       "toOsmNode": 12905620028,
+       "polyline": {
+        "points": "uufe|@_h|jaAsMeC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 4.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1394144389,
+       "fromOsmNode": 12905620028,
+       "toOsmNode": 12905620026,
+       "polyline": {
+        "points": "idge|@el|jaANmA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 17.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 12905620026,
+       "polyline": {
+        "points": "ycge|@sn|jaA|GnA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "previousPageCursor": "EARLIER|1791176400",
+ "nextPageCursor": "LATER|1791179880"
+}

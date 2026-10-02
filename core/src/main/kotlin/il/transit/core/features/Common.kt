@@ -68,8 +68,13 @@ fun <T> paretoFront(options: List<Option<T>>): List<Option<T>> {
 fun best(itineraries: List<Itinerary>): Itinerary? =
     itineraries.minWithOrNull(compareBy<Itinerary> { it.end }.thenBy { it.transfers })
 
-/** The car leg at the start of an itinerary, if it has one. */
-fun Itinerary.leadingCarLeg(): Leg? = legs.firstOrNull()?.takeIf { it.mode in StreetModes.CAR_LIKE }
+/**
+ * The car legs before the first transit leg. A `CAR` answer has one; a `CAR_DROPOFF` answer
+ * opens with a 0-second car stub and can walk between car legs (CAR 0′, WALK 5′, CAR 4′,
+ * WALK 4′), so zero-length legs are dropped. Empty when the car is not used at all.
+ */
+fun Itinerary.leadingCarLegs(): List<Leg> =
+    legs.takeWhile { !it.isTransit }.filter { it.mode in StreetModes.CAR_LIKE && it.duration > 0 }
 
 /** The car leg at the end of an itinerary, if it has one. */
 fun Itinerary.trailingCarLeg(): Leg? = legs.lastOrNull()?.takeIf { it.mode in StreetModes.CAR_LIKE }

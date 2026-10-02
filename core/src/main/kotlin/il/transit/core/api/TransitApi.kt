@@ -59,6 +59,9 @@ data class PlanRequest(
     val directModes: List<String> = listOf(StreetModes.WALK),
     val maxPreTransitSec: Int? = null,
     val maxPostTransitSec: Int? = null,
+    /** Longest street-only trip in `direct[]`. MOTIS defaults to 30 min and silently drops
+     *  longer ones, so a car route needs it raised. */
+    val maxDirectSec: Int? = null,
     val preferences: Preferences = Preferences(),
     val language: String = "he",
     val withFares: Boolean = false,
@@ -81,6 +84,7 @@ data class PlanRequest(
         val post = maxPostTransitSec ?: preferences.maxWalkSec?.takeIf { postTransitModes == listOf(StreetModes.WALK) }
         pre?.let { add("maxPreTransitTime" to it.toString()) }
         post?.let { add("maxPostTransitTime" to it.toString()) }
+        maxDirectSec?.let { add("maxDirectTime" to it.toString()) }
         when {
             directOnly -> add("transitModes" to "")
             preferences.transitModes != null -> add("transitModes" to preferences.transitModes.joinToString(","))

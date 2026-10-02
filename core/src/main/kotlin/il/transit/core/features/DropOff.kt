@@ -71,6 +71,7 @@ class DropOffPlanner(
                 time = q.departAt,
                 directModes = listOf(StreetModes.CAR),
                 directOnly = true,
+                maxDirectSec = MAX_DRIVE_SEC,
             ),
         ).direct.firstOrNull { it.legs.any { l -> l.mode == StreetModes.CAR } }
             ?: return@coroutineScope DropOffResult(null, baselinesOnly(q, null), 0)
@@ -153,6 +154,9 @@ class DropOffPlanner(
 
     companion object {
         const val LONG_DRIVE_M = 15_000.0
+
+        /** `maxDirectTime` for the car route A→B (MOTIS default: 30 min). Transitous accepts 4 h. */
+        const val MAX_DRIVE_SEC = 4 * 3600
 
         /** 1 route + 1 stops + 2 one-to-many + 4 candidates + 2 baselines. */
         const val BUDGET = 10
