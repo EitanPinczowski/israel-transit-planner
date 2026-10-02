@@ -8,6 +8,7 @@ import il.transit.core.api.Itinerary
 import il.transit.core.remind.Reminder
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
+import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UpdateChecker
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
@@ -21,6 +22,7 @@ class TransitApp : Application() {
     val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json")) }
+    val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
     val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME) }
