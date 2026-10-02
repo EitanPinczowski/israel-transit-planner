@@ -25,21 +25,35 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 |---|---|---|
 | `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
-| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox, optional `modes` filter (we pass rail-like for long drives to keep responses small). |
+| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
 
 Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never assume `Z`.
 
-## Unverified until the phase-0 spike (record real answers, then update this list)
-- `CAR_DROPOFF` is marked **Experimental** in MOTIS; Transitous may not enable it.
-  Fallback: `CAR` (`BetterStartQuery.carMode`).
-- Whether `CAR_DROPOFF` is allowed as a **post**-transit mode (pick-up). Default is `CAR`.
-- Server caps: `street_routing_max_prepost_transit_seconds` may be < 30 min (the slider max).
-- Real-time coverage for Israel beyond the busnear.by GTFS-RT feed.
-- Empty `transitModes=` (our `directOnly`) really skips the transit search.
-- `map/stops` bbox corner convention (the docs say "lower right"/"upper left"; we send
-  min-lat/min-lon and max-lat/max-lon).
+## Verified against the live server (phase-0 spike, fixtures in `core/src/test/resources/fixtures/`)
+- **`CAR_DROPOFF` is accepted but useless as a default.** Answers open with a 0-s car stub
+  and drive only a few minutes (Meitar → Tel Aviv, 20-min cap: 4-min drive, arrive 07:35;
+  `CAR` drives 15 min to Be'er Sheva North, arrive 06:46). Better start uses `CAR`;
+  `leadingCarLegs()` still parses the CAR_DROPOFF shape (CAR 0′, WALK, CAR, WALK).
+- **Post-transit `CAR_DROPOFF`** is accepted too, but answers end `…CAR, WALK` — no trailing
+  car leg. Pick-up keeps `CAR`, which ends with the car leg from the station (`plan_car_post_pickup`).
+- **`direct[]` is capped by `maxDirectTime`, default 30 min — silently.** A 73-min car route
+  came back empty without it. Send `PlanRequest.maxDirectSec` for any long direct trip
+  (DropOff sends 4 h; accepted).
+- Empty `transitModes=` works: `itineraries` empty, `direct` filled.
+- `maxPreTransitTime` / `maxPostTransitTime` of 1200 s are honoured.
+- `one-to-many` with 4 points and `max=5400`: `{}` for an unreachable point, as modelled.
+- `map/stops` with `min`=SW, `max`=NE returns the stops inside. **The `modes` filter is
+  ignored**: Be'er Sheva → Tel Aviv's corridor returned 6,417 stops, mostly buses. Stop ids look like
+  `il-Israel-MOT_37314`.
+- **Geocode:** without `placeBias` the `place` bias is weak ("רגר" near Be'er Sheva → Agra,
+  Zagreb, Riga). `placeBias=10` keeps every answer in Israel; `MotisClient` sends it.
+- **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
+  `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
+  `lineLabel()` / `headsignText()`.
+- Still open: real-time coverage (the spike ran on a Friday evening — Shabbat, no service).
+  Record a `stoptimes` for "now" on a weekday and check for `realTime: true`.
 
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
@@ -50,5 +64,6 @@ is a policy decision, not a code tweak — say so in the PR.
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`
 saves a real response into `core/src/test/resources/fixtures/` (needs network access to
-api.transitous.org). `plan_synthetic.json` is hand-written — replace it with a recording.
+api.transitous.org). All fixtures are real recordings; record future-dated (a weekday,
+not a holiday) so the plans make sense, and add a test that pins what you learned.
 Inspect any response cheaply with `python tools/plan_summary.py <file.json>`.

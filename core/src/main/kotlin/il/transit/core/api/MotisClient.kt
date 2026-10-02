@@ -69,7 +69,10 @@ class MotisClient(
             add("text" to text)
             add("language" to language)
             add("numResults" to max.toString())
-            near?.let { add("place" to it.comma()) }
+            near?.let {
+                add("place" to it.comma())
+                add("placeBias" to PLACE_BIAS.toString())
+            }
         }
         return get("api/v1/geocode", params) {
             MotisJson.decodeFromString(ListSerializer(GeocodeMatch.serializer()), it)
@@ -117,6 +120,10 @@ class MotisClient(
         const val USER_AGENT =
             "IsraelTransitPlanner/0.1 (+https://github.com/EitanPinczowski/israel-transit-planner)"
         const val MAX_MATCHING_M = 250
+
+        /** With the default bias "רגר" near Be'er Sheva matched Agra, Zagreb and Riga first;
+         *  10 keeps the answers in Israel. */
+        const val PLACE_BIAS = 10
 
         fun defaultHttp(): OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)

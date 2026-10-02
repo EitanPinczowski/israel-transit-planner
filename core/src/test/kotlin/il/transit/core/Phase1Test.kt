@@ -173,10 +173,10 @@ class BetterStartPresentationTest {
             leg("REGIONAL_RAIL", station, ta, NOON.plusSeconds(600), NOON.plusSeconds(4200)),
         )
         val baseline = itinerary(leg("BUS", home, ta, NOON, NOON.plusSeconds(5280)), transfers = 1)
-        val opt = il.transit.core.features.BetterStartOption(itin, 420, "באר שבע צפון", station.latLon, tight = false)
+        val opt = il.transit.core.features.BetterStartOption(itin, 420, "באר שבע צפון", station.latLon, leaveAt = NOON.minusSeconds(120))
         val row = il.transit.core.present.betterStartRow(opt, baseline)
         assertEquals(7, row.driveMin)
-        assertEquals("12:00", row.depart)
+        assertEquals("11:58", row.depart) // leaveAt, not the free-flow start
         assertEquals("13:10", row.arrive)
         assertEquals(18, row.savedMin)
         assertEquals(1, row.transfersSaved)

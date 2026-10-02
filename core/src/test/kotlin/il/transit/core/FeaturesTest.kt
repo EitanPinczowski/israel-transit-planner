@@ -66,7 +66,7 @@ class DropOffTest {
 
     @Test fun `ranks drop-off stops by detour and arrival, with both baselines`() = runTest {
         val fake = scripted()
-        val result = DropOffPlanner(fake).plan(DropOffQuery(a, b, c, NOON, maxDetourMin = 10))
+        val result = DropOffPlanner(fake, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON, maxDetourMin = 10))
 
         assertEquals(5400, result.directDriveSec)
         assertEquals(3, result.candidatesConsidered) // S1, S2, S5 — twin too close, Far outside the corridor
@@ -95,14 +95,14 @@ class DropOffTest {
 
     @Test fun `passes the UI language to every transit plan`() = runTest {
         val fake = scripted()
-        DropOffPlanner(fake).plan(DropOffQuery(a, b, c, NOON, language = "en"))
+        DropOffPlanner(fake, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON, language = "en"))
         val transitPlans = fake.planRequests.filterNot { it.directOnly }
         assertTrue(transitPlans.isNotEmpty())
         assertTrue(transitPlans.all { it.language == "en" })
     }
 
     @Test fun `rows show the stop, detour and arrival`() = runTest {
-        val result = DropOffPlanner(scripted()).plan(DropOffQuery(a, b, c, NOON))
+        val result = DropOffPlanner(scripted(), stations = emptyList()).plan(DropOffQuery(a, b, c, NOON))
         val row = il.transit.core.present.dropOffRow(result.options.first().payload)
         assertEquals("S2", row.stop)
         assertEquals(s2.latLon, row.stopAt)
@@ -118,7 +118,7 @@ class DropOffTest {
     @Test fun `stays inside its request budget`() = runTest {
         val fake = scripted()
         val budgeted = BudgetedTransitApi(fake, DropOffPlanner.BUDGET)
-        DropOffPlanner(budgeted).plan(DropOffQuery(a, b, c, NOON))
+        DropOffPlanner(budgeted, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON))
         assertTrue("used ${budgeted.used}", budgeted.used <= DropOffPlanner.BUDGET)
     }
 
@@ -136,9 +136,43 @@ class DropOffTest {
             }
         }
         val budgeted = BudgetedTransitApi(fake, DropOffPlanner.BUDGET)
-        val result = DropOffPlanner(budgeted).plan(DropOffQuery(a, b, c, NOON))
-        assertEquals(4, result.candidatesConsidered)
+        val result = DropOffPlanner(budgeted, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON))
+        assertEquals(8, result.candidatesConsidered) // all 8 go into the one-to-many calls…
+        assertEquals(4, fake.planRequests.count { req -> stops.any { it.latLon == (req.from as Endpoint.Coord).at } }) // …4 get planned
         assertEquals(DropOffPlanner.BUDGET, budgeted.used)
+    }
+
+    @Test fun `a long drive takes stations from the bundled list, not map-stops`() = runTest {
+        val fake = scripted().apply { onStops = { _, _ -> error("map/stops must not be called") } }
+        val budgeted = BudgetedTransitApi(fake, DropOffPlanner.BUDGET)
+        val result = DropOffPlanner(budgeted, stations = listOf(s1, s1b, s2, s5, far)).plan(DropOffQuery(a, b, c, NOON))
+        assertEquals(3, result.candidatesConsidered)
+        assertEquals("S2", result.options.first().payload.stop?.name)
+        assertFalse("stops" in fake.calls)
+        assertEquals(7, budgeted.used) // route + 2 one-to-many + S1, S2 + 2 baselines; S5's detour is too long
+    }
+
+    @Test fun `map-stops answers are filtered to rail on a long drive, since Transitous ignores modes`() = runTest {
+        val bus = place("Bus", LatLon(31.70, 34.8005), "bus", listOf("BUS"), 1.0)
+        val fake = scripted().apply { onStops = { _, _ -> listOf(s1, bus, s2) } }
+        val result = DropOffPlanner(fake, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON))
+        assertEquals(2, result.candidatesConsidered)
+        assertTrue(fake.planRequests.none { (it.from as Endpoint.Coord).at == bus.latLon })
+    }
+
+    @Test fun `candidates spread along the route instead of bunching at the busy end`() {
+        // Five busy stations in the last 10 km before B, one quiet one halfway.
+        val busyEnd = (0 until 5).map { i -> place("TA$i", LatLon(31.99 + i * 0.02, 34.80), "ta$i", listOf("RAIL"), 1.0) }
+        val mid = place("Mid", LatLon(31.66, 34.80), "mid", listOf("RAIL"), 0.1)
+        val q = DropOffQuery(a, b, c, NOON, maxCandidates = 4)
+        val picked = DropOffPlanner.pickCandidates(busyEnd + mid, listOf(a, b), q)
+        assertTrue(mid in picked)
+        assertEquals(picked.sortedBy { it.lat }, picked) // route order (A is south)
+    }
+
+    @Test fun `spread keeps the ends and evenly spaced middles`() {
+        assertEquals(listOf(0, 3, 6, 9), DropOffPlanner.spread((0..9).toList(), 4))
+        assertEquals(listOf(1, 2), DropOffPlanner.spread(listOf(1, 2), 4))
     }
 
     @Test fun `failed car route still returns the transit-only baselines`() = runTest {
@@ -146,7 +180,7 @@ class DropOffTest {
             val inner = onPlan
             onPlan = { req -> if (StreetModes.CAR in req.directModes) PlanResponse() else inner(req) }
         }
-        val result = DropOffPlanner(fake).plan(DropOffQuery(a, b, c, NOON))
+        val result = DropOffPlanner(fake, stations = emptyList()).plan(DropOffQuery(a, b, c, NOON))
         assertNull(result.directDriveSec)
         assertEquals(listOf(DropOffKind.TRANSIT_FROM_START), result.options.map { it.payload.kind })
     }
@@ -177,13 +211,13 @@ class BetterStartTest {
         }
         val result = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, NOON, maxDriveMin = 10))
         assertEquals(4, fake.calls.size) // baseline + 3 caps
-        assertEquals(StreetModes.CAR_DROPOFF, fake.planRequests.last().preTransitModes.single())
+        assertEquals(StreetModes.CAR, fake.planRequests.last().preTransitModes.single())
         assertEquals(1, result.options.size)
         val opt = result.options.single().payload
         assertEquals("Be'er Sheva North", opt.dropOffStopName)
         assertEquals(350, opt.driveSec)
-        assertFalse(opt.tight)
-        assertEquals(StreetModes.CAR_DROPOFF, result.usedMode)
+        assertEquals(NOON, opt.leaveAt) // off-peak: no traffic delay
+        assertEquals(StreetModes.CAR, result.usedMode)
     }
 
     @Test fun `falls back to CAR when the server refuses CAR_DROPOFF, within budget`() = runTest {
@@ -198,7 +232,7 @@ class BetterStartTest {
             }
         }
         val budgeted = BudgetedTransitApi(fake, BetterStartPlanner.BUDGET)
-        val result = BetterStartPlanner(budgeted).plan(BetterStartQuery(origin, dest, NOON))
+        val result = BetterStartPlanner(budgeted).plan(BetterStartQuery(origin, dest, NOON, carMode = StreetModes.CAR_DROPOFF))
         assertEquals(StreetModes.CAR, result.usedMode)
         assertEquals(1, result.options.size)
         assertEquals(station.latLon, result.options.single().payload.dropOffAt)
@@ -220,7 +254,7 @@ class BetterStartTest {
         }
     }
 
-    @Test fun `flags a connection that rush-hour traffic makes tight`() = runTest {
+    @Test fun `rush-hour traffic moves the leave time earlier, minus the wait at the stop`() = runTest {
         val fake = FakeTransitApi().apply {
             onPlan = { req ->
                 if (req.maxPreTransitSec == null) PlanResponse()
@@ -229,7 +263,19 @@ class BetterStartTest {
         }
         val opt = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, SUNDAY_8AM)).options.single().payload
         assertEquals(455, opt.driveSec) // 350 × 1.3
-        assertTrue(opt.tight) // 105 s of traffic against 60 s of slack
+        // 105 s of traffic, 60 s of it absorbed by the wait at the station: leave 45 s earlier.
+        assertEquals(SUNDAY_8AM.minusSeconds(45), opt.leaveAt)
+    }
+
+    @Test fun `a long wait at the stop absorbs the traffic delay`() = runTest {
+        val fake = FakeTransitApi().apply {
+            onPlan = { req ->
+                if (req.maxPreTransitSec == null) PlanResponse()
+                else PlanResponse(listOf(viaStation(350, 600, 3000, 0, SUNDAY_8AM)))
+            }
+        }
+        val opt = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, SUNDAY_8AM)).options.single().payload
+        assertEquals(SUNDAY_8AM, opt.leaveAt) // 250 s of wait > 105 s of traffic
     }
 }
 
