@@ -92,9 +92,11 @@ import il.transit.core.user.ModeFilter
 import il.transit.core.user.UserSettings
 import il.transit.core.user.WalkSpeed
 import il.transit.planner.R
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZonedDateTime
+import java.time.format.TextStyle
 import java.util.Locale
 
 private const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
@@ -418,7 +420,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
-                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile) { vm.select(i) }
+                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
@@ -470,14 +472,17 @@ private fun ErrorRow(error: UiError, vm: MainViewModel) {
 }
 
 @Composable
-private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, onClick: () -> Unit) {
-    val s = remember(itin, fareProfile) { summarize(itin, fareProfile) }
+private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, searchedAt: Instant?, onClick: () -> Unit) {
+    val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
     val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
     Column(
         Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("${s.depart}–${s.arrive}", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            // A trip on another day than the one searched (Friday → Saturday night) says so.
+            val depart = s.departDay?.let { d -> stringResource(R.string.on_day, d.getDisplayName(TextStyle.SHORT, Locale.getDefault()), s.depart) } ?: s.depart
+            val arrive = if (s.arriveDaysLater > 0) stringResource(R.string.next_day, s.arrive, s.arriveDaysLater) else s.arrive
+            Text("$depart–$arrive", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             Text(stringResource(R.string.minutes_short, s.durationMin), style = MaterialTheme.typography.titleSmall)
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
@@ -612,7 +617,6 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (row.tight) Text(stringResource(R.string.tight_warning), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         if (selected) {
             TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
         }

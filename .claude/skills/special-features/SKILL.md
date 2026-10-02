@@ -12,19 +12,24 @@ for the trade-off to be visible (e.g. "+4 min for the driver, arrive 18:40" vs "
 
 ## Better start (`BetterStart.kt`)
 Someone drops you (and leaves) at a stop within the slider limit. One walk-only baseline
-plus one `plan` per rung of `capLadder()` with `preTransitModes=CAR_DROPOFF`. The ladder
+plus one `plan` per rung of `capLadder()` with `preTransitModes=CAR` (Transitous's
+`CAR_DROPOFF` answers barely use the car — see the transitous-api skill). The ladder
 (⅓, ⅔, full limit; rungs < 3 min dropped) is what turns MOTIS's (time, transfers) answer
-into a driver-time trade-off. The widest rung runs first and alone: it is also the probe
-for `CAR_DROPOFF` support — on HTTP 400 the search switches to `CAR` for every rung and
-reports `usedMode`. Hence `BUDGET = 5` (baseline + refused probe + 3 rungs), pinned by a
+into a driver-time trade-off. The widest rung runs first and alone: if a query asks for
+`CAR_DROPOFF`, it is also the probe — on HTTP 400 the search switches to `CAR` for every
+rung and reports `usedMode`. Drive cost = all non-zero car legs before the first transit
+leg (`leadingCarLegs()`). Hence `BUDGET = 5` (baseline + refused probe + 3 rungs), pinned by a
 test. Any other error propagates; a 500 must never be read as "mode unsupported".
 Options must beat the baseline by `minGainMin` (5) or with
 fewer transfers. The cap is divided by the traffic factor because MOTIS measures free
-flow. `tight` = the traffic-adjusted drive eats the slack before the first departure.
+flow. MOTIS times the free-flow drive to reach the stop just as the vehicle leaves, so
+`leaveAt` = itinerary start − (traffic delay − wait at the stop), never later than the
+start. (A "tight" warning used to fire on every peak option; it is gone.)
 
 ## Let me off on the way (`DropOff.kt`)
 You ride A→B and need C. Steps and their request cost (total pinned by `BUDGET = 10`):
-1. car route A→B via `directModes=CAR` (1) — geometry = corridor, duration = baseline T
+1. car route A→B via `directModes=CAR`, `maxDirectTime` = 4 h (1) — geometry = corridor,
+   duration = baseline T. Without `maxDirectTime` MOTIS drops drives over 30 min.
 2. `map/stops` in the corridor bbox (1); drives > 15 km ask for rail-like stops only
 3. `pickCandidates`: within `corridorM` (1.5 km) of the line, rail first, then MOTIS
    importance, ≥ `minSpacingM` (2 km) apart, at most `maxCandidates` (4)

@@ -67,6 +67,10 @@ data class ItinerarySummary(
     val hasRealTime: Boolean = false,
     /** Estimated fare for the chosen [FareProfile]; null for a walk-only trip. */
     val fare: FareEstimate? = null,
+    /** Set when the trip leaves on another day than the one searched for (Friday → Saturday night). */
+    val departDay: java.time.DayOfWeek? = null,
+    /** Arrival is this many days after departure; 0 for a same-day trip. */
+    val arriveDaysLater: Int = 0,
 )
 
 /** "≈ ₪8", "≈ ₪14.5", "≈ ₪87.32" — always an estimate, so always "≈". */
@@ -94,12 +98,36 @@ private val HHMM: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 /** 24-hour local Israel time, whatever the phone's own zone is. */
 fun hhmm(t: Instant): String = HHMM.format(t.atZone(ISRAEL))
 
+/** Israel calendar days from [a] to [b]. */
+fun daysBetween(a: Instant, b: Instant): Int =
+    java.time.temporal.ChronoUnit.DAYS.between(a.atZone(ISRAEL).toLocalDate(), b.atZone(ISRAEL).toLocalDate()).toInt()
+
 fun minutes(sec: Int): Int = Math.round(sec / 60.0).toInt()
 
-fun lineLabel(leg: Leg): String? =
-    leg.routeShortName?.takeIf { it.isNotBlank() } ?: leg.displayName?.takeIf { it.isNotBlank() }
+fun lineLabel(leg: Leg): String? = lineLabel(leg.routeShortName, leg.displayName)
 
-fun summarize(it: Itinerary, fareProfile: FareProfile = FareProfile.REGULAR): ItinerarySummary {
+/**
+ * Short line name, or null. Israel Railways routes have no short name and a display name
+ * like "באר שבע מרכז-באר שבע<->כרמיאל-כרמיאל" — too long for a chip; the train icon says enough.
+ */
+fun lineLabel(shortName: String?, displayName: String?): String? =
+    shortName?.takeIf { it.isNotBlank() } ?: displayName?.takeIf { it.isNotBlank() && "<->" !in it }
+
+/** Where the vehicle goes. Israel Railways sends the train number ("406") as the headsign. */
+fun headsignText(headsign: String?, tripTo: il.transit.core.api.Place?): String {
+    val h = headsign.orEmpty()
+    return if ((h.isBlank() || h.all { it.isDigit() }) && !tripTo?.name.isNullOrBlank()) tripTo!!.name else h
+}
+
+/**
+ * [searchedAt] is the time the user searched for (or now); a trip leaving on another day is
+ * marked with [ItinerarySummary.departDay]. Days are Israel calendar days.
+ */
+fun summarize(
+    it: Itinerary,
+    fareProfile: FareProfile = FareProfile.REGULAR,
+    searchedAt: Instant? = null,
+): ItinerarySummary {
     val chips = it.legs
         // Transfers inside a station show up as walks of a few seconds; they are noise.
         .filter { leg -> leg.isTransit || leg.duration >= 60 }
@@ -126,6 +154,8 @@ fun summarize(it: Itinerary, fareProfile: FareProfile = FareProfile.REGULAR): It
         firstBoarding = board,
         hasRealTime = it.legs.any { l -> l.isTransit && l.realTime },
         fare = FareEstimator.estimate(it, fareProfile),
+        departDay = searchedAt?.let { t -> it.start.atZone(ISRAEL).dayOfWeek.takeIf { _ -> daysBetween(t, it.start) != 0 } },
+        arriveDaysLater = daysBetween(it.start, it.end),
     )
 }
 
@@ -158,8 +188,8 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
     val scheduled = st.place.scheduledDeparture ?: st.place.scheduledArrival
     val at = (actual ?: scheduled)?.let { runCatching { il.transit.core.api.parseTime(it) }.getOrNull() }
     return DepartureRow(
-        line = st.routeShortName.ifBlank { st.displayName.orEmpty() },
-        headsign = st.headsign,
+        line = lineLabel(st.routeShortName, st.displayName).orEmpty(),
+        headsign = headsignText(st.headsign, st.tripTo),
         kind = legKind(st.mode),
         time = at?.let(::hhmm) ?: "",
         delayMin = if (st.realTime) delayMin(actual, scheduled) else null,
@@ -177,7 +207,6 @@ data class BetterStartRow(
     /** Minutes earlier than the no-ride baseline (may be ≤ 0 when the gain is fewer transfers). */
     val savedMin: Int?,
     val transfersSaved: Int?,
-    val tight: Boolean,
     val summary: ItinerarySummary,
 )
 
@@ -190,11 +219,10 @@ fun betterStartRow(
     return BetterStartRow(
         driveMin = minutes(o.driveSec),
         stop = o.dropOffStopName,
-        depart = hhmm(it.start),
+        depart = hhmm(o.leaveAt),
         arrive = hhmm(it.end),
         savedMin = baseline?.let { b -> minutes((b.end.epochSecond - it.end.epochSecond).toInt()) },
         transfersSaved = baseline?.let { b -> b.transfers - it.transfers },
-        tight = o.tight,
         summary = summarize(it, fareProfile),
     )
 }

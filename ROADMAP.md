@@ -10,8 +10,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Pareto engine + better start / drop-off / pick-up, with offline unit tests
 - [x] Android shell: MapLibre + OpenFreeMap map, location, Transitous attribution
 - [x] CI: core tests, docs check, debug APK artifact
-- [ ] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
-- [ ] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes, real-time) and replace `plan_synthetic.json`
+- [x] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
+- [x] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes) and replace `plan_synthetic.json`
+- [ ] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
 - [ ] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP

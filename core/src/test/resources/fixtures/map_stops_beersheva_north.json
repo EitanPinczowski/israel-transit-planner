@@ -1,0 +1,225 @@
+[
+ {
+  "name": "שדרות דוד בן גוריון/דרך השלום",
+  "stopId": "il-Israel-MOT_26873",
+  "importance": 4.6194210881367326e-05,
+  "lat": 31.258158,
+  "lon": 34.81146199999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "14381",
+  "description": "רחוב: שדרות דוד בן גוריון 30 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "שדרות דוד בן גוריון/יהושע הצורף",
+  "stopId": "il-Israel-MOT_26872",
+  "importance": 4.6194210881367326e-05,
+  "lat": 31.258114,
+  "lon": 34.81178299999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "14379",
+  "description": "רחוב: שדרות דוד בן גוריון 29 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "מרכז הספורט אוניברסיטת בן גוריון",
+  "stopId": "il-Israel-MOT_26915",
+  "importance": 3.884948091581464e-05,
+  "lat": 31.26139,
+  "lon": 34.806038,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "14454",
+  "description": "רחוב: שדרות אורי צבי גרינברג עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "מרכז הספורט אוניברסיטת בן גוריון",
+  "stopId": "il-Israel-MOT_26684",
+  "importance": 3.884948091581464e-05,
+  "lat": 31.260958000000002,
+  "lon": 34.805446999999994,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "13983",
+  "description": "רחוב: שדרות דוד בן גוריון 7 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "מעונות הסטודנטים/שדרות בן גוריון",
+  "stopId": "il-Israel-MOT_26689",
+  "importance": 2.7940421205130406e-05,
+  "lat": 31.260745999999994,
+  "lon": 34.80638,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "13992",
+  "description": "רחוב: שדרות דוד בן גוריון 8 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "יעקוב מרש/התבונה",
+  "stopId": "il-Israel-MOT_43993",
+  "importance": 1.4921472484275e-06,
+  "lat": 31.264850000000003,
+  "lon": 34.81186299999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "12465",
+  "description": "רחוב: יעקב מרש 2 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "גשר ת. רכבת ב''ש צפון/נתן רוזן",
+  "stopId": "il-Israel-MOT_44327",
+  "importance": 3.0843509648548206e-06,
+  "lat": 31.263309999999997,
+  "lon": 34.809517,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "12555",
+  "description": "רחוב: שדרות פרופ' נתן רוזן עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "גשר ת. רכבת ב''ש צפון/התבונה",
+  "stopId": "il-Israel-MOT_42160",
+  "importance": 6.001941073918715e-06,
+  "lat": 31.263328999999995,
+  "lon": 34.810579999999995,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "12035",
+  "description": "רחוב: התבונה 41 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "פארק הייטק/התבונה",
+  "stopId": "il-Israel-MOT_37531",
+  "importance": 4.463390723685734e-06,
+  "lat": 31.264301,
+  "lon": 34.81176399999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "18442",
+  "description": "רחוב: התבונה 14 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "שדרות תורת היחסות/החדשנות",
+  "stopId": "il-Israel-MOT_44325",
+  "importance": 3.1307540666603018e-06,
+  "lat": 31.263743999999996,
+  "lon": 34.81365999999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "12557",
+  "description": "רחוב: שדרת תורת היחסות 19 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "שדרות תורת היחסות/חלקיקי האור",
+  "stopId": "il-Israel-MOT_44326",
+  "importance": 3.1307540666603018e-06,
+  "lat": 31.263719999999996,
+  "lon": 34.81225,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "12556",
+  "description": "רחוב: שדרת תורת היחסות עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "ת. רכבת ב''ש צפון",
+  "stopId": "il-Israel-MOT_12740",
+  "importance": 9.735934327181894e-06,
+  "lat": 31.261086,
+  "lon": 34.80864,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "10846",
+  "description": "רחוב:   עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "ת. רכבת ב''ש צפון",
+  "stopId": "il-Israel-MOT_28232",
+  "importance": 9.735934327181894e-06,
+  "lat": 31.261715,
+  "lon": 34.80923,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "16067",
+  "description": "רחוב:   עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "תחנת רכבת/שדרות דוד בן גוריון",
+  "stopId": "il-Israel-MOT_40151",
+  "importance": 5.57285820832476e-05,
+  "lat": 31.260876,
+  "lon": 34.807919999999996,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "11601",
+  "description": "רחוב: שדרות דוד בן גוריון 11 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "תחנת רכבת/שדרות דוד בן גוריון",
+  "stopId": "il-Israel-MOT_40150",
+  "importance": 5.57285820832476e-05,
+  "lat": 31.260327999999998,
+  "lon": 34.80904399999999,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "11602",
+  "description": "רחוב: שדרות דוד בן גוריון 14 עיר: באר שבע רציף:  קומה:",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "BUS"
+  ]
+ },
+ {
+  "name": "באר שבע צפון",
+  "stopId": "il-Israel-MOT_37314",
+  "importance": 0.00021084373292978853,
+  "lat": 31.262088999999996,
+  "lon": 34.809287999999995,
+  "tz": "Asia/Jerusalem",
+  "stopCode": "17082",
+  "vertexType": "TRANSIT",
+  "modes": [
+   "REGIONAL_RAIL"
+  ]
+ }
+]

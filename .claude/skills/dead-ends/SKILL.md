@@ -14,5 +14,6 @@ description: Approaches that were considered and rejected, with the reason. Load
 | Any own server in v1 | nothing to host = nothing to pay for or keep awake. Fallback only: MOTIS on the owner's PC + Cloudflare Tunnel. |
 | MOT SIRI real-time directly | needs registration + a static IP (i.e. a server). Transitous already ingests a GTFS-RT feed for Israel. |
 | Play Store distribution | paid developer account; the app is for friends and family. |
-| One `plan` request per candidate stop for "better start" | MOTIS does the drop-off search itself (`CAR_DROPOFF`); per-candidate plans would cost ~25 requests and break the Transitous traffic rule. |
+| One `plan` request per candidate stop for "better start" | MOTIS does the drop-off search itself (`preTransitModes=CAR`); per-candidate plans would cost ~25 requests and break the Transitous traffic rule. |
+| `CAR_DROPOFF` as the better-start / pick-up mode | Recorded on Transitous (2026-10-02): accepted, but drives ~4 min from a 0-s stub and post-transit answers end in a walk. `CAR` gives the real station drop-off. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |

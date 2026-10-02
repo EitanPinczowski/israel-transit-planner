@@ -17,8 +17,9 @@ me and a handful of friends and family (roughly 5–15 people), sideloaded, not 
 
 It calls `api.transitous.org` directly from the phone:
 - `plan`, `geocode`, `map/stops`, `stoptimes` for normal trip planning;
-- `plan` with `preTransitModes=CAR_DROPOFF` (and `postTransitModes`) for "someone drops
-  me at a better station" features, and `one-to-many` with `CAR` for drive times.
+- `plan` with `preTransitModes=CAR` / `postTransitModes=CAR` for "someone drops me at
+  (or picks me up from) a better station" features, a `directModes=CAR` route, and
+  `one-to-many` with `CAR` for drive times.
 
 Traffic controls built in: every request carries a User-Agent with the repo URL; responses
 are cached (plans 60 s, stops/geocoding 1 day); at most 2 concurrent requests per device;
@@ -28,9 +29,11 @@ https://transitous.org/sources/ on the map screen.
 
 Questions:
 1. Is this usage OK with you, and is there a rate you'd like us to stay under?
-2. Is `CAR_DROPOFF` enabled on the public instance, including as a post-transit mode?
-3. What are the server caps for `maxPreTransitTime` and `one-to-many` (`max`, number of
-   `many` points)?
+2. `CAR_DROPOFF` is accepted, but in Israel its answers start with a 0-second car leg and
+   drive only a few minutes even with a 20-minute `maxPreTransitTime` (plain `CAR` drives
+   15 min to a station). Is that expected, or is drop-off restricted on the public instance?
+3. What are the server caps for `maxPreTransitTime`, `maxDirectTime` and `one-to-many`
+   (`max`, number of `many` points)?
 
 If it ever becomes too much for the public instance, we'll self-host MOTIS instead.
 

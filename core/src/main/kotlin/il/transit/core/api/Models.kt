@@ -50,6 +50,8 @@ data class Leg(
     val realTime: Boolean = false,
     val distance: Double? = null,
     val headsign: String? = null,
+    /** Last stop of the vehicle's trip. Israel Railways puts the train number in [headsign]. */
+    val tripTo: Place? = null,
     val routeShortName: String? = null,
     val routeLongName: String? = null,
     val displayName: String? = null,
@@ -109,6 +111,7 @@ data class StopTime(
     val mode: String,
     val realTime: Boolean = false,
     val headsign: String = "",
+    val tripTo: Place? = null,
     val routeShortName: String = "",
     val displayName: String? = null,
     val cancelled: Boolean = false,
