@@ -25,7 +25,7 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 |---|---|---|
 | `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
-| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox, optional `modes` filter (we pass rail-like for long drives to keep responses small). |
+| `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. We pass `modes` (rail-like for long drives) but Transitous ignores it — filter client-side. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
 
@@ -44,7 +44,8 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 - Empty `transitModes=` works: `itineraries` empty, `direct` filled.
 - `maxPreTransitTime` / `maxPostTransitTime` of 1200 s are honoured.
 - `one-to-many` with 4 points and `max=5400`: `{}` for an unreachable point, as modelled.
-- `map/stops` with `min`=SW, `max`=NE returns the stops inside. Stop ids look like
+- `map/stops` with `min`=SW, `max`=NE returns the stops inside. **The `modes` filter is
+  ignored**: Be'er Sheva → Tel Aviv's corridor returned 6,417 stops, mostly buses. Stop ids look like
   `il-Israel-MOT_37314`.
 - **Geocode:** without `placeBias` the `place` bias is weak ("רגר" near Be'er Sheva → Agra,
   Zagreb, Riga). `placeBias=10` keeps every answer in Israel; `MotisClient` sends it.

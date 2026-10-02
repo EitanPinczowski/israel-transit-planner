@@ -45,8 +45,12 @@ data class BetterStartOption(
     val dropOffStopName: String,
     /** Where the driver stops — what "send to driver" links to. */
     val dropOffAt: LatLon,
-    /** The traffic-adjusted drive eats all the slack before the first departure. */
-    val tight: Boolean,
+    /**
+     * When to set off. MOTIS times a free-flow drive to reach the stop just as the vehicle
+     * leaves, so at peak this is earlier than [itinerary]'s start by the traffic delay
+     * that the wait at the stop does not absorb.
+     */
+    val leaveAt: Instant,
 )
 
 data class BetterStartResult(
@@ -104,14 +108,14 @@ class BetterStartPlanner(
         val firstTransit = legs[boardAt]
         val freeFlow = cars.sumOf { it.duration }
         val drive = traffic.adjust(freeFlow, departAt)
-        // Waiting time at the stop: the traffic delay comes out of it.
+        // Waiting time at the stop absorbs traffic first; the rest means leaving earlier.
         val slackSec = firstTransit.start.epochSecond - legs[boardAt - 1].end.epochSecond
-        val tight = drive - freeFlow > slackSec
+        val leaveAt = start.minusSeconds((drive - freeFlow - slackSec).coerceAtLeast(0L))
         // CAR_DROPOFF leaves you on an unnamed street point; name it after the stop you walk to.
         val dropOff = cars.last().to
         val name = dropOff.name.ifBlank { firstTransit.from.name }
         return Option(
-            payload = BetterStartOption(this, drive, name, dropOff.latLon, tight),
+            payload = BetterStartOption(this, drive, name, dropOff.latLon, leaveAt),
             driverCostSec = drive,
             arrival = end,
             transfers = transfers,

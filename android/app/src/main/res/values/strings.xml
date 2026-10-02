@@ -74,7 +74,6 @@
     <string name="drive_to">🚗 %1$d min to %2$s</string>
     <string name="saves_min">saves %d min</string>
     <string name="fewer_transfers">fewer transfers</string>
-    <string name="tight_warning">⚠ Tight connection if traffic is heavy</string>
     <string name="without_ride">Without a ride: arrive %s</string>
     <string name="no_better_start">No faster start within %d min of driving — go as usual.</string>
     <string name="send_to_driver">Send to driver</string>
@@ -105,6 +104,8 @@
     <string name="updated_at">Updated %s</string>
     <string name="refresh">Refresh</string>
     <string name="offline_showing">Offline — showing the result saved at %s. Times may have changed.</string>
+    <string name="on_day">%1$s %2$s</string>
+    <string name="next_day">%1$s (+%2$d)</string>
     <string name="late_paren">(+%d min)</string>
     <string name="remind_me">🔔 Remind me when to leave</string>
     <string name="reminder_set">🔔 Reminder: leave at %s (re-checked 15 min before)</string>

@@ -110,6 +110,38 @@ class RecordedTripsTest {
         assertEquals(DropOffPlanner.MAX_DRIVE_SEC, fake.planRequests.first().maxDirectSec)
     }
 
+    @Test fun `Friday afternoon drops the wait through Shabbat and marks Saturday-night trips`() = runTest {
+        // Be'er Sheva → Tel Aviv, Friday 2026-10-09 15:00: two Friday buses, one that waits
+        // 25 h through Shabbat, two on Saturday night.
+        val fake = FakeTransitApi().apply { onPlan = { plan("plan_friday_bs_telaviv") } }
+        val friday15 = Instant.parse("2026-10-09T12:00:00Z")
+        val r = il.transit.core.plan.TripPlanner(fake).plan(
+            il.transit.core.plan.TripQuery(
+                il.transit.core.api.Endpoint.Coord(LatLon(31.252, 34.7915)),
+                il.transit.core.api.Endpoint.Coord(telAviv),
+                il.transit.core.plan.TimeMode.DEPART_AT,
+                friday15,
+            ),
+        )
+        assertEquals(4, r.itineraries.size)
+        assertTrue(r.itineraries.none { it.duration > 24 * 3600 })
+
+        val summaries = r.itineraries.map { summarize(it, searchedAt = friday15) }
+        assertEquals(listOf(null, null, java.time.DayOfWeek.SATURDAY, java.time.DayOfWeek.SATURDAY), summaries.map { it.departDay })
+        assertEquals("18:17", summaries[2].depart)
+        assertTrue(summaries.all { it.arriveDaysLater == 0 })
+        assertNull(summarize(r.itineraries[2]).departDay) // no search time, no label
+    }
+
+    @Test fun `an overnight trip arrives a day later`() {
+        val start = Instant.parse("2026-10-09T20:30:00Z") // 23:30 Israel time
+        val night = itinerary(leg("BUS", place("a", meitar), place("b", telAviv), start, start.plusSeconds(3600)))
+        val s = summarize(night, searchedAt = start)
+        assertNull(s.departDay)
+        assertEquals(1, s.arriveDaysLater)
+        assertEquals("00:30", s.arrive)
+    }
+
     @Test fun `Israel Railways legs and departures read well`() {
         val train = plan("plan_bgu_telaviv").itineraries[1]
         val chip = summarize(train).chips.single { it.kind == LegKind.TRAIN }

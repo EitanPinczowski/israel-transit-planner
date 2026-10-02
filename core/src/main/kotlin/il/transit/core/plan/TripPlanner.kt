@@ -41,10 +41,14 @@ class TripPlanner(private val api: TransitApi) {
                 language = q.language,
             ),
         )
+        // MOTIS also returns trips that wait out a night or Shabbat (Friday 16:19, arrive
+        // Saturday 17:25: 25 h). Nobody wants those next to a 91-min option.
+        val fastest = resp.itineraries.minOfOrNull { it.duration } ?: 0
+        val sane = resp.itineraries.filter { it.duration <= maxOf(2 * fastest, fastest + MAX_EXTRA_SEC) }
         val sorted = if (q.timeMode == TimeMode.ARRIVE_BY) {
-            resp.itineraries.sortedWith(compareByDescending<Itinerary> { it.start }.thenBy { it.transfers })
+            sane.sortedWith(compareByDescending<Itinerary> { it.start }.thenBy { it.transfers })
         } else {
-            resp.itineraries.sortedWith(compareBy<Itinerary> { it.end }.thenBy { it.transfers })
+            sane.sortedWith(compareBy<Itinerary> { it.end }.thenBy { it.transfers })
         }
         val walk = resp.direct.minByOrNull { it.duration }?.takeIf { it.duration <= MAX_WALK_ONLY_SEC }
         return TripResult(sorted, walk)
@@ -52,5 +56,8 @@ class TripPlanner(private val api: TransitApi) {
 
     companion object {
         const val MAX_WALK_ONLY_SEC = 45 * 60
+
+        /** An option is dropped when it takes more than twice the fastest and over an hour longer. */
+        const val MAX_EXTRA_SEC = 60 * 60
     }
 }

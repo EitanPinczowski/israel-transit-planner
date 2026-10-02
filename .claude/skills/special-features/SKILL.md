@@ -22,7 +22,9 @@ leg (`leadingCarLegs()`). Hence `BUDGET = 5` (baseline + refused probe + 3 rungs
 test. Any other error propagates; a 500 must never be read as "mode unsupported".
 Options must beat the baseline by `minGainMin` (5) or with
 fewer transfers. The cap is divided by the traffic factor because MOTIS measures free
-flow. `tight` = the traffic-adjusted drive eats the slack before the first departure.
+flow. MOTIS times the free-flow drive to reach the stop just as the vehicle leaves, so
+`leaveAt` = itinerary start − (traffic delay − wait at the stop), never later than the
+start. (A "tight" warning used to fire on every peak option; it is gone.)
 
 ## Let me off on the way (`DropOff.kt`)
 You ride A→B and need C. Steps and their request cost (total pinned by `BUDGET = 10`):

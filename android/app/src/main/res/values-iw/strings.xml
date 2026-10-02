@@ -75,7 +75,6 @@
     <string name="drive_to">🚗 \u2068%1$d\u2069 דק׳ עד %2$s</string>
     <string name="saves_min">חוסך \u2068%d\u2069 דק׳</string>
     <string name="fewer_transfers">פחות החלפות</string>
-    <string name="tight_warning">⚠ החיבור צפוף אם יש עומס בכבישים</string>
     <string name="without_ride">בלי הסעה: הגעה ב־\u2068%s\u2069</string>
     <string name="no_better_start">אין נקודת יציאה מהירה יותר בטווח \u2068%d\u2069 דק׳ נסיעה — נסעו כרגיל.</string>
     <string name="send_to_driver">שליחה לנהג/ת</string>
@@ -106,6 +105,8 @@
     <string name="updated_at">עודכן ב־\u2068%s\u2069</string>
     <string name="refresh">רענון</string>
     <string name="offline_showing">אין חיבור — מוצגת התוצאה שנשמרה ב־\u2068%s\u2069. ייתכן שהזמנים השתנו.</string>
+    <string name="on_day">%1$s \u2068%2$s\u2069</string>
+    <string name="next_day">\u2068%1$s\u2069 (\u200E+\u2068%2$d\u2069)</string>
     <string name="late_paren">(‎+\u2068%d\u2069 דק׳)</string>
     <string name="remind_me">🔔 תזכורת מתי לצאת</string>
     <string name="reminder_set">🔔 תזכורת: לצאת ב־\u2068%s\u2069 (נבדק שוב 15 דק׳ לפני)</string>

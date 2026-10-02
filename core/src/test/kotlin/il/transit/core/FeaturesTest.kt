@@ -182,7 +182,7 @@ class BetterStartTest {
         val opt = result.options.single().payload
         assertEquals("Be'er Sheva North", opt.dropOffStopName)
         assertEquals(350, opt.driveSec)
-        assertFalse(opt.tight)
+        assertEquals(NOON, opt.leaveAt) // off-peak: no traffic delay
         assertEquals(StreetModes.CAR, result.usedMode)
     }
 
@@ -220,7 +220,7 @@ class BetterStartTest {
         }
     }
 
-    @Test fun `flags a connection that rush-hour traffic makes tight`() = runTest {
+    @Test fun `rush-hour traffic moves the leave time earlier, minus the wait at the stop`() = runTest {
         val fake = FakeTransitApi().apply {
             onPlan = { req ->
                 if (req.maxPreTransitSec == null) PlanResponse()
@@ -229,7 +229,19 @@ class BetterStartTest {
         }
         val opt = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, SUNDAY_8AM)).options.single().payload
         assertEquals(455, opt.driveSec) // 350 × 1.3
-        assertTrue(opt.tight) // 105 s of traffic against 60 s of slack
+        // 105 s of traffic, 60 s of it absorbed by the wait at the station: leave 45 s earlier.
+        assertEquals(SUNDAY_8AM.minusSeconds(45), opt.leaveAt)
+    }
+
+    @Test fun `a long wait at the stop absorbs the traffic delay`() = runTest {
+        val fake = FakeTransitApi().apply {
+            onPlan = { req ->
+                if (req.maxPreTransitSec == null) PlanResponse()
+                else PlanResponse(listOf(viaStation(350, 600, 3000, 0, SUNDAY_8AM)))
+            }
+        }
+        val opt = BetterStartPlanner(fake).plan(BetterStartQuery(origin, dest, SUNDAY_8AM)).options.single().payload
+        assertEquals(SUNDAY_8AM, opt.leaveAt) // 250 s of wait > 105 s of traffic
     }
 }
 
