@@ -31,6 +31,10 @@ import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
+import il.transit.planner.ui.Shortcuts
+import android.content.Intent
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
@@ -60,6 +64,14 @@ class MainActivity : ComponentActivity() {
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
 
+    /** A shortcut intent waiting for the saved places to load. */
+    private var pendingShortcut by mutableStateOf<Intent?>(null)
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
+    }
+
     /** What to do once the notification-permission prompt is answered. */
     private var afterNotificationPrompt: () -> Unit = {}
 
@@ -79,6 +91,7 @@ class MainActivity : ComponentActivity() {
         mapView = MapView(this).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
+        if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
@@ -94,6 +107,18 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
+                LaunchedEffect(state.savedPlaces) { Shortcuts.update(this@MainActivity, state.savedPlaces) }
+                // An app-icon shortcut opened us: once the saved places are loaded, act on it.
+                LaunchedEffect(state.savedPlaces, pendingShortcut) {
+                    val i = pendingShortcut ?: return@LaunchedEffect
+                    when {
+                        i.getStringExtra(Shortcuts.EXTRA_SHORTCUT) == Shortcuts.LINES -> { vm.showFavorites(true); pendingShortcut = null }
+                        i.getStringExtra(Shortcuts.EXTRA_PLACE) != null && state.savedPlaces.isNotEmpty() -> {
+                            vm.goToPlaceNamed(i.getStringExtra(Shortcuts.EXTRA_PLACE)!!)
+                            pendingShortcut = null
+                        }
+                    }
+                }
                 val selected = state.selectedItinerary
                 val carPath = state.selectedCarPath
                 LaunchedEffect(ctl, selected, carPath) {

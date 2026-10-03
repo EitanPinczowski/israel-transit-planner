@@ -12,6 +12,8 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `ReminderLogic.update` finds the same vehicle in a fresh plan — by `tripId` when both sides
   have one, else line + boarding stop + scheduled time ±1 min — and returns `Updated`
   (new leave time) or `Gone` (cancelled / no longer offered).
+- **Delay alerts need GTFS-RT, which Israel MOT lines do not have on Transitous** (only
+  busofash does; see `transitous-api`). They stay quiet on most trips — expected, not a bug.
 - **Delay alert** (`ReminderLogic.alertMinutes`): notify when the leave time moved ≥ 3 min,
   **earlier or later**, from `toldLeaveAt` — the time the user was last told, stored as
   `alertedLeaveAtEpoch` after each alert. Measuring from the told time (not the previous
@@ -35,6 +37,12 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`
   ONCE — within 120 m of the stop before yours (if MOTIS listed intermediate stops) or 400 m
   of your stop — then `Finished` at the destination or 30 min past planned arrival.
+- **On-the-bus progress** (`RideTracker.progress`): the nearest stop-to-stop segment of the
+  current leg gives "N stops left" (never moves backwards on GPS jitter); the schedule
+  interpolated to that point vs now gives the delay, which shifts the arrival estimates. The
+  service publishes it (`RideService.progress`) and rewrites the ongoing notification
+  ("Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"); the app shows
+  the same in the ride row. 50 of 60 recorded transit legs list intermediate stops.
 - The service is a `location` foreground service that exists only during a ride; it uses
   the platform `LocationManager` (GPS + network, 5 s / 15 m), not Play services.
 - **The `LocationListener` is an explicit object, never a lambda**: below API 29 its other
@@ -43,6 +51,10 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `filesDir/history.json`, newest first, capped at 500 — `core/history/History.kt`).
 
 # Offline
+- **My lines offline**: each successful board is saved per stop (`core/present/DepartureCache`,
+  `data/DepartureCacheStore`, `filesDir/departures_cache.json`, 20 stops). With no signal the
+  saved board shows departures still ahead only, marked "Offline — timetable saved at HH:MM",
+  never a delay or cancellation.
 
 - **Trip results**: `core/plan/PlanCache` (LRU, 10) + `TripCacheJson`, persisted by
   `data/PlanCacheStore` in `filesDir/trip_cache.json`. Key = tab + time mode + places rounded
