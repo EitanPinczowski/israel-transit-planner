@@ -44,6 +44,13 @@ class RoutineTest {
         assertEquals(wide, Routines.active(listOf(wide, uni), il("2026-10-04T11:00")))
     }
 
+    @Test fun `app-icon shortcuts - the routine on now first, then routines, then the rest`() {
+        val gym = SavedPlace("Gym", 31.25, 34.79)
+        val order = Routines.shortcutOrder(listOf(gym, mom, home, uni), il("2026-10-05T17:00"))
+        assertEquals(listOf(home, mom, uni), order) // Monday 17:00: Home's window; max 3
+        assertEquals(listOf(gym), Routines.shortcutOrder(listOf(gym), il("2026-10-05T17:00")))
+    }
+
     @Test fun `saved places from before routines still load, and round-trip`() {
         val old = """[{"name":"Home","lat":31.279,"lon":34.82}]"""
         assertEquals(listOf(SavedPlace("Home", 31.279, 34.82)), UserJson.decodePlaces(old))

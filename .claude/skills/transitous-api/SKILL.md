@@ -55,6 +55,12 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
   (`needsFullNameHint` in `present/Format.kt`).
+- **Real-time and alerts — almost none for Israel (checked 2026-10-03).** Transitous' Israel
+  config (`public-transport/transitous` → `feeds/il.json`) loads the MOT GTFS timetable and
+  ONE GTFS-RT feed: "busofash" (Tel Aviv night/Shabbat buses). MOT lines have no live delays
+  and no service alerts there (3 live plans: 0 alerts). MOT's own SIRI feed needs a registered
+  key → out under the "no key" rule. So delay badges/alerts only fire on busofash lines;
+  "on the bus" delay is GPS vs timetable and does not depend on it. Service alerts: not built.
 - **Last trip of the day (2026-10-03, live):** `arriveBy=true` at 03:00 the next morning
   returns the evening's latest trips — Fri 9 Oct Be'er Sheva → Tel Aviv: 15:29. Two traps,
   handled in `LastRideFinder`: a late trip that arrives after 03:00 (night line 469, hourly
