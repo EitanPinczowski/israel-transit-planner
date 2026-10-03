@@ -81,6 +81,9 @@ import il.transit.core.present.pickUpRow
 import il.transit.core.present.fareLabel
 import il.transit.core.present.lastRideNote
 import il.transit.core.plan.LastRide
+import il.transit.core.plan.TripSort
+import il.transit.core.present.Turn
+import il.transit.core.present.walkSteps
 import il.transit.core.fare.FareEstimate
 import il.transit.core.fare.FareProfile
 import il.transit.core.fare.FareTable
@@ -431,6 +434,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
+                    if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
                     itemsIndexed(state.options) { i, itin ->
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
@@ -514,6 +518,61 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
             stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
+        if (selected) WalkDirections(itin)
+    }
+}
+
+/** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
+@Composable
+private fun SortChips(state: UiState, vm: MainViewModel) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        TripSort.entries.forEach { s ->
+            val label = when (s) {
+                TripSort.FASTEST -> R.string.sort_fastest
+                TripSort.FEWEST_TRANSFERS -> R.string.sort_fewest_transfers
+                TripSort.LEAST_WALKING -> R.string.sort_least_walking
+            }
+            FilterChip(state.settings.tripSort == s, { vm.setTripSort(s) }, label = { Text(stringResource(label)) })
+        }
+    }
+}
+
+/**
+ * Turn-by-turn directions for the walking parts of the selected trip, folded by default.
+ * Arrows are real-world directions: left is left in Hebrew too, so they are never mirrored.
+ */
+@Composable
+private fun WalkDirections(itin: Itinerary) {
+    val walks = remember(itin) {
+        itin.legs.filter { it.mode == "WALK" && it.duration >= 60 }.map { it to walkSteps(it) }.filter { it.second.size > 1 }
+    }
+    if (walks.isEmpty()) return
+    var open by remember(itin) { mutableStateOf(false) }
+    TextButton(onClick = { open = !open }) {
+        Text(stringResource(if (open) R.string.walk_directions_hide else R.string.walk_directions_show))
+    }
+    if (!open) return
+    walks.forEach { (leg, steps) ->
+        Text(stringResource(R.string.walk_to, leg.to.name), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 4.dp))
+        steps.forEach { st ->
+            val (arrow, word) = when (st.turn) {
+                Turn.START -> "↑" to R.string.turn_start
+                Turn.STRAIGHT -> "↑" to R.string.turn_straight
+                Turn.SLIGHT_LEFT -> "↖" to R.string.turn_slight_left
+                Turn.LEFT -> "←" to R.string.turn_left
+                Turn.SHARP_LEFT -> "↙" to R.string.turn_sharp_left
+                Turn.SLIGHT_RIGHT -> "↗" to R.string.turn_slight_right
+                Turn.RIGHT -> "→" to R.string.turn_right
+                Turn.SHARP_RIGHT -> "↘" to R.string.turn_sharp_right
+                Turn.U_TURN -> "↶" to R.string.turn_u_turn
+                Turn.STAIRS -> "⇵" to R.string.turn_stairs
+            }
+            val parts = listOfNotNull(stringResource(word), stringResource(R.string.meters, st.meters), st.street)
+            Row(Modifier.padding(vertical = 1.dp)) {
+                Text(arrow, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(24.dp))
+                Text(parts.joinToString(" · "), style = MaterialTheme.typography.bodySmall)
+            }
+        }
     }
 }
 

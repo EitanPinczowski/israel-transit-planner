@@ -43,6 +43,8 @@ data class UserSettings(
     val fareProfile: FareProfile = FareProfile.REGULAR,
     /** Wheelchair / stroller: step-free walking parts. */
     val accessible: Boolean = false,
+    /** How the Trip tab orders its options. */
+    val tripSort: il.transit.core.plan.TripSort = il.transit.core.plan.TripSort.FASTEST,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

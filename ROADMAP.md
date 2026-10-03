@@ -63,6 +63,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
       timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
       on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] Sort chips on the Trip tab: Fastest · Fewest transfers · Least walking (no new requests)
+- [x] Walking directions for the selected trip: street by street, turns computed from the
+      step geometry (Transitous sends only CONTINUE/STAIRS), stairs called out
 - [x] Accessible routes setting: `pedestrianProfile=WHEELCHAIR` (step-free walking parts;
       vehicle accessibility is not in the data)
 

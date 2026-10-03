@@ -61,6 +61,10 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 - **`pedestrianProfile=WHEELCHAIR`** is accepted and changes the answer (BGU → Tel Aviv: a bus
   to the station instead of the 836 m walk). `map/stops` carries no wheelchair field, so
   vehicle/stop accessibility is unknown — the app says so.
+- **Walking `steps[]`:** only `CONTINUE` or `STAIRS` (2,612 recorded steps), `streetName` on
+  ~16% of steps overall but most of a street walk, and a polyline per step. Turns are computed
+  from the polylines in `present/WalkDirections.kt`; `plan_walk_beersheva_streets.json` pins
+  a real 1.4 km walk (Bialik → Basel → Ussishkin → Weizmann → Wolfson → HaTikva).
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
   `lineLabel()` / `headsignText()`.

@@ -1,0 +1,753 @@
+{
+ "requestParameters": {},
+ "debugOutput": {},
+ "from": {
+  "name": "",
+  "lat": 31.2525,
+  "lon": 34.7915,
+  "vertexType": "NORMAL"
+ },
+ "to": {
+  "name": "",
+  "lat": 31.244,
+  "lon": 34.799,
+  "vertexType": "NORMAL"
+ },
+ "direct": [
+  {
+   "duration": 1400,
+   "startTime": "2026-10-05T05:00:00Z",
+   "endTime": "2026-10-05T05:23:00Z",
+   "transfers": 0,
+   "id": "",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 31.2525,
+      "lon": 34.7915,
+      "departure": "2026-10-05T05:00:00Z",
+      "scheduledDeparture": "2026-10-05T05:00:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "END",
+      "lat": 31.244,
+      "lon": 34.799,
+      "arrival": "2026-10-05T05:23:00Z",
+      "scheduledArrival": "2026-10-05T05:23:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 1400,
+     "startTime": "2026-10-05T05:00:00Z",
+     "endTime": "2026-10-05T05:23:00Z",
+     "scheduledStartTime": "2026-10-05T05:00:00Z",
+     "scheduledEndTime": "2026-10-05T05:23:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 1485.0,
+     "legGeometry": {
+      "points": "eaorz@iwnjaAdVjA??nCM??fOq@??nF`A??lMpE??`NxFvHjEdNvHhC~@xCT??h@Ol@Aj@F??rBgArAyA`GwLpGcMlDkJrCwMtAyJt@mJ??p@Al@Sh@_@\\m@Ru@Du@??dJXtN?|AI??zDe@??lEgAtG_CxJoE??OgABiAVeAf@w@t@g@z@S~@Bx@X??`DaI~HyQjI{O??~Vaf@??zV{e@??pKoSbA_C??dCwF??Z_ApAsDpAkFzAyGhCaLhCwJbDuHZa@??~DiFdAcB??hBuC??|F_K??xGqMfCcF??zEaK??fBkDpDeH??nUkc@??RcA??ZcBTqFTcD??_@i^??kAca@??xdB_A??dCA???vF",
+      "precision": 6,
+      "length": 110
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 60.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 946002019,
+       "polyline": {
+        "points": "eaorz@iwnjaAdVjA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 8.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 785960584,
+       "fromOsmNode": 946002019,
+       "toOsmNode": 3674754414,
+       "polyline": {
+        "points": "_jnrz@}tnjaAnCM",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "חיים נחמן ביאליק",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 29.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 363297795,
+       "fromOsmNode": 3674754414,
+       "toOsmNode": 3674754416,
+       "polyline": {
+        "points": "oenrz@kunjaAfOq@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "חיים נחמן ביאליק",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 785960582,
+       "fromOsmNode": 3674754416,
+       "toOsmNode": 3674754391,
+       "polyline": {
+        "points": "gumrz@}vnjaAnF`A",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "חיים נחמן ביאליק",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 28.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 785960579,
+       "fromOsmNode": 3674754391,
+       "toOsmNode": 3674754536,
+       "polyline": {
+        "points": "wmmrz@{tnjaAlMpE",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "חיים נחמן ביאליק",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 97.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 73085568,
+       "fromOsmNode": 3674754536,
+       "toOsmNode": 1616967772,
+       "polyline": {
+        "points": "i_mrz@innjaA`NxFvHjEdNvHhC~@xCT",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "חיים נחמן ביאליק",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 971779880,
+       "fromOsmNode": 1616967772,
+       "toOsmNode": 867397653,
+       "polyline": {
+        "points": "enkrz@usmjaAh@Ol@Aj@F",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "כיכר המכללות",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 145.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 73096476,
+       "fromOsmNode": 867397653,
+       "toOsmNode": 986002336,
+       "polyline": {
+        "points": "ajkrz@_tmjaArBgArAyA`GwLpGcMlDkJrCwMtAyJt@mJ",
+        "precision": 6,
+        "length": 9
+       },
+       "streetName": "בזל",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 966005392,
+       "fromOsmNode": 986002336,
+       "toOsmNode": 1616967793,
+       "polyline": {
+        "points": "wdjrz@ifpjaAp@Al@Sh@_@\\m@Ru@Du@",
+        "precision": 6,
+        "length": 7
+       },
+       "streetName": "כיכר דאלי",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 53.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 82940247,
+       "fromOsmNode": 1616967793,
+       "toOsmNode": 3679303267,
+       "polyline": {
+        "points": "u~irz@ylpjaAdJXtN?|AI",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 82940247,
+       "fromOsmNode": 3679303267,
+       "toOsmNode": 3674807856,
+       "polyline": {
+        "points": "{`irz@ilpjaAzDe@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 52.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 82940247,
+       "fromOsmNode": 3674807856,
+       "toOsmNode": 8936572076,
+       "polyline": {
+        "points": "_{hrz@ompjaAlEgAtG_CxJoE",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 28.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 73293523,
+       "fromOsmNode": 8936572076,
+       "toOsmNode": 869309983,
+       "polyline": {
+        "points": "a`hrz@gzpjaAOgABiAVeAf@w@t@g@z@S~@Bx@X",
+        "precision": 6,
+        "length": 9
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 83.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 869309983,
+       "toOsmNode": 3674793336,
+       "polyline": {
+        "points": "awgrz@ucqjaA`DaI~HyQjI{O",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 73.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3674793336,
+       "toOsmNode": 3674793367,
+       "polyline": {
+        "points": "s}frz@mqrjaA~Vaf@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 73.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3674793367,
+       "toOsmNode": 3674785711,
+       "polyline": {
+        "points": "sefrz@oxsjaAzV{e@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 46.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3674785711,
+       "toOsmNode": 3674793361,
+       "polyline": {
+        "points": "wmerz@k_ujaApKoSbA_C",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 14.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3674793361,
+       "toOsmNode": 3674793373,
+       "polyline": {
+        "points": "a_erz@{wujaAdCwF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 100.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3674793373,
+       "toOsmNode": 3679323948,
+       "polyline": {
+        "points": "{zdrz@s_vjaAZ_ApAsDpAkFzAyGhCaLhCwJbDuHZa@",
+        "precision": 6,
+        "length": 9
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 22.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3679323948,
+       "toOsmNode": 3681333445,
+       "polyline": {
+        "points": "kcdrz@_{wjaA~DiFdAcB",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 9.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 3681333445,
+       "toOsmNode": 1004497074,
+       "polyline": {
+        "points": "e{crz@mexjaAhBuC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 23.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146371,
+       "fromOsmNode": 1004497074,
+       "toOsmNode": 957367778,
+       "polyline": {
+        "points": "{wcrz@cjxjaA|F_K",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 81548390,
+       "fromOsmNode": 957367778,
+       "toOsmNode": 950663586,
+       "polyline": {
+        "points": "}ocrz@cvxjaAxGqMfCcF",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 22.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 85146369,
+       "fromOsmNode": 950663586,
+       "toOsmNode": 282048713,
+       "polyline": {
+        "points": "{bcrz@ykyjaAzEaK",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 27.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 255766862,
+       "fromOsmNode": 282048713,
+       "toOsmNode": 957367776,
+       "polyline": {
+        "points": "_|brz@{wyjaAfBkDpDeH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 68.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 255766862,
+       "fromOsmNode": 957367776,
+       "toOsmNode": 282048732,
+       "polyline": {
+        "points": "esbrz@mfzjaAnUkc@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 25859028,
+       "fromOsmNode": 282048732,
+       "toOsmNode": 3670618407,
+       "polyline": {
+        "points": "u|arz@yj{jaARcA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 24.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 25859028,
+       "fromOsmNode": 3670618407,
+       "toOsmNode": 3670575721,
+       "polyline": {
+        "points": "a|arz@}l{jaAZcBTqFTcD",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 48.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 25859028,
+       "fromOsmNode": 3670575721,
+       "toOsmNode": 282048733,
+       "polyline": {
+        "points": "yyarz@w|{jaA_@i^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 52.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 358706609,
+       "fromOsmNode": 282048733,
+       "toOsmNode": 3635945303,
+       "polyline": {
+        "points": "yzarz@a||jaAkAca@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "דוד וולפסון",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 181.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 358706604,
+       "fromOsmNode": 3635945303,
+       "toOsmNode": 8071572171,
+       "polyline": {
+        "points": "e}arz@e~}jaAxdB_A",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "התקווה",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 7.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 358706604,
+       "fromOsmNode": 8071572171,
+       "toOsmNode": 2614550404,
+       "polyline": {
+        "points": "kw~qz@e`~jaAdCA",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "התקווה",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 22.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 2614550404,
+       "polyline": {
+        "points": "es~qz@g`~jaA?vF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "itineraries": [],
+ "previousPageCursor": "",
+ "nextPageCursor": ""
+}

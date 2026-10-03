@@ -27,6 +27,8 @@ import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
+import il.transit.core.plan.TripSort
+import il.transit.core.plan.sortOptions
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
 import il.transit.core.present.needsFullNameHint
@@ -132,7 +134,7 @@ data class UiState(
     /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
         get() = when (mode) {
-            AppMode.TRIP -> results?.let { it.itineraries + listOfNotNull(it.walkOnly) }.orEmpty()
+            AppMode.TRIP -> results?.let { sortOptions(it.itineraries, settings.tripSort) + listOfNotNull(it.walkOnly) }.orEmpty()
             AppMode.BETTER_START -> betterStart?.options?.map { it.payload.itinerary }.orEmpty()
             AppMode.DROP_OFF -> dropOff?.options?.map { it.payload.transit }.orEmpty()
             AppMode.PICK_UP -> pickUp?.options?.map { it.payload.itinerary }.orEmpty()
@@ -651,6 +653,12 @@ class MainViewModel(
     fun showSettings(show: Boolean) = _state.update { it.copy(showSettings = show) }
 
     fun updateSettings(s: UserSettings) = viewModelScope.launch { store.setSettings(s) }
+
+    /** Re-order the Trip tab's options; the first of the new order is selected. */
+    fun setTripSort(sort: TripSort) {
+        _state.update { it.copy(selected = 0, settings = it.settings.copy(tripSort = sort)) }
+        updateSettings(_state.value.settings)
+    }
 
     // --- helpers -----------------------------------------------------------------------------
 
