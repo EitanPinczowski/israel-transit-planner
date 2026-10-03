@@ -27,7 +27,9 @@ import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
+import il.transit.core.user.FavoriteLine
 import il.transit.core.user.PlaceRoutine
+import il.transit.core.ride.RideProgress
 import il.transit.core.user.Routines
 import il.transit.core.plan.TripSort
 import il.transit.core.plan.sortOptions
@@ -132,6 +134,12 @@ data class UiState(
     val lastRideLoading: Boolean = false,
     /** The destination was filled in by this saved place's routine, not typed by the user. */
     val routinePlace: String? = null,
+    /** Live progress while a ride is tracked ("3 stops left · arrive 08:47"). */
+    val rideProgress: RideProgress? = null,
+    val favorites: List<FavoriteLine> = emptyList(),
+    val showFavorites: Boolean = false,
+    /** Next departures per pinned line; a missing key = still loading, null value = failed. */
+    val favoriteBoards: Map<FavoriteLine, List<DepartureRow>?> = emptyMap(),
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -200,6 +208,8 @@ class MainViewModel(
         }
         viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
         rides?.let { r -> viewModelScope.launch { r.active.collect { a -> _state.update { it.copy(riding = a) } } } }
+        rides?.let { r -> viewModelScope.launch { r.progress.collect { p -> _state.update { it.copy(rideProgress = p) } } } }
+        viewModelScope.launch { store.favorites.collect { f -> _state.update { it.copy(favorites = f) } } }
         updates?.let { u -> viewModelScope.launch { u.check()?.let { latest -> _state.update { it.copy(update = latest) } } } }
         historyStore?.let { h ->
             viewModelScope.launch {
@@ -483,6 +493,80 @@ class MainViewModel(
     }
 
     fun showHistory(show: Boolean) = _state.update { it.copy(showHistory = show) }
+
+    // --- favourite lines ------------------------------------------------------------------
+
+    /** ☆ on a departure-board row: pin (or unpin) that line in that direction at this stop. */
+    fun toggleFavorite(sheet: StopSheet, row: DepartureRow) = viewModelScope.launch {
+        val fav = FavoriteLine(sheet.stopId, sheet.name, row.line, row.headsign)
+        val now = _state.value.favorites
+        store.setFavorites(if (fav in now) now - fav else now + fav)
+    }
+
+    fun removeFavorite(fav: FavoriteLine) = viewModelScope.launch {
+        store.setFavorites(_state.value.favorites - fav)
+    }
+
+    /** Open the pinned lines with their next departures: one `stoptimes` request per stop. */
+    fun showFavorites(show: Boolean) {
+        _state.update { it.copy(showFavorites = show, favoriteBoards = if (show) emptyMap() else it.favoriteBoards) }
+        if (!show) return
+        _state.value.favorites.groupBy { it.stopId }.forEach { (stopId, favs) ->
+            viewModelScope.launch {
+                val rows = try {
+                    api.stopTimes(stopId, null, 30, language).stopTimes.map(::departureRow)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    null
+                }
+                _state.update { st ->
+                    st.copy(favoriteBoards = st.favoriteBoards + favs.associateWith { f -> rows?.filter(f::matches)?.take(3) })
+                }
+            }
+        }
+    }
+
+    // --- way back -------------------------------------------------------------------------
+
+    /**
+     * The return trip of the selected option: from where it arrives back to where it started,
+     * leaving [stayMin] after arriving, with the same settings.
+     */
+    fun wayBack(stayMin: Int) {
+        val s = _state.value
+        val arrive = s.selectedItinerary?.end ?: return
+        val origin = s.from
+        val back: PlaceRef = when (origin) {
+            is PlaceRef.Point -> origin
+            PlaceRef.MyLocation -> PlaceRef.Point(null, resolve(origin) ?: return)
+        }
+        val dest = s.to ?: return
+        _state.update {
+            it.copy(from = dest, to = back, routinePlace = null, timeMode = TimeMode.DEPART_AT, time = arrive.plusSeconds(stayMin * 60L))
+        }
+        plan()
+        if (back is PlaceRef.Point && back.name == null) nameLater(back.at)
+    }
+
+    /** Fill in a dropped point's name once reverse geocoding answers. */
+    private fun nameLater(at: LatLon) = viewModelScope.launch {
+        val name = try {
+            api.reverseGeocode(at, language, 1).firstOrNull()?.name
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
+        }
+        if (name != null) {
+            _state.update { st ->
+                st.copy(
+                    to = (st.to as? PlaceRef.Point)?.takeIf { it.at == at && it.name == null }?.copy(name = name) ?: st.to,
+                    from = (st.from as? PlaceRef.Point)?.takeIf { it.at == at && it.name == null }?.copy(name = name) ?: st.from,
+                )
+            }
+        }
+    }
 
     fun dismissUpdate() = _state.update { it.copy(update = null) }
 

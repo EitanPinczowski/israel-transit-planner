@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -55,6 +56,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import il.transit.core.user.FavoriteLine
 import il.transit.core.user.PlaceRoutine
 import il.transit.core.user.SavedPlace
 import androidx.compose.runtime.Composable
@@ -147,7 +149,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
         Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
             AttributionChip(Modifier.padding(8.dp))
             when {
-                state.stopSheet != null -> StopPanel(state.stopSheet, vm)
+                state.stopSheet != null -> StopPanel(state.stopSheet, state.favorites, vm)
                 state.loading || state.hasResults || state.error != null ->
                     ResultsPanel(state, vm, actions, onSaveTrip = { savingTrip = true })
                 else -> Spacer(Modifier.navigationBarsPadding())
@@ -157,6 +159,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
 
     if (state.showSettings) SettingsDialog(state, vm, actions)
     if (state.showHistory) HistoryDialog(state, vm)
+    if (state.showFavorites) FavoritesDialog(state, vm)
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }
     }
@@ -219,6 +222,9 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                     }
                     IconButton(onClick = { vm.showHistory(true) }) {
                         Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.history))
+                    }
+                    IconButton(onClick = { vm.showFavorites(true) }) {
+                        Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.my_lines))
                     }
                 }
             }
@@ -449,6 +455,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
                     if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
+                    if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null) item { WayBackRow(vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -477,7 +484,17 @@ private fun ReminderRow(state: UiState, vm: MainViewModel, actions: ScreenAction
 private fun RideRow(state: UiState, vm: MainViewModel, actions: ScreenActions) {
     when {
         state.riding -> Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+            val context = LocalContext.current
+            val p = state.rideProgress
+            Column(Modifier.weight(1f)) {
+                if (p == null) {
+                    Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall)
+                } else {
+                    // "Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"
+                    Text(il.transit.planner.ride.RideService.rideProgressTitle(context, p), style = MaterialTheme.typography.titleSmall)
+                    Text(il.transit.planner.ride.RideService.rideProgressText(context, p), style = MaterialTheme.typography.bodySmall)
+                }
+            }
             TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
         }
         state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null ->
@@ -530,6 +547,55 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
         if (selected) WalkDirections(itin)
     }
+}
+
+/** "Way back after 1 h · 2 h · 3 h": the return of the selected option, same settings. */
+@Composable
+private fun WayBackRow(vm: MainViewModel) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.way_back_after), style = MaterialTheme.typography.bodySmall)
+        listOf(60, 120, 180).forEach { m ->
+            TextButton(onClick = { vm.wayBack(m) }) { Text(stringResource(R.string.hours_short, m / 60)) }
+        }
+    }
+}
+
+/** My lines: each pinned line's next departures at its stop, with live delays. */
+@Composable
+private fun FavoritesDialog(state: UiState, vm: MainViewModel) {
+    AlertDialog(
+        onDismissRequest = { vm.showFavorites(false) },
+        confirmButton = { TextButton(onClick = { vm.showFavorites(false) }) { Text(stringResource(R.string.done)) } },
+        title = { Text(stringResource(R.string.my_lines)) },
+        text = {
+            if (state.favorites.isEmpty()) {
+                Text(stringResource(R.string.my_lines_empty))
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(state.favorites) { f ->
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        listOf(f.line, f.headsign).filter { it.isNotBlank() }.joinToString(" → "),
+                                        style = MaterialTheme.typography.titleSmall,
+                                    )
+                                    Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                IconButton(onClick = { vm.removeFavorite(f) }) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
+                            }
+                            when {
+                                f !in state.favoriteBoards -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                                state.favoriteBoards[f] == null -> Text(stringResource(R.string.err_network), style = MaterialTheme.typography.bodySmall)
+                                state.favoriteBoards[f]!!.isEmpty() -> Text(stringResource(R.string.no_departures), style = MaterialTheme.typography.bodySmall)
+                                else -> state.favoriteBoards[f]!!.forEach { DepartureView(it) }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    )
 }
 
 /** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
@@ -887,7 +953,7 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
 // --- stop departures --------------------------------------------------------------------------
 
 @Composable
-private fun StopPanel(sheet: StopSheet, vm: MainViewModel) {
+private fun StopPanel(sheet: StopSheet, favorites: List<FavoriteLine>, vm: MainViewModel) {
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
         Column(Modifier.navigationBarsPadding().padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -901,7 +967,16 @@ private fun StopPanel(sheet: StopSheet, vm: MainViewModel) {
                 sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
                 sheet.rows.isEmpty() -> Text(stringResource(R.string.no_departures), Modifier.padding(vertical = 12.dp))
-                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) { items(sheet.rows) { DepartureView(it) } }
+                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
+                    items(sheet.rows) { r ->
+                        val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.weight(1f)) { DepartureView(r) }
+                            // ☆ pins this line in this direction at this stop ("My lines").
+                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }) { Text(if (pinned) "★" else "☆") }
+                        }
+                    }
+                }
             }
         }
     }

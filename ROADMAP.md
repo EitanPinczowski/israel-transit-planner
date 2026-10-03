@@ -63,6 +63,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
       timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
       on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] "On the bus": live stops left, delay and arrival in the ride notification and the app
+- [x] My lines: ☆ a line at a stop on its departure board; next 3 departures in one tap
+- [x] Way back after 1 / 2 / 3 h: the return of the selected option, same settings
 - [x] Routines on saved places: "University: Sun–Thu 07:00–10:00" opens the app on that
       trip with the time to leave; never over a destination the user chose (`Routines.active`)
 - [x] Delay alert while waiting: with a leave reminder, re-checks 30/20/12/6/2 min before and

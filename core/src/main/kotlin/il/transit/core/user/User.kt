@@ -52,6 +52,16 @@ object Routines {
     }
 }
 
+/**
+ * A pinned line at a stop ("3 to Ramot from Rager/Oren"), to see its next departures in one
+ * tap. Matched against departure rows by line and headsign, so the other direction of the
+ * same line at the same stop is not mixed in.
+ */
+@Serializable
+data class FavoriteLine(val stopId: String, val stopName: String, val line: String, val headsign: String) {
+    fun matches(row: il.transit.core.present.DepartureRow): Boolean = row.line == line && row.headsign == headsign
+}
+
 /** A one-tap trip. [from] null means "from wherever I am when I tap it". */
 @Serializable
 data class SavedTrip(val name: String, val from: SavedPlace?, val to: SavedPlace)
@@ -120,6 +130,10 @@ object UserJson {
         r?.let { json.encodeToString(il.transit.core.remind.Reminder.serializer(), it) } ?: ""
     fun decodeReminder(s: String?): il.transit.core.remind.Reminder? =
         s?.takeIf { it.isNotBlank() }?.let { runCatching { json.decodeFromString(il.transit.core.remind.Reminder.serializer(), it) }.getOrNull() }
+
+    fun encodeFavorites(f: List<FavoriteLine>): String = json.encodeToString(ListSerializer(FavoriteLine.serializer()), f)
+    fun decodeFavorites(s: String?): List<FavoriteLine> =
+        s?.let { runCatching { json.decodeFromString(ListSerializer(FavoriteLine.serializer()), it) }.getOrNull() }.orEmpty()
 
     fun encodeTrips(t: List<SavedTrip>): String = json.encodeToString(ListSerializer(SavedTrip.serializer()), t)
     fun decodeTrips(s: String?): List<SavedTrip> =

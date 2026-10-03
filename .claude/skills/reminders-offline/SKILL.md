@@ -35,6 +35,12 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`
   ONCE — within 120 m of the stop before yours (if MOTIS listed intermediate stops) or 400 m
   of your stop — then `Finished` at the destination or 30 min past planned arrival.
+- **On-the-bus progress** (`RideTracker.progress`): the nearest stop-to-stop segment of the
+  current leg gives "N stops left" (never moves backwards on GPS jitter); the schedule
+  interpolated to that point vs now gives the delay, which shifts the arrival estimates. The
+  service publishes it (`RideService.progress`) and rewrites the ongoing notification
+  ("Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"); the app shows
+  the same in the ride row. 50 of 60 recorded transit legs list intermediate stops.
 - The service is a `location` foreground service that exists only during a ride; it uses
   the platform `LocationManager` (GPS + network, 5 s / 15 m), not Play services.
 - **The `LocationListener` is an explicit object, never a lambda**: below API 29 its other
