@@ -25,6 +25,25 @@ dependencies {
     testImplementation(libs.okhttp.mockwebserver)
 }
 
+// Golden trips: the reference trips against LIVE Transitous (~25 requests). A separate
+// source set so `test` and CI never run it; see .claude/skills/golden-trips.
+val golden: SourceSet by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+}
+configurations[golden.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[golden.runtimeOnlyConfigurationName].extendsFrom(configurations.runtimeOnly.get())
+
+tasks.register<JavaExec>("goldenTrips") {
+    description = "Runs the golden trips against live Transitous and writes build/golden/report.md."
+    group = "verification"
+    classpath = golden.runtimeClasspath
+    mainClass.set("il.transit.core.golden.GoldenTripsKt")
+    workingDir = projectDir
+    jvmArgs("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8")
+    outputs.upToDateWhen { false }
+}
+
 tasks.test {
     // Unit tests must never reach the network; fixtures only (see .claude/skills/transitous-api).
     systemProperty("transit.offline", "true")

@@ -43,6 +43,26 @@ fun legColor(leg: Leg): String {
     else defaultColor(legKind(leg.mode))
 }
 
+/** WCAG 2 relative luminance of "#RRGGBB". */
+fun luminance(hex: String): Double {
+    val h = hex.removePrefix("#")
+    fun channel(i: Int): Double {
+        val c = h.substring(i, i + 2).toInt(16) / 255.0
+        return if (c <= 0.03928) c / 12.92 else Math.pow((c + 0.055) / 1.055, 2.4)
+    }
+    return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4)
+}
+
+/** WCAG 2 contrast ratio between two "#RRGGBB" colours: 1.0 (same) to 21.0 (black on white). */
+fun contrastRatio(a: String, b: String): Double {
+    val (hi, lo) = listOf(luminance(a), luminance(b)).sortedDescending()
+    return (hi + 0.05) / (lo + 0.05)
+}
+
+/** Chip label colour that reads on [bg]: white or black, whichever contrasts more. */
+fun chipTextColor(bg: String): String =
+    if (contrastRatio(bg, "#FFFFFF") >= contrastRatio(bg, "#000000")) "#FFFFFF" else "#000000"
+
 data class LegChip(
     val kind: LegKind,
     /** Line number / name for transit legs, null for street legs. */
