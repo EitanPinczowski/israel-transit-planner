@@ -13,7 +13,7 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
 - [x] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes) and replace `plan_synthetic.json`
 - [ ] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
-- [ ] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
+- [x] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP
 - [x] Search box (geocode, Hebrew + English), origin = my location, long-press = destination

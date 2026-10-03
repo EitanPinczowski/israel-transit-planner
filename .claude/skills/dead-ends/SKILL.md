@@ -16,4 +16,5 @@ description: Approaches that were considered and rejected, with the reason. Load
 | Play Store distribution | paid developer account; the app is for friends and family. |
 | One `plan` request per candidate stop for "better start" | MOTIS does the drop-off search itself (`preTransitModes=CAR`); per-candidate plans would cost ~25 requests and break the Transitous traffic rule. |
 | `CAR_DROPOFF` as the better-start / pick-up mode | Recorded on Transitous (2026-10-02): accepted, but drives ~4 min from a 0-s stub and post-transit answers end in a walk. `CAR` gives the real station drop-off. |
+| Raising the drop-off default detour above 10 min | Owner decided to keep 10 (2026-10-03). At peak, leaving the highway for a mid-route station costs 14–21 min (golden trip 8); the slider already lets the user allow more. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |

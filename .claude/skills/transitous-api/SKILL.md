@@ -14,9 +14,9 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 2. Send a real User-Agent with contact info → `MotisClient.USER_AGENT` (repo URL).
 3. Visible link to https://transitous.org/sources/ → the attribution chip on the map.
 4. Keep traffic light; **contact them before routine use of routing endpoints** — their
-   API page points to their **Matrix channel** for this. Draft: `docs/transitous-contact.md`.
-   Only the owner can send it (no Matrix access from a session). Until they answer, keep
-   usage to the owner's own testing.
+   API page points to their **Matrix channel** for this. The owner sent
+   `docs/transitous-contact.md` there; until they answer, keep usage to the owner's own
+   testing. Their reply (a rate, caps, `CAR_DROPOFF`) belongs in this skill.
 5. Don't scrape — bulk data is downloadable from them instead.
 
 ## Endpoints we use
