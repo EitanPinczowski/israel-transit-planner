@@ -38,6 +38,7 @@ import il.transit.core.ride.RideProgress
 import il.transit.core.user.Routines
 import il.transit.core.plan.TripSort
 import il.transit.core.plan.sortOptions
+import il.transit.core.plan.reselect
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
 import il.transit.core.present.needsFullNameHint
@@ -299,7 +300,10 @@ class MainViewModel(
             val at = resolve(ref) ?: return
             val name = (ref as? PlaceRef.Point)?.name
             _state.update {
+                // Errands are planned forwards from a departure; "arrive by" would be read as one.
+                val arriveBy = it.timeMode == TimeMode.ARRIVE_BY
                 it.copy(
+                    timeMode = if (arriveBy) TimeMode.NOW else it.timeMode, time = if (arriveBy) null else it.time,
                     chainStops = (it.chainStops + ChainStop(at, name, 15)).take(ChainPlanner.MAX_STOPS),
                     editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, chain = null,
                 )
@@ -429,8 +433,12 @@ class MainViewModel(
                                 results = r,
                                 resultsAt = Instant.now(),
                                 offlineSince = null,
-                                // A refresh keeps the user's selection when it still exists.
-                                selected = if (quiet) it.selected.coerceAtMost((r.itineraries.size - 1).coerceAtLeast(0)) else 0,
+                                // A refresh keeps the bus the user picked, wherever it moved in the list.
+                                selected = if (quiet) {
+                                    reselect(it.selectedItinerary, sortOptions(r.itineraries, it.settings.tripSort) + listOfNotNull(r.walkOnly), it.selected)
+                                } else {
+                                    0
+                                },
                                 error = if (empty) UiError.NO_RESULTS else null,
                             )
                         }
@@ -512,7 +520,9 @@ class MainViewModel(
         val itin = s.selectedItinerary ?: return false
         val from = resolve(s.from) ?: return false
         val to = s.to?.let(::resolve) ?: return false
-        val r = Reminder.from(itin, from, to, s.settings) ?: return false
+        // An errand leg is re-checked on its own stops; the chain's A → B would never find its bus.
+        val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings))
+            ?: return false
         viewModelScope.launch { store.setReminder(r) }
         reminders?.schedule(r)
         return true
@@ -820,6 +830,7 @@ class MainViewModel(
         val from = resolve(s.from) ?: return
         val to = s.to?.let(::resolve) ?: return
         val at = s.selectedItinerary?.start ?: s.time ?: Instant.now()
+        val route = s.from to s.to
         _state.update { it.copy(carLoading = true) }
         viewModelScope.launch {
             val car = try {
@@ -829,7 +840,8 @@ class MainViewModel(
             } catch (e: Exception) {
                 null
             }
-            _state.update { it.copy(carTime = car, carLoading = false) }
+            // The user may have searched another route meanwhile; its car answer is not this one.
+            _state.update { if ((it.from to it.to) != route) it else it.copy(carTime = car, carLoading = false) }
         }
     }
 
