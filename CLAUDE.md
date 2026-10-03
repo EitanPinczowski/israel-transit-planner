@@ -80,3 +80,4 @@ skill that does not exist — a note nobody can find is a note nobody has.
 | `reminders-offline` | leave reminder, get-off alert, history, notifications, offline cache and map |
 | `release-apk` | shipping a signed APK to friends and family |
 | `dead-ends` | **before proposing an approach** — what was rejected and why |
+| `parallel-work` | working as one of several agents (Phase 8+ packages, `docs/agents/`) |
