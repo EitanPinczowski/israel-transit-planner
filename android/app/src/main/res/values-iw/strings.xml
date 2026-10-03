@@ -149,4 +149,5 @@
     <string name="fare_free">חינם (גיל 67 ומעלה)</string>
     <string name="fare_free_label">חינם</string>
     <string name="fare_estimate_note">המחירים הם הערכה (לפי מחירון רב-קו) · הקישו למחירון הרשמי</string>
+    <string name="search_full_name_hint">לא נמצאה התאמה מדויקת — נסו את השם המלא, למשל ״שדרות רגר״</string>
 </resources>

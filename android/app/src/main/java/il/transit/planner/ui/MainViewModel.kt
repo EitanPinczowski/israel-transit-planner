@@ -27,6 +27,7 @@ import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
+import il.transit.core.present.needsFullNameHint
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
 import il.transit.core.remind.Reminder
@@ -93,6 +94,8 @@ data class UiState(
     val editing: Field? = null,
     val query: String = "",
     val suggestions: List<Suggestion> = emptyList(),
+    /** The search was short and nothing found contains it: suggest typing the full name. */
+    val searchHint: Boolean = false,
     val timeMode: TimeMode = TimeMode.NOW,
     val time: Instant? = null,
     val loading: Boolean = false,
@@ -210,13 +213,13 @@ class MainViewModel(
     // --- search -----------------------------------------------------------------------
 
     fun startEditing(field: Field) {
-        _state.update { it.copy(editing = field, query = "", suggestions = savedSuggestions("")) }
+        _state.update { it.copy(editing = field, query = "", suggestions = savedSuggestions(""), searchHint = false) }
     }
 
-    fun cancelEditing() = _state.update { it.copy(editing = null, query = "", suggestions = emptyList()) }
+    fun cancelEditing() = _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false) }
 
     fun onQuery(text: String) {
-        _state.update { it.copy(query = text, suggestions = savedSuggestions(text)) }
+        _state.update { it.copy(query = text, suggestions = savedSuggestions(text), searchHint = false) }
         searchJob?.cancel()
         val q = text.trim()
         if (q.length < 2) return
@@ -229,7 +232,12 @@ class MainViewModel(
             } catch (e: Exception) {
                 emptyList()
             }
-            _state.update { st -> st.copy(suggestions = savedSuggestions(q) + found.map(::toSuggestion)) }
+            _state.update { st ->
+                st.copy(
+                    suggestions = savedSuggestions(q) + found.map(::toSuggestion),
+                    searchHint = needsFullNameHint(q, found.map { it.name }),
+                )
+            }
         }
     }
 
@@ -245,7 +253,7 @@ class MainViewModel(
                 Field.TO -> it.copy(to = ref)
                 Field.DRIVER_TO -> it.copy(driverTo = ref)
             }
-            next.copy(editing = null, query = "", suggestions = emptyList(), results = null, betterStart = null, dropOff = null, pickUp = null)
+            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null)
         }
         if (_state.value.readyToPlan) plan()
     }

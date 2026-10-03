@@ -289,3 +289,18 @@ fun pickUpRow(
         summary = summarize(p.itinerary, fareProfile),
     )
 }
+
+/**
+ * True when a short one-word search (2–4 characters) got answers but none of them contains
+ * what was typed. Transitous matches very short words loosely ("רגר" finds Hagar, not Rager
+ * Boulevard, which is not even in the top 30), so re-ranking cannot help; the UI suggests
+ * typing the full name instead.
+ */
+fun needsFullNameHint(query: String, names: List<String>): Boolean {
+    val q = normalizeForMatch(query.trim())
+    if (q.length !in 2..4 || q.any { it.isWhitespace() } || names.isEmpty()) return false
+    return names.none { normalizeForMatch(it).contains(q) }
+}
+
+/** Lower case without quote marks, so "צה\"ל", "צה״ל" and "צהל" compare equal. */
+private fun normalizeForMatch(s: String): String = s.lowercase().filterNot { it in "\"'״׳`" }
