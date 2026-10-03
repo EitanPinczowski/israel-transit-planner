@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import app.cash.paparazzi.DeviceConfig
@@ -38,7 +40,7 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class ScreensTest(private val v: Variant) {
 
-    class Variant(val name: String, val device: DeviceConfig, val dark: Boolean) {
+    class Variant(val name: String, val device: DeviceConfig, val dark: Boolean, val rtl: Boolean = false) {
         override fun toString() = name
     }
 
@@ -91,10 +93,18 @@ class ScreensTest(private val v: Variant) {
         shot("stop", UiState(stopSheet = StopSheet("s1", "מרכז רפואי סורוקה/אוניברסיטת בן גוריון", false, rows, false)))
     }
 
-    private fun shot(name: String, state: UiState) = paparazzi.snapshot(name) { Screen(state, v.dark) }
+    private fun shot(name: String, state: UiState) = paparazzi.snapshot(name) { Screen(state, v.dark, v.rtl) }
 
     @Composable
-    private fun Screen(state: UiState, dark: Boolean) {
+    private fun Screen(state: UiState, dark: Boolean, rtl: Boolean) {
+        // Paparazzi picks the Hebrew strings from the locale but does not flip the layout;
+        // on a phone the locale does both. Without this the "Hebrew" shots are mirror-wrong.
+        val direction = if (rtl) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr
+        CompositionLocalProvider(LocalLayoutDirection provides direction) { Themed(state, dark) }
+    }
+
+    @Composable
+    private fun Themed(state: UiState, dark: Boolean) {
         AppTheme(dark = dark) {
             val actions = ScreenActions(OfflineState(), {}, {}, {}, {})
             MainScreen(state, NoActions, actions) {
@@ -141,11 +151,11 @@ class ScreensTest(private val v: Variant) {
         @Parameterized.Parameters(name = "{0}")
         fun variants() = listOf(
             Variant("small_en_light", small, dark = false),
-            Variant("small_he_dark", small.hebrew().night(), dark = true),
-            Variant("small_he_bigtext", small.hebrew().copy(fontScale = 1.5f), dark = false),
-            Variant("big_he_light", big.hebrew(), dark = false),
+            Variant("small_he_dark", small.hebrew().night(), dark = true, rtl = true),
+            Variant("small_he_bigtext", small.hebrew().copy(fontScale = 1.5f), dark = false, rtl = true),
+            Variant("big_he_light", big.hebrew(), dark = false, rtl = true),
             Variant("big_en_dark", big.night(), dark = true),
-            Variant("landscape_he_dark", landscape.hebrew().night(), dark = true),
+            Variant("landscape_he_dark", landscape.hebrew().night(), dark = true, rtl = true),
             Variant("landscape_en_light", landscape, dark = false),
         )
     }

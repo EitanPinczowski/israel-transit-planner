@@ -46,17 +46,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -73,6 +77,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -87,11 +93,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -336,7 +344,9 @@ private fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) ->
                     PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
-                    TextButton(onClick = vm::swap, enabled = state.to != null) { Text("⇅") }
+                    IconButton(onClick = vm::swap, enabled = state.to != null) {
+                        Icon(painterResource(R.drawable.ic_swap_vert), contentDescription = stringResource(R.string.swap))
+                    }
                     val to = state.to
                     if (to is PlaceRef.Point && state.savedPlaces.none { it.latLon == to.at }) {
                         IconButton(onClick = { onSavePlace(to.at) }) {
@@ -668,7 +678,7 @@ private fun ResultsPanel(
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium)
                     val at = state.resultsAt
-                    if (state.mode == AppMode.TRIP && at != null && !state.loading) {
+                    if (state.mode == AppMode.TRIP && at != null && !state.loading && state.error == null) {
                         Text(
                             stringResource(R.string.updated_at, hhmm(at)),
                             style = MaterialTheme.typography.labelSmall,
@@ -687,7 +697,8 @@ private fun ResultsPanel(
         }
         if (!collapsed) {
             state.offlineSince?.let { since ->
-                Surface(color = MaterialTheme.colorScheme.errorContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
+                // A warning, not an error: the answers are still useful, just maybe stale.
+                Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
                     Text(
                         stringResource(R.string.offline_showing, hhmm(since)),
                         style = MaterialTheme.typography.bodySmall,
@@ -695,9 +706,10 @@ private fun ResultsPanel(
                     )
                 }
             }
-            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
-            if (!state.loading) RideRow(state, vm, actions)
+            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm)
+            if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
+            CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -712,6 +724,7 @@ private fun ResultsPanel(
                     if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
+            }
             }
         }
     }
@@ -731,33 +744,62 @@ private fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
         .padding(10.dp)
 }
 
+/** A reminder that is set, with its Cancel. (Setting one is a chip on the selected option.) */
 @Composable
-private fun ReminderRow(state: UiState, vm: MainActions, actions: ScreenActions) {
-    val r = state.reminder
+private fun ReminderRow(state: UiState, vm: MainActions) {
+    val r = state.reminder ?: return
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (r != null) {
-            Text(
-                stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.weight(1f),
-            )
-            TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
-        } else if (state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null) {
-            TextButton(onClick = actions.remind) { Text(stringResource(R.string.remind_me)) }
-        }
+        Text(
+            stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
+    }
+}
+
+/** A ride being tracked, with its Stop. (Starting one is a chip on the selected option.) */
+@Composable
+private fun RideRow(state: UiState, vm: MainActions) {
+    if (!state.riding) return
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+        TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
+    }
+}
+
+/**
+ * The chips that act on the selected option: leave reminder (Trip tab) and the get-off
+ * alert. Provided by the results sheet, drawn by whichever card is selected, so they sit
+ * next to the trip they act on instead of taking two rows above the list.
+ */
+private val LocalTrackActions = compositionLocalOf<@Composable () -> Unit> { {} }
+
+@Composable
+private fun TrackChips(state: UiState, actions: ScreenActions) {
+    val canTrack = state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null
+    if (state.mode == AppMode.TRIP && state.reminder == null && canTrack) {
+        ActionChip(R.string.remind_me, Icons.Default.Notifications, actions.remind)
+    }
+    if (!state.riding && canTrack) ActionChip(R.string.ride_start, Icons.Default.PlayArrow, actions.startRide)
+}
+
+/** The selected card's action chips: "send to driver" (car tabs) and [LocalTrackActions]. */
+@Composable
+private fun OptionActions(onSend: (() -> Unit)?) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
+        if (onSend != null) ActionChip(R.string.send_to_driver, Icons.AutoMirrored.Filled.Send, onSend)
+        LocalTrackActions.current()
     }
 }
 
 @Composable
-private fun RideRow(state: UiState, vm: MainActions, actions: ScreenActions) {
-    when {
-        state.riding -> Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
-            TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
-        }
-        state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null ->
-            TextButton(onClick = actions.startRide) { Text(stringResource(R.string.ride_start)) }
-    }
+private fun ActionChip(labelRes: Int, icon: ImageVector, onClick: () -> Unit) {
+    AssistChip(
+        onClick = onClick,
+        label = { Text(stringResource(labelRes)) },
+        leadingIcon = { Icon(icon, null, Modifier.size(AssistChipDefaults.IconSize), tint = MaterialTheme.colorScheme.primary) },
+    )
 }
 
 @Composable
@@ -800,14 +842,17 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
             stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
-        if (selected) WalkDirections(itin)
+        if (selected) {
+            WalkDirections(itin)
+            OptionActions(onSend = null)
+        }
     }
 }
 
 /** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
 @Composable
 private fun SortChips(state: UiState, vm: MainActions) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         TripSort.entries.forEach { s ->
             val label = when (s) {
                 TripSort.FASTEST -> R.string.sort_fastest
@@ -1022,9 +1067,7 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 
@@ -1084,9 +1127,7 @@ private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit,
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected && onSend != null) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 
@@ -1148,9 +1189,7 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 

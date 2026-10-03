@@ -107,7 +107,7 @@
     <string name="on_day">%1$s %2$s</string>
     <string name="next_day">%1$s (+%2$d)</string>
     <string name="late_paren">(+%d min)</string>
-    <string name="remind_me">🔔 Remind me when to leave</string>
+    <string name="remind_me">Remind me to leave</string>
     <string name="reminder_set">🔔 Reminder: leave at %s (re-checked 15 min before)</string>
     <string name="channel_reminders">Trip reminders</string>
     <string name="notify_leave_title">Leave now</string>
@@ -121,7 +121,7 @@
     <string name="offline_failed">Download failed. Check the connection and try again.</string>
     <string name="offline_download">Download map of this area</string>
 
-    <string name="ride_start">▶ Start trip — buzz me before my stop</string>
+    <string name="ride_start">Buzz before my stop</string>
     <string name="ride_active">📍 Trip in progress — I\'ll buzz before your stop</string>
     <string name="ride_stop">Stop</string>
     <string name="ride_ongoing_title">Trip in progress</string>
@@ -181,6 +181,7 @@
 
     <!-- Layout: overflow menu, folded search card, results sheet handle -->
     <string name="more_options">More options</string>
+    <string name="swap">Swap from and to</string>
     <string name="edit_search">Edit search</string>
     <string name="compact_from">From %1$s</string>
     <string name="panel_collapse">Fold the results</string>
