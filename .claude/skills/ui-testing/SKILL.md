@@ -55,6 +55,9 @@ Hebrew and English. Check the report's **Runs** table: it lists the screen each 
 *reported*, so a profile that did not apply is visible. Don't trust a profile you haven't
 checked there or by eye.
 
+Journeys run on API 26 (AOSP `default` image: the Google APIs Android 8 image crashes its own
+SystemUI after boot and takes the permission prompt with it), 29, 33, 34, 35 (`google_apis`).
+
 ## Rules (`LayoutAudit.kt`, report-only until each is fixed, then make it blocking)
 
 R1 search card and bottom panel overlap · R2 tappable outside the usable screen (keyboard-hidden

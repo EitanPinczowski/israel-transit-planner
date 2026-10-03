@@ -92,6 +92,15 @@ jobs:
       fail-fast: false
       matrix:
         api: [26, 29, 33, 34, 35]
+        # The Google APIs Android 8 image crashes its own SystemUI right after boot ("System
+        # UI has stopped", every run on 2026-10-03), taking the permission prompt with it.
+        target: [google_apis]
+        exclude:
+          - api: 26
+            target: google_apis
+        include:
+          - api: 26
+            target: default
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -104,7 +113,7 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api }}
-          target: google_apis
+          target: ${{ matrix.target }}
           arch: x86_64
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
