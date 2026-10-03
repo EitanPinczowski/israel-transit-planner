@@ -337,7 +337,7 @@ private fun TimeRow(state: UiState, vm: MainViewModel) {
             onClick = { pickTime(TimeMode.DEPART_AT) },
             label = { Text(timeLabel(R.string.depart_at, state, TimeMode.DEPART_AT)) },
         )
-        if (state.mode == AppMode.TRIP) {
+        if (state.mode == AppMode.TRIP && state.chainStops.isEmpty()) {
             FilterChip(
                 selected = state.timeMode == TimeMode.ARRIVE_BY,
                 onClick = { pickTime(TimeMode.ARRIVE_BY) },
@@ -462,9 +462,10 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                         }
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
-                    if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
+                    // Both answer for the direct A → B trip, which is not what an errand chain is.
+                    if (state.options.isNotEmpty() && state.chain == null) item { LastRideSection(state, vm) }
                     if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null && state.chain == null) item { WayBackRow(vm) }
-                    if (state.mode == AppMode.TRIP && state.options.isNotEmpty()) item { CarRow(state, vm) }
+                    if (state.mode == AppMode.TRIP && state.options.isNotEmpty() && state.chain == null) item { CarRow(state, vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -585,7 +586,7 @@ private fun chainLegTitle(state: UiState, i: Int): String {
     val names = listOf(placeLabel(state.from)) +
         state.chainStops.map { it.name ?: stringResource(R.string.dropped_pin) } +
         listOf(state.to?.let { placeLabel(it) }.orEmpty())
-    return "${i + 1}. ${names.getOrElse(i) { "" }} → ${names.getOrElse(i + 1) { "" }}"
+    return stringResource(R.string.chain_leg_title, i + 1, names.getOrElse(i) { "" }, names.getOrElse(i + 1) { "" })
 }
 
 /** "Leave 08:00 · arrive 09:10", or which leg has no way to make it. */
@@ -659,7 +660,7 @@ private fun FavoritesDialog(state: UiState, vm: MainViewModel) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Column(Modifier.weight(1f)) {
                                     Text(
-                                        listOf(f.line, f.headsign).filter { it.isNotBlank() }.joinToString(" → "),
+                                        if (f.headsign.isBlank()) f.line else stringResource(R.string.line_to, f.line, f.headsign),
                                         style = MaterialTheme.typography.titleSmall,
                                     )
                                     Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

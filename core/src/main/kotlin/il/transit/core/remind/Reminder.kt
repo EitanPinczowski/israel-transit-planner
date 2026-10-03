@@ -74,6 +74,15 @@ data class Reminder(
             )
         }
 
+        /**
+         * For one leg of an errand chain: the re-check must plan that leg (stop to stop), not
+         * the whole trip, or it never finds the same bus and reports it gone.
+         */
+        fun forOwnEndpoints(itinerary: Itinerary, settings: UserSettings): Reminder? {
+            val first = itinerary.legs.firstOrNull() ?: return null
+            return from(itinerary, first.from.latLon, itinerary.legs.last().to.latLon, settings)
+        }
+
         private fun scheduled(l: Leg): Instant = l.scheduledStartTime?.let(::parseTime) ?: l.start
     }
 }
