@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -101,6 +102,14 @@ import java.util.Locale
 
 private const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
 
+/** Test tags of the screen's regions: the UI tests' layout audit checks them against each other. */
+object UiTags {
+    const val TOP = "top"
+    const val BOTTOM = "bottom"
+    const val SUGGESTIONS = "suggestions"
+    const val ATTRIBUTION = "attribution"
+}
+
 /** What only the Activity can do: permissions, the map camera, the offline store. */
 class ScreenActions(
     val offline: OfflineState,
@@ -121,7 +130,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
         map()
 
         Column(
-            Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp),
+            Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp).testTag(UiTags.TOP),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             state.update?.let { UpdateBanner(it, vm) }
@@ -132,7 +141,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
             }
         }
 
-        Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
+        Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().testTag(UiTags.BOTTOM)) {
             AttributionChip(Modifier.padding(8.dp))
             when {
                 state.stopSheet != null -> StopPanel(state.stopSheet, vm)
@@ -334,7 +343,7 @@ private fun timeLabel(res: Int, state: UiState, mode: TimeMode): String {
 
 @Composable
 private fun SuggestionList(state: UiState, vm: MainViewModel) {
-    Card(Modifier.fillMaxWidth().heightIn(max = 360.dp)) {
+    Card(Modifier.fillMaxWidth().heightIn(max = 360.dp).testTag(UiTags.SUGGESTIONS)) {
         LazyColumn {
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
@@ -420,7 +429,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     itemsIndexed(state.options) { i, itin ->
-                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
+                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time ?: state.resultsAt) { vm.select(i) }
                     }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
@@ -473,7 +482,7 @@ private fun ErrorRow(error: UiError, vm: MainViewModel) {
 
 @Composable
 private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, searchedAt: Instant?, onClick: () -> Unit) {
-    val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
+    val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt) }
     val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
     Column(
         Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp),
@@ -998,7 +1007,7 @@ private fun NameDialog(titleRes: Int, onDismiss: () -> Unit, onSave: (String) ->
 private fun AttributionChip(modifier: Modifier) {
     val context = LocalContext.current
     Surface(
-        modifier = modifier.clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
+        modifier = modifier.testTag(UiTags.ATTRIBUTION).clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
         shape = CircleShape,
         tonalElevation = 2.dp,
     ) {

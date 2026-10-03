@@ -6,13 +6,13 @@ import il.transit.core.plan.TripResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.time.Instant
+import java.time.Clock
 
 /**
  * The Trip tab's last successful searches, on disk, so a search with no signal can show
  * what was found before. Logic (LRU, keys, codec) is in core's PlanCache / TripCacheJson.
  */
-class PlanCacheStore(private val file: File) {
+class PlanCacheStore(private val file: File, private val clock: Clock = Clock.systemUTC()) {
     private val cache = PlanCache<TripResult>()
     private var loaded = false
 
@@ -25,7 +25,7 @@ class PlanCacheStore(private val file: File) {
     suspend fun put(key: String, value: TripResult) = withContext(Dispatchers.IO) {
         synchronized(this@PlanCacheStore) {
             loadOnce()
-            cache.put(key, value, Instant.now())
+            cache.put(key, value, clock.instant())
             runCatching { file.writeText(TripCacheJson.encode(cache.all)) }
         }
     }
@@ -34,6 +34,15 @@ class PlanCacheStore(private val file: File) {
         synchronized(this@PlanCacheStore) {
             loadOnce()
             cache.get(key)
+        }
+    }
+
+    /** Forgets every saved search (UI tests start each case from an empty cache). */
+    suspend fun clear() = withContext(Dispatchers.IO) {
+        synchronized(this@PlanCacheStore) {
+            cache.restore(emptyList())
+            loaded = true
+            file.delete()
         }
     }
 }

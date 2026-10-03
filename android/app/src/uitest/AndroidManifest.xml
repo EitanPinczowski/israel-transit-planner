@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The uitest build runs as UiTestApp: recorded answers, fixed clock, blank map. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:name="il.transit.planner.UiTestApp"
+        tools:replace="android:name" />
+</manifest>

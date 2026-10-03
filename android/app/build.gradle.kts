@@ -36,6 +36,7 @@ android {
         // Real phones are ARM. The x86 copies of MapLibre only serve emulators and roughly
         // halve the APK's size; add "x86_64" back here to test on an emulator.
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -56,6 +57,17 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
+        // The UI-test build: debug plus src/uitest (recorded Transitous answers, a fixed clock,
+        // a blank map), so emulators, monkey runs and Test Lab never touch Transitous or
+        // OpenFreeMap. Adds x86_64 for the CI emulator; debug and release stay ARM only.
+        // See .claude/skills/ui-testing.
+        create("uitest") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".uitest"
+            versionNameSuffix = "-uitest"
+            matchingFallbacks += listOf("debug")
+            ndk { abiFilters += listOf("x86_64") }
+        }
         release {
             // R8 off on purpose: MapLibre and kotlinx-serialization need keep rules, and a
             // few MB saved is not worth a release that crashes on reflection.
@@ -63,6 +75,9 @@ android {
             signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
+    testBuildType = "uitest"
+    // The recorded answers live in core's test resources; the uitest build ships them as assets.
+    sourceSets.maybeCreate("uitest").assets.srcDir("../../core/src/test/resources")
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -93,4 +108,14 @@ dependencies {
     implementation(libs.maplibre.android)
     implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
+
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.espresso.intents)
+    androidTestImplementation(libs.espresso.accessibility)
+    androidTestImplementation(libs.uiautomator)
 }

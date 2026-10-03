@@ -5,7 +5,9 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
+import android.graphics.RectF
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -60,6 +62,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
 
+    /** What the camera was last fitted around, for [routeOnScreen]. */
+    private var lastFit: List<LatLon> = emptyList()
+
     /** What to do once the notification-permission prompt is answered. */
     private var afterNotificationPrompt: () -> Unit = {}
 
@@ -99,11 +104,13 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(ctl, selected, carPath) {
                     val c = ctl ?: return@LaunchedEffect
                     if (selected == null) {
+                        lastFit = emptyList()
                         c.setRoute(MapData.EMPTY)
                     } else {
                         c.setRoute(MapData.itinerary(selected, carPath))
                         val px = resources.displayMetrics.density
-                        c.fit(carPath + MapData.bounds(selected), (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
+                        lastFit = carPath + MapData.bounds(selected)
+                        c.fit(lastFit, (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
                     }
                 }
 
@@ -156,7 +163,7 @@ class MainActivity : ComponentActivity() {
     private fun onMapReady(m: MapLibreMap) {
         map = m
         m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
-        styleUrl = if (isNight()) MAP_STYLE_DARK else MAP_STYLE
+        styleUrl = (application as TransitApp).mapStyle(isNight())
         m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
             style = s
             controller.value = MapController(m, s)
@@ -178,6 +185,18 @@ class MainActivity : ComponentActivity() {
                 m.cameraPosition.zoom,
             )
         }
+    }
+
+    /**
+     * Where the fitted route sits on screen (window pixels), or null with no route. UI tests
+     * check it falls in the part of the map that the panels don't cover.
+     */
+    @VisibleForTesting
+    fun routeOnScreen(): RectF? {
+        val m = map ?: return null
+        if (lastFit.size < 2) return null
+        val pts = lastFit.map { m.projection.toScreenLocation(LatLng(it.lat, it.lon)) }
+        return RectF(pts.minOf { it.x }, pts.minOf { it.y }, pts.maxOf { it.x }, pts.maxOf { it.y })
     }
 
     private fun isNight(): Boolean =

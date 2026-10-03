@@ -27,6 +27,8 @@ jobs:
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew -p android :app:assembleDebug
+      # The UI-test app + its tests (run on emulators by ui-tests.yml); here only built.
+      - run: ./gradlew -p android :app:assembleUitest :app:assembleUitestAndroidTest
       # Unsigned here (no secrets in CI): only proves the release build compiles.
       - run: ./gradlew -p android :app:assembleRelease
       - uses: actions/upload-artifact@v4

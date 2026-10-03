@@ -16,12 +16,12 @@ import java.util.concurrent.TimeUnit
  * any failure (no network, rate limit, the 404 GitHub returns before the first release) is
  * simply "no update". Decisions live in core's UpdateCheck, which is tested.
  */
-class UpdateChecker(
+open class UpdateChecker(
     private val store: UserStore,
     private val currentVersion: String,
     private val http: OkHttpClient = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build(),
 ) {
-    suspend fun check(now: Instant = Instant.now()): LatestRelease? {
+    open suspend fun check(now: Instant = Instant.now()): LatestRelease? {
         val last = store.lastUpdateCheck.first()?.let(Instant::ofEpochSecond)
         if (!UpdateCheck.shouldCheck(last, now)) return null
         val body = withContext(Dispatchers.IO) {

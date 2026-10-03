@@ -15,17 +15,27 @@ import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
+import java.time.Clock
 import java.util.Locale
 
-/** Process-wide singletons. One guarded client, so the cache and the concurrency cap are shared. */
-class TransitApp : Application() {
-    val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
+/**
+ * Process-wide singletons. One guarded client, so the cache and the concurrency cap are shared.
+ * Open so the `uitest` build (src/uitest) can swap in recorded answers, a fixed clock and a
+ * blank map: UI tests, monkey runs and Test Lab crawlers then never reach Transitous.
+ */
+open class TransitApp : Application() {
+    /** "Now" for searches and labels. */
+    open val clock: Clock = Clock.systemUTC()
+    open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
     val store: UserStore by lazy { UserStore(this) }
-    val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json")) }
+    val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
     val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
-    val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME) }
+    open val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME) }
+
+    /** The MapLibre style: OpenFreeMap, light or dark. */
+    open fun mapStyle(night: Boolean): String = if (night) MainActivity.MAP_STYLE_DARK else MainActivity.MAP_STYLE
 
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active

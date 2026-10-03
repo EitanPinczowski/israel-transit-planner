@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.time.Instant
 
 /** Where a trip starts or ends. */
@@ -149,6 +150,7 @@ class MainViewModel(
     private val historyStore: HistoryStore? = null,
     private val updates: UpdateChecker? = null,
     private val stopsCache: StopsStore? = null,
+    private val clock: Clock = Clock.systemUTC(),
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -337,13 +339,14 @@ class MainViewModel(
                     AppMode.TRIP -> {
                         val r = planner.plan(
                             TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
+                            clock.instant(),
                         )
                         val empty = r.itineraries.isEmpty() && r.walkOnly == null
                         _state.update {
                             it.copy(
                                 loading = false,
                                 results = r,
-                                resultsAt = Instant.now(),
+                                resultsAt = clock.instant(),
                                 offlineSince = null,
                                 // A refresh keeps the user's selection when it still exists.
                                 selected = if (quiet) it.selected.coerceAtMost((r.itineraries.size - 1).coerceAtLeast(0)) else 0,
@@ -359,7 +362,7 @@ class MainViewModel(
                             BetterStartQuery(
                                 origin = from,
                                 dest = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDriveMin = s.maxDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -375,7 +378,7 @@ class MainViewModel(
                                 a = from,
                                 b = requireNotNull(driverTo),
                                 c = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDetourMin = s.maxDetourMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -389,7 +392,7 @@ class MainViewModel(
                             PickUpQuery(
                                 me = from,
                                 home = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDriveMin = s.maxPickUpDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -438,7 +441,7 @@ class MainViewModel(
         val itin = s.selectedItinerary ?: return false
         if (itin.firstTransitLeg == null) return false
         rides?.start(itin)
-        val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, Instant.now(), savedMinOfSelected(s))
+        val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, clock.instant(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
     }
@@ -600,7 +603,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache)
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.clock)
             }
         }
     }
