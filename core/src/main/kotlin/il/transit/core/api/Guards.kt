@@ -48,6 +48,15 @@ class GuardedTransitApi(
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String) =
         cached("st:$stopId:$time:$n:$language", Duration.ofSeconds(30)) { inner.stopTimes(stopId, time, n, language) }
 
+    // A trip's live times move; 30 s like departures.
+    override suspend fun trip(tripId: String, language: String) =
+        cached("trip:$tripId:$language", TRIP_TTL) { inner.trip(tripId, language) }
+
+    // Vehicle positions: the trip sheet refreshes every 30 s, so 20 s keeps a re-open cheap
+    // without ever showing a position from two refreshes ago.
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String) =
+        cached("mt:$box:$start:$end:$zoom:$language", MAP_TRIPS_TTL) { inner.mapTrips(box, start, end, zoom, language) }
+
     @Suppress("UNCHECKED_CAST")
     private suspend fun <T : Any> cached(key: String, ttl: Duration, call: suspend () -> T): T {
         val now = clock.instant()
@@ -63,6 +72,11 @@ class GuardedTransitApi(
         if (e.code != 429 && e.code != 503) throw e
         delay(e.retryAfterSec?.let { it * 1000L } ?: backoff.toMillis())
         call()
+    }
+
+    companion object {
+        val TRIP_TTL: Duration = Duration.ofSeconds(30)
+        val MAP_TRIPS_TTL: Duration = Duration.ofSeconds(20)
     }
 }
 
@@ -104,5 +118,13 @@ class BudgetedTransitApi(private val inner: TransitApi, val budget: Int) : Trans
 
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
         take(); return inner.stopTimes(stopId, time, n, language)
+    }
+
+    override suspend fun trip(tripId: String, language: String): Itinerary {
+        take(); return inner.trip(tripId, language)
+    }
+
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<TripSegment> {
+        take(); return inner.mapTrips(box, start, end, zoom, language)
     }
 }

@@ -34,6 +34,15 @@ interface TransitApi {
     suspend fun reverseGeocode(at: LatLon, language: String = "he", max: Int = 3): List<GeocodeMatch>
 
     suspend fun stopTimes(stopId: String, time: Instant? = null, n: Int = 10, language: String = "he"): StopTimesResponse
+
+    /** One vehicle's whole trip (`/api/v6/trip`): a single transit leg whose
+     *  `intermediateStops` are every stop between its first and last, with live times when
+     *  the server has them. [tripId] is a leg's or departure's `tripId`. */
+    suspend fun trip(tripId: String, language: String = "he"): Itinerary
+
+    /** Vehicles moving inside [box] between [start] and [end] (`/api/v6/map/trips`), one
+     *  [TripSegment] per stop-to-stop hop. [zoom] is the map's; MOTIS thins out at low zoom. */
+    suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String = "he"): List<TripSegment>
 }
 
 /** A place the planner can route from/to: a coordinate, or a MOTIS stop id. */

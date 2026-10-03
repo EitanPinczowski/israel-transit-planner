@@ -13,6 +13,8 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
 - [x] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes) and replace `plan_synthetic.json`
 - [ ] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
+      — still open: Sat 2026-10-03 23:20 (service running) gave 0 of 56 departures `realTime`
+      at Be'er Sheva Central + Savidor (A1). Retry on a weekday daytime.
 - [x] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP
@@ -88,10 +90,13 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 
 ### A1 — API spike + plumbing (`claude/p8-api`, core only, ~8 live requests to record)
 - [ ] Weekday `stoptimes` for "now" recorded; `realTime: true` checked (closes the Phase 0 item)
-- [ ] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
+      — recorded Sat 2026-10-03 23:20 with buses running: **no `realTime: true`** anywhere
+      (2 stops, 2 trips, `map/trips`). Left open with the Phase 0 item.
+- [x] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
       fixtures (`trip` for a bus and a train, `map/trips` for a small box)
-- [ ] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?
-- [ ] `CAR_PARKING` verdict (Meitar → Tel Aviv, recorded) written here, in `special-features`,
+- [x] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?
+      No: zero `alerts` in every answer of 2026-10-03.
+- [x] `CAR_PARKING` verdict (Meitar → Tel Aviv, recorded) written here, in `special-features`,
       and in `dead-ends` if it fails
 
 ### A2 — mechanical UI split (`claude/p8-ui-split`, no behaviour change)
@@ -104,6 +109,11 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [ ] ⚠ service alerts on leg chips, the trip sheet and stop-sheet departures
 
 ### B2 — Park & Ride (`claude/p8-park-ride`, `ParkRidePlanner.BUDGET = 5`)
+> **A1 `CAR_PARKING` verdict (2026-10-03): unusable — use bundled `RailStations` + `CAR`.**
+> Meitar → Tel Aviv HaHagana, Mon 08:00, 20-min cap: all 5 answers park at unnamed OSM lots
+> near a bus stop (2–13′ drive, then up to 11′ walk), board a bus, and never park at a
+> station; best arrives 10:06. `CAR` drives 15′ to Be'er Sheva North and reaches Tel Aviv
+> Center (past HaHagana) at 09:46. Fixture `plan_car_parking_meitar`, test `ApiPhase8Test`.
 - [ ] Drive your own car to a station with parking, continue by train; Pareto front like the
       other car features, traffic-adjusted (`CAR_PARKING` or bundled `RailStations`, per A1)
 - [ ] "Way back to my car": plans back to the same station, on tap only (1 request)
