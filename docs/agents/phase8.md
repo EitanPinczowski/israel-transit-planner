@@ -167,7 +167,8 @@ The owner merges every PR; agents never merge.
 ## B2: Park & Ride
 **Branch:** `claude/p8-park-ride`
 **Skills:** `special-features`, `transitous-api`, `golden-trips`, `i18n-rtl`
-**Needs:** A1 merged; read A1's `CAR_PARKING` verdict
+**Needs:** A1 merged (#20). A1's verdict: `CAR_PARKING` is unusable for Israel. It parks at
+unnamed OSM lots by bus stops, never at stations. See `dead-ends`.
 
 > A fourth car + transit feature: drive your own car to a train station with parking, park, and
 > continue by train.
@@ -178,19 +179,21 @@ The owner merges every PR; agents never merge.
 > - arrival time;
 > - transfers.
 >
-> **Approach, from A1's verdict:**
-> - If `CAR_PARKING` parks at real stations: a cap ladder like `BetterStart`, plus a
->   transit-only baseline.
-> - Otherwise: the bundled `RailStations` within the drive limit (straight-line pre-filter) →
->   one `oneToMany` CAR call from the origin → `plan` from the best ≤ 3 stations
->   (`fromPlace` = station stop id) → transit-only baseline.
+> **Approach (fixed by A1's verdict, don't use `CAR_PARKING`):**
+> 1. Take the bundled `RailStations` within the drive limit, using a straight-line
+>    pre-filter.
+> 2. Make one `oneToMany` CAR call from the origin.
+> 3. Run a `plan` from the best ≤ 3 stations (`fromPlace` = station stop id).
+> 4. Add a transit-only baseline.
 >
 > **Budget:** `ParkRidePlanner.BUDGET = 5`, pinned by a test. Options must beat the baseline by
 > 5 min or save a transfer, same as better start.
 >
 > **"Way back to my car":** a separate action, run on tap only, costing 1 request. It plans
-> from the destination back to the *same* station. Show "drive home from there" as a
-> traffic-adjusted estimate taken from the outbound drive. No extra request.
+> from the destination back to the *same* station. Reuse the existing "Way back after
+> 1 / 2 / 3 h" code (PR #14: `MainViewModel.wayBack` and `WayBackRow` in the Trip panel);
+> only the destination changes, to the parked station. Don't add a second way-back mechanism.
+> Show "drive home from there" as a traffic-adjusted estimate taken from the outbound drive. No extra request.
 >
 > **App:**
 > - `AppMode.PARK_RIDE`;
@@ -250,16 +253,20 @@ The owner merges every PR; agents never merge.
 ## B4: UI tests + crash log
 **Branch:** `claude/p8-qa`
 **Skills:** `android-build`, `i18n-rtl`
-**Needs:** A2 merged
+**Needs:** A2 merged, and the design pass PR #18 merged (it adds Paparazzi screenshots and a
+`screenshots` CI job)
 
-> **1. Screenshot tests:**
-> - Add Roborazzi + Robolectric to `android/app` (JVM tests, no emulator).
-> - One test class per `ui/screens/*` panel, rendering it from a fixed `UiState`. Build the
->   state from the real fixtures in `core/src/test/resources/fixtures/`, or hand-built core
->   models.
-> - Cover both English and Hebrew (RTL), light theme.
-> - Commit the goldens.
-> - CI's `android` job runs `verifyRoborazziDebug` and uploads the diff images on failure.
+> **1. Screenshot tests: extend #18's Paparazzi setup; don't add Roborazzi.** #18 renders the
+> whole `MainScreen` from a plain `UiState` through its `MainActions` interface, in 7 states on
+> 7 devices. B4 adds:
+> - per-panel shots for every `ui/screens/*` file that #18's states don't already show
+>   (better start, drop-off, pick-up, the stop sheet, settings, history), in Hebrew (RTL) and
+>   English;
+> - states built from the real fixtures in `core/src/test/resources/fixtures/`, or from
+>   hand-built core models;
+> - a regression check: the `screenshots` job fails when an image changes and the PR has not
+>   re-recorded it. Use Paparazzi's verify task, and keep #18's artifact upload and
+>   `screenshots` branch publishing.
 >
 > **2. Crash log:**
 > - core: `diag/CrashLog.kt` keeps the last 5 entries and formats each with time, app version,
@@ -277,6 +284,19 @@ The owner merges every PR; agents never merge.
 > - tick ROADMAP B4.
 >
 > Merge order: ask the owner to merge B4 first among Wave 1 if it is ready.
+
+---
+
+## Other work on `main` that touches Phase 8 (checked 2026-10-04)
+- **#14 / #16 / #17** (merged): on-the-bus progress, My lines, way back, spoken alerts,
+  shortcuts, errands, car vs. transit. A2 (#19) already split these into `ui/screens/`.
+  B2 reuses way back.
+- **#18 design pass** (open, another session): rewrites `MainScreen.kt` (`MainActions`, side
+  column, sheet) and adds Paparazzi. It conflicts with A2 (#19).
+  - **Recommended order: merge #18 first.** A2 then redoes its split on the new `main` by
+    re-running the mechanical move. Don't resolve conflicts hunk by hunk: a move is cheap to
+    redo, and #18's layout work is not.
+  - B4 builds on #18's screenshots instead of adding a second tool.
 
 ---
 
