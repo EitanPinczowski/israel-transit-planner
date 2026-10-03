@@ -57,7 +57,10 @@ checked there or by eye.
 
 Journeys run on API 26 (AOSP `default` image), 29, 33, 34, 35 (`google_apis`). Android 8's
 SystemUI crashes when an app opens over a lock screen that is still up, killing the permission
-prompt; `ui_behaviour_run.sh` disables the lock screen and waits for it to go first.
+prompt; `ui_behaviour_run.sh` disables the lock screen and waits for it to go first. It still
+crashed on every API 26 run (2026-10-03), so FirstLaunchTest ends there as "not verifiable on
+this emulator" (finding J1, an assumption, not a pass) when it saw that crash; Test Lab's oldest
+real phone covers Android 8. Without a SystemUI crash, a missing prompt still fails.
 
 ## Rules (`LayoutAudit.kt`, report-only until each is fixed, then make it blocking)
 

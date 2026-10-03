@@ -52,7 +52,9 @@ class FirstLaunchTest {
             val device = UiDevice.getInstance(d.inst)
             val denyButton = By.res(Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button"))
             var deny = device.wait(Until.findObject(denyButton), 20_000)
+            var systemUiCrashed = false
             if (deny == null && dismissSystemCrash(device)) {
+                systemUiCrashed = true
                 // Old emulator images crash SystemUI now and then ("System UI has stopped"),
                 // taking the prompt with it. That's the image, not the app: ask again.
                 d.relaunch()
@@ -63,6 +65,15 @@ class FirstLaunchTest {
                 d.shell("uiautomator dump /sdcard/Download/j01.xml")
                 java.io.File(Run.outDir, "j01-window.xml").writeText(d.shell("cat /sdcard/Download/j01.xml"))
                 d.screenshot("00-first-launch-prompt-missing")
+            }
+            if (deny == null && (systemUiCrashed || dismissSystemCrash(device))) {
+                // Not the app: the emulator's SystemUI died and took the prompt with it (every
+                // API 26 run on 2026-10-03, both images, lock screen off). Say so in the report
+                // and end as "not verifiable here" rather than pass or fail; the oldest real
+                // phone in Test Lab (devices.yml) covers Android 8. A missing prompt without a
+                // SystemUI crash still fails below.
+                Findings.expect("J1", false, "not verifiable on this emulator: SystemUI crashed (API ${AppDriver.sdk})")
+                assumeTrue("emulator SystemUI crashed; see journeys.json", false)
             }
             Findings.expect("J1", deny != null, "no location permission prompt on first launch")
             deny?.click()

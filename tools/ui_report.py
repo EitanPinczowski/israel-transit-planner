@@ -29,7 +29,7 @@ RULES = {
     "R5": "Accessibility Test Framework",
     "R6": "RTL order",
     "R7": "route not in the visible map / map squeezed",
-    "J1": "first launch without location",
+    "J1": "first launch without location (or: not verifiable on that emulator)",
     "J3": "reminder alarm",
     "J4": "Back closes what is open before leaving",
     "J10": "Settings reachable with results open",
