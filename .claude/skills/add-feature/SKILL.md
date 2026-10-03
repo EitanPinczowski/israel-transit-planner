@@ -13,11 +13,20 @@ description: Recipe for adding any user-visible feature end to end - core logic,
 3. **Test in `core/src/test`** with `FakeTransitApi` (scripted, records every call) or a
    fixture + `MockWebServer`. Run `./gradlew -p core test -q`.
 4. **App side** (`android/app/src/main/java/il/transit/planner/`):
-   - a `ViewModel` holding UI state as an immutable data class in a `StateFlow`;
-   - a `@Composable` screen that only renders state and sends events;
+   - a new screen is a **new file** `ui/screens/<Feature>.kt` (package
+     `il.transit.planner.ui.screens`): `@Composable` functions that only render state and
+     send events. Never grow `ui/MainScreen.kt` — it is only the scaffold and the update
+     banner; it gets at most one hook line to show your screen;
+   - its **own ViewModel** or state holder (`ui/<Feature>ViewModel.kt`) holding UI state as an
+     immutable data class in a `StateFlow`; add at most one field or callback to
+     `MainViewModel` / `UiState` to reach it;
+   - shared pieces (leg chip, minutes slider, place row, `parseColor`, `FareText`, name
+     dialog) are in `ui/screens/Common.kt` — reuse them; keep helpers `private` unless
+     another file uses them, then `internal`;
    - network via one app-wide `GuardedTransitApi(MotisClient())`.
-5. **Strings**: every visible text in BOTH `res/values/strings.xml` (English) and
-   `res/values-iw/strings.xml` (Hebrew). Load `i18n-rtl`.
+5. **Strings**: the feature's own `res/values/strings_<feature>.xml` (English) AND
+   `res/values-iw/strings_<feature>.xml` (Hebrew), same keys in both. Don't append to the
+   shared `strings.xml`: two PRs that both append to it conflict. Load `i18n-rtl`.
 6. **Persisted user data** (settings, saved places, saved trips) is JSON in one DataStore
    file (`data/UserStore.kt`), encoded by `core/user/UserJson` so the codec is tested.
    Small lists only; if something grows unbounded (e.g. trip history), use Room instead.
