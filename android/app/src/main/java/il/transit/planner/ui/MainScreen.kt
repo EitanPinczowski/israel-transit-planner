@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -616,7 +617,13 @@ private fun SavedChips(state: UiState, vm: MainActions) {
         // Over the map: a surface fill, or the outline-only chip disappears into the streets.
         val colors = androidx.compose.material3.AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
         state.savedTrips.forEach { t ->
-            AssistChip(onClick = { vm.runTrip(t) }, label = { Text("↗ ${t.name}") }, colors = colors)
+            // ↗ as the leading icon, so it sits at the start whatever language the name is in.
+            AssistChip(
+                onClick = { vm.runTrip(t) },
+                label = { Text(t.name) },
+                colors = colors,
+                leadingIcon = { Text("↗", color = MaterialTheme.colorScheme.tertiary) },
+            )
         }
         state.savedPlaces.forEach { p ->
             AssistChip(
@@ -1552,11 +1559,16 @@ internal fun HistoryContent(state: UiState, vm: MainActions) {
             item { Text(stringResource(R.string.history_empty)) }
         } else {
             item {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    StatTile(st.trips.toString(), stringResource(R.string.stat_trips))
-                    StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week))
-                    StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours))
-                    StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved))
+                // A steady 2 x 2 grid: equal tiles, whatever the label lengths or text size.
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.height(IntrinsicSize.Min)) {
+                        StatTile(st.trips.toString(), stringResource(R.string.stat_trips), Modifier.weight(1f))
+                        StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week), Modifier.weight(1f))
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.height(IntrinsicSize.Min)) {
+                        StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours), Modifier.weight(1f))
+                        StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved), Modifier.weight(1f))
+                    }
                 }
             }
             st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
@@ -1582,8 +1594,8 @@ internal fun HistoryContent(state: UiState, vm: MainActions) {
 }
 
 @Composable
-private fun StatTile(value: String, label: String) {
-    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.medium) {
+private fun StatTile(value: String, label: String, modifier: Modifier = Modifier) {
+    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.medium, modifier = modifier.fillMaxHeight()) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             Text(value, style = MaterialTheme.typography.titleLarge)
             Text(label, style = MaterialTheme.typography.labelSmall)
