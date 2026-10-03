@@ -16,6 +16,11 @@ It refuses a version that is not `x.y.z` or whose release already exists.
 `apksigner verify` → `gh release create` with `israel-transit-planner-v0.2.0.apk`.
 Notes come from `docs/releases/v0.2.0.md` if it exists (write it: English + Hebrew, 5 lines),
 else GitHub's generated notes.
+Since Phase 8, parallel PRs don't edit that file. Each one writes a fragment in
+`docs/releases/next/<package>.md`. Before triggering the release, join the fragments into
+`docs/releases/vX.Y.Z.md`: all the English bullets, `---`, all the Hebrew bullets, then the
+usual update and attribution lines (copy them from the previous version's notes). Delete the
+fragments in the same commit.
 
 ## Versioning (android/app/build.gradle.kts)
 - `versionName` = the tag without `v`; `versionCode` = major×10000 + minor×100 + patch.
