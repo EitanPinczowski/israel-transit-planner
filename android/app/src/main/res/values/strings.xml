@@ -204,4 +204,11 @@
     <string name="ride_speak_get_off">Next stop: %1$s. Get off.</string>
     <string name="ride_speak_change">Next stop: %1$s. Change here.</string>
     <string name="shortcut_lines">My lines</string>
+    <string name="add_stop">+ Stop on the way</string>
+    <string name="stay">Stay</string>
+    <string name="chain_summary">Leave \u2068%1$s\u2069 · arrive \u2068%2$s\u2069</string>
+    <string name="chain_failed">No way found for leg %1$d — try another time or stop</string>
+    <string name="by_car_check">🚗 By car?</string>
+    <string name="by_car">By car ~%1$d min at this time (traffic ×%2$s) · %3$d km</string>
+    <string name="taxi_calculator">Taxi price: official MOT calculator</string>
 </resources>

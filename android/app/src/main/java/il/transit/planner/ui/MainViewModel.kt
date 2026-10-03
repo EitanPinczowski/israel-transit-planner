@@ -22,6 +22,11 @@ import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.StopsViewport
+import il.transit.core.plan.CarCompare
+import il.transit.core.plan.CarTime
+import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainResult
+import il.transit.core.plan.ChainStop
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.PlanCache
@@ -74,7 +79,7 @@ sealed interface PlaceRef {
 }
 
 /** DRIVER_TO is the drop-off tab's third field: where the car is going (B). */
-enum class Field { FROM, TO, DRIVER_TO }
+enum class Field { FROM, TO, DRIVER_TO, STOP }
 
 /** The tabs on top of the search card. */
 enum class AppMode { TRIP, BETTER_START, DROP_OFF, PICK_UP }
@@ -142,6 +147,12 @@ data class UiState(
     val favoriteBoards: Map<FavoriteLine, List<DepartureRow>?> = emptyMap(),
     /** Set when some of My lines show a saved board because the network failed. */
     val favoritesOfflineSince: Instant? = null,
+    /** Trip tab errands: stops on the way, each with a stay (A → stops → B). */
+    val chainStops: List<ChainStop> = emptyList(),
+    val chain: ChainResult? = null,
+    /** "🚗 By car?" for the shown trip. */
+    val carTime: CarTime? = null,
+    val carLoading: Boolean = false,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -151,13 +162,13 @@ data class UiState(
     /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
         get() = when (mode) {
-            AppMode.TRIP -> results?.let { sortOptions(it.itineraries, settings.tripSort) + listOfNotNull(it.walkOnly) }.orEmpty()
+            AppMode.TRIP -> chain?.legs ?: results?.let { sortOptions(it.itineraries, settings.tripSort) + listOfNotNull(it.walkOnly) }.orEmpty()
             AppMode.BETTER_START -> betterStart?.options?.map { it.payload.itinerary }.orEmpty()
             AppMode.DROP_OFF -> dropOff?.options?.map { it.payload.transit }.orEmpty()
             AppMode.PICK_UP -> pickUp?.options?.map { it.payload.itinerary }.orEmpty()
         }
 
-    val hasResults: Boolean get() = results != null || betterStart != null || dropOff != null || pickUp != null
+    val hasResults: Boolean get() = results != null || chain != null || betterStart != null || dropOff != null || pickUp != null
 
     /** Everything the current tab needs before it can search. */
     val readyToPlan: Boolean get() = to != null && (mode != AppMode.DROP_OFF || driverTo != null)
@@ -283,11 +294,25 @@ class MainViewModel(
 
     private fun setField(ref: PlaceRef) {
         val field = _state.value.editing ?: Field.TO
+        if (field == Field.STOP) {
+            // A stop on the way: a fixed point (my location is resolved now), 15 min there by default.
+            val at = resolve(ref) ?: return
+            val name = (ref as? PlaceRef.Point)?.name
+            _state.update {
+                it.copy(
+                    chainStops = (it.chainStops + ChainStop(at, name, 15)).take(ChainPlanner.MAX_STOPS),
+                    editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, chain = null,
+                )
+            }
+            if (_state.value.readyToPlan) plan()
+            return
+        }
         _state.update {
             val next = when (field) {
                 Field.FROM -> it.copy(from = ref)
                 Field.TO -> it.copy(to = ref)
                 Field.DRIVER_TO -> it.copy(driverTo = ref)
+                Field.STOP -> it
             }
             next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null)
         }
@@ -372,6 +397,7 @@ class MainViewModel(
                     loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null,
                     selected = 0, stopSheet = null, offlineSince = null,
                     lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
+                    chain = null, carTime = null, carLoading = false,
                 )
             }
         }
@@ -379,7 +405,20 @@ class MainViewModel(
         planJob = viewModelScope.launch {
             try {
                 when (s.mode) {
-                    AppMode.TRIP -> {
+                    AppMode.TRIP -> if (s.chainStops.isNotEmpty()) {
+                        val r = ChainPlanner(BudgetedTransitApi(api, ChainPlanner.BUDGET)).plan(
+                            from, s.chainStops, to,
+                            departAt = s.time?.takeIf { s.timeMode != TimeMode.NOW } ?: Instant.now(),
+                            settings = s.settings, language = language,
+                        )
+                        _state.update {
+                            it.copy(
+                                loading = false, chain = r, resultsAt = Instant.now(),
+                                selected = if (quiet) it.selected.coerceAtMost((r.legs.size - 1).coerceAtLeast(0)) else 0,
+                                error = if (r.legs.isEmpty()) UiError.NO_RESULTS else null,
+                            )
+                        }
+                    } else {
                         val r = planner.plan(
                             TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
                         )
@@ -452,7 +491,8 @@ class MainViewModel(
             } catch (e: Exception) {
                 if (quiet) return@launch
                 // No signal: show what this trip looked like last time, clearly marked.
-                val cached = if (s.mode == AppMode.TRIP) planCache?.get(cacheKey) else null
+                // (An errand chain is not cached: its saved copy would be another trip.)
+                val cached = if (s.mode == AppMode.TRIP && s.chainStops.isEmpty()) planCache?.get(cacheKey) else null
                 _state.update {
                     if (cached != null) {
                         it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, resultsAt = cached.savedAt)
@@ -760,6 +800,37 @@ class MainViewModel(
         _state.update { it.copy(from = PlaceRef.MyLocation, to = PlaceRef.Point(p.name, p.latLon), routinePlace = p.name, timeMode = TimeMode.NOW, time = null) }
         // Location may not be ready at launch; the search then waits for the user's tap.
         if (locationProvider() != null) plan()
+    }
+
+    // --- errands and car -------------------------------------------------------------------
+
+    fun removeChainStop(index: Int) {
+        _state.update { it.copy(chainStops = it.chainStops.filterIndexed { i, _ -> i != index }, chain = null) }
+        if (_state.value.readyToPlan) plan()
+    }
+
+    fun setStay(index: Int, minutes: Int) {
+        _state.update { it.copy(chainStops = it.chainStops.mapIndexed { i, c -> if (i == index) c.copy(stayMin = minutes) else c }) }
+        if (_state.value.readyToPlan) plan()
+    }
+
+    /** "🚗 By car?": the same trip by car at the selected option's time; one request. */
+    fun checkCar() {
+        val s = _state.value
+        val from = resolve(s.from) ?: return
+        val to = s.to?.let(::resolve) ?: return
+        val at = s.selectedItinerary?.start ?: s.time ?: Instant.now()
+        _state.update { it.copy(carLoading = true) }
+        viewModelScope.launch {
+            val car = try {
+                CarCompare(BudgetedTransitApi(api, CarCompare.BUDGET)).drive(from, to, at, s.settings.traffic())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            }
+            _state.update { it.copy(carTime = car, carLoading = false) }
+        }
     }
 
     /** An app-icon shortcut: the trip to the saved place called [name], if it still exists. */
