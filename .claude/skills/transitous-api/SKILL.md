@@ -49,6 +49,10 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   `il-Israel-MOT_37314`.
 - **Geocode:** without `placeBias` the `place` bias is weak ("רגר" near Be'er Sheva → Agra,
   Zagreb, Riga). `placeBias=10` keeps every answer in Israel; `MotisClient` sends it.
+- **Geocode, very short words:** matching is loose. Even with the bias, "רגר" → Hagar (הגר),
+  Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
+  Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
+  (`needsFullNameHint` in `present/Format.kt`).
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
   `lineLabel()` / `headsignText()`.

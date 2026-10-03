@@ -339,6 +339,16 @@ private fun SuggestionList(state: UiState, vm: MainViewModel) {
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
             }
+            if (state.searchHint) {
+                item {
+                    Text(
+                        stringResource(R.string.search_full_name_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                    )
+                }
+            }
             items(state.suggestions) { s ->
                 val detail = s.detail ?: if (s.isStop) stringResource(R.string.stop) else null
                 SuggestionRow(s.name, detail, if (s.saved) Icons.Default.Star else Icons.Default.Place) { vm.pick(s) }

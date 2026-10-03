@@ -148,4 +148,5 @@
     <string name="fare_free">Free (67+)</string>
     <string name="fare_free_label">Free</string>
     <string name="fare_estimate_note">Fares are estimates (Rav-Kav price list) · tap for the official prices</string>
+    <string name="search_full_name_hint">No exact match — try the full name, e.g. “Sderot Rager”</string>
 </resources>
