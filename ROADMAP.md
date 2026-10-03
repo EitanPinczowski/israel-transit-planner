@@ -68,3 +68,12 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Launcher icon; in-app "Update available" banner (GitHub Releases, once a day)
 - [x] Install guide for friends (`docs/install.md`, Hebrew + English)
 - [x] Owner: create the key, add the 4 secrets — v0.1.0 released 2026-09-28
+
+## Phase 8 — UI testing on many phones (skill `ui-testing`)
+- [x] In-session checks: strings/RTL lint in CI, WCAG chip contrast, live golden-trip probe
+- [x] `uitest` build: replayed fixtures, fixed clock, blank map — zero Transitous traffic
+- [x] Emulator CI: 18 screens × 9 phone profiles × he/en with a layout audit; journeys on
+      API 26/29/33/34/35; process death; monkey; report on the `ci-screens` branch
+- [ ] UI tests green on all APIs, every profile verified to apply
+- [ ] Owner: pick the order of the UI fixes in `docs/ui-findings.md`; each fix makes its rule blocking
+- [ ] Owner: Firebase Test Lab (Spark) + keyless login, then run `devices.yml`

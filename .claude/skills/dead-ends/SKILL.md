@@ -17,4 +17,6 @@ description: Approaches that were considered and rejected, with the reason. Load
 | One `plan` request per candidate stop for "better start" | MOTIS does the drop-off search itself (`preTransitModes=CAR`); per-candidate plans would cost ~25 requests and break the Transitous traffic rule. |
 | `CAR_DROPOFF` as the better-start / pick-up mode | Recorded on Transitous (2026-10-02): accepted, but drives ~4 min from a 0-s stub and post-transit answers end in a walk. `CAR` gives the real station drop-off. |
 | Raising the drop-off default detour above 10 min | Owner decided to keep 10 (2026-10-03). At peak, leaving the highway for a mid-route station costs 14–21 min (golden trip 8); the slider already lets the user allow more. |
+| Firebase Blaze plan, BrowserStack, AWS Device Farm, Sauce Labs for device testing | need a card (or a paid plan). Test Lab on Spark + GitHub's free emulators cover it (skill `ui-testing`). |
+| Pixel-diff golden screenshots as a gate | emulator rendering and fonts drift between images; the layout audit checks rules instead, and screenshots are for reading. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |

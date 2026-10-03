@@ -10,8 +10,10 @@ phase checklist is `ROADMAP.md`.
 
 ## Hard rules (do not silently reverse)
 
-- **Free, no card, no API key — ever.** No Google Maps SDK / Directions / Places, no
-  Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
+- **Free, no card, no API key in the app — ever.** No Google Maps SDK / Directions / Places,
+  no Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
+  CI-only test logins are allowed when keyless and on a free plan (Test Lab Spark via
+  Workload Identity, owner 2026-10-03).
 - **No server of our own.** The phone talks directly to free public services:
   - **Transitous** (`https://api.transitous.org`, runs MOTIS) — routing, geocoding, stops,
     departures, real-time. Israel MOT GTFS + a GTFS-RT feed are already loaded there.
@@ -43,7 +45,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · ui_*
 ```
 
 ### The three special features (all return a Pareto front: driver cost × arrival × transfers)
@@ -77,6 +79,7 @@ skill that does not exist — a note nobody can find is a note nobody has.
 | `add-feature` | adding any user-visible feature end to end |
 | `i18n-rtl` | any UI text or layout (Hebrew RTL + English) |
 | `golden-trips` | checking that routing results are still sane |
+| `ui-testing` | UI/UX on many phones: emulator profiles, layout audit, journeys, ci-screens, Test Lab |
 | `reminders-offline` | leave reminder, get-off alert, history, notifications, offline cache and map |
 | `release-apk` | shipping a signed APK to friends and family |
 | `dead-ends` | **before proposing an approach** — what was rejected and why |

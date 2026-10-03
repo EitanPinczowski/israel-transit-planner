@@ -1,0 +1,143 @@
+# The app on REAL phones in Firebase Test Lab — Spark (free) plan, no billing account.
+# Weekly + on demand. Skipped until the owner sets the repository variables
+# GCP_PROJECT, WIF_PROVIDER and SA_EMAIL (setup: .claude/skills/ui-testing).
+#
+# Free by construction: a Spark project has no billing account, so Test Lab refuses runs
+# over the daily quota (5 physical, 10 virtual) instead of charging. Never upgrade the
+# project to Blaze. Login is keyless (Workload Identity Federation): no stored key.
+# The uitest build answers from recorded fixtures: nothing reaches Transitous.
+# Results: the `ci-devices` branch (README.md = findings, screens.md = screenshots).
+name: Real phones (Test Lab)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 0" # Sundays 03:17 UTC
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  pick:
+    name: pick phones
+    if: vars.GCP_PROJECT != ''
+    runs-on: ubuntu-latest
+    outputs:
+      devices: ${{ steps.pick.outputs.devices }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - id: pick
+        run: |
+          gcloud config set project "${{ vars.GCP_PROJECT }}"
+          gcloud firebase test android models list --format=json > models.json
+          echo "devices=$(python3 tools/testlab_pick.py models.json)" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: build uitest APKs
+    if: vars.GCP_PROJECT != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew -p android :app:assembleUitest :app:assembleUitestAndroidTest
+      - run: |
+          mkdir apks
+          cp android/app/build/outputs/apk/uitest/app-uitest.apk apks/
+          cp android/app/build/outputs/apk/androidTest/uitest/app-uitest-androidTest.apk apks/
+      - uses: actions/upload-artifact@v4
+        with: { name: testlab-apks, path: apks/, retention-days: 3 }
+
+  phone:
+    name: ${{ matrix.device.label }}
+    needs: [pick, build]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        device: ${{ fromJSON(needs.pick.outputs.devices) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: testlab-apks, path: apks }
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Screens + journeys on ${{ matrix.device.label }} (Hebrew)
+        run: |
+          gcloud config set project "${{ vars.GCP_PROJECT }}"
+          dir="devices/${GITHUB_RUN_ID}/${{ matrix.device.label }}"
+          set +e
+          gcloud firebase test android run --type instrumentation \
+            --app apks/app-uitest.apk --test apks/app-uitest-androidTest.apk \
+            --device "model=${{ matrix.device.model }},version=${{ matrix.device.version }},locale=iw,orientation=portrait" \
+            --test-targets "class il.transit.planner.uitest.ScreensTest,il.transit.planner.uitest.JourneysTest" \
+            --environment-variables "profile=${{ matrix.device.label }},locale=he,theme=device" \
+            --directories-to-pull /sdcard/Android/data/il.transit.planner.uitest/files \
+            --results-dir "$dir" --timeout 25m 2>&1 | tee run.txt
+          code=${PIPESTATUS[0]}
+          set -e
+          bucket=$(grep -o 'test-lab-[a-z0-9_-]*' run.txt | head -1)
+          mkdir -p "out/testlab-${{ matrix.device.label }}"
+          [ -n "$bucket" ] && gsutil -m -q cp -r "gs://$bucket/$dir" "out/testlab-${{ matrix.device.label }}/" || echo "::warning::no results to download"
+          cp run.txt "out/testlab-${{ matrix.device.label }}/"
+          exit $code
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testlab-${{ matrix.device.label }}
+          path: out/
+          retention-days: 7
+
+  robo:
+    name: Robo crawl (virtual)
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: testlab-apks, path: apks }
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.SA_EMAIL }}
+      - uses: google-github-actions/setup-gcloud@v2
+      # Google's crawler taps through the app by itself and reports crashes. 2 virtual runs.
+      - run: |
+          gcloud config set project "${{ vars.GCP_PROJECT }}"
+          gcloud firebase test android run --type robo --app apks/app-uitest.apk \
+            --device model=MediumPhone.arm,version=34,locale=iw \
+            --device model=SmallPhone.arm,version=30,locale=en \
+            --timeout 5m --results-dir "devices/${GITHUB_RUN_ID}/robo"
+
+  report:
+    name: report → ci-devices
+    needs: [pick, phone]
+    if: always() && needs.pick.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: art, pattern: "testlab-[!a]*" }
+      - run: pip install --quiet pillow
+      - run: |
+          python3 tools/ui_report.py art site --title "Real phones (Test Lab) @ ${GITHUB_SHA::7}, run ${GITHUB_RUN_ID}"
+          cat site/README.md >> "$GITHUB_STEP_SUMMARY"
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd site
+          git init -q -b ci-devices
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Test Lab screens @ ${GITHUB_SHA::7}, run ${GITHUB_RUN_ID}"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" ci-devices
