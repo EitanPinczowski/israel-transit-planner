@@ -45,6 +45,15 @@ data class PlaceRoutine(val days: List<Int>, val fromMin: Int, val toMin: Int) {
 }
 
 object Routines {
+    /**
+     * Saved places for the app-icon shortcuts: the routine on right now first, then other
+     * places with a routine, then the rest; at most [max].
+     */
+    fun shortcutOrder(places: List<SavedPlace>, now: java.time.Instant, max: Int = 3): List<SavedPlace> {
+        val active = active(places, now)
+        return places.sortedWith(compareBy<SavedPlace>({ it != active }, { it.routine == null })).take(max)
+    }
+
     /** The saved place whose routine covers [now] (Israel time); the narrowest window wins. */
     fun active(places: List<SavedPlace>, now: java.time.Instant): SavedPlace? {
         val t = now.atZone(il.transit.core.features.ISRAEL)
@@ -91,6 +100,8 @@ data class UserSettings(
     val fareProfile: FareProfile = FareProfile.REGULAR,
     /** Wheelchair / stroller: step-free walking parts. */
     val accessible: Boolean = false,
+    /** Say "next stop: X, get off" out loud during a tracked ride, besides buzzing. */
+    val speakAlerts: Boolean = true,
     /** How the Trip tab orders its options. */
     val tripSort: il.transit.core.plan.TripSort = il.transit.core.plan.TripSort.FASTEST,
 ) {

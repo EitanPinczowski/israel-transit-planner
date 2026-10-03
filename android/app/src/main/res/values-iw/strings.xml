@@ -200,4 +200,10 @@
     <string name="my_lines_empty">הקישו על תחנה במפה ואז על ☆ ליד קו, כדי לנעוץ אותו כאן עם היציאות הקרובות.</string>
     <string name="way_back_after">דרך חזרה אחרי</string>
     <string name="hours_short">\u2068%1$d ש׳\u2069</string>
+    <string name="my_lines_offline">אין חיבור — לוח זמנים שנשמר ב־\u2068%1$s\u2069, בלי איחורים</string>
+    <string name="ride_alerts">התראת ירידה</string>
+    <string name="speak_alerts">גם להקריא בקול</string>
+    <string name="ride_speak_get_off">התחנה הבאה: %1$s. לרדת.</string>
+    <string name="ride_speak_change">התחנה הבאה: %1$s. להחליף כאן.</string>
+    <string name="shortcut_lines">הקווים שלי</string>
 </resources>

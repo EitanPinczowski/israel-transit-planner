@@ -22,6 +22,9 @@ class TransitApp : Application() {
     val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json")) }
+    val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {
+        il.transit.planner.data.DepartureCacheStore(File(filesDir, "departures_cache.json"))
+    }
     val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
@@ -30,7 +33,7 @@ class TransitApp : Application() {
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active
         override val progress: StateFlow<il.transit.core.ride.RideProgress?> = RideService.progress
-        override fun start(itinerary: Itinerary) = RideService.start(this@TransitApp, itinerary)
+        override fun start(itinerary: Itinerary, speak: Boolean) = RideService.start(this@TransitApp, itinerary, speak)
         override fun stop() = RideService.stop(this@TransitApp)
     }
 
@@ -59,6 +62,7 @@ interface Rides {
 
     /** Live progress of the ride ("3 stops left · arrive 08:47"); null between fixes or when idle. */
     val progress: StateFlow<il.transit.core.ride.RideProgress?>
-    fun start(itinerary: Itinerary)
+    /** [speak]: also say the get-off alert out loud. */
+    fun start(itinerary: Itinerary, speak: Boolean)
     fun stop()
 }

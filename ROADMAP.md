@@ -63,6 +63,11 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
       timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
       on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] Spoken get-off alert (TextToSpeech, navigation audio, ducks music; Settings toggle, on)
+- [x] App-icon shortcuts: My lines + 3 saved places (routine on now first)
+- [x] My lines offline: last saved board per stop, upcoming departures only
+- [ ] ~~Service alerts~~ — not possible free: Transitous has no MOT GTFS-RT (only busofash);
+      MOT SIRI needs a registered key
 - [x] "On the bus": live stops left, delay and arrival in the ride notification and the app
 - [x] My lines: ☆ a line at a stop on its departure board; next 3 departures in one tap
 - [x] Way back after 1 / 2 / 3 h: the return of the selected option, same settings
