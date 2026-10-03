@@ -59,7 +59,8 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     /** Closes the Activity and starts it again (state that lives in stores survives). */
     fun relaunch(): AppDriver {
-        scenario?.close()
+        // After a SystemUI crash the old Activity can be half gone; closing it may throw.
+        runCatching { scenario?.close() }
         return launch()
     }
 

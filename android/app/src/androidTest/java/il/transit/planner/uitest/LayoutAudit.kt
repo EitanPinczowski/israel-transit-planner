@@ -42,13 +42,25 @@ class LayoutAudit(private val d: AppDriver) {
 
     fun run(state: String, screenshot: File?): List<Violation> {
         val out = mutableListOf<Violation>()
+        d.compose.waitForIdle()
         val merged = roots(useUnmergedTree = false)
         val unmerged = roots(useUnmergedTree = true)
+        // Walking the semantics tree reads layout state: off the main thread, a list still
+        // settling after a swipe threw "multithreaded access to SnapshotStateObserver".
+        d.inst.runOnMainSync { analyze(merged, unmerged, out) }
+        // R5 (does its own main-thread work)
+        out += Atf.check(d)
+        write(state, screenshot, out)
+        return out
+    }
+
+    /** R1–R4, R6, R7. Main thread only. */
+    private fun analyze(merged: List<SemanticsNode>, unmerged: List<SemanticsNode>, out: MutableList<Violation>) {
         val decor = d.activity.window.decorView
         var safe = Rect()
         var ime = 0
         var insetsBottomBars: Int? = null
-        d.inst.runOnMainSync {
+        run {
             val insets = ViewCompat.getRootWindowInsets(decor)
             val bars = insets?.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             insetsBottomBars = bars?.bottom
@@ -119,7 +131,7 @@ class LayoutAudit(private val d: AppDriver) {
         for (root in unmerged) walk(root) { n, _ ->
             val get = n.config.getOrNull(SemanticsActions.GetTextLayoutResult)?.action ?: return@walk
             val list = mutableListOf<TextLayoutResult>()
-            d.inst.runOnMainSync { get(list) }
+            get(list)
             list.firstOrNull()?.let { layouts += n to it }
         }
         for ((n, t) in layouts) {
@@ -150,9 +162,6 @@ class LayoutAudit(private val d: AppDriver) {
             }
         }
 
-        // R5
-        out += Atf.check(d)
-
         // R6
         if (Run.locale == "he" || d.activity.resources.configuration.layoutDirection == android.view.View.LAYOUT_DIRECTION_RTL) {
             val label = layouts.firstOrNull { it.second.layoutInput.text.text == d.str(R.string.from) }?.first
@@ -167,7 +176,7 @@ class LayoutAudit(private val d: AppDriver) {
 
         // R7
         var route: android.graphics.RectF? = null
-        d.inst.runOnMainSync { route = d.activity.routeOnScreen() }
+        route = d.activity.routeOnScreen()
         val rr = route
         if (rr != null && top != null && bottom != null) {
             val freeTop = top.boundsInWindow.bottom
@@ -182,8 +191,6 @@ class LayoutAudit(private val d: AppDriver) {
             }
         }
 
-        write(state, screenshot, out)
-        return out
     }
 
     private fun write(state: String, screenshot: File?, v: List<Violation>) {

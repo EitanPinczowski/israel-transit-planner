@@ -207,7 +207,10 @@ class JourneysTest {
         val reachable = d.vm.state.value.showSettings
         Findings.expect("J10", reachable, "Settings button can't be tapped while results are open (the panel covers it)")
         if (!reachable) {
-            compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.BOTTOM))).performClick()
+            // The blocked tap may itself have hit the panel's Close; close only if still open.
+            if (d.vm.state.value.hasResults) {
+                compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.BOTTOM))).performClick()
+            }
             compose.waitForIdle()
             compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
         }
