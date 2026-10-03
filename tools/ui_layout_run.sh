@@ -52,12 +52,21 @@ for line in "${PROFILES[@]}"; do
     adb shell cmd overlay enable-exclusive --category "com.android.internal.display.cutout.emulation.$cutout" >/dev/null 2>&1
   fi
   adb shell settings put system user_rotation "$rot"
+  # API 33+: user_rotation alone no longer rotates; lock the window manager's rotation too.
+  adb shell cmd window user-rotation lock "$rot" >/dev/null 2>&1 || adb shell wm user-rotation lock "$rot" >/dev/null 2>&1 || true
+  sleep 3
+  # A size change can crash the launcher ("keeps stopping" dialog over the app): close it.
+  adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+  # What the emulator really is now, so a profile that did not apply is visible.
+  applied="$(adb shell wm size | tr -d '\r' | tail -1) / $(adb shell wm density | tr -d '\r' | tail -1) / font $(adb shell settings get system font_scale | tr -d '\r') / rotation $(adb shell settings get system user_rotation | tr -d '\r')"
+  echo "$id applied: $applied" | tee -a "$OUT/profiles.txt"
   themes=light
   [[ $dark == yes ]] && themes="light dark"
   for locale in he en; do
     for theme in $themes; do
       run="$id-$locale-$theme"
       adb shell am force-stop $PKG
+      adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
       adb shell cmd locale set-app-locales $PKG --locales "$locale" >/dev/null 2>&1
       adb shell cmd uimode night "$([[ $theme == dark ]] && echo yes || echo no)" >/dev/null
       sleep 2
@@ -76,4 +85,5 @@ done
 adb pull "/sdcard/Android/data/$PKG/files/ui" "$OUT/" >/dev/null || echo "::warning::nothing to pull"
 adb logcat -d -b crash > "$OUT/crash.txt" || true
 adb shell wm size reset; adb shell wm density reset; adb shell settings put system font_scale 1.0; adb shell settings put system user_rotation 0
+adb shell cmd window user-rotation free >/dev/null 2>&1 || true
 exit $failed

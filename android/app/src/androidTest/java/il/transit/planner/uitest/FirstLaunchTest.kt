@@ -42,10 +42,19 @@ class FirstLaunchTest {
         )
         AppDriver(compose).launch().use { d ->
             val device = UiDevice.getInstance(d.inst)
-            val deny = device.wait(Until.findObject(By.res(Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button"))), 10_000)
+            val deny = device.wait(Until.findObject(By.res(Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button"))), 20_000)
+            if (deny == null) {
+                // Keep what was on screen, to tell a missing prompt from a slow or crashed one.
+                d.shell("uiautomator dump /sdcard/Download/j01.xml")
+                java.io.File(Run.outDir, "j01-window.xml").writeText(d.shell("cat /sdcard/Download/j01.xml"))
+                d.screenshot("00-first-launch-prompt-missing")
+            }
             Findings.expect("J1", deny != null, "no location permission prompt on first launch")
             deny?.click()
+            // Back in the app before any Compose call: the prompt is another app's window.
+            device.wait(Until.hasObject(By.pkg(d.app.packageName).depth(0)), 10_000)
             device.waitForIdle()
+            compose.waitUntil(10_000) { runCatching { compose.onAllNodes(hasTestTag(UiTags.TOP)).fetchSemanticsNodes().isNotEmpty() }.getOrDefault(false) }
             compose.onNode(hasText(d.str(R.string.to)) and hasClickAction() and hasAnyAncestor(hasTestTag(UiTags.TOP))).performClick()
             compose.waitUntil(5_000) {
                 compose.onAllNodes(hasText(TEL_AVIV.name) and hasClickAction() and hasAnyAncestor(hasTestTag(UiTags.SUGGESTIONS))).fetchSemanticsNodes().isNotEmpty()

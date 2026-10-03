@@ -13,7 +13,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -62,7 +61,7 @@ class ReplayTransitApi(
             Duration.between(its.maxOf { it.end }, req.time.minus(Duration.ofMinutes(5)))
         } else {
             Duration.between(its.minOf { it.start }, req.time.plus(Duration.ofMinutes(5 + slower)))
-        }.truncatedTo(ChronoUnit.MINUTES)
+        }.let(::wholeMinutes)
         return MotisJson.decodeFromJsonElement(PlanResponse.serializer(), shift(raw, delta))
     }
 
@@ -95,10 +94,13 @@ class ReplayTransitApi(
         val recorded = MotisJson.decodeFromJsonElement(StopTimesResponse.serializer(), raw)
         val first = recorded.stopTimes.mapNotNull { st -> (st.place.departure ?: st.place.arrival)?.let(::parseTime) }.minOrNull()
             ?: return recorded
-        val delta = Duration.between(first, (time ?: clock.instant()).plus(Duration.ofMinutes(2))).truncatedTo(ChronoUnit.MINUTES)
+        val delta = wholeMinutes(Duration.between(first, (time ?: clock.instant()).plus(Duration.ofMinutes(2))))
         val shifted = MotisJson.decodeFromJsonElement(StopTimesResponse.serializer(), shift(raw, delta))
         return shifted.copy(stopTimes = shifted.stopTimes.take(n))
     }
+
+    /** `Duration.truncatedTo` is Java 9: absent on Android 8, which this also runs on. */
+    private fun wholeMinutes(d: Duration): Duration = Duration.ofMinutes(d.toMinutes())
 
     private fun hit() {
         calls.incrementAndGet()

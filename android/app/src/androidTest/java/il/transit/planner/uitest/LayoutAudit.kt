@@ -28,9 +28,11 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  * (see .claude/skills/ui-testing).
  *
  *  R1 overlap      the search card (top) and the bottom panel don't overlap
- *  R2 reachable    every tappable thing is inside the screen minus status/nav bars, cutout, keyboard
+ *  R2 reachable    every tappable thing is inside the screen minus status/nav bars, cutout;
+ *                  things hidden by the open keyboard are one finding per screen
  *  R3 text         no clipped text; no word broken across lines; times/prices/durations never "…"
- *  R4 target       every tappable thing is at least 48×48 dp
+ *  R4 target       tap areas don't crowd: Compose grows a small tappable to 48×48 dp, and that
+ *                  grown area must not reach into another tappable
  *  R5 a11y         Accessibility Test Framework findings (labels, contrast, …)
  *  R6 rtl          in Hebrew, row labels sit on the right of their values
  *  R7 route        the drawn route lies in the map area the panels leave visible
@@ -45,9 +47,11 @@ class LayoutAudit(private val d: AppDriver) {
         val decor = d.activity.window.decorView
         var safe = Rect()
         var ime = 0
+        var insetsBottomBars: Int? = null
         d.inst.runOnMainSync {
             val insets = ViewCompat.getRootWindowInsets(decor)
             val bars = insets?.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            insetsBottomBars = bars?.bottom
             ime = insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
             safe = Rect(bars?.left ?: 0, bars?.top ?: 0, decor.width - (bars?.right ?: 0), decor.height - maxOf(bars?.bottom ?: 0, ime))
         }
@@ -63,24 +67,44 @@ class LayoutAudit(private val d: AppDriver) {
             if (overlap > 1f) out += Violation("R1", "top/bottom", "search card and bottom panel overlap by ${dp(overlap)} dp")
         }
 
+        val underKeyboard = mutableListOf<String>()
         for (root in merged) {
             val isMain = root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
             val area = if (isMain) safe else root.boundsInWindow.toRect()
+            val noKeyboard = if (isMain) Rect(area.left, area.top, area.right, decor.height - (insetsBottomBars ?: 0)) else area
+            val taps = mutableListOf<Pair<SemanticsNode, CRect>>()
             walk(root) { n, scrolled ->
                 if (SemanticsActions.OnClick !in n.config) return@walk
                 val r = n.boundsInWindow
                 if (r.width <= 0f || r.height <= 0f) return@walk
-                val name = label(n)
+                taps += n to r
                 // R2 (a node scrolled out of its list is fine: the list scrolls)
-                if (!scrolled && !area.contains(r.toRect())) {
-                    out += Violation("R2", name, "tappable at ${r.toRect().toShortString()} leaves the usable area ${area.toShortString()}" + if (ime > 0) " (keyboard open)" else "")
-                }
-                // R4
-                val minPx = 48 * density - 1
-                if (r.width < minPx || r.height < minPx) {
-                    out += Violation("R4", name, "touch target ${dp(r.width)}×${dp(r.height)} dp (< 48×48)")
+                if (scrolled || area.contains(r.toRect())) return@walk
+                if (ime > 0 && noKeyboard.contains(r.toRect())) underKeyboard += label(n)
+                else out += Violation("R2", label(n), "tappable at ${r.toRect().toShortString()} leaves the usable area ${area.toShortString()}")
+            }
+            // R4: grow each tap area to 48 dp like Compose does; it must not reach another one.
+            val min = 48 * density
+            fun grown(r: CRect): CRect {
+                val dx = maxOf(0f, (min - r.width) / 2)
+                val dy = maxOf(0f, (min - r.height) / 2)
+                return CRect(r.left - dx, r.top - dy, r.right + dx, r.bottom + dy)
+            }
+            for (i in taps.indices) for (j in taps.indices) {
+                if (i == j) continue
+                val (a, ra) = taps[i]
+                val (b, rb) = taps[j]
+                if (ra.width >= min && ra.height >= min) continue
+                if (ra.overlaps(rb) || rb.containsRect(ra) || ra.containsRect(rb)) continue // nested or already touching
+                val g = grown(ra)
+                val depth = minOf(g.right, rb.right) - maxOf(g.left, rb.left) to minOf(g.bottom, rb.bottom) - maxOf(g.top, rb.top)
+                if (depth.first > 1f && depth.second > 1f) {
+                    out += Violation("R4", label(a), "${dp(ra.width)}×${dp(ra.height)} dp; its 48 dp tap area reaches ${label(b)}")
                 }
             }
+        }
+        if (underKeyboard.isNotEmpty()) {
+            out += Violation("R2", "keyboard", "${underKeyboard.size} tappable items hidden behind the keyboard, e.g. ${underKeyboard.take(3).joinToString()}")
         }
 
         // R3
@@ -96,7 +120,11 @@ class LayoutAudit(private val d: AppDriver) {
             if (text.isBlank()) continue
             val ellipsis = t.layoutInput.overflow == TextOverflow.Ellipsis
             val cut = t.lineCount > 0 && t.isLineEllipsized(t.lineCount - 1)
-            if (t.hasVisualOverflow && !ellipsis) out += Violation("R3", quote(text), "text is clipped")
+            // Height: fonts (Hebrew ones especially) draw a little past the line box; only a
+            // missing part of a line counts.
+            val lineH = if (t.lineCount > 0) t.multiParagraph.height / t.lineCount else 0f
+            val cutHeight = t.multiParagraph.height - t.size.height > lineH / 2
+            if ((t.didOverflowWidth || cutHeight) && !ellipsis) out += Violation("R3", quote(text), "text is clipped")
             if (cut && IMPORTANT.containsMatchIn(text)) out += Violation("R3", quote(text), "a time/price/duration is cut off with …")
             val words = text.split(Regex("\\s+")).count { it.isNotBlank() }
             if (t.lineCount > maxOf(words, 1) || (t.lineCount >= 2 && n.boundsInWindow.width < 40 * density)) {
@@ -144,6 +172,7 @@ class LayoutAudit(private val d: AppDriver) {
         val o = JSONObject()
             .put("state", state).put("profile", Run.profile).put("locale", Run.locale).put("theme", Run.theme)
             .put("sdk", AppDriver.sdk).put("screenshot", screenshot?.name)
+            .put("screen", d.activity.resources.configuration.let { c -> "${c.screenWidthDp}×${c.screenHeightDp} dp, ${c.densityDpi} dpi, font ×${c.fontScale}" })
             .put("violations", JSONArray(v.map { it.json() }))
         File(Run.outDir, "$state.json").writeText(o.toString(2))
     }

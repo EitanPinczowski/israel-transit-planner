@@ -79,12 +79,15 @@ def main() -> int:
     found: dict[tuple, list[str]] = collections.defaultdict(list)       # (rule, state, where, detail) -> runs
     per_rule_run: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
     runs: set[str] = set()
+    screens: dict[str, str] = {}  # run -> what the device reported (size, dpi, font)
 
     for js in sorted(src.rglob("ui/*/*.json")):
         run = js.parent.name
         runs.add(run)
         data = json.loads(js.read_text(encoding="utf-8"))
         state = data.get("state", js.stem)
+        if data.get("screen"):
+            screens.setdefault(run, data["screen"])
         for v in data.get("violations", []):
             detail = re.sub(r"\d+(\.\d+)?", "#", v["detail"]) if v["rule"] in ("R2", "R7") else v["detail"]
             found[(v["rule"], state, v["where"], detail)].append(run)
@@ -108,9 +111,11 @@ def main() -> int:
         failures += [(f"{f.parent.name}/{f.stem.removeprefix('instrument-')}", n, s) for n, s in fl]
     crashes = []
     for f in sorted(src.rglob("crash.txt")):
-        t = f.read_text(encoding="utf-8", errors="replace")
-        if "il.transit.planner" in t:
-            crashes.append((f.parent.name, "\n".join(t.splitlines()[:30])))
+        # Only the app's own crashes (the emulator's SystemUI crashes now and then too).
+        lines = f.read_text(encoding="utf-8", errors="replace").splitlines()
+        for i, line in enumerate(lines):
+            if "Process: il.transit.planner" in line:
+                crashes.append((f.parent.name, "\n".join(lines[max(0, i - 1):i + 25])))
     monkey = [f for f in src.rglob("monkey.txt")]
     monkey_line = ""
     for f in monkey:
@@ -131,6 +136,10 @@ def main() -> int:
         md += ["", monkey_line]
     md += ["", "All screens side by side: [screens.md](screens.md). Rules: `.claude/skills/ui-testing`.", ""]
 
+    if screens:
+        md += ["## Runs", "", "| run | screen as the device reported it |", "|---|---|"]
+        md += [f"| {r} | {screens[r]} |" for r in run_list if r in screens]
+        md.append("")
     if by_rule:
         md += ["## Findings per rule and run", "", "| rule | " + " | ".join(run_list) + " |", "|---|" + "---|" * len(run_list)]
         for rule in sorted(by_rule):

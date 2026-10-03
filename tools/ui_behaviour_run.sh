@@ -32,6 +32,11 @@ adb install -r "$APKS"/app-uitest.apk
 adb install -r "$APKS"/app-uitest-androidTest.apk
 adb shell settings put secure show_ime_with_hard_keyboard 1
 adb emu geo fix 34.8013 31.2622 >/dev/null
+# Old images boot with the keyguard up and SystemUI still settling; a permission prompt
+# shown then can vanish (seen on API 26). Unlock and give it a moment first.
+adb shell input keyevent 82
+adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
+sleep 10
 adb logcat -c
 instrument il.transit.planner.uitest.FirstLaunchTest first-launch
 instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
@@ -61,9 +66,9 @@ fi
 
 adb pull "/sdcard/Android/data/$PKG/files/ui" "$OUT/" >/dev/null 2>&1 || true
 adb logcat -d -b crash > "$OUT/crash.txt" || true
-if grep -q "$PKG" "$OUT/crash.txt"; then
+if grep -q "Process: $PKG" "$OUT/crash.txt"; then
   echo "::error::the app crashed on API $API (see crash.txt)"
-  grep -A20 "$PKG" "$OUT/crash.txt" | head -60
+  grep -A20 "Process: $PKG" "$OUT/crash.txt" | head -60
   failed=1
 fi
 exit $failed

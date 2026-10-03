@@ -11,8 +11,6 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasParent
-import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -201,7 +199,8 @@ class JourneysTest {
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
         compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
-        compose.onNode(hasContentDescription(d.str(R.string.delete)) and hasParent(hasAnyChild(hasText("↗ עבודה")))).performClick()
+        // Saved trips are listed before saved places, so the first Delete in the dialog is the trip's.
+        compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst().performClick()
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.isEmpty() }
     }
 

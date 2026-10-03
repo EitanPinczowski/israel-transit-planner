@@ -14,6 +14,20 @@ java {
 }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
 
+// The app runs on Android 8 (minSdk 26), whose java.time & co. are the Java 8 API. Compiling
+// core's main code against that API turns a Java 9+ call (e.g. Duration.truncatedTo, which
+// crashed the API 26 UI tests) into a compile error here instead of a crash on old phones.
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileKotlin") {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+        freeCompilerArgs.add("-Xjdk-release=1.8")
+    }
+}
+tasks.named<JavaCompile>("compileJava") {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
 dependencies {
     // `api`: these types appear in core's public signatures (MotisClient takes an
     // OkHttpClient, MotisJson is a Json), so the app must see them too.

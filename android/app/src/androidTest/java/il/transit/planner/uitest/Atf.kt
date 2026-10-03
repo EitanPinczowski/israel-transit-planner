@@ -4,8 +4,8 @@ import com.google.android.apps.common.testing.accessibility.framework.Accessibil
 import com.google.android.apps.common.testing.accessibility.framework.integrations.espresso.AccessibilityValidator
 
 /**
- * Rule R5: Google's Accessibility Test Framework over the main window (labels, touch targets,
- * text contrast from a screenshot, …). Errors and warnings become violations; if the
+ * Rule R5: Google's Accessibility Test Framework over the main window (labels, text contrast
+ * from a screenshot, …; touch size is left to R4). Errors and warnings become violations; if the
  * framework itself fails on this device the run says so instead of passing silently.
  */
 object Atf {
@@ -20,6 +20,8 @@ object Atf {
                 val results = validator.checkAndReturnResults(d.activity.window.decorView)
                 for (r in results) {
                     if (r.type != AccessibilityCheckResultType.ERROR && r.type != AccessibilityCheckResultType.WARNING) continue
+                    // Touch size is R4's job: ATF can't see Compose growing small tap areas to 48 dp.
+                    if (r.sourceCheckClass.simpleName == "TouchTargetSizeCheck") continue
                     out += Violation("R5", r.sourceCheckClass.simpleName, "${r.type}: ${r.message}".replace("\n", " ").take(240))
                 }
             } catch (e: Throwable) {
