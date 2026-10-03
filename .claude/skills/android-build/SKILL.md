@@ -33,6 +33,13 @@ there) and that is where most of the logic is tested.
 (assembleDebug, uploads the APK as artifact `app-debug`, kept 14 days). The APK from a
 green run is how friends test a build before a release.
 
+Job `screenshots` runs Paparazzi's `:app:recordPaparazziDebug` and uploads
+`android/app/src/test/snapshots/` as artifact `screenshots`: the main screen
+(`ui/ScreensTest.kt`) in each state × 7 device variants, rendered without an emulator.
+Record-only, no goldens yet. The map is a flat placeholder and there are no system bars
+in these pictures, so inset handling still needs a phone. Test fixtures come from
+`core/src/test/resources` (shared through `sourceSets["test"]`).
+
 ## Emulator / device
 
 - The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled

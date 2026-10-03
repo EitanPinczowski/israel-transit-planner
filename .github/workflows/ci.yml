@@ -33,3 +33,22 @@ jobs:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+  screenshots:
+    name: screenshots (Paparazzi)
+    needs: core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      # Record-only: no golden images yet (a cloud session can't render them; it has no
+      # Android SDK). The pictures are for looking at — light/dark, he/en, small/big/landscape.
+      - run: ./gradlew -p android :app:recordPaparazziDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: android/app/src/test/snapshots/
+          retention-days: 14

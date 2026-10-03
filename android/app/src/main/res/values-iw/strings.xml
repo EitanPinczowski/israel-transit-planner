@@ -179,4 +179,11 @@
     <string name="turn_sharp_right">פנייה חדה ימינה</string>
     <string name="turn_u_turn">חזרו לאחור</string>
     <string name="turn_stairs">מדרגות</string>
+
+    <!-- Layout: overflow menu, folded search card, results sheet handle -->
+    <string name="more_options">אפשרויות נוספות</string>
+    <string name="edit_search">עריכת החיפוש</string>
+    <string name="compact_from">מ־%1$s</string>
+    <string name="panel_collapse">כיווץ התוצאות</string>
+    <string name="panel_expand">הרחבת התוצאות</string>
 </resources>

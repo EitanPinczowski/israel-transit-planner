@@ -178,4 +178,11 @@
     <string name="turn_sharp_right">Sharp right</string>
     <string name="turn_u_turn">Turn back</string>
     <string name="turn_stairs">Stairs</string>
+
+    <!-- Layout: overflow menu, folded search card, results sheet handle -->
+    <string name="more_options">More options</string>
+    <string name="edit_search">Edit search</string>
+    <string name="compact_from">From %1$s</string>
+    <string name="panel_collapse">Fold the results</string>
+    <string name="panel_expand">Unfold the results</string>
 </resources>
