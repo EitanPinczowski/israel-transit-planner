@@ -37,11 +37,38 @@ fun defaultColor(kind: LegKind): String = when (kind) {
 }
 
 /** MOTIS route colours come as "RRGGBB" without '#'; anything malformed falls back. */
-fun legColor(leg: Leg): String {
-    val c = leg.routeColor?.trim()?.removePrefix("#")
+fun legColor(leg: Leg): String = routeColorOr(leg.routeColor, legKind(leg.mode))
+
+private fun routeColorOr(raw: String?, kind: LegKind): String {
+    val c = raw?.trim()?.removePrefix("#")
     return if (c != null && c.length == 6 && c.all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) "#${c.uppercase()}"
-    else defaultColor(legKind(leg.mode))
+    else defaultColor(kind)
 }
+
+/**
+ * Text colour for a label drawn on [background] ("#RRGGBB"): white while it reaches the
+ * WCAG 3:1 minimum for UI labels (the Material convention on mid blues and greens),
+ * otherwise whichever of black/white contrasts more. Route colours come from the operator
+ * and can be anything (yellow light rail, white night lines).
+ */
+fun onColor(background: String): String {
+    val c = background.trim().removePrefix("#")
+    if (c.length != 6) return WHITE
+    val rgb = c.toLongOrNull(16) ?: return WHITE
+    fun channel(shift: Int): Double {
+        val v = ((rgb shr shift) and 0xFF) / 255.0
+        return if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
+    }
+    val l = 0.2126 * channel(16) + 0.7152 * channel(8) + 0.0722 * channel(0)
+    val onWhite = 1.05 / (l + 0.05)
+    val onBlack = (l + 0.05) / 0.05
+    return if (onWhite >= MIN_CONTRAST || onWhite >= onBlack) WHITE else BLACK
+}
+
+private const val MIN_CONTRAST = 3.0
+
+private const val WHITE = "#FFFFFF"
+private const val BLACK = "#000000"
 
 data class LegChip(
     val kind: LegKind,
@@ -181,6 +208,8 @@ data class DepartureRow(
     val delayMin: Int?,
     val cancelled: Boolean,
     val instant: Instant?,
+    /** The line's colour ("#RRGGBB"), the kind's default when the operator sends none. */
+    val color: String = defaultColor(kind),
 )
 
 fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
@@ -195,6 +224,7 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
         delayMin = if (st.realTime) delayMin(actual, scheduled) else null,
         cancelled = st.cancelled || st.tripCancelled,
         instant = at,
+        color = routeColorOr(st.routeColor, legKind(st.mode)),
     )
 }
 
