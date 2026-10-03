@@ -6,40 +6,67 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -54,20 +81,34 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import il.transit.core.user.FavoriteLine
 import il.transit.core.user.PlaceRoutine
 import il.transit.core.user.SavedPlace
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,6 +145,7 @@ import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
 import il.transit.core.present.LegKind
 import il.transit.core.present.hhmm
+import il.transit.core.present.onColor
 import il.transit.core.present.summarize
 import il.transit.core.user.ModeFilter
 import il.transit.core.user.UserSettings
@@ -115,8 +157,15 @@ import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.roundToInt
 
 private const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
+
+/** Wider than this (landscape, foldables, tablets), the panels move into one side column. */
+private val WIDE = 600.dp
+
+/** Shorter than this, the search card folds to one line while results are shown. */
+private val SHORT = 700.dp
 
 /** What only the Activity can do: permissions, the map camera, the offline store. */
 class ScreenActions(
@@ -127,36 +176,119 @@ class ScreenActions(
     val remind: () -> Unit,
     /** Same permission dance, then starts the "get off at the next stop" ride. */
     val startRide: () -> Unit,
+    /** How much of the map our panels and the system bars cover, whenever that changes. */
+    val onMapPadding: (MapPadding) -> Unit = {},
 )
 
+/** Pixels of the map hidden on each side (absolute left/right, not start/end). */
+data class MapPadding(val left: Int = 0, val top: Int = 0, val right: Int = 0, val bottom: Int = 0)
+
+/** System bars and the camera cutout, without the keyboard (that one only matters while typing). */
+private val barsAndCutout: WindowInsets
+    @Composable get() = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+
+/**
+ * The whole screen over the map. Phones: search card on top, results as a bottom sheet.
+ * Wide windows: both in one side column at the start edge. Every edge respects the status
+ * and navigation bars, the camera cutout (which is on a side in landscape) and the keyboard.
+ */
 @Composable
-fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @Composable () -> Unit) {
+fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Composable () -> Unit) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
+    var collapsed by rememberSaveable { mutableStateOf(false) }
+    var searchOpen by rememberSaveable { mutableStateOf(false) }
 
-    Box(Modifier.fillMaxSize()) {
+    val showPanel = state.editing == null &&
+        (state.stopSheet != null || state.loading || state.hasResults || state.error != null)
+    // A new search always shows its answer; closing the results unfolds the search card.
+    LaunchedEffect(state.loading) { if (state.loading) collapsed = false }
+    LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
+
+    val panel: @Composable (Modifier, Shape) -> Unit = { modifier, shape ->
+        if (state.stopSheet != null) {
+            StopPanel(state.stopSheet, state.favorites, vm, collapsed, { collapsed = it }, modifier, shape)
+        } else {
+            ResultsPanel(state, vm, actions, collapsed, { collapsed = it }, { savingTrip = true }, modifier, shape)
+        }
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val density = LocalDensity.current
+        val dir = LocalLayoutDirection.current
+        val bars = barsAndCutout
+        val rootWidth = constraints.maxWidth
+        val rootHeight = constraints.maxHeight
+        val compactSearch = showPanel && maxHeight < SHORT && !searchOpen
+        val sheetMaxHeight = maxHeight * 0.5f
+
         map()
+        StatusBarScrim()
 
-        Column(
-            Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+        val search: @Composable () -> Unit = {
             state.update?.let { UpdateBanner(it, vm) }
-            SearchCard(state, vm, onSavePlace = { savingPlace = it })
-            when {
-                state.editing != null -> SuggestionList(state, vm)
-                !state.hasResults && !state.loading && state.stopSheet == null -> SavedChips(state, vm)
+            if (compactSearch) {
+                CompactSearch(state) { searchOpen = true }
+            } else {
+                SearchCard(state, vm, onSavePlace = { savingPlace = it })
             }
         }
 
-        Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
-            AttributionChip(Modifier.padding(8.dp))
-            when {
-                state.stopSheet != null -> StopPanel(state.stopSheet, state.favorites, vm)
-                state.loading || state.hasResults || state.error != null ->
-                    ResultsPanel(state, vm, actions, onSaveTrip = { savingTrip = true })
-                else -> Spacer(Modifier.navigationBarsPadding())
+        if (maxWidth >= WIDE) {
+            var side by remember { mutableStateOf(0 to 0) } // left and right edge, px
+            Column(
+                Modifier.fillMaxHeight()
+                    .onGloballyPositioned { c -> c.boundsInRoot().let { side = it.left.roundToInt() to it.right.roundToInt() } }
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start))
+                    .width(minOf(420.dp, maxWidth * 0.5f))
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                search()
+                when {
+                    state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false))
+                    showPanel -> panel(Modifier.weight(1f, fill = false), MaterialTheme.shapes.extraLarge)
+                    else -> SavedChips(state, vm)
+                }
+                AttributionChip(Modifier)
             }
+            val atLeft = side.first < rootWidth / 2
+            val pad = MapPadding(
+                left = if (atLeft) side.second else bars.getLeft(density, dir),
+                top = bars.getTop(density),
+                right = if (atLeft) bars.getRight(density, dir) else rootWidth - side.first,
+                bottom = bars.getBottom(density),
+            )
+            LaunchedEffect(pad) { actions.onMapPadding(pad) }
+        } else {
+            var topEdge by remember { mutableIntStateOf(0) }
+            var bottomEdge by remember { mutableIntStateOf(rootHeight) }
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(12.dp)) {
+                Column(
+                    Modifier.fillMaxWidth().onGloballyPositioned { topEdge = it.boundsInRoot().bottom.roundToInt() },
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    search()
+                    when {
+                        state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false))
+                        !showPanel -> SavedChips(state, vm)
+                    }
+                }
+            }
+            Column(
+                Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                    .onGloballyPositioned { bottomEdge = it.boundsInRoot().top.roundToInt() },
+            ) {
+                AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
+                if (showPanel) {
+                    val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
+                    panel(Modifier.heightIn(max = sheetMaxHeight), top)
+                } else {
+                    Spacer(Modifier.windowInsetsBottomHeight(bars))
+                }
+            }
+            val pad = MapPadding(bars.getLeft(density, dir), topEdge, bars.getRight(density, dir), rootHeight - bottomEdge)
+            LaunchedEffect(pad) { actions.onMapPadding(pad) }
         }
     }
 
@@ -171,10 +303,22 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
     }
 }
 
+/** Keeps the clock and battery icons readable over a busy map. */
 @Composable
-private fun UpdateBanner(latest: il.transit.core.update.LatestRelease, vm: MainViewModel) {
+private fun StatusBarScrim() {
+    val c = MaterialTheme.colorScheme.surface
+    Box(
+        Modifier.fillMaxWidth()
+            .background(Brush.verticalGradient(listOf(c.copy(alpha = 0.85f), c.copy(alpha = 0f))))
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .height(12.dp),
+    )
+}
+
+@Composable
+private fun UpdateBanner(latest: il.transit.core.update.LatestRelease, vm: MainActions) {
     val context = LocalContext.current
-    Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.update_available, latest.version), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
             TextButton(onClick = {
@@ -188,14 +332,14 @@ private fun UpdateBanner(latest: il.transit.core.update.LatestRelease, vm: MainV
 // --- search ---------------------------------------------------------------------------------
 
 @Composable
-private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+private fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -> Unit) {
+    ElevatedCard(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
+        Column(Modifier.padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 8.dp)) {
             ModeRow(state, vm)
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.padding(end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     PlaceRow(R.string.from, placeLabel(state.from), state.editing == Field.FROM) { vm.startEditing(Field.FROM) }
-                    HorizontalDivider()
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     if (state.mode == AppMode.DROP_OFF) {
                         PlaceRow(
                             R.string.driver_to,
@@ -203,7 +347,7 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                             state.editing == Field.DRIVER_TO,
                             placeholderRes = R.string.choose_driver_destination,
                         ) { vm.startEditing(Field.DRIVER_TO) }
-                        HorizontalDivider()
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     }
                     if (state.mode == AppMode.TRIP) ChainStopsRows(state, vm)
                     val toLabel = when (state.mode) {
@@ -214,60 +358,122 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                     PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
-                    TextButton(onClick = vm::swap, enabled = state.to != null) { Text("⇅") }
+                    IconButton(onClick = vm::swap, enabled = state.to != null) {
+                        Icon(painterResource(R.drawable.ic_swap_vert), contentDescription = stringResource(R.string.swap))
+                    }
                     val to = state.to
                     if (to is PlaceRef.Point && state.savedPlaces.none { it.latLon == to.at }) {
                         IconButton(onClick = { onSavePlace(to.at) }) {
-                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.save_place))
+                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.save_place), tint = MaterialTheme.colorScheme.tertiary)
                         }
-                    }
-                    IconButton(onClick = { vm.showSettings(true) }) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
-                    }
-                    IconButton(onClick = { vm.showHistory(true) }) {
-                        Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.history))
-                    }
-                    IconButton(onClick = { vm.showFavorites(true) }) {
-                        Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.my_lines))
                     }
                 }
             }
-            if (state.editing != null) {
-                OutlinedTextField(
-                    value = state.query,
-                    onValueChange = vm::onQuery,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(stringResource(R.string.search_hint)) },
-                    singleLine = true,
-                    trailingIcon = {
-                        IconButton(onClick = vm::cancelEditing) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
-                        }
-                    },
-                )
-            } else {
-                TimeRow(state, vm)
-                when (state.mode) {
-                    AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
-                    AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
-                    AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
-                    AppMode.TRIP -> Unit
+            Column(Modifier.padding(end = 8.dp)) {
+                if (state.editing != null) {
+                    OutlinedTextField(
+                        value = state.query,
+                        onValueChange = vm::onQuery,
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text(stringResource(R.string.search_hint)) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        trailingIcon = {
+                            IconButton(onClick = vm::cancelEditing) {
+                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+                            }
+                        },
+                    )
+                } else {
+                    TimeRow(state, vm)
+                    when (state.mode) {
+                        AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
+                        AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
+                        AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
+                        AppMode.TRIP -> Unit
+                    }
                 }
             }
         }
     }
 }
 
+/** The search card folded to one line, so results get the room on short phones. Tap to unfold. */
 @Composable
-private fun ModeRow(state: UiState, vm: MainViewModel) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        listOf(
-            AppMode.TRIP to R.string.mode_trip,
-            AppMode.BETTER_START to R.string.mode_better_start,
-            AppMode.DROP_OFF to R.string.mode_drop_off,
-            AppMode.PICK_UP to R.string.mode_pick_up,
-        ).forEach { (mode, label) ->
-            FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(label)) })
+private fun CompactSearch(state: UiState, onOpen: () -> Unit) {
+    ElevatedCard(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
+        Row(
+            Modifier.fillMaxWidth().clickable(onClick = onOpen).padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    state.to?.let { placeLabel(it) } ?: stringResource(R.string.choose_destination),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    stringResource(R.string.compact_from, placeLabel(state.from)) + " · " + stringResource(modeLabel(state.mode)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Icon(
+                Icons.Default.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.edit_search),
+                modifier = Modifier.padding(12.dp),
+            )
+        }
+    }
+}
+
+private fun modeLabel(mode: AppMode): Int = when (mode) {
+    AppMode.TRIP -> R.string.mode_trip
+    AppMode.BETTER_START -> R.string.mode_better_start
+    AppMode.DROP_OFF -> R.string.mode_drop_off
+    AppMode.PICK_UP -> R.string.mode_pick_up
+}
+
+/** One scrolling line of mode chips (never two lines, even in Hebrew), then the ⋮ menu. */
+@Composable
+private fun ModeRow(state: UiState, vm: MainActions) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.weight(1f).horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            AppMode.entries.forEach { mode ->
+                FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(modeLabel(mode))) })
+            }
+        }
+        OverflowMenu(vm)
+    }
+}
+
+@Composable
+private fun OverflowMenu(vm: MainActions) {
+    var open by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { open = true }) { Icon(Icons.Default.MoreVert, stringResource(R.string.more_options)) }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.settings)) },
+                leadingIcon = { Icon(Icons.Default.Settings, null) },
+                onClick = { open = false; vm.showSettings(true) },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.history)) },
+                leadingIcon = { Icon(Icons.Default.DateRange, null) },
+                onClick = { open = false; vm.showHistory(true) },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.my_lines)) },
+                leadingIcon = { Icon(Icons.Default.Favorite, null) },
+                onClick = { open = false; vm.showFavorites(true) },
+            )
         }
     }
 }
@@ -296,11 +502,20 @@ private fun PlaceRow(
     placeholderRes: Int = R.string.choose_destination,
     onClick: () -> Unit,
 ) {
+    // The label column grows with the font size, so "Driver to" never clips at 200%.
+    val labelWidth = 64.dp * LocalDensity.current.fontScale.coerceIn(1f, 2f)
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
+        Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(64.dp))
+        Text(
+            stringResource(labelRes),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.width(labelWidth).padding(end = 6.dp),
+        )
         Text(
             value ?: stringResource(placeholderRes),
             style = MaterialTheme.typography.bodyLarge,
@@ -319,7 +534,7 @@ private fun placeLabel(ref: PlaceRef): String = when (ref) {
 }
 
 @Composable
-private fun TimeRow(state: UiState, vm: MainViewModel) {
+private fun TimeRow(state: UiState, vm: MainActions) {
     val context = LocalContext.current
     fun pickTime(mode: TimeMode) {
         val now = ZonedDateTime.now(ISRAEL)
@@ -330,7 +545,7 @@ private fun TimeRow(state: UiState, vm: MainViewModel) {
             vm.setTime(mode, at.toInstant())
         }, now.hour, now.minute, true).show()
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         FilterChip(selected = state.timeMode == TimeMode.NOW, onClick = { vm.setTime(TimeMode.NOW, null) }, label = { Text(stringResource(R.string.now)) })
         FilterChip(
             selected = state.timeMode == TimeMode.DEPART_AT,
@@ -354,9 +569,10 @@ private fun timeLabel(res: Int, state: UiState, mode: TimeMode): String {
     return if (state.timeMode == mode && t != null) "$base ${hhmm(t)}" else base
 }
 
+/** Fills whatever room is left above the keyboard ([modifier] carries the weight). */
 @Composable
-private fun SuggestionList(state: UiState, vm: MainViewModel) {
-    Card(Modifier.fillMaxWidth().heightIn(max = 360.dp)) {
+private fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier) {
+    ElevatedCard(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
         LazyColumn {
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
@@ -382,10 +598,10 @@ private fun SuggestionList(state: UiState, vm: MainViewModel) {
 @Composable
 private fun SuggestionRow(title: String, detail: String?, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 10.dp),
+        Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
+        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.width(12.dp))
         Column {
             Text(title, style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -395,29 +611,99 @@ private fun SuggestionRow(title: String, detail: String?, icon: androidx.compose
 }
 
 @Composable
-private fun SavedChips(state: UiState, vm: MainViewModel) {
+private fun SavedChips(state: UiState, vm: MainActions) {
     if (state.savedPlaces.isEmpty() && state.savedTrips.isEmpty()) return
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        // Over the map: a surface fill, or the outline-only chip disappears into the streets.
+        val colors = androidx.compose.material3.AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
         state.savedTrips.forEach { t ->
-            AssistChip(onClick = { vm.runTrip(t) }, label = { Text("↗ ${t.name}") })
+            // ↗ as the leading icon, so it sits at the start whatever language the name is in.
+            AssistChip(
+                onClick = { vm.runTrip(t) },
+                label = { Text(t.name) },
+                colors = colors,
+                leadingIcon = { Text("↗", color = MaterialTheme.colorScheme.tertiary) },
+            )
         }
         state.savedPlaces.forEach { p ->
-            AssistChip(onClick = { vm.goTo(p) }, label = { Text(p.name) }, leadingIcon = { Icon(Icons.Default.Star, null, Modifier.size(16.dp)) })
+            AssistChip(
+                onClick = { vm.goTo(p) },
+                label = { Text(p.name) },
+                colors = colors,
+                leadingIcon = { Icon(Icons.Default.Star, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.tertiary) },
+            )
         }
     }
 }
 
-// --- results ---------------------------------------------------------------------------------
+// --- panels ----------------------------------------------------------------------------------
+
+/**
+ * The bottom sheet's top: a handle that folds the sheet to its title row (drag down or tap)
+ * and unfolds it (drag up or tap), so a small phone can see the route on the map.
+ */
+@Composable
+private fun SheetHeader(collapsed: Boolean, onCollapse: (Boolean) -> Unit, title: @Composable () -> Unit) {
+    val threshold = with(LocalDensity.current) { 24.dp.toPx() }
+    var drag by remember { mutableFloatStateOf(0f) }
+    val label = stringResource(if (collapsed) R.string.panel_expand else R.string.panel_collapse)
+    Column(
+        Modifier.fillMaxWidth()
+            .draggable(
+                rememberDraggableState { drag += it },
+                Orientation.Vertical,
+                onDragStarted = { drag = 0f },
+                onDragStopped = {
+                    if (drag > threshold) onCollapse(true) else if (drag < -threshold) onCollapse(false)
+                },
+            )
+            .clickable(onClickLabel = label) { onCollapse(!collapsed) },
+    ) {
+        Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), contentAlignment = Alignment.Center) {
+            Box(
+                Modifier.size(width = 32.dp, height = 4.dp)
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f), CircleShape),
+            )
+        }
+        title()
+    }
+}
+
+/** The sheet itself: content clear of the navigation bar, side cutouts and rounded corners. */
+@Composable
+private fun Sheet(modifier: Modifier, shape: Shape, content: @Composable ColumnScope.() -> Unit) {
+    Surface(
+        modifier.fillMaxWidth(),
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        shadowElevation = 8.dp,
+    ) {
+        Column(
+            Modifier.windowInsetsPadding(barsAndCutout.only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal))
+                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp),
+            content = content,
+        )
+    }
+}
 
 @Composable
-private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActions, onSaveTrip: () -> Unit) {
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
-        Column(Modifier.navigationBarsPadding().padding(12.dp)) {
+private fun ResultsPanel(
+    state: UiState,
+    vm: MainActions,
+    actions: ScreenActions,
+    collapsed: Boolean,
+    onCollapse: (Boolean) -> Unit,
+    onSaveTrip: () -> Unit,
+    modifier: Modifier,
+    shape: Shape,
+) {
+    Sheet(modifier, shape) {
+        SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium)
                     val at = state.resultsAt
-                    if (state.mode == AppMode.TRIP && at != null && !state.loading) {
+                    if (state.mode == AppMode.TRIP && at != null && !state.loading && state.error == null) {
                         Text(
                             stringResource(R.string.updated_at, hhmm(at)),
                             style = MaterialTheme.typography.labelSmall,
@@ -426,15 +712,20 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                     }
                 }
                 if (state.hasResults && !state.loading) {
-                    IconButton(onClick = { vm.plan() }) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
+                    IconButton(onClick = vm::plan) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
                 }
                 if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
-                    TextButton(onClick = onSaveTrip) { Text(stringResource(R.string.save_trip)) }
+                    IconButton(onClick = onSaveTrip) {
+                        Icon(Icons.Default.Star, stringResource(R.string.save_trip), tint = MaterialTheme.colorScheme.tertiary)
+                    }
                 }
                 IconButton(onClick = vm::clearResults) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
+        }
+        if (!collapsed) {
             state.offlineSince?.let { since ->
-                Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
+                // A warning, not an error: the answers are still useful, just maybe stale.
+                Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
                     Text(
                         stringResource(R.string.offline_showing, hhmm(since)),
                         style = MaterialTheme.typography.bodySmall,
@@ -445,15 +736,17 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
             if (state.mode == AppMode.TRIP) state.activeRoutine?.let { name ->
                 AssistChip(onClick = vm::dismissRoutine, label = { Text(stringResource(R.string.routine_chip, name)) })
             }
-            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
-            if (!state.loading) RideRow(state, vm, actions)
+            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm)
+            if (!state.loading) RideRow(state, vm)
+            val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
+            CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
-                state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
-                state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
-                state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
-                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
+                state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm, list)
+                state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm, list)
+                state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, list)
+                else -> LazyColumn(list) {
                     if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
                     state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
@@ -468,51 +761,95 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun ReminderRow(state: UiState, vm: MainViewModel, actions: ScreenActions) {
-    val r = state.reminder
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        if (r != null) {
-            Text(
-                stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.weight(1f),
-            )
-            TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
-        } else if (state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null) {
-            TextButton(onClick = actions.remind) { Text(stringResource(R.string.remind_me)) }
-        }
-    }
-}
-
-@Composable
-private fun RideRow(state: UiState, vm: MainViewModel, actions: ScreenActions) {
-    when {
-        state.riding -> Row(verticalAlignment = Alignment.CenterVertically) {
-            val context = LocalContext.current
-            val p = state.rideProgress
-            Column(Modifier.weight(1f)) {
-                if (p == null) {
-                    Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall)
-                } else {
-                    // "Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"
-                    Text(il.transit.planner.ride.RideService.rideProgressTitle(context, p), style = MaterialTheme.typography.titleSmall)
-                    Text(il.transit.planner.ride.RideService.rideProgressText(context, p), style = MaterialTheme.typography.bodySmall)
-                }
             }
-            TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
         }
-        state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null ->
-            TextButton(onClick = actions.startRide) { Text(stringResource(R.string.ride_start)) }
+    }
+}
+
+/** A selectable option in a results list: tinted and outlined when it is the one on the map. */
+@Composable
+private fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
+    val shape = MaterialTheme.shapes.medium
+    val c = MaterialTheme.colorScheme
+    return fillMaxWidth()
+        .padding(vertical = 2.dp)
+        .clip(shape)
+        .background(if (selected) c.primaryContainer else Color.Transparent)
+        .border(1.dp, if (selected) c.primary.copy(alpha = 0.6f) else Color.Transparent, shape)
+        .clickable(onClick = onClick)
+        .padding(10.dp)
+}
+
+/** A reminder that is set, with its Cancel. (Setting one is a chip on the selected option.) */
+@Composable
+private fun ReminderRow(state: UiState, vm: MainActions) {
+    val r = state.reminder ?: return
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
+    }
+}
+
+/** A ride being tracked, with its progress and Stop. (Starting one is a chip on the selected option.) */
+@Composable
+private fun RideRow(state: UiState, vm: MainActions) {
+    if (!state.riding) return
+    val context = LocalContext.current
+    val p = state.rideProgress
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            if (p == null) {
+                Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall)
+            } else {
+                // "Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"
+                Text(il.transit.planner.ride.RideService.rideProgressTitle(context, p), style = MaterialTheme.typography.titleSmall)
+                Text(il.transit.planner.ride.RideService.rideProgressText(context, p), style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
+    }
+}
+
+/**
+ * The chips that act on the selected option: leave reminder (Trip tab) and the get-off
+ * alert. Provided by the results sheet, drawn by whichever card is selected, so they sit
+ * next to the trip they act on instead of taking two rows above the list.
+ */
+private val LocalTrackActions = compositionLocalOf<@Composable () -> Unit> { {} }
+
+@Composable
+private fun TrackChips(state: UiState, actions: ScreenActions) {
+    val canTrack = state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null
+    if (state.mode == AppMode.TRIP && state.reminder == null && canTrack) {
+        ActionChip(R.string.remind_me, Icons.Default.Notifications, actions.remind)
+    }
+    if (!state.riding && canTrack) ActionChip(R.string.ride_start, Icons.Default.PlayArrow, actions.startRide)
+}
+
+/** The selected card's action chips: "send to driver" (car tabs) and [LocalTrackActions]. */
+@Composable
+private fun OptionActions(onSend: (() -> Unit)?) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
+        if (onSend != null) ActionChip(R.string.send_to_driver, Icons.AutoMirrored.Filled.Send, onSend)
+        LocalTrackActions.current()
     }
 }
 
 @Composable
-private fun ErrorRow(error: UiError, vm: MainViewModel) {
+private fun ActionChip(labelRes: Int, icon: ImageVector, onClick: () -> Unit) {
+    AssistChip(
+        onClick = onClick,
+        label = { Text(stringResource(labelRes)) },
+        leadingIcon = { Icon(icon, null, Modifier.size(AssistChipDefaults.IconSize), tint = MaterialTheme.colorScheme.primary) },
+    )
+}
+
+@Composable
+private fun ErrorRow(error: UiError, vm: MainActions) {
     val msg = when (error) {
         UiError.NO_LOCATION -> R.string.err_no_location
         UiError.NETWORK -> R.string.err_network
@@ -527,10 +864,7 @@ private fun ErrorRow(error: UiError, vm: MainViewModel) {
 @Composable
 private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, searchedAt: Instant?, onClick: () -> Unit) {
     val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
-    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-    Column(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp),
-    ) {
+    Column(Modifier.option(selected, onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             // A trip on another day than the one searched (Friday → Saturday night) says so.
             val depart = s.departDay?.let { d -> stringResource(R.string.on_day, d.getDisplayName(TextStyle.SHORT, Locale.getDefault()), s.depart) } ?: s.depart
@@ -554,13 +888,16 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
             stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
-        if (selected) WalkDirections(itin)
+        if (selected) {
+            WalkDirections(itin)
+            OptionActions(onSend = null)
+        }
     }
 }
 
 /** Errands: each stop on the way with its stay chips and ✕, then "+ Stop on the way". */
 @Composable
-private fun ChainStopsRows(state: UiState, vm: MainViewModel) {
+private fun ChainStopsRows(state: UiState, vm: MainActions) {
     state.chainStops.forEachIndexed { i, c ->
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
             Text("• ${c.name ?: stringResource(R.string.dropped_pin)}", Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -605,7 +942,7 @@ private fun ChainSummary(state: UiState, c: ChainResult) {
 
 /** "🚗 By car?" → "By car ~95 min at this time (traffic ×1.3) · 113 km" + the official taxi calculator. */
 @Composable
-private fun CarRow(state: UiState, vm: MainViewModel) {
+private fun CarRow(state: UiState, vm: MainActions) {
     val context = LocalContext.current
     val car = state.carTime
     when {
@@ -630,7 +967,7 @@ private fun CarRow(state: UiState, vm: MainViewModel) {
 
 /** "Way back after 1 h · 2 h · 3 h": the return of the selected option, same settings. */
 @Composable
-private fun WayBackRow(vm: MainViewModel) {
+private fun WayBackRow(vm: MainActions) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(stringResource(R.string.way_back_after), style = MaterialTheme.typography.bodySmall)
         listOf(60, 120, 180).forEach { m ->
@@ -641,7 +978,7 @@ private fun WayBackRow(vm: MainViewModel) {
 
 /** My lines: each pinned line's next departures at its stop, with live delays. */
 @Composable
-private fun FavoritesDialog(state: UiState, vm: MainViewModel) {
+private fun FavoritesDialog(state: UiState, vm: MainActions) {
     AlertDialog(
         onDismissRequest = { vm.showFavorites(false) },
         confirmButton = { TextButton(onClick = { vm.showFavorites(false) }) { Text(stringResource(R.string.done)) } },
@@ -682,8 +1019,8 @@ private fun FavoritesDialog(state: UiState, vm: MainViewModel) {
 
 /** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
 @Composable
-private fun SortChips(state: UiState, vm: MainViewModel) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+private fun SortChips(state: UiState, vm: MainActions) {
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         TripSort.entries.forEach { s ->
             val label = when (s) {
                 TripSort.FASTEST -> R.string.sort_fastest
@@ -695,6 +1032,9 @@ private fun SortChips(state: UiState, vm: MainViewModel) {
     }
 }
 
+/** Screenshot tests open the walking directions; the app always starts them folded. */
+internal val LocalWalkDirectionsOpen = compositionLocalOf { false }
+
 /**
  * Turn-by-turn directions for the walking parts of the selected trip, folded by default.
  * Arrows are real-world directions: left is left in Hebrew too, so they are never mirrored.
@@ -705,7 +1045,8 @@ private fun WalkDirections(itin: Itinerary) {
         itin.legs.filter { it.mode == "WALK" && it.duration >= 60 }.map { it to walkSteps(it) }.filter { it.second.size > 1 }
     }
     if (walks.isEmpty()) return
-    var open by remember(itin) { mutableStateOf(false) }
+    val startOpen = LocalWalkDirectionsOpen.current
+    var open by remember(itin) { mutableStateOf(startOpen) }
     TextButton(onClick = { open = !open }) {
         Text(stringResource(if (open) R.string.walk_directions_hide else R.string.walk_directions_show))
     }
@@ -748,7 +1089,7 @@ private fun FareText(f: FareEstimate?) {
  * otherwise one tap away. Each lookup is at most [il.transit.core.plan.LastRideFinder.BUDGET] requests.
  */
 @Composable
-private fun LastRideSection(state: UiState, vm: MainViewModel) {
+private fun LastRideSection(state: UiState, vm: MainActions) {
     val warn = MaterialTheme.colorScheme.error
     Column(Modifier.fillMaxWidth().padding(top = 4.dp)) {
         val lr = state.lastRide
@@ -815,7 +1156,7 @@ private fun LegChipView(c: LegChip) {
         else -> c.label ?: kindName(c.kind)
     }
     Box(
-        Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, RoundedCornerShape(6.dp))
+        Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
             .padding(horizontal = 6.dp, vertical = 2.dp),
     ) {
         val live = when {
@@ -826,7 +1167,8 @@ private fun LegChipView(c: LegChip) {
         Text(
             text + live,
             style = MaterialTheme.typography.labelMedium,
-            color = if (c.kind == LegKind.WALK) MaterialTheme.colorScheme.onSurfaceVariant else Color.White,
+            // Black on a yellow line, white on a blue one: whatever the operator's colour is.
+            color = if (c.kind == LegKind.WALK) MaterialTheme.colorScheme.onSurfaceVariant else parseColor(onColor(c.color)),
         )
     }
 }
@@ -849,9 +1191,9 @@ private fun parseColor(hex: String): Color =
 // --- better start ---------------------------------------------------------------------------------
 
 @Composable
-private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainViewModel) {
+private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 340.dp)) {
+    LazyColumn(modifier) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -883,8 +1225,7 @@ private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainV
 
 @Composable
 private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
-    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+    Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.drive_to, row.driveMin, row.stop), style = MaterialTheme.typography.titleSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("${row.depart}–${row.arrive}", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -898,18 +1239,16 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 
 // --- let me off on the way -----------------------------------------------------------------------
 
 @Composable
-private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel) {
+private fun DropOffList(state: UiState, result: DropOffResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+    LazyColumn(modifier) {
         result.directDriveSec?.let { sec ->
             item {
                 Text(
@@ -944,8 +1283,7 @@ private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel
 
 @Composable
 private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit, onSend: (() -> Unit)?) {
-    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+    Column(Modifier.option(selected, onClick)) {
         val title = when (row.kind) {
             DropOffKind.STOP_ON_THE_WAY -> stringResource(R.string.get_out_at, row.stop.orEmpty(), row.detourMin)
             DropOffKind.RIDE_TO_END -> stringResource(R.string.ride_to_end)
@@ -961,18 +1299,16 @@ private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit,
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected && onSend != null) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 
 // --- best pick-up point --------------------------------------------------------------------------
 
 @Composable
-private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel) {
+private fun PickUpList(state: UiState, result: PickUpResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+    LazyColumn(modifier) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -1006,8 +1342,7 @@ private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel) 
 
 @Composable
 private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
-    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+    Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.picked_up_at, row.stop, row.pickUpTime), style = MaterialTheme.typography.titleSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.home_at, row.arriveHome), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -1026,36 +1361,46 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) {
-            TextButton(onClick = onSend) { Text(stringResource(R.string.send_to_driver)) }
-        }
+        if (selected) OptionActions(onSend)
     }
 }
 
 // --- stop departures --------------------------------------------------------------------------
 
 @Composable
-private fun StopPanel(sheet: StopSheet, favorites: List<FavoriteLine>, vm: MainViewModel) {
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
-        Column(Modifier.navigationBarsPadding().padding(12.dp)) {
+private fun StopPanel(
+    sheet: StopSheet,
+    favorites: List<FavoriteLine>,
+    vm: MainActions,
+    collapsed: Boolean,
+    onCollapse: (Boolean) -> Unit,
+    modifier: Modifier,
+    shape: Shape,
+) {
+    Sheet(modifier, shape) {
+        SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(sheet.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(stringResource(R.string.departures), style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.departures), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 IconButton(onClick = vm::closeStop) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
+        }
+        if (!collapsed) {
             when {
                 sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
                 sheet.rows.isEmpty() -> Text(stringResource(R.string.no_departures), Modifier.padding(vertical = 12.dp))
-                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
+                else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) {
                     items(sheet.rows) { r ->
                         val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(Modifier.weight(1f)) { DepartureView(r) }
                             // ☆ pins this line in this direction at this stop ("My lines").
-                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }) { Text(if (pinned) "★" else "☆") }
+                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }) {
+                                Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary)
+                            }
                         }
                     }
                 }
@@ -1068,8 +1413,8 @@ private fun StopPanel(sheet: StopSheet, favorites: List<FavoriteLine>, vm: MainV
 private fun DepartureView(r: DepartureRow) {
     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(
-            Modifier.background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(6.dp)).padding(horizontal = 6.dp, vertical = 2.dp),
-        ) { Text(r.line.ifBlank { kindName(r.kind) }, style = MaterialTheme.typography.labelLarge) }
+            Modifier.background(parseColor(r.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
+        ) { Text(r.line.ifBlank { kindName(r.kind) }, style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(r.color))) }
         Spacer(Modifier.width(10.dp))
         Text(r.headsign, Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
         val status = when {
@@ -1093,9 +1438,7 @@ private fun DepartureView(r: DepartureRow) {
 // --- settings & dialogs --------------------------------------------------------------------------
 
 @Composable
-private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenActions) {
-    val s = state.settings
-    fun set(n: UserSettings) = vm.updateSettings(n)
+private fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions) {
     var editingRoutine by remember { mutableStateOf<SavedPlace?>(null) }
     editingRoutine?.let { p ->
         RoutineDialog(p, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
@@ -1104,93 +1447,98 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
         onDismissRequest = { vm.showSettings(false) },
         confirmButton = { TextButton(onClick = { vm.showSettings(false) }) { Text(stringResource(R.string.done)) } },
         title = { Text(stringResource(R.string.settings)) },
-        text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                item {
-                    Section(R.string.max_transfers) {
-                        UserSettings.TRANSFER_CHOICES.forEach { n ->
-                            FilterChip(s.maxTransfers == n, { set(s.copy(maxTransfers = n)) }, label = { Text(n?.toString() ?: stringResource(R.string.any)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.max_walk) {
-                        UserSettings.WALK_CHOICES.forEach { m ->
-                            FilterChip(s.maxWalkMin == m, { set(s.copy(maxWalkMin = m)) }, label = { Text(stringResource(R.string.minutes_short, m)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.modes) {
-                        ModeFilter.entries.forEach { f ->
-                            val label = when (f) {
-                                ModeFilter.ALL -> R.string.mode_all
-                                ModeFilter.TRAINS_ONLY -> R.string.mode_trains
-                                ModeFilter.NO_BUSES -> R.string.mode_no_buses
-                            }
-                            FilterChip(s.modeFilter == f, { set(s.copy(modeFilter = f)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.walk_speed) {
-                        WalkSpeed.entries.forEach { w ->
-                            val label = when (w) {
-                                WalkSpeed.SLOW -> R.string.speed_slow
-                                WalkSpeed.NORMAL -> R.string.speed_normal
-                                WalkSpeed.FAST -> R.string.speed_fast
-                            }
-                            FilterChip(s.walkSpeed == w, { set(s.copy(walkSpeed = w)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.fare_profile) {
-                        FareProfile.entries.forEach { f ->
-                            val label = when (f) {
-                                FareProfile.REGULAR -> R.string.fare_regular
-                                FareProfile.HALF -> R.string.fare_half
-                                FareProfile.FREE -> R.string.fare_free
-                            }
-                            FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.ride_alerts) {
-                        FilterChip(s.speakAlerts, { set(s.copy(speakAlerts = !s.speakAlerts)) }, label = { Text(stringResource(R.string.speak_alerts)) })
-                    }
-                }
-                item {
-                    Section(R.string.accessibility) {
-                        FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
-                    }
-                    Text(stringResource(R.string.accessible_help), style = MaterialTheme.typography.bodySmall)
-                }
-                item {
-                    Text(stringResource(R.string.traffic_factor, String.format(Locale.US, "%.1f", s.peakFactor)), style = MaterialTheme.typography.labelLarge)
-                    Slider(
-                        value = s.peakFactor.toFloat(),
-                        onValueChange = { v -> set(s.copy(peakFactor = Math.round(v * 10) / 10.0)) },
-                        valueRange = UserSettings.PEAK_RANGE.start.toFloat()..UserSettings.PEAK_RANGE.endInclusive.toFloat(),
-                        steps = 7,
-                    )
-                    Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
-                }
-                item { OfflineSection(actions) }
-                if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
-                    item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
-                    items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
-                    items(state.savedPlaces) { p -> SavedPlaceRow(p, onRoutine = { editingRoutine = p }) { vm.deletePlace(p) } }
-                }
-            }
-        },
+        text = { SettingsContent(state, vm, actions, onRoutine = { editingRoutine = it }) },
     )
 }
 
+/** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
 @Composable
-private fun HistoryDialog(state: UiState, vm: MainViewModel) {
-    val st = state.historyStats
+internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenActions, onRoutine: (SavedPlace) -> Unit = {}) {
+    val s = state.settings
+    fun set(n: UserSettings) = vm.updateSettings(n)
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item {
+            Section(R.string.max_transfers) {
+                UserSettings.TRANSFER_CHOICES.forEach { n ->
+                    FilterChip(s.maxTransfers == n, { set(s.copy(maxTransfers = n)) }, label = { Text(n?.toString() ?: stringResource(R.string.any)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.max_walk) {
+                UserSettings.WALK_CHOICES.forEach { m ->
+                    FilterChip(s.maxWalkMin == m, { set(s.copy(maxWalkMin = m)) }, label = { Text(stringResource(R.string.minutes_short, m)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.modes) {
+                ModeFilter.entries.forEach { f ->
+                    val label = when (f) {
+                        ModeFilter.ALL -> R.string.mode_all
+                        ModeFilter.TRAINS_ONLY -> R.string.mode_trains
+                        ModeFilter.NO_BUSES -> R.string.mode_no_buses
+                    }
+                    FilterChip(s.modeFilter == f, { set(s.copy(modeFilter = f)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.walk_speed) {
+                WalkSpeed.entries.forEach { w ->
+                    val label = when (w) {
+                        WalkSpeed.SLOW -> R.string.speed_slow
+                        WalkSpeed.NORMAL -> R.string.speed_normal
+                        WalkSpeed.FAST -> R.string.speed_fast
+                    }
+                    FilterChip(s.walkSpeed == w, { set(s.copy(walkSpeed = w)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.fare_profile) {
+                FareProfile.entries.forEach { f ->
+                    val label = when (f) {
+                        FareProfile.REGULAR -> R.string.fare_regular
+                        FareProfile.HALF -> R.string.fare_half
+                        FareProfile.FREE -> R.string.fare_free
+                    }
+                    FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.ride_alerts) {
+                FilterChip(s.speakAlerts, { set(s.copy(speakAlerts = !s.speakAlerts)) }, label = { Text(stringResource(R.string.speak_alerts)) })
+            }
+        }
+        item {
+            Section(R.string.accessibility) {
+                FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
+            }
+            Text(stringResource(R.string.accessible_help), style = MaterialTheme.typography.bodySmall)
+        }
+        item {
+            Text(stringResource(R.string.traffic_factor, String.format(Locale.US, "%.1f", s.peakFactor)), style = MaterialTheme.typography.labelLarge)
+            Slider(
+                value = s.peakFactor.toFloat(),
+                onValueChange = { v -> set(s.copy(peakFactor = Math.round(v * 10) / 10.0)) },
+                valueRange = UserSettings.PEAK_RANGE.start.toFloat()..UserSettings.PEAK_RANGE.endInclusive.toFloat(),
+                steps = 7,
+            )
+            Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
+        }
+        item { OfflineSection(actions) }
+        if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
+            item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
+            items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
+            items(state.savedPlaces) { p -> SavedPlaceRow(p, onRoutine = { onRoutine(p) }) { vm.deletePlace(p) } }
+        }
+    }
+}
+
+@Composable
+private fun HistoryDialog(state: UiState, vm: MainActions) {
     AlertDialog(
         onDismissRequest = { vm.showHistory(false) },
         confirmButton = { TextButton(onClick = { vm.showHistory(false) }) { Text(stringResource(R.string.done)) } },
@@ -1198,46 +1546,56 @@ private fun HistoryDialog(state: UiState, vm: MainViewModel) {
             if (state.history.isNotEmpty()) TextButton(onClick = { vm.clearHistory() }) { Text(stringResource(R.string.history_clear)) }
         },
         title = { Text(stringResource(R.string.history)) },
-        text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                if (state.history.isEmpty()) {
-                    item { Text(stringResource(R.string.history_empty)) }
-                } else {
-                    item {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            StatTile(st.trips.toString(), stringResource(R.string.stat_trips))
-                            StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week))
-                            StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours))
-                            StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved))
-                        }
-                    }
-                    st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
-                        item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
-                    }
-                    item { HorizontalDivider() }
-                    items(state.history.take(30)) { r ->
-                        val from = r.from.ifBlank { stringResource(R.string.my_location) }
-                        val to = r.to.ifBlank { stringResource(R.string.my_location) }
-                        Column {
-                            Text("$from – $to", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            val date = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm").format(r.startedAt.atZone(ISRAEL))
-                            val saved = r.savedMin?.let { " · " + stringResource(R.string.saves_min, it) }.orEmpty()
-                            Text(
-                                "$date · " + stringResource(R.string.minutes_short, r.transitMin + r.walkMin) + saved,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-            }
-        },
+        text = { HistoryContent(state, vm) },
     )
 }
 
+/** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
 @Composable
-private fun StatTile(value: String, label: String) {
-    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(12.dp)) {
+internal fun HistoryContent(state: UiState, vm: MainActions) {
+    val st = state.historyStats
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (state.history.isEmpty()) {
+            item { Text(stringResource(R.string.history_empty)) }
+        } else {
+            item {
+                // A steady 2 x 2 grid: equal tiles, whatever the label lengths or text size.
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.height(IntrinsicSize.Min)) {
+                        StatTile(st.trips.toString(), stringResource(R.string.stat_trips), Modifier.weight(1f))
+                        StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week), Modifier.weight(1f))
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.height(IntrinsicSize.Min)) {
+                        StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours), Modifier.weight(1f))
+                        StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved), Modifier.weight(1f))
+                    }
+                }
+            }
+            st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
+                item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
+            }
+            item { HorizontalDivider() }
+            items(state.history.take(30)) { r ->
+                val from = r.from.ifBlank { stringResource(R.string.my_location) }
+                val to = r.to.ifBlank { stringResource(R.string.my_location) }
+                Column {
+                    Text("$from – $to", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    val date = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm").format(r.startedAt.atZone(ISRAEL))
+                    val saved = r.savedMin?.let { " · " + stringResource(R.string.saves_min, it) }.orEmpty()
+                    Text(
+                        "$date · " + stringResource(R.string.minutes_short, r.transitMin + r.walkMin) + saved,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatTile(value: String, label: String, modifier: Modifier = Modifier) {
+    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.medium, modifier = modifier.fillMaxHeight()) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             Text(value, style = MaterialTheme.typography.titleLarge)
             Text(label, style = MaterialTheme.typography.labelSmall)
@@ -1367,11 +1725,19 @@ private fun NameDialog(titleRes: Int, onDismiss: () -> Unit, onSave: (String) ->
 @Composable
 private fun AttributionChip(modifier: Modifier) {
     val context = LocalContext.current
+    // Surface(onClick) keeps a 48dp touch target around the small pill.
     Surface(
-        modifier = modifier.clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
+        onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
+        modifier = modifier,
         shape = CircleShape,
-        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.92f),
+        shadowElevation = 2.dp,
     ) {
-        Text(stringResource(R.string.attribution), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+        Text(
+            stringResource(R.string.attribution),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+        )
     }
 }

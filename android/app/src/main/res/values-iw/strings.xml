@@ -24,7 +24,7 @@
     </plurals>
     <string name="minutes_short">⁨%d⁩ דק׳</string>
     <string name="walk_minutes">הליכה ⁨%d⁩ דק׳</string>
-    <string name="board_line">⁨%1$s⁩ ב־⁨%2$s⁩ מ־%3$s</string>
+    <string name="board_line">⁨%1$s⁩ ב־⁨%2$s⁩ מ־\u2068%3$s\u2069</string>
 
     <string name="kind_walk">הליכה</string>
     <string name="kind_bus">אוטובוס</string>
@@ -72,7 +72,7 @@
     <string name="mode_trip">מסלול</string>
     <string name="mode_better_start">נקודת יציאה טובה</string>
     <string name="drive_up_to">מישהו מסיע אותי עד \u2068%d\u2069 דק׳</string>
-    <string name="drive_to">🚗 \u2068%1$d\u2069 דק׳ עד %2$s</string>
+    <string name="drive_to">🚗 \u2068%1$d\u2069 דק׳ עד \u2068%2$s\u2069</string>
     <string name="saves_min">חוסך \u2068%d\u2069 דק׳</string>
     <string name="fewer_transfers">פחות החלפות</string>
     <string name="without_ride">בלי הסעה: הגעה ב־\u2068%s\u2069</string>
@@ -87,7 +87,7 @@
     <string name="detour_up_to">הנהג/ת מוכן/ה לעקוף עד \u2068%d\u2069 דק׳</string>
     <string name="drive_takes">הנסיעה לבדה: \u2068%d\u2069 דק׳</string>
     <string name="no_stop_on_the_way">אין תחנה בדרך, בעיקוף של עד \u2068%d\u2069 דק׳, שעדיפה על אלה.</string>
-    <string name="get_out_at">🚗 לרדת ב%1$s · לנהג/ת ‎+\u2068%2$d\u2069 דק׳</string>
+    <string name="get_out_at">🚗 לרדת ב\u2068%1$s\u2069 · לנהג/ת ‎+\u2068%2$d\u2069 דק׳</string>
     <string name="ride_to_end">🚗 לנסוע עד הסוף, ומשם בתחבורה ציבורית</string>
     <string name="transit_from_start">🚌 תחבורה ציבורית מההתחלה, בלי הסעה</string>
     <string name="you_arrive">הגעה ב־\u2068%s\u2069</string>
@@ -96,7 +96,7 @@
     <string name="driver_at">הנהג/ת ב־</string>
     <string name="pickup_drive_up_to">הנהג/ת נוסע/ת עד \u2068%d\u2069 דק׳ לכל כיוון</string>
     <string name="no_pick_up">אין נקודת איסוף בטווח \u2068%d\u2069 דק׳ נסיעה שעדיפה על תחבורה ציבורית עד הסוף.</string>
-    <string name="picked_up_at">🚗 איסוף ב%1$s ב־\u2068%2$s\u2069</string>
+    <string name="picked_up_at">🚗 איסוף ב\u2068%1$s\u2069 ב־\u2068%2$s\u2069</string>
     <string name="home_at">בבית ב־\u2068%s\u2069</string>
     <string name="driver_leaves">הנהג/ת יוצא/ת ב־\u2068%1$s\u2069 · הלוך ושוב \u2068%2$d\u2069 דק׳</string>
     <string name="transit_all_the_way">כל הדרך בתחבורה ציבורית: הגעה ב־\u2068%s\u2069</string>
@@ -108,7 +108,7 @@
     <string name="on_day">%1$s \u2068%2$s\u2069</string>
     <string name="next_day">\u2068%1$s\u2069 (\u200E+\u2068%2$d\u2069)</string>
     <string name="late_paren">(‎+\u2068%d\u2069 דק׳)</string>
-    <string name="remind_me">🔔 תזכורת מתי לצאת</string>
+    <string name="remind_me">תזכורת ליציאה</string>
     <string name="reminder_set">🔔 תזכורת: לצאת ב־\u2068%s\u2069 (נבדק שוב 15 דק׳ לפני)</string>
     <string name="channel_reminders">תזכורות נסיעה</string>
     <string name="notify_leave_title">הגיע הזמן לצאת</string>
@@ -122,7 +122,7 @@
     <string name="offline_failed">ההורדה נכשלה. בדקו את החיבור ונסו שוב.</string>
     <string name="offline_download">הורדת המפה של האזור הזה</string>
 
-    <string name="ride_start">▶ התחלת נסיעה — רטט לפני התחנה שלי</string>
+    <string name="ride_start">רטט לפני התחנה שלי</string>
     <string name="ride_active">📍 נסיעה פעילה — ארטוט לפני התחנה שלך</string>
     <string name="ride_stop">עצירה</string>
     <string name="ride_ongoing_title">נסיעה פעילה</string>
@@ -139,9 +139,9 @@
     <string name="stat_week">השבוע</string>
     <string name="stat_transit_hours">שעות בתחבורה ציבורית</string>
     <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
-    <string name="stat_top_destination">היעד הנפוץ ביותר: %s</string>
+    <string name="stat_top_destination">היעד הנפוץ ביותר: \u2068%s\u2069</string>
 
-    <string name="update_available">גרסה חדשה זמינה: v\u2068%s\u2069</string>
+    <string name="update_available">גרסה חדשה זמינה: \u2068v%s\u2069</string>
     <string name="update_download">הורדה</string>
     <string name="fare_profile">תעריף</string>
     <string name="fare_regular">רגיל</string>
@@ -167,7 +167,7 @@
     <string name="sort_least_walking">מעט הליכה</string>
     <string name="walk_directions_show">הוראות הליכה</string>
     <string name="walk_directions_hide">הסתרת הוראות ההליכה</string>
-    <string name="walk_to">הליכה אל %1$s</string>
+    <string name="walk_to">הליכה אל \u2068%1$s\u2069</string>
     <string name="meters">\u2068%1$d מ׳\u2069</string>
     <string name="turn_start">צאו</string>
     <string name="turn_straight">המשיכו ישר</string>
@@ -213,4 +213,12 @@
     <string name="by_car_check">🚗 ברכב?</string>
     <string name="by_car">ברכב ~%1$d דק׳ בשעה הזאת (פקקים ×\u2068%2$s\u2069) · \u2068%3$d ק״מ\u2069</string>
     <string name="taxi_calculator">מחיר מונית: המחשבון הרשמי של משרד התחבורה</string>
+
+    <!-- Layout: overflow menu, folded search card, results sheet handle -->
+    <string name="more_options">אפשרויות נוספות</string>
+    <string name="swap">החלפת מוצא ויעד</string>
+    <string name="edit_search">עריכת החיפוש</string>
+    <string name="compact_from">מ־%1$s</string>
+    <string name="panel_collapse">כיווץ התוצאות</string>
+    <string name="panel_expand">הרחבת התוצאות</string>
 </resources>

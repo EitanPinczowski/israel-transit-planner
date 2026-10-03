@@ -1,6 +1,6 @@
 ---
 name: i18n-rtl
-description: Hebrew right-to-left and English UI rules. Load before touching any UI text, layout, icon, or number/time formatting.
+description: Hebrew right-to-left and English UI rules, plus the design system (palette, dark mode, insets, phone sizes). Load before touching any UI text, layout, colour, icon, or number/time formatting.
 ---
 
 # Hebrew RTL + English
@@ -25,3 +25,28 @@ description: Hebrew right-to-left and English UI rules. Load before touching any
   the UI is English.
 - Plurals: `<plurals>` in both files; Hebrew needs `one` and `other` (and `two` reads
   better for minutes: "2 דקות").
+
+# Design: theme, dark mode, every phone shape
+
+- Colours come from `ui/Theme.kt` (`LightColors`/`DarkColors`, seeded from the icon's
+  `#1E88E5`; amber = tertiary). No Material You on purpose: route colours are designed
+  against these surfaces. Never hard-code a UI colour in Compose; use `MaterialTheme.colorScheme`.
+- Corners: `MaterialTheme.shapes` (`extraSmall` 6 chips · `small` 8 · `medium` 12 option
+  cards · `large` 16 cards · `extraLarge` 28 sheets). No ad-hoc `RoundedCornerShape`.
+- Text on an operator's route colour: `onColor(hex)` (core, tested) picks black or white.
+- Map layers (`MapController`) take `dark` and use their own `Palette`; a new layer needs
+  both values. Rides get a casing (halo) so any line colour reads on any map.
+- Insets: edge-to-edge everywhere. Overlays pad with `WindowInsets.safeDrawing` (bars +
+  camera cutout + keyboard); sheets pad their content with bars + cutout but paint under
+  the nav bar. The notch is on a SIDE in landscape: never pad only the top.
+- Sizes: nothing fixed in height. Sheets cap at 50% of the screen and lists inside take
+  `weight(1f, fill = false)`; under 700dp tall the search card folds to one line while
+  results show; 600dp wide and up, everything moves into one start-side column.
+- MainScreen reports the map area it covers (`MapPadding`); the Activity uses it for
+  camera fits and to keep the compass and the OSM ⓘ (licence: must stay visible) clear.
+- Icon: `python tools/gen_icons.py` writes the launcher foreground, background, themed
+  layer and notification icon from one geometry. Edit the script, not the XML. The themed
+  layer is a silhouette with holes, never the colour art (it would tint to a white block).
+- Check a UI change in the screenshots CI records (Paparazzi; artifact `screenshots`, or
+  the `screenshots` branch, which a cloud session can read; see `android-build`):
+  small/big/landscape × light/dark × he/en × large text.

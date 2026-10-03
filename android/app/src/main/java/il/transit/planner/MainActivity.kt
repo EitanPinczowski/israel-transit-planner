@@ -11,26 +11,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.view.Gravity
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
+import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
+import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
+import il.transit.planner.ui.ViewModelActions
 import il.transit.planner.ui.Shortcuts
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +43,7 @@ import org.maplibre.android.location.LocationComponentActivationOptions
 import org.maplibre.android.location.modes.CameraMode
 import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 
@@ -60,6 +61,9 @@ class MainActivity : ComponentActivity() {
 
     /** Non-null once the style has loaded; Compose effects push layer data through it. */
     private val controller = MutableStateFlow<MapController?>(null)
+
+    /** How much of the map the Compose panels and system bars cover, measured by MainScreen. */
+    private val mapPadding = MutableStateFlow(MapPadding())
 
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
@@ -88,7 +92,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
-        mapView = MapView(this).apply { onCreate(savedInstanceState) }
+        // Before the first tiles arrive the map shows this colour, not a white flash at night.
+        val options = MapLibreMapOptions.createFromAttributes(this, null)
+            .foregroundLoadColor(getColor(R.color.window_background))
+        mapView = MapView(this, options).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
@@ -104,6 +111,8 @@ class MainActivity : ComponentActivity() {
                 val stops by vm.stops.collectAsState()
                 val ctl by controller.collectAsState()
                 val offlineState by offline.state.collectAsState()
+                val pad by mapPadding.collectAsState()
+                val ui = remember { ViewModelActions(vm) }
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
@@ -123,14 +132,17 @@ class MainActivity : ComponentActivity() {
                 val carPath = state.selectedCarPath
                 LaunchedEffect(ctl, selected, carPath) {
                     val c = ctl ?: return@LaunchedEffect
-                    if (selected == null) {
-                        c.setRoute(MapData.EMPTY)
-                    } else {
-                        c.setRoute(MapData.itinerary(selected, carPath))
-                        val px = resources.displayMetrics.density
-                        c.fit(carPath + MapData.bounds(selected), (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
-                    }
+                    c.setRoute(if (selected == null) MapData.EMPTY else MapData.itinerary(selected, carPath))
                 }
+                // Re-fit when the panels change size too (sheet folded, search card unfolded):
+                // the route always sits in the part of the map that is actually visible.
+                LaunchedEffect(ctl, selected, carPath, pad) {
+                    val c = ctl ?: return@LaunchedEffect
+                    if (selected == null) return@LaunchedEffect
+                    val margin = (24 * resources.displayMetrics.density).toInt()
+                    c.fit(carPath + MapData.bounds(selected), pad, margin, mapView.width, mapView.height)
+                }
+                LaunchedEffect(ctl, pad) { if (ctl != null) placeMapChrome(pad) }
 
                 val actions = ScreenActions(
                     offline = offlineState,
@@ -138,8 +150,9 @@ class MainActivity : ComponentActivity() {
                     deleteOffline = offline::delete,
                     remind = ::remind,
                     startRide = ::startRide,
+                    onMapPadding = { mapPadding.value = it },
                 )
-                MainScreen(state, vm, actions) {
+                MainScreen(state, ui, actions) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
                 }
             }
@@ -181,10 +194,18 @@ class MainActivity : ComponentActivity() {
     private fun onMapReady(m: MapLibreMap) {
         map = m
         m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
+        m.uiSettings.apply {
+            // Our attribution chip names MapLibre's data sources; the logo only adds clutter.
+            // The ⓘ (OpenStreetMap credits, required) moves to the bottom end, away from the chip.
+            isLogoEnabled = false
+            attributionGravity = Gravity.BOTTOM or Gravity.END
+            setAttributionTintColor(getColor(R.color.brand))
+        }
+        placeMapChrome(mapPadding.value)
         styleUrl = if (isNight()) MAP_STYLE_DARK else MAP_STYLE
         m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
             style = s
-            controller.value = MapController(m, s)
+            controller.value = MapController(m, s, isNight())
             enableLocationIfAllowed()
         }
         m.addOnMapLongClickListener { p ->
@@ -203,6 +224,17 @@ class MainActivity : ComponentActivity() {
                 m.cameraPosition.zoom,
             )
         }
+    }
+
+    /**
+     * Keeps the compass and the ⓘ inside the visible map: below the search card, above the
+     * results sheet, beside a side panel, and clear of bars, notches and rounded corners.
+     */
+    private fun placeMapChrome(p: MapPadding) {
+        val m = map ?: return
+        val g = (12 * resources.displayMetrics.density).toInt()
+        m.uiSettings.setCompassMargins(p.left + g, p.top + g, p.right + g, p.bottom + g)
+        m.uiSettings.setAttributionMargins(p.left + g, p.top + g, p.right + g, p.bottom + g)
     }
 
     private fun isNight(): Boolean =
@@ -240,9 +272,4 @@ class MainActivity : ComponentActivity() {
         const val MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
         const val MAP_STYLE_DARK = "https://tiles.openfreemap.org/styles/dark"
     }
-}
-
-@Composable
-private fun AppTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme(), content = content)
 }
