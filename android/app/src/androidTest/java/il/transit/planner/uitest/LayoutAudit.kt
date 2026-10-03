@@ -127,16 +127,20 @@ class LayoutAudit(private val d: AppDriver) {
             if (text.isBlank()) continue
             val ellipsis = t.layoutInput.overflow == TextOverflow.Ellipsis
             val cut = t.lineCount > 0 && t.isLineEllipsized(t.lineCount - 1)
-            // Height: fonts (Hebrew ones especially) draw a little past the line box; only a
-            // missing part of a line counts.
-            val lineH = if (t.lineCount > 0) t.multiParagraph.height / t.lineCount else 0f
-            val cutHeight = t.multiParagraph.height - t.size.height > lineH / 2
-            if ((t.didOverflowWidth || cutHeight) && !ellipsis) {
+            // Measure the lines themselves: TextLayoutResult.didOverflowWidth compares against
+            // the paragraph's layout width (the max allowed), so every shrink-wrapped label
+            // "overflowed". Height: fonts (Hebrew ones especially) draw a little past the line
+            // box; only a missing part of a line counts.
+            val widest = (0 until t.lineCount).maxOfOrNull { t.getLineRight(it) - t.getLineLeft(it) } ?: 0f
+            val bottom = if (t.lineCount > 0) t.getLineBottom(t.lineCount - 1) else 0f
+            val lineH = if (t.lineCount > 0) bottom / t.lineCount else 0f
+            val cutWidth = widest > t.size.width + 1
+            val cutHeight = bottom - t.size.height > lineH / 2
+            if ((cutWidth || cutHeight) && !ellipsis) {
                 out += Violation(
                     "R3", quote(text),
                     "text is clipped: box ${dp(t.size.width.toFloat())}×${dp(t.size.height.toFloat())} dp, " +
-                        "text ${dp(t.multiParagraph.width)}×${dp(t.multiParagraph.height)} dp, ${t.lineCount} lines" +
-                        if (t.didOverflowWidth) " (width)" else " (height)",
+                        "text ${dp(widest)}×${dp(bottom)} dp, ${t.lineCount} lines" + if (cutWidth) " (width)" else " (height)",
                 )
             }
             if (cut && IMPORTANT.containsMatchIn(text)) out += Violation("R3", quote(text), "a time/price/duration is cut off with …")

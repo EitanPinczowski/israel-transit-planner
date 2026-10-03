@@ -34,6 +34,14 @@ import java.util.regex.Pattern
 class FirstLaunchTest {
     @get:Rule val compose = createEmptyComposeRule()
 
+    /** Closes an "X has stopped" dialog of some other process; true if there was one. */
+    private fun dismissSystemCrash(device: UiDevice): Boolean {
+        val close = device.findObject(By.res("android:id/aerr_close")) ?: device.findObject(By.text(Pattern.compile("Close app|Close", Pattern.CASE_INSENSITIVE)))
+        close?.click()
+        device.waitForIdle()
+        return close != null
+    }
+
     @Test fun j01_deny_location_and_still_search() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
         assumeTrue(
@@ -42,7 +50,14 @@ class FirstLaunchTest {
         )
         AppDriver(compose).launch().use { d ->
             val device = UiDevice.getInstance(d.inst)
-            val deny = device.wait(Until.findObject(By.res(Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button"))), 20_000)
+            val denyButton = By.res(Pattern.compile(".*:id/permission_deny(_and_dont_ask_again)?_button"))
+            var deny = device.wait(Until.findObject(denyButton), 20_000)
+            if (deny == null && dismissSystemCrash(device)) {
+                // Old emulator images crash SystemUI now and then ("System UI has stopped"),
+                // taking the prompt with it. That's the image, not the app: ask again.
+                d.relaunch()
+                deny = device.wait(Until.findObject(denyButton), 20_000)
+            }
             if (deny == null) {
                 // Keep what was on screen, to tell a missing prompt from a slow or crashed one.
                 d.shell("uiautomator dump /sdcard/Download/j01.xml")

@@ -201,7 +201,17 @@ class JourneysTest {
         compose.onNode(hasText("↗ עבודה") and hasClickAction()).performClick()
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
+        // With results open, is Settings still reachable? (The panel may cover it.)
         compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
+        compose.waitForIdle()
+        val reachable = d.vm.state.value.showSettings
+        Findings.expect("J10", reachable, "Settings button can't be tapped while results are open (the panel covers it)")
+        if (!reachable) {
+            compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.BOTTOM))).performClick()
+            compose.waitForIdle()
+            compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
+        }
+        compose.waitUntil(5_000) { d.vm.state.value.showSettings }
         // The saved rows sit at the end of the settings list: scroll there first (a lazy list
         // only composes what is on screen). Trips come before places, so the first Delete is the trip's.
         compose.onNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog())).performScrollToNode(hasText("↗ עבודה"))

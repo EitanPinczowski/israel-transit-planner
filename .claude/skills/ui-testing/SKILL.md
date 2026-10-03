@@ -62,7 +62,7 @@ items = one finding per screen; behind an open dialog doesn't count) · R3 clipp
 · R4 a target under 40 dp whose grown 48 dp tap area reaches another · R5 Accessibility Test Framework
 (contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
 not squeezed. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
-closes what is open. Broken journeys and crashes fail the run; findings never do.
+closes what is open, J10 Settings reachable with results open. Broken journeys and crashes fail the run; findings never do.
 
 ## Adding to it
 

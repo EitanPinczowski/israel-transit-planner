@@ -57,6 +57,12 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         return this
     }
 
+    /** Closes the Activity and starts it again (state that lives in stores survives). */
+    fun relaunch(): AppDriver {
+        scenario?.close()
+        return launch()
+    }
+
     /** Re-reads the Activity after a configuration change recreated it. */
     fun refreshActivity() {
         scenario?.onActivity { activity = it }
