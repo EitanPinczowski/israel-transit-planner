@@ -47,5 +47,6 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
 - Icon: `python tools/gen_icons.py` writes the launcher foreground, background, themed
   layer and notification icon from one geometry. Edit the script, not the XML. The themed
   layer is a silhouette with holes, never the colour art (it would tint to a white block).
-- Check a UI change in the `screenshots` CI artifact (Paparazzi, see `android-build`):
+- Check a UI change in the screenshots CI records (Paparazzi; artifact `screenshots`, or
+  the `screenshots` branch, which a cloud session can read; see `android-build`):
   small/big/landscape × light/dark × he/en × large text.

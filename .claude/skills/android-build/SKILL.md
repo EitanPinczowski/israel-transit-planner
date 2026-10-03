@@ -40,6 +40,14 @@ Record-only, no goldens yet. The map is a flat placeholder and there are no syst
 in these pictures, so inset handling still needs a phone. Test fixtures come from
 `core/src/test/resources` (shared through `sourceSets["test"]`).
 
+On pushes the same job also writes the PNGs to the `screenshots` branch, one folder per
+source branch (`/` becomes `_`, e.g. `claude_eager-curie-477jsw/`), plus `INFO.txt` with
+the commit and run. The branch is one parentless commit, force-pushed each time, so it
+never grows. A cloud session can't download artifacts (blob storage is blocked) but can
+read `https://raw.githubusercontent.com/EitanPinczowski/israel-transit-planner/screenshots/<folder>/<file>.png`;
+list a folder through `api.github.com/repos/.../contents/<folder>?ref=screenshots`.
+Check that `INFO.txt` names your commit before judging a picture.
+
 ## Emulator / device
 
 - The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled
