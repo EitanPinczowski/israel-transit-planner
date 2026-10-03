@@ -92,3 +92,45 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Launcher icon; in-app "Update available" banner (GitHub Releases, once a day)
 - [x] Install guide for friends (`docs/install.md`, Hebrew + English)
 - [x] Owner: create the key, add the 4 secrets — v0.1.0 released 2026-09-28
+
+## Phase 8 — parallel features
+One cloud session per package, each on its own branch and PR; rules in the `parallel-work`
+skill, the brief each session got in `docs/agents/phase8.md`. Wave 0 (A1, A2) merges before
+Wave 1 (B1–B4) starts. Tick only your own package's lines.
+
+### A1 — API spike + plumbing (`claude/p8-api`, core only, ~8 live requests to record)
+- [ ] Weekday `stoptimes` for "now" recorded; `realTime: true` checked (closes the Phase 0 item)
+- [ ] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
+      fixtures (`trip` for a bus and a train, `map/trips` for a small box)
+- [ ] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?
+- [ ] `CAR_PARKING` verdict (Meitar → Tel Aviv, recorded) written here, in `special-features`,
+      and in `dead-ends` if it fails
+
+### A2 — mechanical UI split (`claude/p8-ui-split`, no behaviour change)
+- [ ] `MainScreen.kt` → `ui/screens/` (TripPanel, BetterStartPanel, DropOffPanel, PickUpPanel,
+      StopSheet, SettingsDialog, Common); `MainScreen.kt` keeps the scaffold only
+
+### B1 — Trip details + live bus (`claude/p8-trip-details`, 1 request per tap + 1 per 30 s)
+- [ ] Tap a transit leg: every stop with scheduled + live time, cancelled stops struck through
+- [ ] The vehicle on the map while the sheet is open (`map/trips`, leg bbox, app in front only)
+- [ ] ⚠ service alerts on leg chips, the trip sheet and stop-sheet departures — **only when an
+      answer carries them**; Israel sent none on 2026-10-03 (A1), so no empty alert UI
+
+### B2 — Park & Ride (`claude/p8-park-ride`, `ParkRidePlanner.BUDGET = 5`)
+- [ ] Drive your own car to a station with parking, continue by train; Pareto front like the
+      other car features, traffic-adjusted (`CAR_PARKING` or bundled `RailStations`, per A1)
+- [ ] "Way back to my car": plans back to the same station, on tap only (1 request)
+- [ ] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
+
+### B3 — Calendar → arrive by (`claude/p8-calendar`, 1 geocode, cached a day)
+- [ ] "From my calendar": next events with a location (on the phone, `READ_CALENDAR` asked on
+      tap), "arrive by 09:50 at …" with a buffer setting (default 10 min)
+- [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
+
+### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
+- [ ] Roborazzi/Robolectric screenshots of every `ui/screens/*` panel, Hebrew + English, in CI
+- [ ] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
+
+### Close-out (planner)
+- [ ] `docs/releases/v0.7.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [ ] Owner: every Phase 8 feature checked on the Pixel against live Transitous
