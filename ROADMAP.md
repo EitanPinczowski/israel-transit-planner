@@ -138,7 +138,8 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
-- [ ] Roborazzi/Robolectric screenshots of every `ui/screens/*` panel, Hebrew + English, in CI
+- [ ] Paparazzi screenshots of every `ui/screens/*` panel (on top of PR #18's `ScreensTest`),
+      Hebrew + English, goldens committed, CI verifies
 - [ ] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
 
 ### Close-out (planner)
