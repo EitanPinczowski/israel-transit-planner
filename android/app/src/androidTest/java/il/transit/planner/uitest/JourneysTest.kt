@@ -11,7 +11,9 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
@@ -23,7 +25,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.lifecycle.Lifecycle
-import androidx.test.espresso.Espresso
+import androidx.test.uiautomator.UiDevice
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -117,7 +119,8 @@ class JourneysTest {
             AppDriver(compose).launch().use { d ->
                 d.open()
                 compose.waitForIdle()
-                Espresso.pressBackUnconditionally()
+                // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
+                UiDevice.getInstance(d.inst).pressBack()
                 SystemClock.sleep(500)
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
                 Findings.expect("J4", alive && d.closed(), "Back with $what open " + if (alive) "did not close it" else "left the app")
@@ -199,7 +202,9 @@ class JourneysTest {
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
         compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
-        // Saved trips are listed before saved places, so the first Delete in the dialog is the trip's.
+        // The saved rows sit at the end of the settings list: scroll there first (a lazy list
+        // only composes what is on screen). Trips come before places, so the first Delete is the trip's.
+        compose.onNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog())).performScrollToNode(hasText("↗ עבודה"))
         compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst().performClick()
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.isEmpty() }
     }
