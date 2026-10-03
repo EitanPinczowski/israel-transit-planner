@@ -25,6 +25,7 @@ import il.transit.core.geo.LatLon
 import il.transit.core.ride.RideEvent
 import il.transit.core.ride.RideTracker
 import il.transit.planner.MainActivity
+import il.transit.planner.TransitApp
 import il.transit.planner.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -92,7 +93,7 @@ class RideService : Service() {
     }
 
     private fun onLocation(loc: Location) {
-        when (val e = tracker?.update(LatLon(loc.latitude, loc.longitude), Instant.now())) {
+        when (val e = tracker?.update(LatLon(loc.latitude, loc.longitude), (application as TransitApp).clock.instant())) {
             is RideEvent.Approaching -> getOffNext(e)
             RideEvent.Finished -> stopSelf()
             null -> Unit

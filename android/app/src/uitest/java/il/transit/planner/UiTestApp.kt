@@ -14,7 +14,7 @@ import java.time.ZoneOffset
  * The app as the UI tests, monkey runs and Test Lab crawlers see it (build type `uitest`):
  *  - Transitous is replaced by [ReplayTransitApi] over the recorded fixtures — zero requests,
  *  - "now" is Monday 2026-10-05 07:55 Israel time, the morning the fixtures were recorded for,
- *  - the map is a blank local style (no OpenFreeMap tiles) unless [realTiles] is set,
+ *  - the map is a blank local style (no OpenFreeMap tiles),
  *  - the update check answers [latestRelease] instead of asking GitHub.
  * Everything else — stores, alarms, the ride service — is the real app.
  */
@@ -26,14 +26,8 @@ class UiTestApp : TransitApp() {
     }
     override val api: TransitApi get() = replay
 
-    /** Real OpenFreeMap tiles instead of the blank style; set before the Activity starts. */
-    @Volatile var realTiles: Boolean = false
-
-    override fun mapStyle(night: Boolean): String = when {
-        realTiles -> super.mapStyle(night)
-        night -> "asset://uitest/blank-dark.json"
-        else -> "asset://uitest/blank.json"
-    }
+    override fun mapStyle(night: Boolean): String =
+        if (night) "asset://uitest/blank-dark.json" else "asset://uitest/blank.json"
 
     /** What the update check reports; null = up to date. Set before the Activity starts. */
     @Volatile var latestRelease: LatestRelease? = null
@@ -47,7 +41,6 @@ class UiTestApp : TransitApp() {
     /** A clean slate: the saved places below, nothing else saved, replay answering. */
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
-        realTiles = false
         latestRelease = null
         store.setSettings(UserSettings())
         store.setPlaces(places)

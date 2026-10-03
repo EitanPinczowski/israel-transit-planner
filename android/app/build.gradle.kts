@@ -117,5 +117,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.espresso.intents)
     androidTestImplementation(libs.espresso.accessibility)
+    androidTestImplementation(libs.accessibility.test.framework)
     androidTestImplementation(libs.uiautomator)
 }
