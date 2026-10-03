@@ -10,8 +10,46 @@ import kotlinx.serialization.json.Json
 
 /** A named point the user saved: home, work, university... */
 @Serializable
-data class SavedPlace(val name: String, val lat: Double, val lon: Double) {
+data class SavedPlace(
+    val name: String,
+    val lat: Double,
+    val lon: Double,
+    /** When the user usually heads here: the app then opens on "to <name>". */
+    val routine: PlaceRoutine? = null,
+) {
     val latLon: LatLon get() = LatLon(lat, lon)
+}
+
+/**
+ * "University: Sun–Thu 07:00–10:00". [days] are ISO day numbers (1 = Monday … 7 = Sunday);
+ * minutes are Israel local time. [toMin] < [fromMin] is an overnight window (22:00–02:00),
+ * which belongs to the day it starts on.
+ */
+@Serializable
+data class PlaceRoutine(val days: List<Int>, val fromMin: Int, val toMin: Int) {
+    fun contains(t: java.time.ZonedDateTime): Boolean {
+        val m = t.hour * 60 + t.minute
+        return if (fromMin <= toMin) {
+            t.dayOfWeek.value in days && m >= fromMin && m < toMin
+        } else {
+            (t.dayOfWeek.value in days && m >= fromMin) || (t.minusDays(1).dayOfWeek.value in days && m < toMin)
+        }
+    }
+
+    val lengthMin: Int get() = if (fromMin <= toMin) toMin - fromMin else 24 * 60 - fromMin + toMin
+
+    companion object {
+        /** The Israeli week, for the day chips: Sunday first. */
+        val WEEK: List<Int> = listOf(7, 1, 2, 3, 4, 5, 6)
+    }
+}
+
+object Routines {
+    /** The saved place whose routine covers [now] (Israel time); the narrowest window wins. */
+    fun active(places: List<SavedPlace>, now: java.time.Instant): SavedPlace? {
+        val t = now.atZone(il.transit.core.features.ISRAEL)
+        return places.filter { it.routine?.contains(t) == true }.minByOrNull { it.routine!!.lengthMin }
+    }
 }
 
 /** A one-tap trip. [from] null means "from wherever I am when I tap it". */

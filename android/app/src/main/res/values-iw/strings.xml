@@ -179,4 +179,13 @@
     <string name="turn_sharp_right">פנייה חדה ימינה</string>
     <string name="turn_u_turn">חזרו לאחור</string>
     <string name="turn_stairs">מדרגות</string>
+    <string name="notify_time_changed_title">שעת היציאה השתנתה</string>
+    <string name="notify_late_text">קו \u2068%1$s\u2069 מאחר ב־%2$d דק׳ — צאו ב־\u2068%3$s\u2069</string>
+    <string name="notify_early_text">קו \u2068%1$s\u2069 מקדים ב־%2$d דק׳ — צאו ב־\u2068%3$s\u2069</string>
+    <string name="routine_chip">⏰ שגרה: %1$s  ✕</string>
+    <string name="routine_title">מתי בדרך כלל נוסעים ל%1$s?</string>
+    <string name="routine_help">בימים ובשעות האלה האפליקציה תיפתח על הנסיעה לשם, עם שעת היציאה.</string>
+    <string name="routine_from">מ־</string>
+    <string name="routine_to">עד</string>
+    <string name="routine_remove">הסרה</string>
 </resources>

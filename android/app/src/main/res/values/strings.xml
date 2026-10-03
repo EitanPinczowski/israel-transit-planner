@@ -178,4 +178,13 @@
     <string name="turn_sharp_right">Sharp right</string>
     <string name="turn_u_turn">Turn back</string>
     <string name="turn_stairs">Stairs</string>
+    <string name="notify_time_changed_title">Your leave time changed</string>
+    <string name="notify_late_text">Line \u2068%1$s\u2069 is %2$d min late — leave at \u2068%3$s\u2069</string>
+    <string name="notify_early_text">Line \u2068%1$s\u2069 comes %2$d min early — leave at \u2068%3$s\u2069</string>
+    <string name="routine_chip">⏰ Routine: %1$s  ✕</string>
+    <string name="routine_title">When do you usually go to %1$s?</string>
+    <string name="routine_help">On these days, in this window, the app opens on the trip there with the time to leave.</string>
+    <string name="routine_from">From</string>
+    <string name="routine_to">Until</string>
+    <string name="routine_remove">Remove</string>
 </resources>
