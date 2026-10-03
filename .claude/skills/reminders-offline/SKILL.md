@@ -12,6 +12,8 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `ReminderLogic.update` finds the same vehicle in a fresh plan — by `tripId` when both sides
   have one, else line + boarding stop + scheduled time ±1 min — and returns `Updated`
   (new leave time) or `Gone` (cancelled / no longer offered).
+- **Delay alerts need GTFS-RT, which Israel MOT lines do not have on Transitous** (only
+  busofash does; see `transitous-api`). They stay quiet on most trips — expected, not a bug.
 - **Delay alert** (`ReminderLogic.alertMinutes`): notify when the leave time moved ≥ 3 min,
   **earlier or later**, from `toldLeaveAt` — the time the user was last told, stored as
   `alertedLeaveAtEpoch` after each alert. Measuring from the told time (not the previous
@@ -49,6 +51,10 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `filesDir/history.json`, newest first, capped at 500 — `core/history/History.kt`).
 
 # Offline
+- **My lines offline**: each successful board is saved per stop (`core/present/DepartureCache`,
+  `data/DepartureCacheStore`, `filesDir/departures_cache.json`, 20 stops). With no signal the
+  saved board shows departures still ahead only, marked "Offline — timetable saved at HH:MM",
+  never a delay or cancellation.
 
 - **Trip results**: `core/plan/PlanCache` (LRU, 10) + `TripCacheJson`, persisted by
   `data/PlanCacheStore` in `filesDir/trip_cache.json`. Key = tab + time mode + places rounded

@@ -572,6 +572,9 @@ private fun FavoritesDialog(state: UiState, vm: MainViewModel) {
                 Text(stringResource(R.string.my_lines_empty))
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    state.favoritesOfflineSince?.let { at ->
+                        item { Text(stringResource(R.string.my_lines_offline, hhmm(at)), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                    }
                     items(state.favorites) { f ->
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1072,6 +1075,11 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
                             }
                             FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
                         }
+                    }
+                }
+                item {
+                    Section(R.string.ride_alerts) {
+                        FilterChip(s.speakAlerts, { set(s.copy(speakAlerts = !s.speakAlerts)) }, label = { Text(stringResource(R.string.speak_alerts)) })
                     }
                 }
                 item {

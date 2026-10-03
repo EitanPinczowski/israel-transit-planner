@@ -198,4 +198,10 @@
     <string name="my_lines_empty">Tap a stop on the map, then ☆ next to a line, to pin it here with its next departures.</string>
     <string name="way_back_after">Way back after</string>
     <string name="hours_short">\u2068%1$d h\u2069</string>
+    <string name="my_lines_offline">Offline — timetable saved at \u2068%1$s\u2069, no live delays</string>
+    <string name="ride_alerts">Get-off alert</string>
+    <string name="speak_alerts">Also say it out loud</string>
+    <string name="ride_speak_get_off">Next stop: %1$s. Get off.</string>
+    <string name="ride_speak_change">Next stop: %1$s. Change here.</string>
+    <string name="shortcut_lines">My lines</string>
 </resources>

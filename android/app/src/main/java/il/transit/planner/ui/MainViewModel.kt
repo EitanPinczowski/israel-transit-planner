@@ -140,6 +140,8 @@ data class UiState(
     val showFavorites: Boolean = false,
     /** Next departures per pinned line; a missing key = still loading, null value = failed. */
     val favoriteBoards: Map<FavoriteLine, List<DepartureRow>?> = emptyMap(),
+    /** Set when some of My lines show a saved board because the network failed. */
+    val favoritesOfflineSince: Instant? = null,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -177,6 +179,7 @@ class MainViewModel(
     private val historyStore: HistoryStore? = null,
     private val updates: UpdateChecker? = null,
     private val stopsCache: StopsStore? = null,
+    private val departureCache: il.transit.planner.data.DepartureCacheStore? = null,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -482,7 +485,7 @@ class MainViewModel(
         val s = _state.value
         val itin = s.selectedItinerary ?: return false
         if (itin.firstTransitLeg == null) return false
-        rides?.start(itin)
+        rides?.start(itin, s.settings.speakAlerts)
         val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, Instant.now(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
@@ -509,19 +512,29 @@ class MainViewModel(
 
     /** Open the pinned lines with their next departures: one `stoptimes` request per stop. */
     fun showFavorites(show: Boolean) {
-        _state.update { it.copy(showFavorites = show, favoriteBoards = if (show) emptyMap() else it.favoriteBoards) }
+        _state.update {
+            it.copy(showFavorites = show, favoriteBoards = if (show) emptyMap() else it.favoriteBoards, favoritesOfflineSince = null)
+        }
         if (!show) return
         _state.value.favorites.groupBy { it.stopId }.forEach { (stopId, favs) ->
             viewModelScope.launch {
-                val rows = try {
-                    api.stopTimes(stopId, null, 30, language).stopTimes.map(::departureRow)
+                val live = try {
+                    api.stopTimes(stopId, null, 60, language).stopTimes.map(::departureRow)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
                     null
                 }
+                if (live != null) departureCache?.put(stopId, live)
+                // No signal: the board saved last time, departures still ahead only.
+                val saved = if (live == null) departureCache?.upcoming(stopId) else null
+                val rows = live ?: saved?.second
                 _state.update { st ->
-                    st.copy(favoriteBoards = st.favoriteBoards + favs.associateWith { f -> rows?.filter(f::matches)?.take(3) })
+                    st.copy(
+                        favoriteBoards = st.favoriteBoards + favs.associateWith { f -> rows?.filter(f::matches)?.take(3) },
+                        favoritesOfflineSince = saved?.first?.let { a -> st.favoritesOfflineSince?.let { minOf(it, a) } ?: a }
+                            ?: st.favoritesOfflineSince,
+                    )
                 }
             }
         }
@@ -749,6 +762,11 @@ class MainViewModel(
         if (locationProvider() != null) plan()
     }
 
+    /** An app-icon shortcut: the trip to the saved place called [name], if it still exists. */
+    fun goToPlaceNamed(name: String) {
+        _state.value.savedPlaces.firstOrNull { it.name == name }?.let(::goTo)
+    }
+
     fun goTo(p: SavedPlace) {
         _state.update { it.copy(to = PlaceRef.Point(p.name, p.latLon), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null) }
         plan()
@@ -809,7 +827,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache)
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache)
             }
         }
     }

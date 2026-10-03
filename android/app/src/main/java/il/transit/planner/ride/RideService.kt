@@ -28,6 +28,11 @@ import il.transit.planner.MainActivity
 import il.transit.planner.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import il.transit.core.ride.RideProgress
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.Instant
@@ -40,6 +45,10 @@ import java.time.Instant
 class RideService : Service() {
     private var tracker: RideTracker? = null
     private var finalStop: String = ""
+
+    /** Speaks the get-off alert when the user asked for it; null otherwise or until ready. */
+    private var tts: TextToSpeech? = null
+    private var ttsReady = false
     private var locationManager: LocationManager? = null
     // An explicit object, not a lambda: before API 29 the other three methods are abstract
     // too, and a SAM lambda would crash with AbstractMethodError when a provider toggles.
@@ -67,6 +76,7 @@ class RideService : Service() {
         }
         tracker = RideTracker(itinerary)
         finalStop = itinerary.legs.lastOrNull { it.isTransit }?.to?.name.orEmpty()
+        if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
         ServiceCompat.startForeground(
             this,
             ID_ONGOING,
@@ -109,7 +119,44 @@ class RideService : Service() {
         if (p != null && nm.areNotificationsEnabled()) nm.notify(ID_ONGOING, ongoing(finalStop, p))
     }
 
+    /** One TextToSpeech for the ride, in the phone's language, on the navigation audio stream. */
+    private fun startSpeech() {
+        tts = TextToSpeech(this) { status ->
+            ttsReady = status == TextToSpeech.SUCCESS
+            if (ttsReady) {
+                tts?.language = java.util.Locale.getDefault()
+                tts?.setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build(),
+                )
+            }
+        }
+    }
+
+    /** Duck the music while speaking ("Next stop: X. Get off."), then give it back. */
+    private fun speak(text: String) {
+        val t = tts?.takeIf { ttsReady } ?: return
+        val am = getSystemService(AudioManager::class.java)
+        val focus = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+            .setAudioAttributes(
+                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).build(),
+            )
+            .build()
+        am.requestAudioFocus(focus)
+        t.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) = Unit
+            override fun onDone(utteranceId: String?) { am.abandonAudioFocusRequest(focus) }
+            @Deprecated("Deprecated in API 21")
+            override fun onError(utteranceId: String?) { am.abandonAudioFocusRequest(focus) }
+        })
+        t.speak(text, TextToSpeech.QUEUE_FLUSH, null, "get-off")
+    }
+
     override fun onDestroy() {
+        tts?.shutdown()
+        tts = null
         locationManager?.removeUpdates(listener)
         _active.value = false
         _progress.value = null
@@ -134,6 +181,7 @@ class RideService : Service() {
 
     @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS
     private fun getOffNext(e: RideEvent.Approaching) {
+        speak(getString(if (e.isLastLeg) R.string.ride_speak_get_off else R.string.ride_speak_change, e.stopName))
         val nm = NotificationManagerCompat.from(this)
         if (!nm.areNotificationsEnabled()) return
         val title = getString(if (e.isLastLeg) R.string.ride_get_off_title else R.string.ride_change_title)
@@ -159,6 +207,7 @@ class RideService : Service() {
     companion object {
         private const val ACTION_STOP = "il.transit.planner.action.STOP_RIDE"
         private const val EXTRA_ITINERARY = "itinerary"
+        private const val EXTRA_SPEAK = "speak"
         private const val CHANNEL_ONGOING = "ride_ongoing"
         private const val CHANNEL_ALERTS = "ride_alerts"
         private const val ID_ONGOING = 2001
@@ -189,9 +238,10 @@ class RideService : Service() {
         /** True while a ride is being tracked; the service clears it when it stops itself. */
         val active: StateFlow<Boolean> = _active.asStateFlow()
 
-        fun start(context: Context, itinerary: Itinerary) {
+        fun start(context: Context, itinerary: Itinerary, speak: Boolean) {
             val intent = Intent(context, RideService::class.java)
                 .putExtra(EXTRA_ITINERARY, MotisJson.encodeToString(Itinerary.serializer(), itinerary))
+                .putExtra(EXTRA_SPEAK, speak)
             ContextCompat.startForegroundService(context, intent)
         }
 
