@@ -63,6 +63,10 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
       timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
       on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] Errands: up to 3 stops on the way with a stay each (0/15/30/60 min), chained so each leg
+      leaves after the previous arrival + stay; one plan per leg (`plan/CarAndChain.kt`)
+- [x] "🚗 By car?": the same trip by car with the traffic factor (1 request); no taxi price —
+      the official tariff could not be confirmed from a reachable source, so it links to MOT's calculator
 - [x] Spoken get-off alert (TextToSpeech, navigation audio, ducks music; Settings toggle, on)
 - [x] App-icon shortcuts: My lines + 3 saved places (routine on now first)
 - [x] My lines offline: last saved board per stop, upcoming departures only

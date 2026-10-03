@@ -33,7 +33,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   api/        TransitApi · MotisClient (HTTP) · GuardedTransitApi · BudgetedTransitApi · Models
   geo/        LatLon, haversine, polyline decode (MOTIS precision 6), corridor bbox, RailStations (generated)
   features/   Pareto engine + BetterStart · DropOff · PickUp, TrafficProfile
-  plan/       TripPlanner — the ordinary A→B search (now / depart at / arrive by); LastRideFinder
+  plan/       TripPlanner (A→B), LastRideFinder, ChainPlanner (errands), CarCompare, caches
   present/    summaries, leg chips, colours, departure rows — all UI text logic, tested
   user/       UserSettings → MOTIS Preferences, saved places/trips, UserJson codec
   remind/     Reminder + ReminderLogic: leave time, re-check matching (tested)

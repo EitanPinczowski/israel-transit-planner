@@ -89,6 +89,9 @@ import il.transit.core.present.PickUpRow
 import il.transit.core.present.pickUpRow
 import il.transit.core.present.fareLabel
 import il.transit.core.present.lastRideNote
+import il.transit.core.plan.CarCompare
+import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainResult
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.TripSort
 import il.transit.core.present.Turn
@@ -202,6 +205,7 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                         ) { vm.startEditing(Field.DRIVER_TO) }
                         HorizontalDivider()
                     }
+                    if (state.mode == AppMode.TRIP) ChainStopsRows(state, vm)
                     val toLabel = when (state.mode) {
                         AppMode.DROP_OFF -> R.string.me_to
                         AppMode.PICK_UP -> R.string.driver_at
@@ -451,11 +455,16 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
+                    state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
+                        if (state.chain != null) {
+                            Text(chainLegTitle(state, i), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 6.dp))
+                        }
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
                     if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
-                    if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null) item { WayBackRow(vm) }
+                    if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null && state.chain == null) item { WayBackRow(vm) }
+                    if (state.mode == AppMode.TRIP && state.options.isNotEmpty()) item { CarRow(state, vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -546,6 +555,76 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
         }
         Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
         if (selected) WalkDirections(itin)
+    }
+}
+
+/** Errands: each stop on the way with its stay chips and ✕, then "+ Stop on the way". */
+@Composable
+private fun ChainStopsRows(state: UiState, vm: MainViewModel) {
+    state.chainStops.forEachIndexed { i, c ->
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
+            Text("• ${c.name ?: stringResource(R.string.dropped_pin)}", Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            IconButton(onClick = { vm.removeChainStop(i) }) { Icon(Icons.Default.Close, stringResource(R.string.delete)) }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(start = 16.dp)) {
+            Text(stringResource(R.string.stay), style = MaterialTheme.typography.labelMedium)
+            ChainPlanner.STAY_CHOICES.forEach { m ->
+                FilterChip(c.stayMin == m, { vm.setStay(i, m) }, label = { Text(stringResource(R.string.minutes_short, m)) })
+            }
+        }
+        HorizontalDivider()
+    }
+    if (state.chainStops.size < ChainPlanner.MAX_STOPS) {
+        TextButton(onClick = { vm.startEditing(Field.STOP) }) { Text(stringResource(R.string.add_stop)) }
+    }
+}
+
+/** "1. Home → Post office": which leg of the errand chain a card is. */
+@Composable
+private fun chainLegTitle(state: UiState, i: Int): String {
+    val names = listOf(placeLabel(state.from)) +
+        state.chainStops.map { it.name ?: stringResource(R.string.dropped_pin) } +
+        listOf(state.to?.let { placeLabel(it) }.orEmpty())
+    return "${i + 1}. ${names.getOrElse(i) { "" }} → ${names.getOrElse(i + 1) { "" }}"
+}
+
+/** "Leave 08:00 · arrive 09:10", or which leg has no way to make it. */
+@Composable
+private fun ChainSummary(state: UiState, c: ChainResult) {
+    val leave = c.leaveAt?.let(::hhmm).orEmpty()
+    val text = when {
+        c.failedAt != null -> stringResource(R.string.chain_failed, c.failedAt!! + 1)
+        else -> stringResource(R.string.chain_summary, leave, c.arriveAt?.let(::hhmm).orEmpty())
+    }
+    Text(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        color = if (c.failedAt != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+    )
+}
+
+/** "🚗 By car?" → "By car ~95 min at this time (traffic ×1.3) · 113 km" + the official taxi calculator. */
+@Composable
+private fun CarRow(state: UiState, vm: MainViewModel) {
+    val context = LocalContext.current
+    val car = state.carTime
+    when {
+        state.carLoading -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+        car == null -> TextButton(onClick = vm::checkCar) { Text(stringResource(R.string.by_car_check)) }
+        else -> Column {
+            Text(
+                stringResource(R.string.by_car, car.minutes, String.format(Locale.US, "%.1f", car.factor), Math.round(car.km).toInt()),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                stringResource(R.string.taxi_calculator),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(CarCompare.TAXI_CALCULATOR_URL)))
+                }.padding(vertical = 4.dp),
+            )
+        }
     }
 }
 
