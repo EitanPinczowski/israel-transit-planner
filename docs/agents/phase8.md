@@ -136,6 +136,15 @@ The owner merges every PR; agents never merge.
 >   on the map. It comes from `mapTrips` over the leg's bounding box every 30 s, matched by trip
 >   id, and is interpolated along the segment polyline between refreshes.
 >
+> **What the data really has (A1, 2026-10-03, and the `transitous-api` skill):** Transitous
+> carries GTFS-RT for Israel only for `busofash` (Tel Aviv night buses). MOT lines have no
+> real-time and no alerts: A1 saw 0 `realTime: true` and 0 `alerts` in every answer. So:
+> - the "live time" and ⚠ alerts appear **only when an answer carries them**. Build them, test
+>   them on hand-built core models, but never show an empty alert area or a "live" label;
+> - the vehicle position is the **timetable** position (`realTime: false` from `mapTrips`).
+>   Label it "scheduled position" unless that segment's `realTime` is true;
+> - say this in the release fragment, so friends don't expect live tracking on MOT lines.
+>
 > **Requests:**
 > - `trip`: 1 per tap, cached 30 s.
 > - `mapTrips`: 1 per 30 s, and only in that state.
@@ -272,8 +281,10 @@ The owner merges every PR; agents never merge.
 ---
 
 ## Close-out (planner)
-- Once all packages are merged, join `docs/releases/next/*.md` into `docs/releases/v0.5.0.md`
+- Once all packages are merged, join `docs/releases/next/*.md` into `docs/releases/v0.7.0.md`
   (English block, then Hebrew block, then the usual update and attribution lines). Then delete
   the fragments.
 - Check every Phase 8 ROADMAP line and every skill row.
+  (v0.5.0 and v0.6.0 were released before Phase 8 merged, and v0.6.1 is the quality pass, so
+  Phase 8 ships as v0.7.0.)
 - Ask the owner to check each feature on the Pixel, then release with the `release-apk` skill.
