@@ -11,8 +11,8 @@ import il.transit.core.remind.ReminderLogic
 import java.time.Instant
 
 /**
- * Two exact alarms per reminder: a real-time re-check [Reminder.RECHECK_BEFORE] ahead, and
- * the "leave now" notification. The app is sideloaded, so USE_EXACT_ALARM is granted on
+ * Two exact alarms per reminder: the next real-time re-check (leave − [Reminder.RECHECKS]),
+ * re-armed after each one, and the "leave now" notification. The app is sideloaded, so USE_EXACT_ALARM is granted on
  * Android 13+; if exact alarms are ever refused, an inexact alarm is still better than none.
  */
 object ReminderScheduler {
@@ -20,8 +20,7 @@ object ReminderScheduler {
     const val ACTION_LEAVE = "il.transit.planner.action.LEAVE"
 
     fun schedule(context: Context, r: Reminder, now: Instant = Instant.now()) {
-        val recheck = ReminderLogic.recheckTime(r, now)
-        if (recheck.isBefore(r.leaveAt)) set(context, recheck, ACTION_RECHECK)
+        ReminderLogic.nextRecheck(r, now)?.let { set(context, it, ACTION_RECHECK) }
         scheduleLeave(context, r, now)
     }
 

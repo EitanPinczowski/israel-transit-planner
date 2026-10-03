@@ -50,6 +50,13 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import il.transit.core.user.PlaceRoutine
+import il.transit.core.user.SavedPlace
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -424,6 +431,9 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                         modifier = Modifier.padding(8.dp),
                     )
                 }
+            }
+            if (state.mode == AppMode.TRIP) state.activeRoutine?.let { name ->
+                AssistChip(onClick = vm::dismissRoutine, label = { Text(stringResource(R.string.routine_chip, name)) })
             }
             if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
             if (!state.loading) RideRow(state, vm, actions)
@@ -929,6 +939,10 @@ private fun DepartureView(r: DepartureRow) {
 private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenActions) {
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
+    var editingRoutine by remember { mutableStateOf<SavedPlace?>(null) }
+    editingRoutine?.let { p ->
+        RoutineDialog(p, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
+    }
     AlertDialog(
         onDismissRequest = { vm.showSettings(false) },
         confirmButton = { TextButton(onClick = { vm.showSettings(false) }) { Text(stringResource(R.string.done)) } },
@@ -1005,7 +1019,7 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
                 if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
                     item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
                     items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
-                    items(state.savedPlaces) { p -> SavedRow("★ ${p.name}") { vm.deletePlace(p) } }
+                    items(state.savedPlaces) { p -> SavedPlaceRow(p, onRoutine = { editingRoutine = p }) { vm.deletePlace(p) } }
                 }
             }
         },
@@ -1099,6 +1113,71 @@ private fun Section(titleRes: Int, chips: @Composable () -> Unit) {
         Text(stringResource(titleRes), style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) { chips() }
     }
+}
+
+/** A saved place: its routine under the name, ⏰ to edit it, 🗑 to delete the place. */
+@Composable
+private fun SavedPlaceRow(p: SavedPlace, onRoutine: () -> Unit, onDelete: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("★ ${p.name}", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            p.routine?.let { Text(routineLabel(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
+        TextButton(onClick = onRoutine) { Text("⏰") }
+        IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
+    }
+}
+
+/** "Sun Mon Tue 07:00–10:00", days in Israeli week order. */
+private fun routineLabel(r: PlaceRoutine): String {
+    val days = PlaceRoutine.WEEK.filter { it in r.days }
+        .joinToString(" ") { java.time.DayOfWeek.of(it).getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
+    return "$days \u2068${hhmmOf(r.fromMin)}–${hhmmOf(r.toMin)}\u2069"
+}
+
+private fun hhmmOf(min: Int) = String.format(Locale.US, "%02d:%02d", min / 60, min % 60)
+
+/** Days (Sunday first) and a window; Save, Remove (when one is set) or Cancel. */
+@Composable
+private fun RoutineDialog(p: SavedPlace, onDismiss: () -> Unit, onSave: (PlaceRoutine?) -> Unit) {
+    val r = p.routine
+    val days = remember { mutableStateListOf<Int>().apply { addAll(r?.days ?: listOf(7, 1, 2, 3, 4)) } }
+    val from = rememberTimePickerState(initialHour = (r?.fromMin ?: 420) / 60, initialMinute = (r?.fromMin ?: 420) % 60, is24Hour = true)
+    val to = rememberTimePickerState(initialHour = (r?.toMin ?: 600) / 60, initialMinute = (r?.toMin ?: 600) % 60, is24Hour = true)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.routine_title, p.name)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.routine_help), style = MaterialTheme.typography.bodySmall)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    PlaceRoutine.WEEK.forEach { d ->
+                        FilterChip(
+                            selected = d in days,
+                            onClick = { if (d in days) days.remove(d) else days.add(d) },
+                            label = { Text(java.time.DayOfWeek.of(d).getDisplayName(TextStyle.SHORT, Locale.getDefault())) },
+                        )
+                    }
+                }
+                Text(stringResource(R.string.routine_from), style = MaterialTheme.typography.labelLarge)
+                TimeInput(state = from)
+                Text(stringResource(R.string.routine_to), style = MaterialTheme.typography.labelLarge)
+                TimeInput(state = to)
+            }
+        },
+        confirmButton = {
+            TextButton(
+                enabled = days.isNotEmpty(),
+                onClick = { onSave(PlaceRoutine(days.toList().sorted(), from.hour * 60 + from.minute, to.hour * 60 + to.minute)) },
+            ) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            Row {
+                if (r != null) TextButton(onClick = { onSave(null) }) { Text(stringResource(R.string.routine_remove)) }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+            }
+        },
+    )
 }
 
 @Composable

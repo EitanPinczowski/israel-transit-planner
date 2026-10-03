@@ -27,6 +27,8 @@ import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
+import il.transit.core.user.PlaceRoutine
+import il.transit.core.user.Routines
 import il.transit.core.plan.TripSort
 import il.transit.core.plan.sortOptions
 import il.transit.core.plan.TripQuery
@@ -128,8 +130,13 @@ data class UiState(
     val lastRideAsked: Boolean = false,
     val lastRideBack: LastRide? = null,
     val lastRideLoading: Boolean = false,
+    /** The destination was filled in by this saved place's routine, not typed by the user. */
+    val routinePlace: String? = null,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
+
+    /** The routine's place, while the destination is still the one the routine filled in. */
+    val activeRoutine: String? get() = routinePlace?.takeIf { (to as? PlaceRef.Point)?.name == it }
 
     /** The itineraries the results panel lists, for whichever tab is showing. */
     val options: List<Itinerary>
@@ -180,10 +187,15 @@ class MainViewModel(
     private var stopsJob: Job? = null
     private var loadedStops: BBox? = null
 
+    /** A routine the user dismissed today ("name|day"), so it does not come straight back. */
+    private var dismissedRoutine: String? = null
+
     init {
         viewModelScope.launch {
             combine(store.settings, store.places, store.trips) { s, p, t -> Triple(s, p, t) }.collect { (s, p, t) ->
+                val first = _state.value.savedPlaces.isEmpty() && p.isNotEmpty()
                 _state.update { it.copy(settings = s, savedPlaces = p, savedTrips = t) }
+                if (first) applyRoutine()
             }
         }
         viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
@@ -209,6 +221,7 @@ class MainViewModel(
     fun onVisible(visible: Boolean) {
         refreshJob?.cancel()
         if (!visible) return
+        applyRoutine()
         refreshJob = viewModelScope.launch {
             while (true) {
                 delay(REFRESH_MS)
@@ -609,13 +622,47 @@ class MainViewModel(
     // --- saved places, trips, settings ---------------------------------------------------
 
     fun savePlace(name: String, at: LatLon) = viewModelScope.launch {
+        val old = _state.value.savedPlaces.firstOrNull { it.name == name }
         val rest = _state.value.savedPlaces.filterNot { it.name == name }
-        store.setPlaces(rest + SavedPlace(name, at.lat, at.lon))
+        store.setPlaces(rest + SavedPlace(name, at.lat, at.lon, routine = old?.routine))
         _state.update { st -> if ((st.to as? PlaceRef.Point)?.at == at) st.copy(to = PlaceRef.Point(name, at)) else st }
     }
 
     fun deletePlace(p: SavedPlace) = viewModelScope.launch {
         store.setPlaces(_state.value.savedPlaces - p)
+    }
+
+    // --- routines -------------------------------------------------------------------------
+
+    /** Set or clear (null) when [place] is usually the destination. */
+    fun setRoutine(place: SavedPlace, routine: PlaceRoutine?) = viewModelScope.launch {
+        store.setPlaces(_state.value.savedPlaces.map { if (it.name == place.name) it.copy(routine = routine) else it })
+    }
+
+    /** "Routine: University ✕": the user does not want it this time. */
+    fun dismissRoutine() {
+        val s = _state.value
+        dismissedRoutine = s.routinePlace?.let { routineKey(it) }
+        _state.update { it.copy(to = null, routinePlace = null, results = null, error = null, lastRide = null, lastRideBack = null) }
+    }
+
+    private fun routineKey(name: String) = "$name|${LastRideFinder.serviceDay(Instant.now())}"
+
+    /**
+     * Open on the routine's destination when its window is on: only in the Trip tab, never
+     * over a destination the user chose, at most once per place and day after a dismissal.
+     */
+    private fun applyRoutine() {
+        val s = _state.value
+        if (s.mode != AppMode.TRIP || s.editing != null || s.loading) return
+        val routineSet = s.activeRoutine != null
+        if (s.to != null && !routineSet) return
+        val p = Routines.active(s.savedPlaces, Instant.now()) ?: return
+        if (routineKey(p.name) == dismissedRoutine) return
+        if (routineSet && s.routinePlace == p.name && s.results != null) return // already showing it
+        _state.update { it.copy(from = PlaceRef.MyLocation, to = PlaceRef.Point(p.name, p.latLon), routinePlace = p.name, timeMode = TimeMode.NOW, time = null) }
+        // Location may not be ready at launch; the search then waits for the user's tap.
+        if (locationProvider() != null) plan()
     }
 
     fun goTo(p: SavedPlace) {

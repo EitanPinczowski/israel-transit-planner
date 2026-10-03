@@ -6,10 +6,17 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 # "Time to leave" reminders
 
 - **Logic is in `core/remind/Reminder.kt`** and tested: `Reminder.from(itinerary, …)` sets
-  `leaveAt` = itinerary start (when to start walking); `recheckAt` = 15 min earlier.
+  `leaveAt` = itinerary start (when to start walking). Re-checks run at leave − 30, 20, 12,
+  6 and 2 min (`Reminder.RECHECKS`, `ReminderLogic.nextRecheck`), each re-arming the next:
+  at most 5 plan requests per reminder.
   `ReminderLogic.update` finds the same vehicle in a fresh plan — by `tripId` when both sides
   have one, else line + boarding stop + scheduled time ±1 min — and returns `Updated`
   (new leave time) or `Gone` (cancelled / no longer offered).
+- **Delay alert** (`ReminderLogic.alertMinutes`): notify when the leave time moved ≥ 3 min,
+  **earlier or later**, from `toldLeaveAt` — the time the user was last told, stored as
+  `alertedLeaveAtEpoch` after each alert. Measuring from the told time (not the previous
+  check) means a delay creeping 2 min at a time still alerts once, and never twice for the
+  same shift. Text: "Line 3 is 4 min late — leave at 08:16" / "comes 3 min early".
 - **One active reminder**, stored as JSON in `UserStore` (`UserJson.encodeReminder`).
 - **Alarms** (`remind/ReminderScheduler.kt`): two exact alarms, re-check and leave.
   `USE_EXACT_ALARM` (API 33+) is fine because the app is sideloaded — it is a Play-policy
@@ -17,7 +24,7 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `SCHEDULE_EXACT_ALARM` is declared only up to API 32. If exact alarms are refused, an
   inexact `setAndAllowWhileIdle` is used rather than nothing.
 - **The receiver never loses a reminder on a bad signal**: a failed re-check keeps the
-  original time. `Gone` posts "your trip changed" and clears it.
+  original time and arms the next re-check. `Gone` posts "your trip changed" and clears it.
 - **Reboot clears alarms** → `BootReceiver` re-arms (or drops a reminder already past).
 - `POST_NOTIFICATIONS` is asked the first time a reminder is set (API 33+). A refusal still
   arms the alarm; only the banner is blocked.

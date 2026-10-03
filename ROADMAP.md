@@ -63,6 +63,10 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
       timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
       on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] Routines on saved places: "University: Sun–Thu 07:00–10:00" opens the app on that
+      trip with the time to leave; never over a destination the user chose (`Routines.active`)
+- [x] Delay alert while waiting: with a leave reminder, re-checks 30/20/12/6/2 min before and
+      notifies when the leave time moves ≥ 3 min, earlier or later, from what the user was told
 - [x] Sort chips on the Trip tab: Fastest · Fewest transfers · Least walking (no new requests)
 - [x] Walking directions for the selected trip: street by street, turns computed from the
       step geometry (Transitous sends only CONTINUE/STAIRS), stairs called out
