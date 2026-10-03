@@ -92,8 +92,8 @@ jobs:
       fail-fast: false
       matrix:
         api: [26, 29, 33, 34, 35]
-        # The Google APIs Android 8 image crashes its own SystemUI right after boot ("System
-        # UI has stopped", every run on 2026-10-03), taking the permission prompt with it.
+        # Android 8 runs the plain AOSP image (lighter). Its SystemUI crash over the lock
+        # screen is handled in tools/ui_behaviour_run.sh.
         target: [google_apis]
         exclude:
           - api: 26

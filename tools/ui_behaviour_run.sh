@@ -32,11 +32,21 @@ adb install -r "$APKS"/app-uitest.apk
 adb install -r "$APKS"/app-uitest-androidTest.apk
 adb shell settings put secure show_ime_with_hard_keyboard 1
 adb emu geo fix 34.8013 31.2622 >/dev/null
-# Old images boot with the keyguard up and SystemUI still settling; a permission prompt
-# shown then can vanish (seen on API 26). Unlock and give it a moment first.
+# Android 8's SystemUI crashes ("System UI has stopped", NPE in
+# KeyguardViewMediator.handleSetOccluded) when an app opens over a lock screen that is still
+# up, and takes the permission prompt with it. Turn the lock screen off, unlock, and wait
+# until it is really gone before any test starts.
+adb shell locksettings set-disabled true >/dev/null 2>&1 || true
+adb shell svc power stayon true >/dev/null 2>&1 || true
+adb shell input keyevent KEYCODE_WAKEUP >/dev/null 2>&1 || true
 adb shell input keyevent 82
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
-sleep 10
+for _ in $(seq 1 30); do
+  adb shell dumpsys window | grep -q "mShowingLockscreen=true\|isKeyguardShowing=true\|mDreamingLockscreen=true" || break
+  adb shell input keyevent 82; sleep 1
+done
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+sleep 5
 adb logcat -c
 instrument il.transit.planner.uitest.FirstLaunchTest first-launch
 instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys

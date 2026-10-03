@@ -55,8 +55,9 @@ Hebrew and English. Check the report's **Runs** table: it lists the screen each 
 *reported*, so a profile that did not apply is visible. Don't trust a profile you haven't
 checked there or by eye.
 
-Journeys run on API 26 (AOSP `default` image: the Google APIs Android 8 image crashes its own
-SystemUI after boot and takes the permission prompt with it), 29, 33, 34, 35 (`google_apis`).
+Journeys run on API 26 (AOSP `default` image), 29, 33, 34, 35 (`google_apis`). Android 8's
+SystemUI crashes when an app opens over a lock screen that is still up, killing the permission
+prompt; `ui_behaviour_run.sh` disables the lock screen and waits for it to go first.
 
 ## Rules (`LayoutAudit.kt`, report-only until each is fixed, then make it blocking)
 
