@@ -29,6 +29,7 @@ class TransitApp : Application() {
 
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active
+        override val progress: StateFlow<il.transit.core.ride.RideProgress?> = RideService.progress
         override fun start(itinerary: Itinerary) = RideService.start(this@TransitApp, itinerary)
         override fun stop() = RideService.stop(this@TransitApp)
     }
@@ -55,6 +56,9 @@ interface Reminders {
 /** Start/stop the "get off at the next stop" service, without the ViewModel holding a Context. */
 interface Rides {
     val active: StateFlow<Boolean>
+
+    /** Live progress of the ride ("3 stops left · arrive 08:47"); null between fixes or when idle. */
+    val progress: StateFlow<il.transit.core.ride.RideProgress?>
     fun start(itinerary: Itinerary)
     fun stop()
 }

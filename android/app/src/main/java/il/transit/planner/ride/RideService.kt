@@ -27,6 +27,7 @@ import il.transit.core.ride.RideTracker
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import kotlinx.coroutines.flow.MutableStateFlow
+import il.transit.core.ride.RideProgress
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.Instant
@@ -38,6 +39,7 @@ import java.time.Instant
  */
 class RideService : Service() {
     private var tracker: RideTracker? = null
+    private var finalStop: String = ""
     private var locationManager: LocationManager? = null
     // An explicit object, not a lambda: before API 29 the other three methods are abstract
     // too, and a SAM lambda would crash with AbstractMethodError when a provider toggles.
@@ -64,7 +66,7 @@ class RideService : Service() {
             return START_NOT_STICKY
         }
         tracker = RideTracker(itinerary)
-        val finalStop = itinerary.legs.lastOrNull { it.isTransit }?.to?.name.orEmpty()
+        finalStop = itinerary.legs.lastOrNull { it.isTransit }?.to?.name.orEmpty()
         ServiceCompat.startForeground(
             this,
             ID_ONGOING,
@@ -91,29 +93,39 @@ class RideService : Service() {
         }
     }
 
+    @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS
     private fun onLocation(loc: Location) {
-        when (val e = tracker?.update(LatLon(loc.latitude, loc.longitude), Instant.now())) {
+        val pos = LatLon(loc.latitude, loc.longitude)
+        val now = Instant.now()
+        when (val e = tracker?.update(pos, now)) {
             is RideEvent.Approaching -> getOffNext(e)
-            RideEvent.Finished -> stopSelf()
+            RideEvent.Finished -> { stopSelf(); return }
             null -> Unit
         }
+        val p = tracker?.progress(pos, now)
+        _progress.value = p
+        // The ongoing notification follows the ride: "Line 5 · 3 stops left · arrive 08:47".
+        val nm = NotificationManagerCompat.from(this)
+        if (p != null && nm.areNotificationsEnabled()) nm.notify(ID_ONGOING, ongoing(finalStop, p))
     }
 
     override fun onDestroy() {
         locationManager?.removeUpdates(listener)
         _active.value = false
+        _progress.value = null
         super.onDestroy()
     }
 
-    private fun ongoing(finalStop: String): Notification {
+    private fun ongoing(finalStop: String, p: RideProgress? = null): Notification {
         ensureChannels(this)
         val stop = PendingIntent.getService(
             this, 0, Intent(this, RideService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE,
         )
         return NotificationCompat.Builder(this, CHANNEL_ONGOING)
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-            .setContentTitle(getString(R.string.ride_ongoing_title))
-            .setContentText(getString(R.string.ride_ongoing_text, finalStop))
+            .setContentTitle(p?.let { rideProgressTitle(this, it) } ?: getString(R.string.ride_ongoing_title))
+            .setContentText(p?.let { rideProgressText(this, it) } ?: getString(R.string.ride_ongoing_text, finalStop))
+            .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
@@ -156,6 +168,23 @@ class RideService : Service() {
         private val VIBRATION = longArrayOf(0, 600, 250, 600, 250, 600)
 
         private val _active = MutableStateFlow(false)
+        private val _progress = MutableStateFlow<RideProgress?>(null)
+
+        /** The latest progress of the ride being tracked; null when none. */
+        val progress: StateFlow<RideProgress?> = _progress.asStateFlow()
+
+        /** "Line 5 · 3 stops left" */
+        fun rideProgressTitle(context: Context, p: RideProgress): String {
+            val stops = context.resources.getQuantityString(R.plurals.stops_left, p.stopsLeft, p.stopsLeft)
+            return if (p.line.isNullOrBlank()) stops else context.getString(R.string.ride_progress_title, p.line, stops)
+        }
+
+        /** "Get off at X ~08:47 (+2) · arrive 08:55" */
+        fun rideProgressText(context: Context, p: RideProgress): String {
+            val late = if (p.delayMin >= 2) " " + context.getString(R.string.late_paren, p.delayMin) else ""
+            return context.getString(R.string.ride_progress_text, p.alightStop, il.transit.core.present.hhmm(p.arriveAt)) + late +
+                " · " + context.getString(R.string.ride_progress_arrive, il.transit.core.present.hhmm(p.tripArriveAt))
+        }
 
         /** True while a ride is being tracked; the service clears it when it stops itself. */
         val active: StateFlow<Boolean> = _active.asStateFlow()

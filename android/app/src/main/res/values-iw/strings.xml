@@ -188,4 +188,16 @@
     <string name="routine_from">מ־</string>
     <string name="routine_to">עד</string>
     <string name="routine_remove">הסרה</string>
+    <plurals name="stops_left">
+        <item quantity="one">נשארה תחנה אחת</item>
+        <item quantity="two">נשארו %d תחנות</item>
+        <item quantity="other">נשארו %d תחנות</item>
+    </plurals>
+    <string name="ride_progress_title">קו \u2068%1$s\u2069 · %2$s</string>
+    <string name="ride_progress_text">לרדת ב%1$s ~\u2068%2$s\u2069</string>
+    <string name="ride_progress_arrive">הגעה \u2068%1$s\u2069</string>
+    <string name="my_lines">הקווים שלי</string>
+    <string name="my_lines_empty">הקישו על תחנה במפה ואז על ☆ ליד קו, כדי לנעוץ אותו כאן עם היציאות הקרובות.</string>
+    <string name="way_back_after">דרך חזרה אחרי</string>
+    <string name="hours_short">\u2068%1$d ש׳\u2069</string>
 </resources>

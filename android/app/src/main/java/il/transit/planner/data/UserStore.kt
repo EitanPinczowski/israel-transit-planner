@@ -32,6 +32,7 @@ class UserStore(private val context: Context) {
     val settings: Flow<UserSettings> = data.map { UserJson.decodeSettings(it[SETTINGS]) }
     val places: Flow<List<SavedPlace>> = data.map { UserJson.decodePlaces(it[PLACES]) }
     val trips: Flow<List<SavedTrip>> = data.map { UserJson.decodeTrips(it[TRIPS]) }
+    val favorites: Flow<List<il.transit.core.user.FavoriteLine>> = data.map { UserJson.decodeFavorites(it[FAVORITES]) }
 
     /** The one active "time to leave" reminder, if any. */
     val reminder: Flow<Reminder?> = data.map { UserJson.decodeReminder(it[REMINDER]) }
@@ -59,10 +60,15 @@ class UserStore(private val context: Context) {
         context.userData.edit { it[TRIPS] = UserJson.encodeTrips(t) }
     }
 
+    suspend fun setFavorites(f: List<il.transit.core.user.FavoriteLine>) {
+        context.userData.edit { it[FAVORITES] = UserJson.encodeFavorites(f) }
+    }
+
     private companion object {
         val SETTINGS = stringPreferencesKey("settings")
         val PLACES = stringPreferencesKey("places")
         val TRIPS = stringPreferencesKey("trips")
+        val FAVORITES = stringPreferencesKey("favorite_lines")
         val REMINDER = stringPreferencesKey("reminder")
         val LAST_UPDATE_CHECK = longPreferencesKey("last_update_check")
     }
