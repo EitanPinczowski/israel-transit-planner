@@ -3,6 +3,11 @@ package il.transit.planner.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -15,7 +20,14 @@ import com.android.resources.NightMode
 import com.android.resources.ScreenOrientation
 import il.transit.core.api.MotisJson
 import il.transit.core.api.PlanResponse
+import il.transit.core.features.BetterStartOption
+import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
+import il.transit.core.features.PickUpOption
+import il.transit.core.features.PickUpResult
+import il.transit.core.history.TripRecord
+import il.transit.core.plan.LastRide
+import il.transit.core.update.LatestRelease
 import il.transit.core.features.DropOffOption
 import il.transit.core.features.DropOffResult
 import il.transit.core.features.Option
@@ -25,6 +37,7 @@ import il.transit.core.plan.TripResult
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.LegKind
 import il.transit.core.user.SavedPlace
+import il.transit.core.user.SavedTrip
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,22 +106,85 @@ class ScreensTest(private val v: Variant) {
         shot("stop", UiState(stopSheet = StopSheet("s1", "מרכז רפואי סורוקה/אוניברסיטת בן גוריון", false, rows, false)))
     }
 
-    private fun shot(name: String, state: UiState) = paparazzi.snapshot(name) { Screen(state, v.dark, v.rtl) }
-
-    @Composable
-    private fun Screen(state: UiState, dark: Boolean, rtl: Boolean) {
-        // Paparazzi picks the Hebrew strings from the locale but does not flip the layout;
-        // on a phone the locale does both. Without this the "Hebrew" shots are mirror-wrong.
-        val direction = if (rtl) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr
-        CompositionLocalProvider(LocalLayoutDirection provides direction) { Themed(state, dark) }
+    @Test fun betterStart() {
+        val itin = trip.itineraries.first()
+        val o = BetterStartOption(itin, driveSec = 540, dropOffStopName = "מרכז רפואי סורוקה", dropOffAt = LatLon(31.258, 34.80), leaveAt = start)
+        val state = tripState().copy(
+            mode = AppMode.BETTER_START,
+            results = null,
+            betterStart = BetterStartResult(trip.itineraries[1], listOf(Option(o, 540, itin.end, itin.transfers)), "CAR"),
+        )
+        shot("betterstart", state)
     }
 
+    @Test fun pickUp() {
+        val itin = trip.itineraries.first()
+        val o = PickUpOption(itin, "מחלף לה גווארדייה", LatLon(32.05, 34.79), itin.end, driveSec = 900, driverLeavesAt = itin.end.minusSeconds(900))
+        val state = tripState().copy(
+            mode = AppMode.PICK_UP,
+            results = null,
+            pickUp = PickUpResult(trip.itineraries[1], listOf(Option(o, 1800, itin.end.plusSeconds(900), itin.transfers))),
+        )
+        shot("pickup", state)
+    }
+
+    /** The selected trip unfolded: walking directions (arrows never mirror) and a last-trip warning. */
+    @Test fun walking() = shot(
+        "walking",
+        tripState().copy(lastRide = LastRide(last = trip.itineraries.last(), next = null)),
+        walkOpen = true,
+    )
+
+    @Test fun banners() = shot(
+        "banners",
+        UiState(
+            update = LatestRelease("0.3.0", "https://github.com", null),
+            savedTrips = listOf(SavedTrip("עבודה", null, home)),
+            savedPlaces = listOf(home, SavedPlace("BGU", 31.262, 34.801)),
+        ),
+    )
+
+    @Test fun settings() {
+        val state = UiState(savedTrips = listOf(SavedTrip("עבודה", null, home)), savedPlaces = listOf(home))
+        val actions = ScreenActions(OfflineState(OfflineState.Status.READY, 100, 42.5), {}, {}, {}, {})
+        paparazzi.snapshot("settings") { Frame { DialogBody { SettingsContent(state, NoActions, actions) } } }
+    }
+
+    @Test fun history() {
+        val t0 = start.epochSecond
+        val records = listOf(
+            TripRecord(t0, "המיקום שלי", "ת. רכבת תל אביב - סבידור", "TRIP", 82, 18, 2),
+            TripRecord(t0 - 86_400, "Home", "BGU", "BETTER_START", 21, 4, 0, savedMin = 12),
+            TripRecord(t0 - 3 * 86_400, "", "Soroka", "PICK_UP", 35, 9, 1, savedMin = 25),
+        )
+        paparazzi.snapshot("history") { Frame { DialogBody { HistoryContent(UiState(history = records), NoActions) } } }
+    }
+
+    private fun shot(name: String, state: UiState, walkOpen: Boolean = false) = paparazzi.snapshot(name) {
+        Frame {
+            CompositionLocalProvider(LocalWalkDirectionsOpen provides walkOpen) {
+                val actions = ScreenActions(OfflineState(), {}, {}, {}, {})
+                MainScreen(state, NoActions, actions) {
+                    Box(Modifier.fillMaxSize().background(if (v.dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)))
+                }
+            }
+        }
+    }
+
+    /** Theme + direction. Paparazzi takes Hebrew strings from the locale but does not flip the
+     *  layout (a phone does both), so RTL is set here or the "Hebrew" shots are mirror-wrong. */
     @Composable
-    private fun Themed(state: UiState, dark: Boolean) {
-        AppTheme(dark = dark) {
-            val actions = ScreenActions(OfflineState(), {}, {}, {}, {})
-            MainScreen(state, NoActions, actions) {
-                Box(Modifier.fillMaxSize().background(if (dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)))
+    private fun Frame(content: @Composable () -> Unit) {
+        val direction = if (v.rtl) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr
+        CompositionLocalProvider(LocalLayoutDirection provides direction) { AppTheme(dark = v.dark, content = content) }
+    }
+
+    /** Roughly what AlertDialog draws around its text: a scrim, a rounded surface, 24dp in. */
+    @Composable
+    private fun DialogBody(content: @Composable () -> Unit) {
+        Box(Modifier.fillMaxSize().background(Color(0x99000000)).padding(24.dp), contentAlignment = Alignment.Center) {
+            Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+                Box(Modifier.padding(24.dp)) { content() }
             }
         }
     }
@@ -135,6 +211,7 @@ class ScreensTest(private val v: Variant) {
             null,
         )
         private val start = trip.itineraries.first().start
+        private val home = SavedPlace("Home", 31.25, 34.79)
 
         private val small = DeviceConfig.NEXUS_5 // 360 x 640 dp
         private val big = DeviceConfig.PIXEL_6_PRO

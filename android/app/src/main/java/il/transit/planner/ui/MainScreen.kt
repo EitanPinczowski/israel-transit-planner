@@ -690,7 +690,9 @@ private fun ResultsPanel(
                     IconButton(onClick = vm::plan) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
                 }
                 if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
-                    TextButton(onClick = onSaveTrip) { Text(stringResource(R.string.save_trip)) }
+                    IconButton(onClick = onSaveTrip) {
+                        Icon(Icons.Default.Star, stringResource(R.string.save_trip), tint = MaterialTheme.colorScheme.tertiary)
+                    }
                 }
                 IconButton(onClick = vm::clearResults) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
@@ -864,6 +866,9 @@ private fun SortChips(state: UiState, vm: MainActions) {
     }
 }
 
+/** Screenshot tests open the walking directions; the app always starts them folded. */
+internal val LocalWalkDirectionsOpen = compositionLocalOf { false }
+
 /**
  * Turn-by-turn directions for the walking parts of the selected trip, folded by default.
  * Arrows are real-world directions: left is left in Hebrew too, so they are never mirrored.
@@ -874,7 +879,8 @@ private fun WalkDirections(itin: Itinerary) {
         itin.legs.filter { it.mode == "WALK" && it.duration >= 60 }.map { it to walkSteps(it) }.filter { it.second.size > 1 }
     }
     if (walks.isEmpty()) return
-    var open by remember(itin) { mutableStateOf(false) }
+    val startOpen = LocalWalkDirectionsOpen.current
+    var open by remember(itin) { mutableStateOf(startOpen) }
     TextButton(onClick = { open = !open }) {
         Text(stringResource(if (open) R.string.walk_directions_hide else R.string.walk_directions_show))
     }
@@ -1248,94 +1254,97 @@ private fun DepartureView(r: DepartureRow) {
 
 @Composable
 private fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions) {
-    val s = state.settings
-    fun set(n: UserSettings) = vm.updateSettings(n)
     AlertDialog(
         onDismissRequest = { vm.showSettings(false) },
         confirmButton = { TextButton(onClick = { vm.showSettings(false) }) { Text(stringResource(R.string.done)) } },
         title = { Text(stringResource(R.string.settings)) },
-        text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                item {
-                    Section(R.string.max_transfers) {
-                        UserSettings.TRANSFER_CHOICES.forEach { n ->
-                            FilterChip(s.maxTransfers == n, { set(s.copy(maxTransfers = n)) }, label = { Text(n?.toString() ?: stringResource(R.string.any)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.max_walk) {
-                        UserSettings.WALK_CHOICES.forEach { m ->
-                            FilterChip(s.maxWalkMin == m, { set(s.copy(maxWalkMin = m)) }, label = { Text(stringResource(R.string.minutes_short, m)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.modes) {
-                        ModeFilter.entries.forEach { f ->
-                            val label = when (f) {
-                                ModeFilter.ALL -> R.string.mode_all
-                                ModeFilter.TRAINS_ONLY -> R.string.mode_trains
-                                ModeFilter.NO_BUSES -> R.string.mode_no_buses
-                            }
-                            FilterChip(s.modeFilter == f, { set(s.copy(modeFilter = f)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.walk_speed) {
-                        WalkSpeed.entries.forEach { w ->
-                            val label = when (w) {
-                                WalkSpeed.SLOW -> R.string.speed_slow
-                                WalkSpeed.NORMAL -> R.string.speed_normal
-                                WalkSpeed.FAST -> R.string.speed_fast
-                            }
-                            FilterChip(s.walkSpeed == w, { set(s.copy(walkSpeed = w)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.fare_profile) {
-                        FareProfile.entries.forEach { f ->
-                            val label = when (f) {
-                                FareProfile.REGULAR -> R.string.fare_regular
-                                FareProfile.HALF -> R.string.fare_half
-                                FareProfile.FREE -> R.string.fare_free
-                            }
-                            FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
-                        }
-                    }
-                }
-                item {
-                    Section(R.string.accessibility) {
-                        FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
-                    }
-                    Text(stringResource(R.string.accessible_help), style = MaterialTheme.typography.bodySmall)
-                }
-                item {
-                    Text(stringResource(R.string.traffic_factor, String.format(Locale.US, "%.1f", s.peakFactor)), style = MaterialTheme.typography.labelLarge)
-                    Slider(
-                        value = s.peakFactor.toFloat(),
-                        onValueChange = { v -> set(s.copy(peakFactor = Math.round(v * 10) / 10.0)) },
-                        valueRange = UserSettings.PEAK_RANGE.start.toFloat()..UserSettings.PEAK_RANGE.endInclusive.toFloat(),
-                        steps = 7,
-                    )
-                    Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
-                }
-                item { OfflineSection(actions) }
-                if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
-                    item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
-                    items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
-                    items(state.savedPlaces) { p -> SavedRow("★ ${p.name}") { vm.deletePlace(p) } }
+        text = { SettingsContent(state, vm, actions) },
+    )
+}
+
+/** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
+@Composable
+internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenActions) {
+    val s = state.settings
+    fun set(n: UserSettings) = vm.updateSettings(n)
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item {
+            Section(R.string.max_transfers) {
+                UserSettings.TRANSFER_CHOICES.forEach { n ->
+                    FilterChip(s.maxTransfers == n, { set(s.copy(maxTransfers = n)) }, label = { Text(n?.toString() ?: stringResource(R.string.any)) })
                 }
             }
-        },
-    )
+        }
+        item {
+            Section(R.string.max_walk) {
+                UserSettings.WALK_CHOICES.forEach { m ->
+                    FilterChip(s.maxWalkMin == m, { set(s.copy(maxWalkMin = m)) }, label = { Text(stringResource(R.string.minutes_short, m)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.modes) {
+                ModeFilter.entries.forEach { f ->
+                    val label = when (f) {
+                        ModeFilter.ALL -> R.string.mode_all
+                        ModeFilter.TRAINS_ONLY -> R.string.mode_trains
+                        ModeFilter.NO_BUSES -> R.string.mode_no_buses
+                    }
+                    FilterChip(s.modeFilter == f, { set(s.copy(modeFilter = f)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.walk_speed) {
+                WalkSpeed.entries.forEach { w ->
+                    val label = when (w) {
+                        WalkSpeed.SLOW -> R.string.speed_slow
+                        WalkSpeed.NORMAL -> R.string.speed_normal
+                        WalkSpeed.FAST -> R.string.speed_fast
+                    }
+                    FilterChip(s.walkSpeed == w, { set(s.copy(walkSpeed = w)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.fare_profile) {
+                FareProfile.entries.forEach { f ->
+                    val label = when (f) {
+                        FareProfile.REGULAR -> R.string.fare_regular
+                        FareProfile.HALF -> R.string.fare_half
+                        FareProfile.FREE -> R.string.fare_free
+                    }
+                    FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
+                }
+            }
+        }
+        item {
+            Section(R.string.accessibility) {
+                FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
+            }
+            Text(stringResource(R.string.accessible_help), style = MaterialTheme.typography.bodySmall)
+        }
+        item {
+            Text(stringResource(R.string.traffic_factor, String.format(Locale.US, "%.1f", s.peakFactor)), style = MaterialTheme.typography.labelLarge)
+            Slider(
+                value = s.peakFactor.toFloat(),
+                onValueChange = { v -> set(s.copy(peakFactor = Math.round(v * 10) / 10.0)) },
+                valueRange = UserSettings.PEAK_RANGE.start.toFloat()..UserSettings.PEAK_RANGE.endInclusive.toFloat(),
+                steps = 7,
+            )
+            Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
+        }
+        item { OfflineSection(actions) }
+        if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
+            item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
+            items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
+            items(state.savedPlaces) { p -> SavedRow("★ ${p.name}") { vm.deletePlace(p) } }
+        }
+    }
 }
 
 @Composable
 private fun HistoryDialog(state: UiState, vm: MainActions) {
-    val st = state.historyStats
     AlertDialog(
         onDismissRequest = { vm.showHistory(false) },
         confirmButton = { TextButton(onClick = { vm.showHistory(false) }) { Text(stringResource(R.string.done)) } },
@@ -1343,41 +1352,46 @@ private fun HistoryDialog(state: UiState, vm: MainActions) {
             if (state.history.isNotEmpty()) TextButton(onClick = { vm.clearHistory() }) { Text(stringResource(R.string.history_clear)) }
         },
         title = { Text(stringResource(R.string.history)) },
-        text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                if (state.history.isEmpty()) {
-                    item { Text(stringResource(R.string.history_empty)) }
-                } else {
-                    item {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            StatTile(st.trips.toString(), stringResource(R.string.stat_trips))
-                            StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week))
-                            StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours))
-                            StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved))
-                        }
-                    }
-                    st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
-                        item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
-                    }
-                    item { HorizontalDivider() }
-                    items(state.history.take(30)) { r ->
-                        val from = r.from.ifBlank { stringResource(R.string.my_location) }
-                        val to = r.to.ifBlank { stringResource(R.string.my_location) }
-                        Column {
-                            Text("$from – $to", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            val date = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm").format(r.startedAt.atZone(ISRAEL))
-                            val saved = r.savedMin?.let { " · " + stringResource(R.string.saves_min, it) }.orEmpty()
-                            Text(
-                                "$date · " + stringResource(R.string.minutes_short, r.transitMin + r.walkMin) + saved,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
+        text = { HistoryContent(state, vm) },
+    )
+}
+
+/** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
+@Composable
+internal fun HistoryContent(state: UiState, vm: MainActions) {
+    val st = state.historyStats
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (state.history.isEmpty()) {
+            item { Text(stringResource(R.string.history_empty)) }
+        } else {
+            item {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StatTile(st.trips.toString(), stringResource(R.string.stat_trips))
+                    StatTile(st.tripsThisWeek.toString(), stringResource(R.string.stat_week))
+                    StatTile(String.format(Locale.US, "%.1f", st.transitHours), stringResource(R.string.stat_transit_hours))
+                    StatTile(st.minutesSaved.toString(), stringResource(R.string.stat_saved))
                 }
             }
-        },
-    )
+            st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
+                item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
+            }
+            item { HorizontalDivider() }
+            items(state.history.take(30)) { r ->
+                val from = r.from.ifBlank { stringResource(R.string.my_location) }
+                val to = r.to.ifBlank { stringResource(R.string.my_location) }
+                Column {
+                    Text("$from – $to", style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    val date = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm").format(r.startedAt.atZone(ISRAEL))
+                    val saved = r.savedMin?.let { " · " + stringResource(R.string.saves_min, it) }.orEmpty()
+                    Text(
+                        "$date · " + stringResource(R.string.minutes_short, r.transitMin + r.walkMin) + saved,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
