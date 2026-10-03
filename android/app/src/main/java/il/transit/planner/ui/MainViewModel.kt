@@ -22,6 +22,8 @@ import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.StopsViewport
+import il.transit.core.plan.LastRide
+import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
@@ -118,6 +120,12 @@ data class UiState(
     val showHistory: Boolean = false,
     /** A newer release to offer, until dismissed. */
     val update: LatestRelease? = null,
+    /** Trip tab: the evening's last trip for the shown route (looked up on evenings, Fridays
+     *  and Saturdays, or when asked), and for the way back when asked. */
+    val lastRide: LastRide? = null,
+    val lastRideAsked: Boolean = false,
+    val lastRideBack: LastRide? = null,
+    val lastRideLoading: Boolean = false,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -335,6 +343,7 @@ class MainViewModel(
                 it.copy(
                     loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null,
                     selected = 0, stopSheet = null, offlineSince = null,
+                    lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
                 )
             }
         }
@@ -359,6 +368,9 @@ class MainViewModel(
                             )
                         }
                         if (!empty) planCache?.put(cacheKey, r)
+                        r.itineraries.firstOrNull()?.let { first ->
+                            if (!quiet && LastRideFinder.worthAsking(first.start)) loadLastRide(from, to, first.start, back = false, asked = false)
+                        }
                     }
                     AppMode.BETTER_START -> {
                         // A fresh budget per search: a pruning bug becomes an exception, not a flood.
@@ -488,6 +500,56 @@ class MainViewModel(
     }
 
     fun select(index: Int) = _state.update { it.copy(selected = index) }
+
+    // --- last trip ------------------------------------------------------------------------
+
+    /** Remembered per route and service day, so a refresh or a second look costs nothing. */
+    private val lastRides = HashMap<String, LastRide>()
+
+    /** "Last trip today?" — the user asked, so the answer is shown whatever it is. */
+    fun checkLastRide() = lastRideFor(back = false)
+
+    /** "Last trip back" — from the destination to the origin, the same day. */
+    fun checkLastRideBack() = lastRideFor(back = true)
+
+    private fun lastRideFor(back: Boolean) {
+        val s = _state.value
+        val from = resolve(s.from) ?: return
+        val to = s.to?.let(::resolve) ?: return
+        val at = s.selectedItinerary?.start ?: s.time ?: Instant.now()
+        loadLastRide(from, to, at, back, asked = true)
+    }
+
+    private fun loadLastRide(from: LatLon, to: LatLon, at: Instant, back: Boolean, asked: Boolean) {
+        val day = LastRideFinder.serviceDay(at)
+        val a = if (back) to else from
+        val b = if (back) from else to
+        val key = PlanCache.key("LAST-$day", a, b)
+        val prefs = _state.value.settings.preferences()
+        val route = _state.value.let { it.from to it.to }
+        fun show(lr: LastRide) = _state.update {
+            when {
+                (it.from to it.to) != route -> it // the user moved on to another route meanwhile
+                back -> it.copy(lastRideBack = lr, lastRideLoading = false)
+                else -> it.copy(lastRide = lr, lastRideAsked = it.lastRideAsked || asked, lastRideLoading = false)
+            }
+        }
+        lastRides[key]?.let { show(it); return }
+        _state.update { it.copy(lastRideLoading = true) }
+        viewModelScope.launch {
+            try {
+                val lr = LastRideFinder(BudgetedTransitApi(api, LastRideFinder.BUDGET))
+                    .find(Endpoint.Coord(a), Endpoint.Coord(b), day, prefs, language)
+                lastRides[key] = lr
+                show(lr)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // A hint, not the answer: a failed lookup just leaves it out.
+                _state.update { it.copy(lastRideLoading = false) }
+            }
+        }
+    }
 
     fun clearResults() = _state.update { it.copy(results = null, betterStart = null, dropOff = null, pickUp = null, error = null, loading = false) }
 

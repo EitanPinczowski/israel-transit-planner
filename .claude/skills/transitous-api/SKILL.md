@@ -53,6 +53,14 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
   (`needsFullNameHint` in `present/Format.kt`).
+- **Last trip of the day (2026-10-03, live):** `arriveBy=true` at 03:00 the next morning
+  returns the evening's latest trips — Fri 9 Oct Be'er Sheva → Tel Aviv: 15:29. Two traps,
+  handled in `LastRideFinder`: a late trip that arrives after 03:00 (night line 469, hourly
+  all night) is invisible to that search; and a depart-at search after the last Friday trip
+  offers a 16:20 bus that **waits out Shabbat** (arrives Saturday night) — not a "next trip".
+- **`pedestrianProfile=WHEELCHAIR`** is accepted and changes the answer (BGU → Tel Aviv: a bus
+  to the station instead of the 836 m walk). `map/stops` carries no wheelchair field, so
+  vehicle/stop accessibility is unknown — the app says so.
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
   `lineLabel()` / `headsignText()`.

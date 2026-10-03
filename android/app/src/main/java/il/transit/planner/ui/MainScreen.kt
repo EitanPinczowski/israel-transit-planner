@@ -79,6 +79,8 @@ import il.transit.core.present.DropOffRow
 import il.transit.core.present.PickUpRow
 import il.transit.core.present.pickUpRow
 import il.transit.core.present.fareLabel
+import il.transit.core.present.lastRideNote
+import il.transit.core.plan.LastRide
 import il.transit.core.fare.FareEstimate
 import il.transit.core.fare.FareProfile
 import il.transit.core.fare.FareTable
@@ -432,6 +434,7 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                     itemsIndexed(state.options) { i, itin ->
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
+                    if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -520,6 +523,57 @@ private fun FareText(f: FareEstimate?) {
     if (f == null) return
     val text = if (f.agorot == 0) stringResource(R.string.fare_free_label) else "\u2068${fareLabel(f)}\u2069"
     Text(text, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp))
+}
+
+/**
+ * "Last trip today" and "last trip back". Shown by itself on evenings, Fridays and
+ * Saturdays when it matters (the last trip is near, or service stops for Shabbat/a holiday);
+ * otherwise one tap away. Each lookup is at most [il.transit.core.plan.LastRideFinder.BUDGET] requests.
+ */
+@Composable
+private fun LastRideSection(state: UiState, vm: MainViewModel) {
+    val warn = MaterialTheme.colorScheme.error
+    Column(Modifier.fillMaxWidth().padding(top = 4.dp)) {
+        val lr = state.lastRide
+        val line = lr?.let { lastRideText(it, state.selectedItinerary, always = state.lastRideAsked, back = false) }
+        if (line != null) Text(line, style = MaterialTheme.typography.bodySmall, color = warn)
+        state.lastRideBack?.let { b ->
+            Text(lastRideText(b, null, always = true, back = true)!!, style = MaterialTheme.typography.bodySmall, color = warn)
+        }
+        Row {
+            // Also when an automatic look found nothing worth saying: asking shows it anyway.
+            if ((lr == null || (line == null && !state.lastRideAsked)) && !state.lastRideLoading) {
+                TextButton(onClick = vm::checkLastRide) { Text(stringResource(R.string.last_ride_check)) }
+            }
+            if (state.lastRideBack == null && !state.lastRideLoading) {
+                TextButton(onClick = vm::checkLastRideBack) { Text(stringResource(R.string.last_ride_back_check)) }
+            }
+            if (state.lastRideLoading) CircularProgressIndicator(Modifier.size(18.dp).padding(2.dp), strokeWidth = 2.dp)
+        }
+    }
+}
+
+/** One line for a [LastRide]; null when an automatic lookup has nothing worth saying. */
+@Composable
+private fun lastRideText(lr: LastRide, selected: Itinerary?, always: Boolean, back: Boolean): String? {
+    if (lr.runsAllNight) return if (always) stringResource(R.string.last_ride_all_night) else null
+    if (lr.last == null) return if (always) stringResource(R.string.last_ride_none) else null
+    val n = lastRideNote(lr, selected, always) ?: return null
+    val head = when {
+        back -> stringResource(R.string.last_ride_back_at, n.lastTime)
+        n.selectedIsLast -> stringResource(R.string.last_ride_this)
+        else -> stringResource(R.string.last_ride_at, n.lastTime)
+    }
+    val tail = when {
+        !n.longGap -> ""
+        n.resumesTime == null -> stringResource(R.string.last_ride_none_after)
+        else -> {
+            val day = n.resumesDay
+            val whenText = if (day != null) stringResource(R.string.on_day, day.getDisplayName(TextStyle.SHORT, Locale.getDefault()), n.resumesTime!!) else n.resumesTime!!
+            stringResource(R.string.last_ride_resumes, whenText)
+        }
+    }
+    return head + tail
 }
 
 /** Fares are an estimate from a copied price list; the official one is a tap away. */
@@ -871,6 +925,12 @@ private fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAct
                             FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
                         }
                     }
+                }
+                item {
+                    Section(R.string.accessibility) {
+                        FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
+                    }
+                    Text(stringResource(R.string.accessible_help), style = MaterialTheme.typography.bodySmall)
                 }
                 item {
                     Text(stringResource(R.string.traffic_factor, String.format(Locale.US, "%.1f", s.peakFactor)), style = MaterialTheme.typography.labelLarge)
