@@ -10,6 +10,8 @@ description: Hebrew right-to-left and English UI rules. Load before touching any
 - Manifest has `android:supportsRtl="true"`. In Compose use `start`/`end`, never
   `left`/`right`; `Alignment.BottomStart`, `Arrangement.Start`, `PaddingValues(start=…)`.
 - Directional icons (back arrow, chevrons) must mirror: `Icons.AutoMirrored.*`.
+- **Except real-world directions.** Walking-direction arrows (← left, → right in
+  `WalkDirections`) mean the street, not the layout: never mirror them in Hebrew.
 - Numbers, times, line numbers inside Hebrew text: wrap in `⁨…⁩` (FSI/PDI) or use
   `BidiFormatter` so "קו 5 בעוד 7 דק׳" doesn't reorder. Line numbers like `5א` are text,
   never parse them as ints.

@@ -37,6 +37,19 @@ data class Place(
 @Serializable
 data class EncodedPolyline(val points: String, val precision: Int, val length: Int = 0)
 
+/**
+ * One piece of a walking leg. Transitous only ever sends `CONTINUE` or `STAIRS` here (2,612
+ * recorded steps, 2026-10), and names the street on some of them; turns are worked out from
+ * [polyline] by `walkSteps()`.
+ */
+@Serializable
+data class StepInstruction(
+    val relativeDirection: String = "CONTINUE",
+    val distance: Double = 0.0,
+    val streetName: String = "",
+    val polyline: EncodedPolyline? = null,
+)
+
 @Serializable
 data class Leg(
     val mode: String,
@@ -61,6 +74,8 @@ data class Leg(
     val cancelled: Boolean = false,
     val intermediateStops: List<Place> = emptyList(),
     val legGeometry: EncodedPolyline? = null,
+    /** Walking legs only: the path piece by piece. */
+    val steps: List<StepInstruction> = emptyList(),
 ) {
     val start: Instant get() = parseTime(startTime)
     val end: Instant get() = parseTime(endTime)

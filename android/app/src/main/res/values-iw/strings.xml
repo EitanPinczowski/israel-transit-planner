@@ -162,4 +162,21 @@
     <string name="accessibility">נגישות</string>
     <string name="accessible_routes">כיסא גלגלים / עגלה</string>
     <string name="accessible_help">קטעי ההליכה נמנעים ממדרגות, לפי נתוני המפה. אין מידע אם האוטובוס או הרכבת עצמם נגישים; כדאי לבדוק מול המפעיל.</string>
+    <string name="sort_fastest">המהירה</string>
+    <string name="sort_fewest_transfers">מעט החלפות</string>
+    <string name="sort_least_walking">מעט הליכה</string>
+    <string name="walk_directions_show">הוראות הליכה</string>
+    <string name="walk_directions_hide">הסתרת הוראות ההליכה</string>
+    <string name="walk_to">הליכה אל %1$s</string>
+    <string name="meters">\u2068%1$d מ׳\u2069</string>
+    <string name="turn_start">צאו</string>
+    <string name="turn_straight">המשיכו ישר</string>
+    <string name="turn_slight_left">סטו שמאלה</string>
+    <string name="turn_left">פנו שמאלה</string>
+    <string name="turn_sharp_left">פנייה חדה שמאלה</string>
+    <string name="turn_slight_right">סטו ימינה</string>
+    <string name="turn_right">פנו ימינה</string>
+    <string name="turn_sharp_right">פנייה חדה ימינה</string>
+    <string name="turn_u_turn">חזרו לאחור</string>
+    <string name="turn_stairs">מדרגות</string>
 </resources>

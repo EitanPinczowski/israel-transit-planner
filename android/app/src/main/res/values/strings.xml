@@ -161,4 +161,21 @@
     <string name="accessibility">Accessibility</string>
     <string name="accessible_routes">Wheelchair / stroller</string>
     <string name="accessible_help">Walking parts avoid stairs, using map data. Whether the bus or train itself is accessible is not known; check with the operator.</string>
+    <string name="sort_fastest">Fastest</string>
+    <string name="sort_fewest_transfers">Fewest transfers</string>
+    <string name="sort_least_walking">Least walking</string>
+    <string name="walk_directions_show">Walking directions</string>
+    <string name="walk_directions_hide">Hide walking directions</string>
+    <string name="walk_to">Walk to %1$s</string>
+    <string name="meters">\u2068%1$d m\u2069</string>
+    <string name="turn_start">Head out</string>
+    <string name="turn_straight">Continue</string>
+    <string name="turn_slight_left">Bear left</string>
+    <string name="turn_left">Turn left</string>
+    <string name="turn_sharp_left">Sharp left</string>
+    <string name="turn_slight_right">Bear right</string>
+    <string name="turn_right">Turn right</string>
+    <string name="turn_sharp_right">Sharp right</string>
+    <string name="turn_u_turn">Turn back</string>
+    <string name="turn_stairs">Stairs</string>
 </resources>
