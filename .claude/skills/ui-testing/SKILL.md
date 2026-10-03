@@ -46,18 +46,20 @@ only Java 8 `java.time`. `Duration.truncatedTo` crashed API 26/29 once — now a
 | P5 | same, largest font | 1080×2340 @450 | 2.0 | |
 | P6 | Pixel-class | 1080×2400 @420 (411×914 dp) | 1.0 | |
 | P7 | Fold cover screen | 904×2316 @420 | 1.0 | |
-| P8 | landscape | 1080×2400 @420, rotated | 1.0 | + dark |
+| P8 | landscape | 2400×1080 @420 (914×411 dp) | 1.0 | + dark |
 | P9 | tablet / unfolded | 2208×1840 @420 | 1.0 | |
 
-Each in Hebrew and English. Check the report's **Runs** table: it lists the screen each device
+The emulator boots with a 2400×2400 screen because `wm size` can only shrink the physical
+screen (a 1080×1920 AVD silently clamped every taller profile, seen 2026-10-03). Each profile in
+Hebrew and English. Check the report's **Runs** table: it lists the screen each device
 *reported*, so a profile that did not apply is visible. Don't trust a profile you haven't
 checked there or by eye.
 
 ## Rules (`LayoutAudit.kt`, report-only until each is fixed, then make it blocking)
 
 R1 search card and bottom panel overlap · R2 tappable outside the usable screen (keyboard-hidden
-items = one finding per screen) · R3 clipped/squeezed text, or a time/price/duration cut with …
-· R4 Compose's grown 48 dp tap areas crowd each other · R5 Accessibility Test Framework
+items = one finding per screen; behind an open dialog doesn't count) · R3 clipped/squeezed text, or a time/price/duration cut with …
+· R4 a target under 40 dp whose grown 48 dp tap area reaches another · R5 Accessibility Test Framework
 (contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
 not squeezed. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
 closes what is open. Broken journeys and crashes fail the run; findings never do.

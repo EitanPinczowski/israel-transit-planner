@@ -73,7 +73,8 @@ jobs:
           target: google_apis
           arch: x86_64
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # A screen big enough for every profile: wm size only shrinks it (tools/ui_layout_run.sh).
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 2400x2400
           script: bash tools/ui_layout_run.sh ${{ matrix.shard }} apks out/layout-${{ matrix.shard }}
       - if: always()
         uses: actions/upload-artifact@v4

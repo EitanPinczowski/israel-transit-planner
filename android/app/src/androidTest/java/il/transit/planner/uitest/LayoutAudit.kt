@@ -68,8 +68,13 @@ class LayoutAudit(private val d: AppDriver) {
         }
 
         val underKeyboard = mutableListOf<String>()
+        fun isMain(root: SemanticsNode) =
+            root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
+        // With a dialog up, only the dialog is reachable; what lies behind it is not a finding.
+        val dialogOpen = merged.any { !isMain(it) }
         for (root in merged) {
-            val isMain = root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
+            val isMain = isMain(root)
+            if (isMain && dialogOpen) continue
             val area = if (isMain) safe else root.boundsInWindow.toRect()
             val noKeyboard = if (isMain) Rect(area.left, area.top, area.right, decor.height - (insetsBottomBars ?: 0)) else area
             val taps = mutableListOf<Pair<SemanticsNode, CRect>>()
@@ -90,11 +95,13 @@ class LayoutAudit(private val d: AppDriver) {
                 val dy = maxOf(0f, (min - r.height) / 2)
                 return CRect(r.left - dx, r.top - dy, r.right + dx, r.bottom + dy)
             }
+            // Only clearly small targets (< 40 dp): rows of 44 dp that merely touch are normal lists.
+            val small = 40 * density
             for (i in taps.indices) for (j in taps.indices) {
                 if (i == j) continue
                 val (a, ra) = taps[i]
                 val (b, rb) = taps[j]
-                if (ra.width >= min && ra.height >= min) continue
+                if (minOf(ra.width, ra.height) >= small) continue
                 if (ra.overlaps(rb) || rb.containsRect(ra) || ra.containsRect(rb)) continue // nested or already touching
                 val g = grown(ra)
                 val depth = minOf(g.right, rb.right) - maxOf(g.left, rb.left) to minOf(g.bottom, rb.bottom) - maxOf(g.top, rb.top)
@@ -124,7 +131,14 @@ class LayoutAudit(private val d: AppDriver) {
             // missing part of a line counts.
             val lineH = if (t.lineCount > 0) t.multiParagraph.height / t.lineCount else 0f
             val cutHeight = t.multiParagraph.height - t.size.height > lineH / 2
-            if ((t.didOverflowWidth || cutHeight) && !ellipsis) out += Violation("R3", quote(text), "text is clipped")
+            if ((t.didOverflowWidth || cutHeight) && !ellipsis) {
+                out += Violation(
+                    "R3", quote(text),
+                    "text is clipped: box ${dp(t.size.width.toFloat())}×${dp(t.size.height.toFloat())} dp, " +
+                        "text ${dp(t.multiParagraph.width)}×${dp(t.multiParagraph.height)} dp, ${t.lineCount} lines" +
+                        if (t.didOverflowWidth) " (width)" else " (height)",
+                )
+            }
             if (cut && IMPORTANT.containsMatchIn(text)) out += Violation("R3", quote(text), "a time/price/duration is cut off with …")
             val words = text.split(Regex("\\s+")).count { it.isNotBlank() }
             if (t.lineCount > maxOf(words, 1) || (t.lineCount >= 2 && n.boundsInWindow.width < 40 * density)) {

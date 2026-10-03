@@ -3,6 +3,9 @@
 # emulator that is reshaped between runs. Called by .github/workflows/ui-tests.yml:
 #   tools/ui_layout_run.sh <shard 1|2|3> <apk dir> <out dir>
 # Profiles: see .claude/skills/ui-testing. Exit 1 if a test crashed (audit findings never fail).
+# The emulator boots with a 2400×2400 screen (ui-tests.yml): `wm size` can shrink the screen
+# but not grow it past the physical one (a 1080×1920 AVD clamped every taller profile).
+# Landscape is a wide size, not a rotation.
 set -u
 SHARD=$1
 APKS=$2
@@ -20,7 +23,7 @@ PROFILES=(
   "P5 1080x2340 450 2.0 gestural    0 hole  no"
   "P6 1080x2400 420 1.0 gestural    0 none  no"
   "P7 904x2316  420 1.0 gestural    0 none  no"
-  "P8 1080x2400 420 1.0 gestural    1 hole  yes"
+  "P8 2400x1080 420 1.0 gestural    0 hole  yes"
   "P9 2208x1840 420 1.0 threebutton 0 none  no"
 )
 case $SHARD in
