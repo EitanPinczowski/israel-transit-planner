@@ -3,6 +3,9 @@ package il.transit.planner.ui
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripSort
+import il.transit.core.present.DepartureRow
+import il.transit.core.user.FavoriteLine
+import il.transit.core.user.PlaceRoutine
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserSettings
@@ -44,6 +47,15 @@ interface MainActions {
     fun deletePlace(p: SavedPlace)
     fun deleteTrip(t: SavedTrip)
     fun clearHistory()
+    fun showFavorites(show: Boolean)
+    fun toggleFavorite(sheet: StopSheet, row: DepartureRow)
+    fun removeFavorite(fav: FavoriteLine)
+    fun setRoutine(place: SavedPlace, routine: PlaceRoutine?)
+    fun dismissRoutine()
+    fun removeChainStop(index: Int)
+    fun setStay(index: Int, minutes: Int)
+    fun checkCar()
+    fun wayBack(stayMin: Int)
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */
@@ -79,6 +91,15 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun deletePlace(p: SavedPlace) { vm.deletePlace(p) }
     override fun deleteTrip(t: SavedTrip) { vm.deleteTrip(t) }
     override fun clearHistory() { vm.clearHistory() }
+    override fun showFavorites(show: Boolean) { vm.showFavorites(show) }
+    override fun toggleFavorite(sheet: StopSheet, row: DepartureRow) { vm.toggleFavorite(sheet, row) }
+    override fun removeFavorite(fav: FavoriteLine) { vm.removeFavorite(fav) }
+    override fun setRoutine(place: SavedPlace, routine: PlaceRoutine?) { vm.setRoutine(place, routine) }
+    override fun dismissRoutine() { vm.dismissRoutine() }
+    override fun removeChainStop(index: Int) { vm.removeChainStop(index) }
+    override fun setStay(index: Int, minutes: Int) { vm.setStay(index, minutes) }
+    override fun checkCar() { vm.checkCar() }
+    override fun wayBack(stayMin: Int) { vm.wayBack(stayMin) }
 }
 
 /** Does nothing: for previews and screenshot tests. */
@@ -114,4 +135,13 @@ object NoActions : MainActions {
     override fun deletePlace(p: SavedPlace) = Unit
     override fun deleteTrip(t: SavedTrip) = Unit
     override fun clearHistory() = Unit
+    override fun showFavorites(show: Boolean) = Unit
+    override fun toggleFavorite(sheet: StopSheet, row: DepartureRow) = Unit
+    override fun removeFavorite(fav: FavoriteLine) = Unit
+    override fun setRoutine(place: SavedPlace, routine: PlaceRoutine?) = Unit
+    override fun dismissRoutine() = Unit
+    override fun removeChainStop(index: Int) = Unit
+    override fun setStay(index: Int, minutes: Int) = Unit
+    override fun checkCar() = Unit
+    override fun wayBack(stayMin: Int) = Unit
 }

@@ -38,6 +38,18 @@ object Notifications {
         )
     }
 
+    /** "Bus 3 is 4 min late — leave at 08:16" / "comes 3 min early — leave at 08:09". */
+    fun timeChanged(context: Context, r: Reminder, movedMin: Long) {
+        val line = r.line ?: context.getString(R.string.kind_other)
+        val leave = il.transit.core.present.hhmm(r.leaveAt)
+        val text = if (movedMin > 0) {
+            context.getString(R.string.notify_late_text, line, movedMin.toInt(), leave)
+        } else {
+            context.getString(R.string.notify_early_text, line, (-movedMin).toInt(), leave)
+        }
+        post(context, ID_CHANGED, context.getString(R.string.notify_time_changed_title), text)
+    }
+
     fun changed(context: Context, r: Reminder) = post(
         context,
         ID_CHANGED,

@@ -50,6 +50,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
@@ -76,6 +77,13 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.foundation.verticalScroll
+import il.transit.core.user.FavoriteLine
+import il.transit.core.user.PlaceRoutine
+import il.transit.core.user.SavedPlace
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -121,6 +129,9 @@ import il.transit.core.present.PickUpRow
 import il.transit.core.present.pickUpRow
 import il.transit.core.present.fareLabel
 import il.transit.core.present.lastRideNote
+import il.transit.core.plan.CarCompare
+import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainResult
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.TripSort
 import il.transit.core.present.Turn
@@ -195,7 +206,7 @@ fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Co
 
     val panel: @Composable (Modifier, Shape) -> Unit = { modifier, shape ->
         if (state.stopSheet != null) {
-            StopPanel(state.stopSheet, vm, collapsed, { collapsed = it }, modifier, shape)
+            StopPanel(state.stopSheet, state.favorites, vm, collapsed, { collapsed = it }, modifier, shape)
         } else {
             ResultsPanel(state, vm, actions, collapsed, { collapsed = it }, { savingTrip = true }, modifier, shape)
         }
@@ -282,6 +293,7 @@ fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Co
 
     if (state.showSettings) SettingsDialog(state, vm, actions)
     if (state.showHistory) HistoryDialog(state, vm)
+    if (state.showFavorites) FavoritesDialog(state, vm)
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }
     }
@@ -336,6 +348,7 @@ private fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) ->
                         ) { vm.startEditing(Field.DRIVER_TO) }
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     }
+                    if (state.mode == AppMode.TRIP) ChainStopsRows(state, vm)
                     val toLabel = when (state.mode) {
                         AppMode.DROP_OFF -> R.string.me_to
                         AppMode.PICK_UP -> R.string.driver_at
@@ -454,6 +467,11 @@ private fun OverflowMenu(vm: MainActions) {
                 text = { Text(stringResource(R.string.history)) },
                 leadingIcon = { Icon(Icons.Default.DateRange, null) },
                 onClick = { open = false; vm.showHistory(true) },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.my_lines)) },
+                leadingIcon = { Icon(Icons.Default.Favorite, null) },
+                onClick = { open = false; vm.showFavorites(true) },
             )
         }
     }
@@ -708,6 +726,9 @@ private fun ResultsPanel(
                     )
                 }
             }
+            if (state.mode == AppMode.TRIP) state.activeRoutine?.let { name ->
+                AssistChip(onClick = vm::dismissRoutine, label = { Text(stringResource(R.string.routine_chip, name)) })
+            }
             if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm)
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
@@ -720,10 +741,16 @@ private fun ResultsPanel(
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, list)
                 else -> LazyColumn(list) {
                     if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
+                    state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
+                        if (state.chain != null) {
+                            Text(chainLegTitle(state, i), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 6.dp))
+                        }
                         ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
                     }
                     if (state.options.isNotEmpty()) item { LastRideSection(state, vm) }
+                    if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null && state.chain == null) item { WayBackRow(vm) }
+                    if (state.mode == AppMode.TRIP && state.options.isNotEmpty()) item { CarRow(state, vm) }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -760,12 +787,22 @@ private fun ReminderRow(state: UiState, vm: MainActions) {
     }
 }
 
-/** A ride being tracked, with its Stop. (Starting one is a chip on the selected option.) */
+/** A ride being tracked, with its progress and Stop. (Starting one is a chip on the selected option.) */
 @Composable
 private fun RideRow(state: UiState, vm: MainActions) {
     if (!state.riding) return
+    val context = LocalContext.current
+    val p = state.rideProgress
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+        Column(Modifier.weight(1f)) {
+            if (p == null) {
+                Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall)
+            } else {
+                // "Line 5 · 3 stops left" / "Get off at X ~08:47 (+2 min) · arrive 08:55"
+                Text(il.transit.planner.ride.RideService.rideProgressTitle(context, p), style = MaterialTheme.typography.titleSmall)
+                Text(il.transit.planner.ride.RideService.rideProgressText(context, p), style = MaterialTheme.typography.bodySmall)
+            }
+        }
         TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
     }
 }
@@ -849,6 +886,128 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
             OptionActions(onSend = null)
         }
     }
+}
+
+/** Errands: each stop on the way with its stay chips and ✕, then "+ Stop on the way". */
+@Composable
+private fun ChainStopsRows(state: UiState, vm: MainActions) {
+    state.chainStops.forEachIndexed { i, c ->
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
+            Text("• ${c.name ?: stringResource(R.string.dropped_pin)}", Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            IconButton(onClick = { vm.removeChainStop(i) }) { Icon(Icons.Default.Close, stringResource(R.string.delete)) }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(start = 16.dp)) {
+            Text(stringResource(R.string.stay), style = MaterialTheme.typography.labelMedium)
+            ChainPlanner.STAY_CHOICES.forEach { m ->
+                FilterChip(c.stayMin == m, { vm.setStay(i, m) }, label = { Text(stringResource(R.string.minutes_short, m)) })
+            }
+        }
+        HorizontalDivider()
+    }
+    if (state.chainStops.size < ChainPlanner.MAX_STOPS) {
+        TextButton(onClick = { vm.startEditing(Field.STOP) }) { Text(stringResource(R.string.add_stop)) }
+    }
+}
+
+/** "1. Home → Post office": which leg of the errand chain a card is. */
+@Composable
+private fun chainLegTitle(state: UiState, i: Int): String {
+    val names = listOf(placeLabel(state.from)) +
+        state.chainStops.map { it.name ?: stringResource(R.string.dropped_pin) } +
+        listOf(state.to?.let { placeLabel(it) }.orEmpty())
+    return "${i + 1}. ${names.getOrElse(i) { "" }} → ${names.getOrElse(i + 1) { "" }}"
+}
+
+/** "Leave 08:00 · arrive 09:10", or which leg has no way to make it. */
+@Composable
+private fun ChainSummary(state: UiState, c: ChainResult) {
+    val leave = c.leaveAt?.let(::hhmm).orEmpty()
+    val text = when {
+        c.failedAt != null -> stringResource(R.string.chain_failed, c.failedAt!! + 1)
+        else -> stringResource(R.string.chain_summary, leave, c.arriveAt?.let(::hhmm).orEmpty())
+    }
+    Text(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        color = if (c.failedAt != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+    )
+}
+
+/** "🚗 By car?" → "By car ~95 min at this time (traffic ×1.3) · 113 km" + the official taxi calculator. */
+@Composable
+private fun CarRow(state: UiState, vm: MainActions) {
+    val context = LocalContext.current
+    val car = state.carTime
+    when {
+        state.carLoading -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+        car == null -> TextButton(onClick = vm::checkCar) { Text(stringResource(R.string.by_car_check)) }
+        else -> Column {
+            Text(
+                stringResource(R.string.by_car, car.minutes, String.format(Locale.US, "%.1f", car.factor), Math.round(car.km).toInt()),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                stringResource(R.string.taxi_calculator),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(CarCompare.TAXI_CALCULATOR_URL)))
+                }.padding(vertical = 4.dp),
+            )
+        }
+    }
+}
+
+/** "Way back after 1 h · 2 h · 3 h": the return of the selected option, same settings. */
+@Composable
+private fun WayBackRow(vm: MainActions) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.way_back_after), style = MaterialTheme.typography.bodySmall)
+        listOf(60, 120, 180).forEach { m ->
+            TextButton(onClick = { vm.wayBack(m) }) { Text(stringResource(R.string.hours_short, m / 60)) }
+        }
+    }
+}
+
+/** My lines: each pinned line's next departures at its stop, with live delays. */
+@Composable
+private fun FavoritesDialog(state: UiState, vm: MainActions) {
+    AlertDialog(
+        onDismissRequest = { vm.showFavorites(false) },
+        confirmButton = { TextButton(onClick = { vm.showFavorites(false) }) { Text(stringResource(R.string.done)) } },
+        title = { Text(stringResource(R.string.my_lines)) },
+        text = {
+            if (state.favorites.isEmpty()) {
+                Text(stringResource(R.string.my_lines_empty))
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    state.favoritesOfflineSince?.let { at ->
+                        item { Text(stringResource(R.string.my_lines_offline, hhmm(at)), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                    }
+                    items(state.favorites) { f ->
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        listOf(f.line, f.headsign).filter { it.isNotBlank() }.joinToString(" → "),
+                                        style = MaterialTheme.typography.titleSmall,
+                                    )
+                                    Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                IconButton(onClick = { vm.removeFavorite(f) }) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
+                            }
+                            when {
+                                f !in state.favoriteBoards -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                                state.favoriteBoards[f] == null -> Text(stringResource(R.string.err_network), style = MaterialTheme.typography.bodySmall)
+                                state.favoriteBoards[f]!!.isEmpty() -> Text(stringResource(R.string.no_departures), style = MaterialTheme.typography.bodySmall)
+                                else -> state.favoriteBoards[f]!!.forEach { DepartureView(it) }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    )
 }
 
 /** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
@@ -1202,7 +1361,15 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
 // --- stop departures --------------------------------------------------------------------------
 
 @Composable
-private fun StopPanel(sheet: StopSheet, vm: MainActions, collapsed: Boolean, onCollapse: (Boolean) -> Unit, modifier: Modifier, shape: Shape) {
+private fun StopPanel(
+    sheet: StopSheet,
+    favorites: List<FavoriteLine>,
+    vm: MainActions,
+    collapsed: Boolean,
+    onCollapse: (Boolean) -> Unit,
+    modifier: Modifier,
+    shape: Shape,
+) {
     Sheet(modifier, shape) {
         SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1218,7 +1385,18 @@ private fun StopPanel(sheet: StopSheet, vm: MainActions, collapsed: Boolean, onC
                 sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
                 sheet.rows.isEmpty() -> Text(stringResource(R.string.no_departures), Modifier.padding(vertical = 12.dp))
-                else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) { items(sheet.rows) { DepartureView(it) } }
+                else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) {
+                    items(sheet.rows) { r ->
+                        val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.weight(1f)) { DepartureView(r) }
+                            // ☆ pins this line in this direction at this stop ("My lines").
+                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }) {
+                                Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1254,17 +1432,21 @@ private fun DepartureView(r: DepartureRow) {
 
 @Composable
 private fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions) {
+    var editingRoutine by remember { mutableStateOf<SavedPlace?>(null) }
+    editingRoutine?.let { p ->
+        RoutineDialog(p, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
+    }
     AlertDialog(
         onDismissRequest = { vm.showSettings(false) },
         confirmButton = { TextButton(onClick = { vm.showSettings(false) }) { Text(stringResource(R.string.done)) } },
         title = { Text(stringResource(R.string.settings)) },
-        text = { SettingsContent(state, vm, actions) },
+        text = { SettingsContent(state, vm, actions, onRoutine = { editingRoutine = it }) },
     )
 }
 
 /** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
 @Composable
-internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenActions) {
+internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenActions, onRoutine: (SavedPlace) -> Unit = {}) {
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -1319,6 +1501,11 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
             }
         }
         item {
+            Section(R.string.ride_alerts) {
+                FilterChip(s.speakAlerts, { set(s.copy(speakAlerts = !s.speakAlerts)) }, label = { Text(stringResource(R.string.speak_alerts)) })
+            }
+        }
+        item {
             Section(R.string.accessibility) {
                 FilterChip(s.accessible, { set(s.copy(accessible = !s.accessible)) }, label = { Text(stringResource(R.string.accessible_routes)) })
             }
@@ -1338,7 +1525,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
             item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
             items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
-            items(state.savedPlaces) { p -> SavedRow("★ ${p.name}") { vm.deletePlace(p) } }
+            items(state.savedPlaces) { p -> SavedPlaceRow(p, onRoutine = { onRoutine(p) }) { vm.deletePlace(p) } }
         }
     }
 }
@@ -1434,6 +1621,71 @@ private fun Section(titleRes: Int, chips: @Composable () -> Unit) {
         Text(stringResource(titleRes), style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) { chips() }
     }
+}
+
+/** A saved place: its routine under the name, ⏰ to edit it, 🗑 to delete the place. */
+@Composable
+private fun SavedPlaceRow(p: SavedPlace, onRoutine: () -> Unit, onDelete: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("★ ${p.name}", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            p.routine?.let { Text(routineLabel(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
+        TextButton(onClick = onRoutine) { Text("⏰") }
+        IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
+    }
+}
+
+/** "Sun Mon Tue 07:00–10:00", days in Israeli week order. */
+private fun routineLabel(r: PlaceRoutine): String {
+    val days = PlaceRoutine.WEEK.filter { it in r.days }
+        .joinToString(" ") { java.time.DayOfWeek.of(it).getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
+    return "$days \u2068${hhmmOf(r.fromMin)}–${hhmmOf(r.toMin)}\u2069"
+}
+
+private fun hhmmOf(min: Int) = String.format(Locale.US, "%02d:%02d", min / 60, min % 60)
+
+/** Days (Sunday first) and a window; Save, Remove (when one is set) or Cancel. */
+@Composable
+private fun RoutineDialog(p: SavedPlace, onDismiss: () -> Unit, onSave: (PlaceRoutine?) -> Unit) {
+    val r = p.routine
+    val days = remember { mutableStateListOf<Int>().apply { addAll(r?.days ?: listOf(7, 1, 2, 3, 4)) } }
+    val from = rememberTimePickerState(initialHour = (r?.fromMin ?: 420) / 60, initialMinute = (r?.fromMin ?: 420) % 60, is24Hour = true)
+    val to = rememberTimePickerState(initialHour = (r?.toMin ?: 600) / 60, initialMinute = (r?.toMin ?: 600) % 60, is24Hour = true)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.routine_title, p.name)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.routine_help), style = MaterialTheme.typography.bodySmall)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    PlaceRoutine.WEEK.forEach { d ->
+                        FilterChip(
+                            selected = d in days,
+                            onClick = { if (d in days) days.remove(d) else days.add(d) },
+                            label = { Text(java.time.DayOfWeek.of(d).getDisplayName(TextStyle.SHORT, Locale.getDefault())) },
+                        )
+                    }
+                }
+                Text(stringResource(R.string.routine_from), style = MaterialTheme.typography.labelLarge)
+                TimeInput(state = from)
+                Text(stringResource(R.string.routine_to), style = MaterialTheme.typography.labelLarge)
+                TimeInput(state = to)
+            }
+        },
+        confirmButton = {
+            TextButton(
+                enabled = days.isNotEmpty(),
+                onClick = { onSave(PlaceRoutine(days.toList().sorted(), from.hour * 60 + from.minute, to.hour * 60 + to.minute)) },
+            ) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            Row {
+                if (r != null) TextButton(onClick = { onSave(null) }) { Text(stringResource(R.string.routine_remove)) }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+            }
+        },
+    )
 }
 
 @Composable

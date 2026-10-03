@@ -61,6 +61,34 @@ class RideTrackerTest {
         assertNull(t.update(at(31.2790), NOON.plusSeconds(620))) // once only
     }
 
+    @Test fun `progress counts stops left and how late the bus runs`() {
+        // Schedule: A 12:03 → S1 12:07 → S2 12:11 → B 12:15 (stops 4 min apart).
+        val timed = trip.copy(
+            legs = trip.legs.map { l ->
+                if (l.mode != "BUS") l else l.copy(
+                    intermediateStops = listOf(
+                        s1.copy(scheduledDeparture = NOON.plusSeconds(420).toString()),
+                        s2.copy(scheduledDeparture = NOON.plusSeconds(660).toString()),
+                    ),
+                )
+            },
+        )
+        val t = RideTracker(timed)
+        // Half-way between A and S1 at 12:07: due there at 12:05, so 2 min late; 3 stops left.
+        val mid = at(31.2560)
+        t.update(mid, NOON.plusSeconds(420))
+        val p = t.progress(mid, NOON.plusSeconds(420))!!
+        assertEquals(3, p.stopsLeft)
+        assertEquals(2, p.delayMin)
+        assertEquals("B", p.alightStop)
+        assertEquals(NOON.plusSeconds(900 + 120), p.arriveAt) // 12:15 + 2 min
+        assertEquals(NOON.plusSeconds(1020 + 120), p.tripArriveAt)
+        // Past S2: one stop left. GPS jitter back towards S1 does not add a stop back.
+        t.update(at(31.2750), NOON.plusSeconds(720))
+        assertEquals(1, t.progress(at(31.2750), NOON.plusSeconds(720))!!.stopsLeft)
+        assertEquals(1, t.progress(at(31.2700), NOON.plusSeconds(730))!!.stopsLeft)
+    }
+
     @Test fun `a trip long past its arrival finishes even without GPS reaching the end`() {
         val t = RideTracker(trip)
         assertEquals(RideEvent.Finished, t.update(at(31.20), NOON.plusSeconds(1020 + 31 * 60)))
