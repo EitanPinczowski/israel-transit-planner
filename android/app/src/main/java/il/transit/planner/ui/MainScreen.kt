@@ -200,6 +200,7 @@ fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Co
         val rootWidth = constraints.maxWidth
         val rootHeight = constraints.maxHeight
         val compactSearch = showPanel && maxHeight < SHORT && !searchOpen
+        val sheetMaxHeight = maxHeight * 0.5f
 
         map()
         StatusBarScrim()
@@ -261,7 +262,7 @@ fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Co
                 AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
                 if (showPanel) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
-                    panel(Modifier.heightIn(max = maxHeight * 0.5f), top)
+                    panel(Modifier.heightIn(max = sheetMaxHeight), top)
                 } else {
                     Spacer(Modifier.windowInsetsBottomHeight(bars))
                 }
