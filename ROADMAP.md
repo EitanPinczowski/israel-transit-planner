@@ -60,6 +60,11 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Fare estimate ("≈ ₪8" on every option): straight-line distance bands, 90-min yellow
       transfer, train column, daily cap, Regular / 50% / Free. Table copied from HopOn's
       Rav-Pass price list (checked 2026-08-04, `fare/Fares.kt`); links to bus.gov.il
+- [x] Last trip / Shabbat warning: "Last trip today 15:29 · next only Sat 20:14" from the
+      timetable itself (no holiday calendar), automatic on evenings/Fri/Sat, "last trip back"
+      on tap; ≤ 3 requests (`plan/LastRide.kt`)
+- [x] Accessible routes setting: `pedestrianProfile=WHEELCHAIR` (step-free walking parts;
+      vehicle accessibility is not in the data)
 
 ## Phase 7 — Release
 - [x] Tag-triggered release workflow: signed APK (key from repo secrets), `apksigner verify`,

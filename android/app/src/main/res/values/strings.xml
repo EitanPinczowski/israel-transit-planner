@@ -149,4 +149,16 @@
     <string name="fare_free_label">Free</string>
     <string name="fare_estimate_note">Fares are estimates (Rav-Kav price list) · tap for the official prices</string>
     <string name="search_full_name_hint">No exact match — try the full name, e.g. “Sderot Rager”</string>
+    <string name="last_ride_check">Last trip today?</string>
+    <string name="last_ride_back_check">Last trip back?</string>
+    <string name="last_ride_at">Last trip today: \u2068%1$s\u2069</string>
+    <string name="last_ride_this">This is the last trip today</string>
+    <string name="last_ride_back_at">Last trip back: \u2068%1$s\u2069</string>
+    <string name="last_ride_resumes"> · next only \u2068%1$s\u2069</string>
+    <string name="last_ride_none_after"> · nothing after it</string>
+    <string name="last_ride_none">No more trips found today</string>
+    <string name="last_ride_all_night">Trips run through the night</string>
+    <string name="accessibility">Accessibility</string>
+    <string name="accessible_routes">Wheelchair / stroller</string>
+    <string name="accessible_help">Walking parts avoid stairs, using map data. Whether the bus or train itself is accessible is not known; check with the operator.</string>
 </resources>

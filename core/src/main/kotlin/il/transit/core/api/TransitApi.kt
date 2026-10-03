@@ -92,6 +92,7 @@ data class PlanRequest(
         preferences.maxTransfers?.let { add("maxTransfers" to it.toString()) }
         preferences.pedestrianSpeedMps?.let { add("pedestrianSpeed" to it.toString()) }
         preferences.additionalTransferSec?.let { add("additionalTransferTime" to (it / 60).toString()) }
+        if (preferences.wheelchair) add("pedestrianProfile" to "WHEELCHAIR")
         add("language" to language)
         if (withFares) add("withFares" to "true")
     }
@@ -107,6 +108,9 @@ data class Preferences(
     val additionalTransferSec: Int? = null,
     /** Longest walk to the first stop / from the last stop. null = server default (15 min). */
     val maxWalkSec: Int? = null,
+    /** Step-free walking (MOTIS `pedestrianProfile=WHEELCHAIR`): avoids stairs on the walking
+     *  parts using OpenStreetMap data. Vehicles' accessibility is not known to the server. */
+    val wheelchair: Boolean = false,
 )
 
 class TransitHttpException(val code: Int, message: String, val retryAfterSec: Int? = null) :

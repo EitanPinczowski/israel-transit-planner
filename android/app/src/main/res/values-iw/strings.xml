@@ -150,4 +150,16 @@
     <string name="fare_free_label">חינם</string>
     <string name="fare_estimate_note">המחירים הם הערכה (לפי מחירון רב-קו) · הקישו למחירון הרשמי</string>
     <string name="search_full_name_hint">לא נמצאה התאמה מדויקת — נסו את השם המלא, למשל ״שדרות רגר״</string>
+    <string name="last_ride_check">הנסיעה האחרונה היום?</string>
+    <string name="last_ride_back_check">הנסיעה האחרונה חזרה?</string>
+    <string name="last_ride_at">הנסיעה האחרונה היום: \u2068%1$s\u2069</string>
+    <string name="last_ride_this">זו הנסיעה האחרונה היום</string>
+    <string name="last_ride_back_at">הנסיעה האחרונה חזרה: \u2068%1$s\u2069</string>
+    <string name="last_ride_resumes"> · הבאה רק ב־\u2068%1$s\u2069</string>
+    <string name="last_ride_none_after"> · אין נסיעות אחריה</string>
+    <string name="last_ride_none">לא נמצאו עוד נסיעות היום</string>
+    <string name="last_ride_all_night">יש נסיעות לאורך כל הלילה</string>
+    <string name="accessibility">נגישות</string>
+    <string name="accessible_routes">כיסא גלגלים / עגלה</string>
+    <string name="accessible_help">קטעי ההליכה נמנעים ממדרגות, לפי נתוני המפה. אין מידע אם האוטובוס או הרכבת עצמם נגישים; כדאי לבדוק מול המפעיל.</string>
 </resources>

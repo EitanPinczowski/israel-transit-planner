@@ -304,3 +304,40 @@ fun needsFullNameHint(query: String, names: List<String>): Boolean {
 
 /** Lower case without quote marks, so "צה\"ל", "צה״ל" and "צהל" compare equal. */
 private fun normalizeForMatch(s: String): String = s.lowercase().filterNot { it in "\"'״׳`" }
+
+/** What the trip list says about the evening's last trip. */
+data class LastRideNote(
+    /** HH:mm of the last trip. */
+    val lastTime: String,
+    /** The selected option is that last trip. */
+    val selectedIsLast: Boolean,
+    /** Service stops for hours after it (Shabbat, a holiday): when it resumes, if known. */
+    val longGap: Boolean,
+    val resumesDay: java.time.DayOfWeek?,
+    val resumesTime: String?,
+)
+
+/**
+ * The note for [lr], or null when there is nothing worth saying: the selected trip is not
+ * the last, the last is more than [SOON] away, and service does not stop for long after it.
+ * [always] skips that filter (the "last trip back" button, which the user asked for).
+ */
+fun lastRideNote(lr: il.transit.core.plan.LastRide, selected: Itinerary?, always: Boolean = false): LastRideNote? {
+    val last = lr.last ?: return null
+    if (lr.runsAllNight) return null
+    val sel = selected?.start
+    val selectedIsLast = sel != null && Duration.between(sel, last.start).abs() < Duration.ofMinutes(1)
+    val soon = sel != null && !sel.isAfter(last.start) && Duration.between(sel, last.start) <= SOON
+    if (!always && !selectedIsLast && !soon && !lr.longGap) return null
+    val next = lr.next?.takeIf { lr.longGap }
+    val nextDay = next?.start?.atZone(ISRAEL)?.toLocalDate()
+    return LastRideNote(
+        lastTime = hhmm(last.start),
+        selectedIsLast = selectedIsLast,
+        longGap = lr.longGap,
+        resumesDay = nextDay?.takeIf { it != last.start.atZone(ISRAEL).toLocalDate() }?.dayOfWeek,
+        resumesTime = next?.let { hhmm(it.start) },
+    )
+}
+
+private val SOON: Duration = Duration.ofHours(3)

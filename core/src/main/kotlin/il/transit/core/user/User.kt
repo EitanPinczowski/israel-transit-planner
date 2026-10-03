@@ -41,12 +41,15 @@ data class UserSettings(
     val peakFactor: Double = 1.3,
     /** Which fare the estimate shows (regular, 50% discount, free). */
     val fareProfile: FareProfile = FareProfile.REGULAR,
+    /** Wheelchair / stroller: step-free walking parts. */
+    val accessible: Boolean = false,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,
         maxTransfers = maxTransfers,
         pedestrianSpeedMps = walkSpeed.metersPerSecond,
         maxWalkSec = maxWalkMin * 60,
+        wheelchair = accessible,
     )
 
     fun traffic() = TrafficProfile(peakFactor = peakFactor)
