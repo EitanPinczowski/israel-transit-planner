@@ -252,20 +252,14 @@ The owner merges every PR; agents never merge.
 **Skills:** `android-build`, `i18n-rtl`
 **Needs:** A2 merged
 
-> **1. Screenshot tests** (build on Paparazzi, which PR #18 added; the owner chose it over
-> Roborazzi so there is one screenshot tool):
-> - Already there: `ui/ScreensTest.kt` renders `MainScreen` from a plain `UiState` through
->   `MainActions` / `NoActions` (13 states × 7 device variants: small/big/landscape,
->   light/dark, he/en, large text). The CI job `screenshots` records them, and pushes copy
->   them to the `screenshots` branch (see `android-build`).
-> - Add one test class per `ui/screens/*` panel (after A2), rendering it from a fixed
->   `UiState`. Build the state from the real fixtures in `core/src/test/resources/fixtures/`
->   (already on the test classpath), or from hand-built core models.
-> - Cover both English and Hebrew. Paparazzi does not mirror the layout from the locale, so
->   provide `LocalLayoutDirection` RTL as `ScreensTest` does.
-> - Commit the goldens and switch the CI job from `recordPaparazziDebug` to
->   `verifyPaparazziDebug`, uploading the diff images on failure. Keep the
->   `screenshots`-branch publish step.
+> **1. Screenshot tests:**
+> - Add Roborazzi + Robolectric to `android/app` (JVM tests, no emulator).
+> - One test class per `ui/screens/*` panel, rendering it from a fixed `UiState`. Build the
+>   state from the real fixtures in `core/src/test/resources/fixtures/`, or hand-built core
+>   models.
+> - Cover both English and Hebrew (RTL), light theme.
+> - Commit the goldens.
+> - CI's `android` job runs `verifyRoborazziDebug` and uploads the diff images on failure.
 >
 > **2. Crash log:**
 > - core: `diag/CrashLog.kt` keeps the last 5 entries and formats each with time, app version,
@@ -276,7 +270,7 @@ The owner merges every PR; agents never merge.
 > - Nothing is sent anywhere automatically, and there is no network.
 >
 > **Docs:**
-> - the `android-build` skill (it already covers recording): how to verify goldens, and what to do when another PR
+> - the `android-build` skill: how to record or verify goldens, and what to do when another PR
 >   changes a screen (re-record in that PR);
 > - `parallel-work`: Wave 1 PRs that change a screen re-record its golden;
 > - a release fragment;
