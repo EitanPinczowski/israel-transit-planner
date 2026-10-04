@@ -125,6 +125,8 @@ data class GeocodeMatch(
     val street: String? = null,
     val houseNumber: String? = null,
     val modes: List<String>? = null,
+    /** For PLACE answers: "place_6" etc. for a town or area itself, else the kind of POI. */
+    val category: String? = null,
 )
 
 @Serializable
