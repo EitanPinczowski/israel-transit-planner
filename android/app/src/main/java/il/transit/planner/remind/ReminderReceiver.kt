@@ -52,6 +52,8 @@ class ReminderReceiver : BroadcastReceiver() {
                         ),
                     )
                 }.getOrNull()
+                // The user may have cancelled or replaced it while the plan was loading.
+                if (app.store.reminder.first() != r) return
                 if (fresh == null) {
                     // No signal: keep the reminder as it is and try at the next re-check.
                     ReminderScheduler.schedule(app, r)

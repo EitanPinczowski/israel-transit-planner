@@ -70,19 +70,21 @@ class RideService : Service() {
         }
         val itinerary = intent?.getStringExtra(EXTRA_ITINERARY)
             ?.let { runCatching { MotisJson.decodeFromString(Itinerary.serializer(), it) }.getOrNull() }
-        if (itinerary == null) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
-        tracker = RideTracker(itinerary)
-        finalStop = itinerary.legs.lastOrNull { it.isTransit }?.to?.name.orEmpty()
-        if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
+        finalStop = itinerary?.legs?.lastOrNull { it.isTransit }?.to?.name.orEmpty()
+        // startForegroundService() must be answered by startForeground() even when we are about
+        // to stop, or Android kills the app ("did not then call Service.startForeground()").
         ServiceCompat.startForeground(
             this,
             ID_ONGOING,
             ongoing(finalStop),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0,
         )
+        if (itinerary == null) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        tracker = RideTracker(itinerary)
+        if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
         startLocation()
         _active.value = true
         return START_NOT_STICKY
@@ -122,9 +124,11 @@ class RideService : Service() {
     /** One TextToSpeech for the ride, in the phone's language, on the navigation audio stream. */
     private fun startSpeech() {
         tts = TextToSpeech(this) { status ->
-            ttsReady = status == TextToSpeech.SUCCESS
+            // No voice for the phone's language (often Hebrew): stay silent rather than read
+            // Hebrew with an English voice. The notification and vibration still come.
+            val lang = if (status == TextToSpeech.SUCCESS) tts?.setLanguage(java.util.Locale.getDefault()) else null
+            ttsReady = lang != null && lang >= TextToSpeech.LANG_AVAILABLE
             if (ttsReady) {
-                tts?.language = java.util.Locale.getDefault()
                 tts?.setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)

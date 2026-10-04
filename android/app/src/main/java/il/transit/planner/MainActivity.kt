@@ -98,7 +98,10 @@ class MainActivity : ComponentActivity() {
         mapView = MapView(this, options).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
-        if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
+        // Only a fresh launch: after a rotation, a theme change or a reopen from Recents the same
+        // intent comes back, and acting on it again would undo whatever the user did since.
+        val fresh = savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0
+        if (fresh && (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE))) pendingShortcut = intent
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation

@@ -210,6 +210,9 @@
     <string name="stay">שהייה</string>
     <string name="chain_summary">יציאה \u2068%1$s\u2069 · הגעה \u2068%2$s\u2069</string>
     <string name="chain_failed">לא נמצאה דרך לקטע %1$d — נסו שעה או עצירה אחרת</string>
+    <!-- The arrow points along the reading direction: → in English, ← in Hebrew. -->
+    <string name="chain_leg_title">\u2068%1$d\u2069. \u2068%2$s\u2069 ← \u2068%3$s\u2069</string>
+    <string name="line_to">\u2068%1$s\u2069 ← \u2068%2$s\u2069</string>
     <string name="by_car_check">🚗 ברכב?</string>
     <string name="by_car">ברכב ~%1$d דק׳ בשעה הזאת (פקקים ×\u2068%2$s\u2069) · \u2068%3$d ק״מ\u2069</string>
     <string name="taxi_calculator">מחיר מונית: המחשבון הרשמי של משרד התחבורה</string>
