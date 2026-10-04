@@ -252,6 +252,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
             Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
         }
         item { OfflineSection(actions) }
+        item { CrashLogSection(actions.crashLog) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
             item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
             items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }

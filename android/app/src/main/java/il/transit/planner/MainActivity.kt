@@ -30,6 +30,9 @@ import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
+import il.transit.planner.ui.screens.CrashLogUi
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import il.transit.planner.ui.ViewModelActions
 import il.transit.planner.ui.Shortcuts
 import android.content.Intent
@@ -108,6 +111,8 @@ class MainActivity : ComponentActivity() {
                 ?.let { LatLon(it.latitude, it.longitude) }
         }
 
+        lifecycleScope.launch { app.crashLog.refresh() }
+
         setContent {
             AppTheme {
                 val state by vm.state.collectAsState()
@@ -115,6 +120,7 @@ class MainActivity : ComponentActivity() {
                 val ctl by controller.collectAsState()
                 val offlineState by offline.state.collectAsState()
                 val pad by mapPadding.collectAsState()
+                val crashes by app.crashLog.count.collectAsState()
                 val ui = remember { ViewModelActions(vm) }
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
@@ -154,6 +160,7 @@ class MainActivity : ComponentActivity() {
                     remind = ::remind,
                     startRide = ::startRide,
                     onMapPadding = { mapPadding.value = it },
+                    crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
                 )
                 MainScreen(state, ui, actions) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
@@ -163,6 +170,21 @@ class MainActivity : ComponentActivity() {
 
         if (!hasLocationPermission()) {
             askLocation.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+        }
+    }
+
+    private val app get() = application as TransitApp
+
+    /** Plain text to whatever app the user picks (mail, WhatsApp…). Nothing leaves without that tap. */
+    private fun shareCrashLog() {
+        lifecycleScope.launch {
+            val text = app.crashLog.report() ?: return@launch
+            val send = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " – " + getString(R.string.crash_log))
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
+            startActivity(Intent.createChooser(send, getString(R.string.crash_log_share)))
         }
     }
 
