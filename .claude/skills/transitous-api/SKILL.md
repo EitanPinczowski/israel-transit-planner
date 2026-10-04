@@ -28,6 +28,8 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
+| `trip` | `GET /api/v6/trip` | `tripId` (from a leg or a departure; contains `:` — let OkHttp encode it). Answers an `Itinerary`: one transit leg, first stop → last, every stop in `intermediateStops`. |
+| `mapTrips` | `GET /api/v6/map/trips` | `min`/`max` bbox (SW/NE, like `map/stops`), `zoom`, `startTime`/`endTime`. A list of stop-to-stop hops (`TripSegment`); **polyline precision 5**, not 6. |
 
 Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never assume `Z`.
 
@@ -74,12 +76,33 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
   `lineLabel()` / `headsignText()`.
-- Still open: real-time coverage (the spike ran on a Friday evening — Shabbat, no service).
-  Record a `stoptimes` for "now" on a weekday and check for `realTime: true`.
+- **Real-time on MOT lines: confirmed none (closed 2026-10-04).** Sat 2026-10-03 23:20, late buses running: 0 of 36 departures
+  at Be'er Sheva Central and 0 of 20 at Savidor (6 operators) had `realTime: true`; nor did
+  the `trip`/`map/trips` answers. Departure = scheduled everywhere (`stoptimes_now_*`).
+  **Sun 2026-10-04 10:16 (weekday, full service): still 0 of 49** at the same two stops
+  (7 operators; `stoptimes_weekday_*`). Matches the feed config above (GTFS-RT only for
+  busofash). The app stays tolerant: it shows live times whenever `realTime` is true.
+- **No service alerts** (2026-10-03/04): no `alerts` on any leg, place or stop time in 9 answers.
+  `Alert` is modelled from the MOTIS schema (header/description text, cause, effect,
+  `impactPeriod` = validity) but has never been seen from Israel.
+- **`cancelled` on WALK legs is noise:** some transfer walks between two stops come back
+  `cancelled: true`, with both their places (both plans of 2026-10-03). Only trust it on
+  transit legs and their stops.
+- **Saturday-night trips appear twice**, one per service day (`…_031026` and `…_041026`, same
+  line, same minute) in `stoptimes`. De-duplicate by line + time if it shows.
+- **`trip`** (bus 470, train 7026, 2026-10-03): `transfers` 0, a single leg from the trip's
+  first stop to its last, `intermediateStops` with arrival + departure each, precision-6
+  geometry. Train: `routeShortName` empty, `headsign` = train number, as in `plan`.
+- **`map/trips`** (Be'er Sheva box, 1-min window, zoom 14): 134 hops, each with one trip
+  (`tripId` + `displayName`), from/to stop and their times, `realTime`, polyline at
+  **precision 5**. A train's `displayName` is the long "A<->B" route name, not the number.
+  `distance` is not the hop's length. One **Rome → Naples** hop (bad stop at 10.1,40.1)
+  crossed the box — select by `tripId`, never trust the box alone.
+- **`CAR_PARKING` (pre-transit) is unusable** — see `dead-ends` and `special-features`.
 
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
-departures 30 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
+departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
 `BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` is pinned by a test. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
 
