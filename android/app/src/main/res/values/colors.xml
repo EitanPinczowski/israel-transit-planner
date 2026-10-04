@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Transit blue: notification accent. The Compose palette lives in ui/Theme.kt. -->
+    <color name="brand">#1E88E5</color>
+    <!-- The window behind the map before the first frame: ui/Theme.kt's surface, so a cold
+         start in dark mode never flashes white. -->
+    <color name="window_background">#F8F9FF</color>
+</resources>

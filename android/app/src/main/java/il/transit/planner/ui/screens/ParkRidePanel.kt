@@ -4,28 +4,23 @@ package il.transit.planner.ui.screens
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -38,14 +33,14 @@ import il.transit.core.present.driveHomeMin
 import il.transit.core.present.hhmm
 import il.transit.core.present.parkRideRow
 import il.transit.planner.R
-import il.transit.planner.ui.MainViewModel
+import il.transit.planner.ui.MainActions
 import il.transit.planner.ui.PlaceRef
 import il.transit.planner.ui.UiState
 
 @Composable
-internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainViewModel) {
+internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+    LazyColumn(modifier) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_park_ride, state.parkRide.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -77,8 +72,7 @@ internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainViewMo
 
 @Composable
 private fun ParkRideCard(row: ParkRideRow, selected: Boolean, onClick: () -> Unit, onNavigate: () -> Unit) {
-    val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-    Column(Modifier.fillMaxWidth().clickable(onClick = onClick).background(bg, RoundedCornerShape(12.dp)).padding(10.dp)) {
+    Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.park_at, row.station, row.driveMin), style = MaterialTheme.typography.titleSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.you_arrive, row.arrive), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -98,7 +92,10 @@ private fun ParkRideCard(row: ParkRideRow, selected: Boolean, onClick: () -> Uni
             FareText(row.summary.fare)
         }
         if (selected) {
-            TextButton(onClick = onNavigate) { Text(stringResource(R.string.navigate_to_station)) }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
+                ActionChip(R.string.navigate_to_station, Icons.Default.Place, onNavigate)
+                LocalTrackActions.current()
+            }
         }
     }
 }
