@@ -153,7 +153,7 @@ internal fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon)
                     AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
                     AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
                     AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
-                    AppMode.TRIP -> Unit
+                    AppMode.TRIP -> CalendarChip(state, vm)
                 }
             }
         }

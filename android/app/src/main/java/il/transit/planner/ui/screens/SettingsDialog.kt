@@ -139,6 +139,7 @@ internal fun SettingsDialog(state: UiState, vm: MainViewModel, actions: ScreenAc
                     )
                     Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
                 }
+                item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
                 item { OfflineSection(actions) }
                 if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
                     item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
