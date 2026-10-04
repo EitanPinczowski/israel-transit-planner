@@ -26,6 +26,9 @@ import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
+import il.transit.planner.ui.screens.CalendarChip
+import il.transit.planner.ui.screens.LocalCalendarChip
+import androidx.compose.runtime.CompositionLocalProvider
 import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
@@ -174,8 +177,10 @@ class MainActivity : ComponentActivity() {
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
                     if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape) }) else null
-                MainScreen(state, ui, actions, tripSheet = sheetUi) {
-                    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
+                    MainScreen(state, ui, actions, tripSheet = sheetUi) {
+                        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                    }
                 }
             }
         }
