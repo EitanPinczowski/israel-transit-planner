@@ -63,6 +63,19 @@ class ApiPhase8Test {
         }
     }
 
+    @Test fun `still no real-time on a Sunday morning with full service`() {
+        // Recorded Sunday 2026-10-04 10:16 Israel time: 7 operators, buses leaving within minutes.
+        val beerSheva = board("stoptimes_weekday_beersheva_central").stopTimes
+        val savidor = board("stoptimes_weekday_savidor").stopTimes
+        assertEquals(30, beerSheva.size)
+        assertEquals(19, savidor.size)
+        for (st in beerSheva + savidor) {
+            assertFalse(st.realTime)
+            assertEquals(st.place.scheduledDeparture, st.place.departure)
+            assertTrue(st.alerts.isEmpty() && st.place.alerts.isEmpty())
+        }
+    }
+
     @Test fun `the same Saturday-night trip can be listed twice, once per service day`() {
         // Line 250 at 00:20: …_031026 and …_041026 — MOT GTFS carries both service days.
         val line250 = board("stoptimes_now_beersheva_central").stopTimes.filter { it.routeShortName == "250" }

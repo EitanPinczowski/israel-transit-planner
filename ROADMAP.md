@@ -13,8 +13,9 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
 - [x] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes) and replace `plan_synthetic.json`
 - [ ] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
-      — still open: Sat 2026-10-03 23:20 (service running) gave 0 of 56 departures `realTime`
-      at Be'er Sheva Central + Savidor (A1). Retry on a weekday daytime.
+      — still open: Sat 2026-10-03 23:20 gave 0 of 56 departures `realTime`, and Sun 2026-10-04
+      10:16 (full weekday service) 0 of 49, at Be'er Sheva Central + Savidor (A1). Transitous
+      does not carry Israeli real-time today; owner decides whether to close this as "none".
 - [x] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP
@@ -102,8 +103,8 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 
 ### A1 — API spike + plumbing (`claude/p8-api`, core only, ~8 live requests to record)
 - [ ] Weekday `stoptimes` for "now" recorded; `realTime: true` checked (closes the Phase 0 item)
-      — recorded Sat 2026-10-03 23:20 with buses running: **no `realTime: true`** anywhere
-      (2 stops, 2 trips, `map/trips`). Left open with the Phase 0 item.
+      — recorded Sat 2026-10-03 23:20 and Sun 2026-10-04 10:16 (weekday): **no `realTime: true`**
+      anywhere (2 stops each time, 2 trips, `map/trips`). Left open with the Phase 0 item.
 - [x] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
       fixtures (`trip` for a bus and a train, `map/trips` for a small box)
 - [x] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?

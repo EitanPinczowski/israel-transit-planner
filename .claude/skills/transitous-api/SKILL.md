@@ -78,9 +78,11 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   `lineLabel()` / `headsignText()`.
 - **Real-time: none seen yet.** Sat 2026-10-03 23:20, late buses running: 0 of 36 departures
   at Be'er Sheva Central and 0 of 20 at Savidor (6 operators) had `realTime: true`; nor did
-  the `trip`/`map/trips` answers. Departure = scheduled everywhere. Still open: retry on a
-  weekday daytime before building anything that needs live times (`stoptimes_now_*`).
-- **No service alerts** (2026-10-03): no `alerts` on any leg, place or stop time in 7 answers.
+  the `trip`/`map/trips` answers. Departure = scheduled everywhere (`stoptimes_now_*`).
+  **Sun 2026-10-04 10:16 (weekday, full service): still 0 of 49** at the same two stops
+  (7 operators; `stoptimes_weekday_*`). Transitous does not pass Israeli real-time through
+  today — treat every time as scheduled, and label it so; never claim "live" in the UI.
+- **No service alerts** (2026-10-03/04): no `alerts` on any leg, place or stop time in 9 answers.
   `Alert` is modelled from the MOTIS schema (header/description text, cause, effect,
   `impactPeriod` = validity) but has never been seen from Israel.
 - **`cancelled` on WALK legs is noise:** some transfer walks between two stops come back
