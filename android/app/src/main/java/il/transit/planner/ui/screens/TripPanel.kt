@@ -220,7 +220,7 @@ internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -
                         AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
                         AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
                         AppMode.PARK_RIDE -> MinutesSlider(R.string.park_ride_drive_up_to, state.parkRide.maxDriveMin, vm::setMaxParkRideDrive, max = ParkRideUi.MAX_DRIVE)
-                        AppMode.TRIP -> Unit
+                        AppMode.TRIP -> LocalCalendarChip.current(state)
                     }
                 }
             }

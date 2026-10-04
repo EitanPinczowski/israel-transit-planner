@@ -348,6 +348,24 @@ class MainViewModel(
         }
     }
 
+    /**
+     * "From my calendar" (B3): the event's place becomes the destination, arriving by
+     * [arriveBy] (null = too late for the buffer, so leave now). [at] null = the place was not
+     * found: its text goes into the search box, to fix by typing.
+     */
+    fun fromCalendar(place: String, at: LatLon?, arriveBy: Instant?) {
+        val time = if (arriveBy != null) TimeMode.ARRIVE_BY else TimeMode.NOW
+        _state.update {
+            val timed = it.copy(mode = AppMode.TRIP, timeMode = time, time = arriveBy, chainStops = emptyList(), chain = null, results = null, error = null)
+            if (at == null) {
+                timed.copy(editing = Field.TO, query = place, suggestions = savedSuggestions(place), searchHint = false)
+            } else {
+                timed.copy(to = PlaceRef.Point(place, at), editing = null, routinePlace = null, stopSheet = null)
+            }
+        }
+        if (at != null) plan()
+    }
+
     fun swap() {
         val s = _state.value
         val to = s.to ?: return

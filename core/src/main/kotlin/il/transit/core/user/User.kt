@@ -104,6 +104,8 @@ data class UserSettings(
     val speakAlerts: Boolean = true,
     /** How the Trip tab orders its options. */
     val tripSort: il.transit.core.plan.TripSort = il.transit.core.plan.TripSort.FASTEST,
+    /** "From my calendar": arrive this many minutes before the event starts. */
+    val calendarBufferMin: Int = il.transit.core.plan.CalendarSuggest.DEFAULT_BUFFER_MIN,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

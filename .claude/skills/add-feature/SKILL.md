@@ -33,4 +33,15 @@ description: Recipe for adding any user-visible feature end to end - core logic,
 7. **Tick the item in `ROADMAP.md`** in the same commit.
 8. CI must be green; the `android` job's APK artifact is how the owner tries it.
 
+## Permissions (location, notifications, calendar…)
+- **Ask on tap, never at launch.** The permission is requested when the user taps the thing
+  that needs it, not on startup or in onboarding.
+- **Rationale first**, in our own dialog, saying what is read and what leaves the phone.
+  For the calendar (`ui/screens/CalendarPicker.kt`): events are read on the phone; only the
+  picked event's location text goes to Transitous's geocoder, the same as typing it; titles
+  never leave the phone.
+- **A refusal leaves the feature usable by hand** (type the place, set the time) and says so
+  once. Never re-ask in a loop; the next tap shows the rationale again.
+- The permission line in `AndroidManifest.xml` carries a comment saying why.
+
 Keep screens thin and logic in `core`: `core` is the only part a cloud session can compile.

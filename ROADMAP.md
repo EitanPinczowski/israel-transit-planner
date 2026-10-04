@@ -145,9 +145,9 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [x] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
 
 ### B3 — Calendar → arrive by (`claude/p8-calendar`, 1 geocode, cached a day)
-- [ ] "From my calendar": next events with a location (on the phone, `READ_CALENDAR` asked on
+- [x] "From my calendar": next events with a location (on the phone, `READ_CALENDAR` asked on
       tap), "arrive by 09:50 at …" with a buffer setting (default 10 min)
-- [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
+- [x] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
 - [ ] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
