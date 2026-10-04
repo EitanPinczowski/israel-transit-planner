@@ -42,9 +42,9 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
-  ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/MapController · data/UserStore
+  ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py
 ```
 
 ### The three special features (all return a Pareto front: driver cost × arrival × transfers)
@@ -76,7 +76,7 @@ skill that does not exist — a note nobody can find is a note nobody has.
 | `transitous-api` | any call to MOTIS/Transitous, new endpoints, recording fixtures |
 | `special-features` | editing BetterStart / DropOff / PickUp / Pareto / traffic |
 | `add-feature` | adding any user-visible feature end to end |
-| `i18n-rtl` | any UI text or layout (Hebrew RTL + English) |
+| `i18n-rtl` | any UI text, layout, colour or icon (Hebrew RTL + English, dark mode, insets) |
 | `golden-trips` | checking that routing results are still sane |
 | `reminders-offline` | leave reminder, get-off alert, history, notifications, offline cache and map |
 | `release-apk` | shipping a signed APK to friends and family |
