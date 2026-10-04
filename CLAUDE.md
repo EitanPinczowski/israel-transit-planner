@@ -42,7 +42,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
-  ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/MapController (layers) · data/UserStore
+  ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/MapController · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
 tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
 ```
