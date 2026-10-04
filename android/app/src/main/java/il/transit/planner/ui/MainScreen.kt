@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
@@ -299,9 +300,11 @@ private fun PlaceRow(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(64.dp))
+        // As wide as the label needs ("Driver to", large fonts), never a fixed column that wraps it.
+        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.widthIn(min = 48.dp).padding(end = 8.dp))
         Text(
             value ?: stringResource(placeholderRes),
+            modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             color = if (value == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
@@ -329,7 +332,7 @@ private fun TimeRow(state: UiState, vm: MainViewModel) {
             vm.setTime(mode, at.toInstant())
         }, now.hour, now.minute, true).show()
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         FilterChip(selected = state.timeMode == TimeMode.NOW, onClick = { vm.setTime(TimeMode.NOW, null) }, label = { Text(stringResource(R.string.now)) })
         FilterChip(
             selected = state.timeMode == TimeMode.DEPART_AT,
