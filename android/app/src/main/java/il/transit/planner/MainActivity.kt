@@ -32,6 +32,9 @@ import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
 import il.transit.planner.ui.Shortcuts
+import il.transit.planner.ui.TripDetailsViewModel
+import il.transit.planner.ui.screens.TripDetailsSheet
+import il.transit.core.present.vehicleGeoJson
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -53,6 +56,7 @@ import org.maplibre.android.maps.Style
  */
 class MainActivity : ComponentActivity() {
     private val vm: MainViewModel by viewModels { MainViewModel.factory(application as TransitApp) }
+    private val tripVm: TripDetailsViewModel by viewModels { TripDetailsViewModel.factory(application as TransitApp) }
 
     private lateinit var mapView: MapView
     private var map: MapLibreMap? = null
@@ -135,14 +139,28 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                // Trip sheet (B1): the vehicle on the map; closes when its option is no longer shown.
+                val tripSheet by tripVm.sheet.collectAsState()
+                LaunchedEffect(ctl, tripSheet?.vehicle, tripSheet?.details?.color) {
+                    ctl?.setVehicle(vehicleGeoJson(tripSheet?.vehicle, tripSheet?.details?.color ?: "#000000"))
+                }
+                LaunchedEffect(selected) {
+                    val open = tripVm.sheet.value ?: return@LaunchedEffect
+                    if (selected?.legs?.contains(open.leg) != true) tripVm.close()
+                }
+
                 val actions = ScreenActions(
                     offline = offlineState,
                     downloadOffline = ::downloadOfflineArea,
                     deleteOffline = offline::delete,
                     remind = ::remind,
                     startRide = ::startRide,
+                    openLeg = tripVm::open,
                 )
-                MainScreen(state, vm, actions) {
+                val openSheet = tripSheet
+                val sheetUi: (@Composable () -> Unit)? =
+                    if (openSheet != null) ({ TripDetailsSheet(openSheet, onClose = tripVm::close) }) else null
+                MainScreen(state, vm, actions, tripSheet = sheetUi) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
                 }
             }
@@ -229,8 +247,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true) }
-    override fun onPause() { vm.onVisible(false); mapView.onPause(); super.onPause() }
+    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
+    override fun onPause() { vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }

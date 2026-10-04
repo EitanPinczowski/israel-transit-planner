@@ -100,6 +100,25 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   crossed the box — select by `tripId`, never trust the box alone.
 - **`CAR_PARKING` (pre-transit) is unusable** — see `dead-ends` and `special-features`.
 
+## How the app uses `trip` and `map/trips` (trip sheet, Phase 8 B1)
+All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest`.
+- **`trip`: one per tap** on a bus/train chip of the selected option (`TripDetailsSession.open`);
+  the guard caches it 30 s, so close + re-open is free. No answer (offline, no `tripId`) → the
+  sheet shows the plan leg's own stops (`legOnly`). Boarding/alighting are matched to the trip's
+  stops by stop id, else the nearest stop within 150 m (sibling platforms), nearest in time.
+- **`map/trips`: at most one per 30 s** (`TripDetailsSession.REFRESH`), only while the sheet is
+  open **and the app is in front**, and only while the timetable has the vehicle on the road
+  (from 2 min before its first stop to its last). Window `now … now+60 s`, zoom 14.
+- **The box is not the user's leg** but the stretch of the trip between the last stop served and
+  the next (`vehicleBox`, +1 km): the sheet is usually opened while waiting, when the vehicle is
+  still before the boarding stop. It also keeps answers small (the leg box of a Be'er Sheva →
+  Tel Aviv train would cover thousands of hops).
+- The mark is matched **by `tripId`** and interpolated by time along the hop's precision-5
+  polyline every 2 s between refreshes (`vehicleAt`); between hops it waits at the stop.
+  `realTime: false` (every MOT line) → the sheet says "scheduled position".
+- Live times, skipped stops and ⚠ alerts render only when present (`TripStopRow.live`,
+  `cancelled`, `alertTexts`); alerts are kept only while `inEffectAt` and folded by text.
+
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a

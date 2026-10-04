@@ -57,10 +57,19 @@ class ScreenActions(
     val remind: () -> Unit,
     /** Same permission dance, then starts the "get off at the next stop" ride. */
     val startRide: () -> Unit,
+    /** Opens the trip sheet (all stops of the vehicle) for a transit leg of the selected option. */
+    val openLeg: (il.transit.core.api.Leg) -> Unit = {},
 )
 
 @Composable
-fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @Composable () -> Unit) {
+fun MainScreen(
+    state: UiState,
+    vm: MainViewModel,
+    actions: ScreenActions,
+    /** The open trip sheet (TripDetailsSheet), shown in place of the results; null when closed. */
+    tripSheet: (@Composable () -> Unit)? = null,
+    map: @Composable () -> Unit,
+) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
 
@@ -82,6 +91,7 @@ fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @
         Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
             AttributionChip(Modifier.padding(8.dp))
             when {
+                tripSheet != null -> tripSheet()
                 state.stopSheet != null -> StopPanel(state.stopSheet, state.favorites, vm)
                 state.loading || state.hasResults || state.error != null ->
                     ResultsPanel(state, vm, actions, onSaveTrip = { savingTrip = true })

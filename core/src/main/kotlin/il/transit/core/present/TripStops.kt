@@ -10,6 +10,10 @@ import il.transit.core.api.parseTime
 import il.transit.core.geo.BBox
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
+import il.transit.core.geo.MapData
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import java.time.Duration
 import java.time.Instant
 
@@ -255,6 +259,10 @@ class TripDetailsSession(
     var details: TripDetails? = null
         private set
 
+    /** No `trip` answer (no trip id, offline, an error): only the leg's own stops are known. */
+    var legOnly: Boolean = false
+        private set
+
     /** Hops of the last refresh, kept to interpolate between refreshes. */
     private var segments: List<TripSegment> = emptyList()
     private var lastRefresh: Instant? = null
@@ -262,6 +270,7 @@ class TripDetailsSession(
     /** One `trip` request. On failure the sheet falls back to the leg's own stops. */
     suspend fun open(now: Instant): TripDetails {
         val trip = leg.tripId?.let { id -> orNull { api.trip(id, language) } }
+        legOnly = trip == null
         return tripDetails(leg, trip, now).also { details = it }
     }
 
@@ -307,4 +316,21 @@ class TripDetailsSession(
         /** As recorded (2026-10-03, zoom 14); MOTIS thins out vehicles at low zoom. */
         const val ZOOM = 14.0
     }
+}
+
+/** GeoJSON for the map's vehicle layer: one Point with `realTime` and `color`, or empty. */
+fun vehicleGeoJson(mark: VehicleMark?, color: String): String {
+    if (mark == null) return MapData.EMPTY
+    val point = buildJsonObject {
+        put("type", JsonPrimitive("Feature"))
+        put("geometry", buildJsonObject {
+            put("type", JsonPrimitive("Point"))
+            put("coordinates", JsonArray(listOf(mark.at.lon, mark.at.lat).map { JsonPrimitive(it) }))
+        })
+        put("properties", buildJsonObject {
+            put("realTime", JsonPrimitive(mark.realTime))
+            put("color", JsonPrimitive(color))
+        })
+    }
+    return """{"type":"FeatureCollection","features":[$point]}"""
 }

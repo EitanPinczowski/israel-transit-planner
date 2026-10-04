@@ -117,9 +117,9 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
       StopSheet, SettingsDialog, Common); `MainScreen.kt` keeps the scaffold only
 
 ### B1 — Trip details + live bus (`claude/p8-trip-details`, 1 request per tap + 1 per 30 s)
-- [ ] Tap a transit leg: every stop with scheduled + live time, cancelled stops struck through
-- [ ] The vehicle on the map while the sheet is open (`map/trips`, leg bbox, app in front only)
-- [ ] ⚠ service alerts on leg chips, the trip sheet and stop-sheet departures — **only when an
+- [x] Tap a transit leg: every stop with scheduled + live time, cancelled stops struck through
+- [x] The vehicle on the map while the sheet is open (`map/trips`, leg bbox, app in front only)
+- [x] ⚠ service alerts on leg chips, the trip sheet and stop-sheet departures — **only when an
       answer carries them**; Israel sent none on 2026-10-03 (A1), so no empty alert UI
 
 ### B2 — Park & Ride (`claude/p8-park-ride`, `ParkRidePlanner.BUDGET = 5`)

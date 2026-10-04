@@ -21,6 +21,9 @@ import il.transit.core.present.summarize
 import il.transit.core.present.tripDetails
 import il.transit.core.present.vehicleAt
 import il.transit.core.present.vehicleBox
+import il.transit.core.present.vehicleGeoJson
+import il.transit.core.present.VehicleMark
+import il.transit.core.geo.MapData
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.builtins.ListSerializer
 import org.junit.Assert.assertEquals
@@ -208,6 +211,13 @@ class TripDetailsTest {
         assertEquals(31.015, vehicleAt(hops, "x", at("20:07:30"))!!.at.lat, 1e-6)
     }
 
+    @Test fun `vehicle GeoJSON is lon-lat with its colour and real-time flag, empty without a mark`() {
+        val json = vehicleGeoJson(VehicleMark(LatLon(31.25, 34.79), realTime = false, atStop = false), "#1E88E5")
+        assertTrue(json.contains("\"coordinates\":[34.79,31.25]"))
+        assertTrue(json.contains("\"realTime\":false") && json.contains("#1E88E5"))
+        assertEquals(MapData.EMPTY, vehicleGeoJson(null, "#000000"))
+    }
+
     @Test fun `point along a path is measured by length`() {
         val path = listOf(LatLon(31.0, 34.0), LatLon(31.0, 34.01), LatLon(31.0, 34.03))
         assertEquals(34.015, pointAlong(path, 0.5).lon, 1e-4)
@@ -293,6 +303,7 @@ class TripDetailsTest {
         val session = TripDetailsSession(fake, userLeg())
         // Only the user's stops are known (Soroka 20:37 on), so the box starts 2 min before that.
         assertEquals(3, session.open(at("20:33:00")).rows.size)
+        assertTrue(session.legOnly)
         assertNull(session.tick(at("20:33:00"), visible = true))
         assertEquals(listOf("trip"), fake.calls)
         assertNull(session.tick(at("20:35:00"), visible = true))

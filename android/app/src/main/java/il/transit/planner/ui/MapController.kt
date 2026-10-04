@@ -25,6 +25,7 @@ class MapController(private val map: MapLibreMap, private val style: Style) {
         style.addSource(GeoJsonSource(STOPS_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(ROUTE_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(PLACES_SRC, MapData.EMPTY))
+        style.addSource(GeoJsonSource(VEHICLE_SRC, MapData.EMPTY))
 
         style.addLayer(
             CircleLayer(STOPS_LAYER, STOPS_SRC).withProperties(
@@ -74,6 +75,19 @@ class MapController(private val map: MapLibreMap, private val style: Style) {
                 PropertyFactory.circleStrokeWidth(2f),
             ),
         )
+        // The trip sheet's vehicle, on top of everything. A timetable position (every MOT line)
+        // is drawn see-through; the sheet labels it "scheduled position".
+        style.addLayer(
+            CircleLayer(VEHICLE_LAYER, VEHICLE_SRC).withProperties(
+                PropertyFactory.circleRadius(9f),
+                PropertyFactory.circleColor(Expression.toColor(Expression.get("color"))),
+                PropertyFactory.circleOpacity(
+                    Expression.switchCase(Expression.toBool(Expression.get("realTime")), Expression.literal(1f), Expression.literal(0.7f)),
+                ),
+                PropertyFactory.circleStrokeColor("#FFFFFF"),
+                PropertyFactory.circleStrokeWidth(3f),
+            ),
+        )
     }
 
     fun setStops(geoJson: String) = source(STOPS_SRC)?.setGeoJson(geoJson)
@@ -81,6 +95,9 @@ class MapController(private val map: MapLibreMap, private val style: Style) {
     fun setRoute(geoJson: String) = source(ROUTE_SRC)?.setGeoJson(geoJson)
 
     fun setPlaces(geoJson: String) = source(PLACES_SRC)?.setGeoJson(geoJson)
+
+    /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
+    fun setVehicle(geoJson: String) = source(VEHICLE_SRC)?.setGeoJson(geoJson)
 
     /** Fit the camera around [points], leaving [bottomPaddingPx] for the results panel. */
     fun fit(points: List<LatLon>, sidePaddingPx: Int, topPaddingPx: Int, bottomPaddingPx: Int) {
@@ -114,6 +131,8 @@ class MapController(private val map: MapLibreMap, private val style: Style) {
         private const val ROUTE_WALK_LAYER = "app-route-walk-layer"
         private const val ROUTE_STOPS_LAYER = "app-route-stops-layer"
         private const val PLACES_LAYER = "app-places-layer"
+        private const val VEHICLE_SRC = "app-vehicle"
+        private const val VEHICLE_LAYER = "app-vehicle-layer"
         private const val STOPS_MIN_ZOOM = 15f
     }
 }

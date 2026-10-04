@@ -320,7 +320,10 @@ internal fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActi
                         if (state.chain != null) {
                             Text(chainLegTitle(state, i), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 6.dp))
                         }
-                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time) { vm.select(i) }
+                        ItineraryCard(
+                            itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
+                            onLeg = { li -> actions.openLeg(itin.legs[li]) },
+                        ) { vm.select(i) }
                     }
                     // Both answer for the direct A → B trip, which is not what an errand chain is.
                     if (state.options.isNotEmpty() && state.chain == null) item { LastRideSection(state, vm) }
@@ -386,7 +389,14 @@ private fun ErrorRow(error: UiError, vm: MainViewModel) {
 }
 
 @Composable
-private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareProfile, searchedAt: Instant?, onClick: () -> Unit) {
+private fun ItineraryCard(
+    itin: Itinerary,
+    selected: Boolean,
+    fareProfile: FareProfile,
+    searchedAt: Instant?,
+    onLeg: ((Int) -> Unit)? = null,
+    onClick: () -> Unit,
+) {
     val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
     val bg = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
     Column(
@@ -400,8 +410,15 @@ private fun ItineraryCard(itin: Itinerary, selected: Boolean, fareProfile: FareP
             Text(stringResource(R.string.minutes_short, s.durationMin), style = MaterialTheme.typography.titleSmall)
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
-            s.chips.forEach { LegChipView(it) }
+            // On the selected option a bus or train chip opens that vehicle's stops (trip sheet).
+            s.chips.forEach { c ->
+                val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit
+                LegChipView(c, onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null)
+            }
             FareText(s.fare)
+        }
+        if (selected && onLeg != null && itin.firstTransitLeg != null) {
+            Text(stringResource(R.string.trip_tap_hint), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         val transfers = if (s.transfers == 0) stringResource(R.string.direct) else pluralStringResource(R.plurals.transfers, s.transfers, s.transfers)
         val walk = stringResource(R.string.walk_minutes, s.walkMin)

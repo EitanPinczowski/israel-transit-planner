@@ -93,14 +93,15 @@ internal fun FareText(f: FareEstimate?) {
 }
 
 @Composable
-internal fun LegChipView(c: LegChip) {
+internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null) {
     val color = parseColor(c.color)
     val text = when (c.kind) {
         LegKind.WALK, LegKind.CAR -> "${kindName(c.kind)} ${c.minutes}′"
         else -> c.label ?: kindName(c.kind)
-    }
+    }.let { if (c.alert) "⚠ $it" else it } // only when an answer carries an alert
     Box(
         Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, RoundedCornerShape(6.dp))
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(horizontal = 6.dp, vertical = 2.dp),
     ) {
         val live = when {
@@ -128,7 +129,7 @@ internal fun kindName(k: LegKind): String = stringResource(
     },
 )
 
-private fun parseColor(hex: String): Color =
+internal fun parseColor(hex: String): Color =
     runCatching { Color(android.graphics.Color.parseColor(hex)) }.getOrDefault(Color.Gray)
 
 @Composable
