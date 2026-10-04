@@ -5,6 +5,7 @@ package il.transit.planner.ui
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -87,6 +88,7 @@ import il.transit.core.present.dropOffRow
 import il.transit.core.present.betterStartRow
 import il.transit.core.present.LegChip
 import il.transit.core.present.LegKind
+import il.transit.core.present.chipTextColor
 import il.transit.core.present.hhmm
 import il.transit.core.present.summarize
 import il.transit.core.user.ModeFilter
@@ -125,6 +127,16 @@ class ScreenActions(
 fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @Composable () -> Unit) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
+
+    // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
+    val panelOpen = state.loading || state.hasResults || state.error != null
+    BackHandler(enabled = state.editing != null || state.stopSheet != null || panelOpen) {
+        when {
+            state.editing != null -> vm.cancelEditing()
+            state.stopSheet != null -> vm.closeStop()
+            else -> vm.clearResults()
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         map()
@@ -204,7 +216,7 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                     PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
-                    TextButton(onClick = vm::swap, enabled = state.to != null) { Text("⇅") }
+                    IconButton(onClick = vm::swap, enabled = state.to != null) { Icon(Icons.Default.SwapVert, stringResource(R.string.swap)) }
                     val to = state.to
                     if (to is PlaceRef.Point && state.savedPlaces.none { it.latLon == to.at }) {
                         IconButton(onClick = { onSavePlace(to.at) }) {
@@ -554,7 +566,8 @@ private fun LegChipView(c: LegChip) {
         Text(
             text + live,
             style = MaterialTheme.typography.labelMedium,
-            color = if (c.kind == LegKind.WALK) MaterialTheme.colorScheme.onSurfaceVariant else Color.White,
+            // Black or white, whichever reads better on the route colour (4.5:1 where it can).
+            color = if (c.kind == LegKind.WALK) MaterialTheme.colorScheme.onSurfaceVariant else parseColor(chipTextColor(c.color)),
         )
     }
 }

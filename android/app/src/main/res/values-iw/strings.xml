@@ -45,6 +45,9 @@
     <string name="retry">נסו שוב</string>
 
     <string name="settings">הגדרות</string>
+    <string name="swap">החלפת מוצא ויעד</string>
+    <string name="more_options">אפשרויות נוספות</string>
+    <string name="edit_search">שינוי החיפוש</string>
     <string name="done">סיום</string>
     <string name="max_transfers">מספר החלפות מרבי</string>
     <string name="any">ללא הגבלה</string>
@@ -141,7 +144,7 @@
     <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
     <string name="stat_top_destination">היעד הנפוץ ביותר: %s</string>
 
-    <string name="update_available">גרסה חדשה זמינה: v\u2068%s\u2069</string>
+    <string name="update_available">גרסה חדשה זמינה: \u2068v%s\u2069</string>
     <string name="update_download">הורדה</string>
     <string name="fare_profile">תעריף</string>
     <string name="fare_regular">רגיל</string>

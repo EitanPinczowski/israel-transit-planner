@@ -85,6 +85,9 @@ def check(en: dict[str, dict[str, str]], iw: dict[str, dict[str, str]]) -> list[
                 before, after = text[: m.start()], text[m.end():].removeprefix("%%")  # "42%" is one unit
                 if not (before.endswith(FSI) and after.startswith(PDI)):
                     errors.append(f"{where}: {m.group(0)} is not wrapped in FSI/PDI")
+            # "v⁨%s⁩" shows as "9.9.9v" in Hebrew: a Latin prefix/suffix belongs inside the isolate.
+            if re.search(f"[A-Za-z]{FSI}|{PDI}[A-Za-z]", text):
+                errors.append(f"{where}: a Latin letter is glued outside an FSI/PDI isolate; move it inside")
             if name.startswith("late"):
                 for m in re.finditer(r"\+", text):
                     if m.start() == 0 or text[m.start() - 1] not in (LRM, RLM):
