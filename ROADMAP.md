@@ -113,7 +113,7 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
       and in `dead-ends` if it fails
 
 ### A2 — mechanical UI split (`claude/p8-ui-split`, no behaviour change)
-- [ ] `MainScreen.kt` → `ui/screens/` (TripPanel, BetterStartPanel, DropOffPanel, PickUpPanel,
+- [x] `MainScreen.kt` → `ui/screens/` (TripPanel, BetterStartPanel, DropOffPanel, PickUpPanel,
       StopSheet, SettingsDialog, Common); `MainScreen.kt` keeps the scaffold only
 
 ### B1 — Trip details + live bus (`claude/p8-trip-details`, 1 request per tap + 1 per 30 s)
