@@ -208,6 +208,9 @@
     <string name="stay">Stay</string>
     <string name="chain_summary">Leave \u2068%1$s\u2069 · arrive \u2068%2$s\u2069</string>
     <string name="chain_failed">No way found for leg %1$d — try another time or stop</string>
+    <!-- The arrow points along the reading direction: → in English, ← in Hebrew. -->
+    <string name="chain_leg_title">%1$d. %2$s → %3$s</string>
+    <string name="line_to">%1$s → %2$s</string>
     <string name="by_car_check">🚗 By car?</string>
     <string name="by_car">By car ~%1$d min at this time (traffic ×%2$s) · %3$d km</string>
     <string name="taxi_calculator">Taxi price: official MOT calculator</string>
