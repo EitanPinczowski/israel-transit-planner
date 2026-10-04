@@ -19,6 +19,9 @@ import com.android.resources.LayoutDirection
 import com.android.resources.NightMode
 import com.android.resources.ScreenOrientation
 import il.transit.core.api.MotisJson
+import il.transit.planner.ui.screens.HistoryContent
+import il.transit.planner.ui.screens.LocalWalkDirectionsOpen
+import il.transit.planner.ui.screens.SettingsContent
 import il.transit.core.api.PlanResponse
 import il.transit.core.features.BetterStartOption
 import il.transit.core.features.BetterStartResult

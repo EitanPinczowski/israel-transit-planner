@@ -12,7 +12,10 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] CI: core tests, docs check, debug APK artifact
 - [x] Owner: allow `api.transitous.org` + `tiles.openfreemap.org` in the cloud environment's network settings
 - [x] Spike: record real Transitous answers for Israel (plan, CAR_DROPOFF pre + post, one-to-many CAR, map/stops, stoptimes) and replace `plan_synthetic.json`
-- [ ] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
+- [x] Spike, real-time part: record a weekday `stoptimes` for "now" and check `realTime: true` (the spike ran on Shabbat)
+      — closed as **not available** (owner, 2026-10-04): Transitous has no real-time for Israeli
+      MOT lines (0 `realTime` on Sat 2026-10-03 23:20 and Sun 2026-10-04 10:16; only busofash
+      carries GTFS-RT).
 - [x] Owner: send `docs/transitous-contact.md` to Transitous in their Matrix channel
 
 ## Phase 1 — MVP
@@ -109,15 +112,18 @@ skill, the brief each session got in `docs/agents/phase8.md`. Wave 0 (A1, A2) me
 Wave 1 (B1–B4) starts. Tick only your own package's lines.
 
 ### A1 — API spike + plumbing (`claude/p8-api`, core only, ~8 live requests to record)
-- [ ] Weekday `stoptimes` for "now" recorded; `realTime: true` checked (closes the Phase 0 item)
-- [ ] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
+- [x] Weekday `stoptimes` for "now" recorded; `realTime: true` checked (closes the Phase 0 item)
+      — Transitous has no real-time for Israeli MOT lines (0 `realTime` on Sat 2026-10-03 23:20
+      and Sun 2026-10-04 10:16; only busofash carries GTFS-RT). Closed as not available.
+- [x] `trip(tripId)` and `mapTrips(bbox, start, end, zoom)` in `TransitApi`, both guards, fakes,
       fixtures (`trip` for a bus and a train, `map/trips` for a small box)
-- [ ] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?
-- [ ] `CAR_PARKING` verdict (Meitar → Tel Aviv, recorded) written here, in `special-features`,
+- [x] `Alert` model; `alerts` / `cancelled` on legs, places and stop times; does Israel send any?
+      No: zero `alerts` in every answer of 2026-10-03.
+- [x] `CAR_PARKING` verdict (Meitar → Tel Aviv, recorded) written here, in `special-features`,
       and in `dead-ends` if it fails
 
 ### A2 — mechanical UI split (`claude/p8-ui-split`, no behaviour change)
-- [ ] `MainScreen.kt` → `ui/screens/` (TripPanel, BetterStartPanel, DropOffPanel, PickUpPanel,
+- [x] `MainScreen.kt` → `ui/screens/` (TripPanel, BetterStartPanel, DropOffPanel, PickUpPanel,
       StopSheet, SettingsDialog, Common); `MainScreen.kt` keeps the scaffold only
 
 ### B1 — Trip details + live bus (`claude/p8-trip-details`, 1 request per tap + 1 per 30 s)
@@ -127,9 +133,15 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
       answer carries them**; Israel sent none on 2026-10-03 (A1), so no empty alert UI
 
 ### B2 — Park & Ride (`claude/p8-park-ride`, `ParkRidePlanner.BUDGET = 5`)
+> **A1 `CAR_PARKING` verdict (2026-10-03): unusable — use bundled `RailStations` + `CAR`.**
+> Meitar → Tel Aviv HaHagana, Mon 08:00, 20-min cap: all 5 answers park at unnamed OSM lots
+> near a bus stop (2–13′ drive, then up to 11′ walk), board a bus, and never park at a
+> station; best arrives 10:06. `CAR` drives 15′ to Be'er Sheva North and reaches Tel Aviv
+> Center (past HaHagana) at 09:46. Fixture `plan_car_parking_meitar`, test `ApiPhase8Test`.
 - [ ] Drive your own car to a station with parking, continue by train; Pareto front like the
-      other car features, traffic-adjusted (`CAR_PARKING` or bundled `RailStations`, per A1)
-- [ ] "Way back to my car": plans back to the same station, on tap only (1 request)
+      other car features, traffic-adjusted; bundled `RailStations` (A1: `CAR_PARKING` unusable)
+- [ ] "Way back to my car": plans back to the same station, on tap only (1 request), reusing
+      the existing way-back code
 - [ ] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
 
 ### B3 — Calendar → arrive by (`claude/p8-calendar`, 1 geocode, cached a day)
@@ -138,7 +150,8 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
-- [ ] Roborazzi/Robolectric screenshots of every `ui/screens/*` panel, Hebrew + English, in CI
+- [ ] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
+      the job fails on an image change the PR did not re-record
 - [ ] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
 
 ### Close-out (planner)

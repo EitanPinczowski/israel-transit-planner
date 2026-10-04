@@ -14,7 +14,8 @@ phase checklist is `ROADMAP.md`.
   Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
 - **No server of our own.** The phone talks directly to free public services:
   - **Transitous** (`https://api.transitous.org`, runs MOTIS) — routing, geocoding, stops,
-    departures, real-time. Israel MOT GTFS + a GTFS-RT feed are already loaded there.
+    departures. Israel MOT GTFS is loaded there; real-time only for busofash (Tel Aviv
+    night buses), so MOT times are scheduled.
   - **OpenFreeMap** (`tiles.openfreemap.org`) — map tiles for MapLibre.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),
@@ -41,7 +42,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
-  ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/Theme (palette) · ui/MapController (layers)
+  ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
 tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py
 ```

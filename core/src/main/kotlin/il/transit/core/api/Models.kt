@@ -30,6 +30,10 @@ data class Place(
     val scheduledDeparture: String? = null,
     val track: String? = null,
     val modes: List<String>? = null,
+    /** The vehicle skips this stop (real-time). Also set on both ends of some transfer walks —
+     *  see [Leg.cancelled]. */
+    val cancelled: Boolean = false,
+    val alerts: List<Alert> = emptyList(),
 ) {
     val latLon: LatLon get() = LatLon(lat, lon)
 }
@@ -71,7 +75,10 @@ data class Leg(
     val routeColor: String? = null,
     val agencyName: String? = null,
     val tripId: String? = null,
+    /** Meaningful on transit legs only: MOTIS also sets it on some transfer walks between two
+     *  stops, together with their places (both recorded plans of 2026-10-03). */
     val cancelled: Boolean = false,
+    val alerts: List<Alert> = emptyList(),
     val intermediateStops: List<Place> = emptyList(),
     val legGeometry: EncodedPolyline? = null,
     /** Walking legs only: the path piece by piece. */
@@ -132,6 +139,8 @@ data class StopTime(
     val routeColor: String? = null,
     val cancelled: Boolean = false,
     val tripCancelled: Boolean = false,
+    val tripId: String? = null,
+    val alerts: List<Alert> = emptyList(),
 )
 
 @Serializable
