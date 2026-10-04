@@ -1,7 +1,7 @@
 # Israel Transit Planner — project context
 
 Android trip planner for Israeli public transport (bus, Israel Railways, light rail) with
-three car + transit features. For the owner, friends and family; shipped as an APK.
+four car + transit features. For the owner, friends and family; shipped as an APK.
 
 **Keep this file under 120 lines.** It is loaded into every session. Anything a session
 only sometimes needs belongs in a skill (table below). No status, no history, no dated
@@ -33,7 +33,7 @@ phase checklist is `ROADMAP.md`.
 core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   api/        TransitApi · MotisClient (HTTP) · GuardedTransitApi · BudgetedTransitApi · Models
   geo/        LatLon, haversine, polyline decode (MOTIS precision 6), corridor bbox, RailStations (generated)
-  features/   Pareto engine + BetterStart · DropOff · PickUp, TrafficProfile
+  features/   Pareto engine + BetterStart · DropOff · PickUp · ParkRide, TrafficProfile
   plan/       TripPlanner (A→B), LastRideFinder, ChainPlanner (errands), CarCompare, caches
   present/    summaries, leg chips, colours, departure rows — all UI text logic, tested
   user/       UserSettings → MOTIS Preferences, saved places/trips, UserJson codec
@@ -47,13 +47,14 @@ android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK �
 tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
 ```
 
-### The three special features (all return a Pareto front: driver cost × arrival × transfers)
+### The four special features (all return a Pareto front: driver cost × arrival × transfers)
 
 | Feature | Idea | Requests |
 |---|---|---|
 | Better start | `preTransitModes=CAR` (Transitous's `CAR_DROPOFF` barely drives), cap ladder + walk baseline | ≤ 5 |
 | Let me off on the way (A→B, reach C) | car route → stations spread along it (bundled list on long drives) → 2 one-to-many → ≤ 4 plans + 2 baselines | ≤ 10 (`DropOffPlanner.BUDGET`) |
 | Best pick-up point | `postTransitModes=CAR`, cap ladder + transit-only baseline (`PickUpPlanner.BUDGET`) | ≤ 4 |
+| Park & ride (own car → train) | bundled `RailStations` (not `CAR_PARKING`) → 1 one-to-many CAR → plans from ≤ 3 station ids + baseline | ≤ 5 (`ParkRidePlanner.BUDGET`) |
 
 Car times from free routers assume empty roads → `TrafficProfile` (×1.3 Sun–Thu peaks).
 
@@ -74,7 +75,7 @@ skill that does not exist — a note nobody can find is a note nobody has.
 |---|---|
 | `android-build` | building, running, or debugging the app; Gradle or CI failures |
 | `transitous-api` | any call to MOTIS/Transitous, new endpoints, recording fixtures |
-| `special-features` | editing BetterStart / DropOff / PickUp / Pareto / traffic |
+| `special-features` | editing BetterStart / DropOff / PickUp / ParkRide / Pareto / traffic |
 | `add-feature` | adding any user-visible feature end to end |
 | `i18n-rtl` | any UI text or layout (Hebrew RTL + English) |
 | `golden-trips` | checking that routing results are still sane |

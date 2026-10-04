@@ -76,6 +76,7 @@ import il.transit.core.present.summarize
 import il.transit.core.present.walkSteps
 import il.transit.planner.R
 import il.transit.planner.ui.AppMode
+import il.transit.planner.ui.ParkRideUi
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.PlaceRef
@@ -153,6 +154,7 @@ internal fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon)
                     AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
                     AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
                     AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
+                    AppMode.PARK_RIDE -> MinutesSlider(R.string.park_ride_drive_up_to, state.parkRide.maxDriveMin, vm::setMaxParkRideDrive, max = ParkRideUi.MAX_DRIVE)
                     AppMode.TRIP -> Unit
                 }
             }
@@ -168,6 +170,7 @@ private fun ModeRow(state: UiState, vm: MainViewModel) {
             AppMode.BETTER_START to R.string.mode_better_start,
             AppMode.DROP_OFF to R.string.mode_drop_off,
             AppMode.PICK_UP to R.string.mode_pick_up,
+            AppMode.PARK_RIDE to R.string.mode_park_ride,
         ).forEach { (mode, label) ->
             FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(label)) })
         }
@@ -313,6 +316,7 @@ internal fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActi
                 state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
                 state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
+                state.mode == AppMode.PARK_RIDE && state.parkRide.result != null -> ParkRideList(state, state.parkRide.result, vm)
                 else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
                     state.chain?.let { c -> item { ChainSummary(state, c) } }
@@ -326,6 +330,7 @@ internal fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActi
                     if (state.options.isNotEmpty() && state.chain == null) item { LastRideSection(state, vm) }
                     if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null && state.chain == null) item { WayBackRow(vm) }
                     if (state.mode == AppMode.TRIP && state.options.isNotEmpty() && state.chain == null) item { CarRow(state, vm) }
+                    if (state.mode == AppMode.TRIP) parkedCarFor(state)?.let { p -> item { DriveHomeRow(state, p) } }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
             }
@@ -489,11 +494,12 @@ private fun CarRow(state: UiState, vm: MainViewModel) {
     }
 }
 
-/** "Way back after 1 h · 2 h · 3 h": the return of the selected option, same settings. */
+/** "Way back after 1 h · 2 h · 3 h": the return of the selected option, same settings.
+ *  Park & ride reuses it with its own label: the way back goes to the parked car. */
 @Composable
-private fun WayBackRow(vm: MainViewModel) {
+internal fun WayBackRow(vm: MainViewModel, labelRes: Int = R.string.way_back_after) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(stringResource(R.string.way_back_after), style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(labelRes), style = MaterialTheme.typography.bodySmall)
         listOf(60, 120, 180).forEach { m ->
             TextButton(onClick = { vm.wayBack(m) }) { Text(stringResource(R.string.hours_short, m / 60)) }
         }

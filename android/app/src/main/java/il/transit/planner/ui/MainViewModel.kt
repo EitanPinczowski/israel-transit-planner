@@ -83,7 +83,7 @@ sealed interface PlaceRef {
 enum class Field { FROM, TO, DRIVER_TO, STOP }
 
 /** The tabs on top of the search card. */
-enum class AppMode { TRIP, BETTER_START, DROP_OFF, PICK_UP }
+enum class AppMode { TRIP, BETTER_START, DROP_OFF, PICK_UP, PARK_RIDE }
 
 enum class UiError { NO_LOCATION, NETWORK, NO_RESULTS }
 
@@ -103,6 +103,8 @@ data class UiState(
     /** Pick-up: the driver starts and ends at [to] (usually home); this is their one-way limit. */
     val maxPickUpDriveMin: Int = 15,
     val pickUp: PickUpResult? = null,
+    /** Park & ride: drive limit, results, and the station the car was left at. */
+    val parkRide: ParkRideUi = ParkRideUi(),
     val from: PlaceRef = PlaceRef.MyLocation,
     val to: PlaceRef? = null,
     val editing: Field? = null,
@@ -167,9 +169,10 @@ data class UiState(
             AppMode.BETTER_START -> betterStart?.options?.map { it.payload.itinerary }.orEmpty()
             AppMode.DROP_OFF -> dropOff?.options?.map { it.payload.transit }.orEmpty()
             AppMode.PICK_UP -> pickUp?.options?.map { it.payload.itinerary }.orEmpty()
+            AppMode.PARK_RIDE -> parkRide.result?.options?.map { it.payload.itinerary }.orEmpty()
         }
 
-    val hasResults: Boolean get() = results != null || chain != null || betterStart != null || dropOff != null || pickUp != null
+    val hasResults: Boolean get() = results != null || chain != null || betterStart != null || dropOff != null || pickUp != null || parkRide.result != null
 
     /** Everything the current tab needs before it can search. */
     val readyToPlan: Boolean get() = to != null && (mode != AppMode.DROP_OFF || driverTo != null)
@@ -178,7 +181,11 @@ data class UiState(
 
     /** The car part to draw before [selectedItinerary] (drop-off tab only). */
     val selectedCarPath: List<LatLon>
-        get() = if (mode == AppMode.DROP_OFF) dropOff?.options?.getOrNull(selected)?.payload?.carPath.orEmpty() else emptyList()
+        get() = when (mode) {
+            AppMode.DROP_OFF -> dropOff?.options?.getOrNull(selected)?.payload?.carPath.orEmpty()
+            AppMode.PARK_RIDE -> parkRide.carPath(selected)
+            else -> emptyList()
+        }
 }
 
 class MainViewModel(
@@ -318,14 +325,14 @@ class MainViewModel(
                 Field.DRIVER_TO -> it.copy(driverTo = ref)
                 Field.STOP -> it
             }
-            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null)
+            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = next.parkRide.cleared())
         }
         if (_state.value.readyToPlan) plan()
     }
 
     /** Long-press on the map: that point becomes the destination, named once reverse geocoding answers. */
     fun setDestinationFromMap(at: LatLon) {
-        _state.update { it.copy(to = PlaceRef.Point(null, at), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null, stopSheet = null) }
+        _state.update { it.copy(to = PlaceRef.Point(null, at), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), stopSheet = null) }
         plan()
         viewModelScope.launch {
             val name = try {
@@ -344,7 +351,7 @@ class MainViewModel(
     fun swap() {
         val s = _state.value
         val to = s.to ?: return
-        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null) }
+        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared()) }
         plan()
     }
 
@@ -358,7 +365,7 @@ class MainViewModel(
         _state.update {
             // Only the plain trip has arrive-by: the car tabs ask "leaving now/at T, where do I get out?"
             val time = if (mode != AppMode.TRIP && it.timeMode == TimeMode.ARRIVE_BY) TimeMode.NOW else it.timeMode
-            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, error = null, selected = 0)
+            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0)
         }
         if (_state.value.readyToPlan) plan()
     }
@@ -372,6 +379,12 @@ class MainViewModel(
     fun setMaxPickUpDrive(min: Int) {
         if (min == _state.value.maxPickUpDriveMin) return
         _state.update { it.copy(maxPickUpDriveMin = min) }
+        if (_state.value.readyToPlan) plan()
+    }
+
+    fun setMaxParkRideDrive(min: Int) {
+        if (min == _state.value.parkRide.maxDriveMin) return
+        _state.update { it.copy(parkRide = it.parkRide.copy(maxDriveMin = min)) }
         if (_state.value.readyToPlan) plan()
     }
 
@@ -398,7 +411,7 @@ class MainViewModel(
         if (!quiet) {
             _state.update {
                 it.copy(
-                    loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null,
+                    loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(),
                     selected = 0, stopSheet = null, offlineSince = null,
                     lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
                     chain = null, carTime = null, carLoading = false,
@@ -492,6 +505,11 @@ class MainViewModel(
                         )
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, pickUp = r, error = if (empty) UiError.NO_RESULTS else null) }
+                    }
+                    AppMode.PARK_RIDE -> {
+                        val r = planParkRide(api, s, from, to, language)
+                        val empty = r.options.isEmpty() && r.baseline == null
+                        _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null) }
                     }
                 }
             } catch (e: CancellationException) {
@@ -600,13 +618,20 @@ class MainViewModel(
         val s = _state.value
         val arrive = s.selectedItinerary?.end ?: return
         val origin = s.from
-        val back: PlaceRef = when (origin) {
-            is PlaceRef.Point -> origin
-            PlaceRef.MyLocation -> PlaceRef.Point(null, resolve(origin) ?: return)
+        // Park & ride: back to the station where the car is, as a plain trip (one request).
+        val parked = if (s.mode == AppMode.PARK_RIDE) s.parkRide.selected(s.selected) else null
+        val back: PlaceRef = when {
+            parked != null -> PlaceRef.Point(parked.station.name, parked.stationAt)
+            origin is PlaceRef.Point -> origin
+            else -> PlaceRef.Point(null, resolve(origin) ?: return)
         }
         val dest = s.to ?: return
         _state.update {
-            it.copy(from = dest, to = back, routinePlace = null, timeMode = TimeMode.DEPART_AT, time = arrive.plusSeconds(stayMin * 60L))
+            it.copy(
+                from = dest, to = back, routinePlace = null, timeMode = TimeMode.DEPART_AT, time = arrive.plusSeconds(stayMin * 60L),
+                mode = if (parked != null) AppMode.TRIP else it.mode,
+                parkRide = if (parked != null) it.parkRide.copy(parked = parked) else it.parkRide,
+            )
         }
         plan()
         if (back is PlaceRef.Point && back.name == null) nameLater(back.at)
@@ -648,6 +673,7 @@ class MainViewModel(
             AppMode.TRIP -> null
             AppMode.BETTER_START -> s.betterStart?.let { r -> r.options.getOrNull(s.selected)?.let { o -> r.baseline?.let { b -> min(b.end, o.arrival) } } }
             AppMode.PICK_UP -> s.pickUp?.let { r -> r.options.getOrNull(s.selected)?.let { o -> r.baseline?.let { b -> min(b.end, o.arrival) } } }
+            AppMode.PARK_RIDE -> s.parkRide.result?.let { r -> r.options.getOrNull(s.selected)?.let { o -> r.baseline?.let { b -> min(b.end, o.arrival) } } }
             AppMode.DROP_OFF -> s.dropOff?.let { r ->
                 val o = r.options.getOrNull(s.selected) ?: return@let null
                 val noCar = r.options.firstOrNull { it.payload.kind == il.transit.core.features.DropOffKind.TRANSIT_FROM_START }
@@ -713,7 +739,7 @@ class MainViewModel(
         }
     }
 
-    fun clearResults() = _state.update { it.copy(results = null, betterStart = null, dropOff = null, pickUp = null, error = null, loading = false) }
+    fun clearResults() = _state.update { it.copy(results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, loading = false) }
 
     private fun resolve(ref: PlaceRef): LatLon? = when (ref) {
         PlaceRef.MyLocation -> locationProvider()
@@ -851,7 +877,7 @@ class MainViewModel(
     }
 
     fun goTo(p: SavedPlace) {
-        _state.update { it.copy(to = PlaceRef.Point(p.name, p.latLon), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null) }
+        _state.update { it.copy(to = PlaceRef.Point(p.name, p.latLon), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared()) }
         plan()
     }
 

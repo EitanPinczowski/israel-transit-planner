@@ -44,9 +44,9 @@ import il.transit.planner.R
 
 private const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
 
-/** 5–30 minutes in steps of 5. Local while dragging; [onDone] (a search) runs once, on release. */
+/** 5–[max] minutes in steps of 5. Local while dragging; [onDone] (a search) runs once, on release. */
 @Composable
-internal fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit) {
+internal fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit, max: Int = 30) {
     var value by remember(current) { mutableStateOf(current.toFloat()) }
     Column {
         Text(stringResource(labelRes, value.toInt()), style = MaterialTheme.typography.labelLarge)
@@ -54,8 +54,8 @@ internal fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit) {
             value = value,
             onValueChange = { value = (Math.round(it / 5f) * 5).toFloat() },
             onValueChangeFinished = { onDone(value.toInt()) },
-            valueRange = 5f..30f,
-            steps = 4,
+            valueRange = 5f..max.toFloat(),
+            steps = (max - 5) / 5 - 1,
         )
     }
 }

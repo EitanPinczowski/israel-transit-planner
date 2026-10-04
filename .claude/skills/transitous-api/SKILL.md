@@ -103,7 +103,7 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
-`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` is pinned by a test. Raising a budget
+`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
 
 ## Fixtures
