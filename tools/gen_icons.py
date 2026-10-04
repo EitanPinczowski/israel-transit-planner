@@ -4,7 +4,8 @@
     python tools/gen_icons.py              (writes android/app/src/main/res/drawable/)
     python tools/gen_icons.py --svg DIR    (also writes preview SVGs to DIR)
 
-Writes ic_launcher_foreground / _background / _monochrome and ic_notification. The canvas
+Writes ic_launcher_foreground / _background / _monochrome, ic_notification and the
+shortcut icons (mipmap ic_shortcut_lines / _place). The canvas
 is the 108x108 adaptive-icon grid; everything stays inside the middle 66 (the safe zone),
 so no launcher mask (circle, squircle, teardrop) clips the bus.
 """
@@ -102,6 +103,35 @@ bgx = vector(bg, "Transit blue, lit from the top corner.").replace(
     'xmlns:android="http://schemas.android.com/apk/res/android"',
     'xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:aapt="http://schemas.android.com/aapt"')
 open(f"{out}/ic_launcher_background.xml", "w").write(bgx)
+
+# App-icon shortcuts (long-press the launcher icon): the app's own symbols, so each shortcut
+# is told apart at a glance: ♥ My lines (as in the ⋮ menu), ★ a saved place (as on its chip).
+# Material glyphs (Apache 2.0), 24-unit paths scaled to 46 on the 108 canvas.
+HEART = ("M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09"
+         "C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z")
+STAR = "M12,17.27L18.18,21l-1.64,-7.03L22,9.24l-7.19,-0.61L12,2 9.19,8.63 2,9.24l5.46,4.73L5.82,21z"
+SHORTCUT_BG = "#FFD1E4FF"  # LightColors.primaryContainer (ui/Theme.kt)
+
+def glyph(d, color, comment):
+    k = 46 / 24
+    body = (f'    <group android:translateX="{(108 - 46) / 2}" android:translateY="{(108 - 46) / 2}"\n'
+            f'        android:scaleX="{k:.4f}" android:scaleY="{k:.4f}">\n'
+            f'        <path android:fillColor="{color}" android:pathData="{d}" />\n'
+            f'    </group>\n')
+    return vector(body, comment)
+
+open(f"{out}/ic_shortcut_lines_fg.xml", "w").write(glyph(HEART, "#FF0061A4", "Shortcut glyph: My lines (♥, primary blue)."))
+open(f"{out}/ic_shortcut_place_fg.xml", "w").write(glyph(STAR, "#FF7C5800", "Shortcut glyph: a saved place (★, tertiary amber)."))
+open(f"{out}/ic_shortcut_bg.xml", "w").write(vector(
+    f'    <path android:fillColor="{SHORTCUT_BG}" android:pathData="M0,0h108v108h-108z" />\n',
+    "Shortcut background: the light primary container; the launcher masks it to its shape."))
+mipmap = out.parent / "mipmap-anydpi-v26"
+for name in ("lines", "place"):
+    (mipmap / f"ic_shortcut_{name}.xml").write_text(
+        HEADER + '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
+        '    <background android:drawable="@drawable/ic_shortcut_bg" />\n'
+        f'    <foreground android:drawable="@drawable/ic_shortcut_{name}_fg" />\n'
+        '</adaptive-icon>\n')
 
 if svg_dir:
     svg_dir.mkdir(parents=True, exist_ok=True)
