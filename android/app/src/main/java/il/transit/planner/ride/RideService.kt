@@ -173,7 +173,8 @@ class RideService : Service() {
             this, 0, Intent(this, RideService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE,
         )
         return NotificationCompat.Builder(this, CHANNEL_ONGOING)
-            .setSmallIcon(android.R.drawable.ic_menu_mylocation)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(ContextCompat.getColor(this, R.color.brand))
             .setContentTitle(p?.let { rideProgressTitle(this, it) } ?: getString(R.string.ride_ongoing_title))
             .setContentText(p?.let { rideProgressText(this, it) } ?: getString(R.string.ride_ongoing_text, finalStop))
             .setOnlyAlertOnce(true)
@@ -190,7 +191,8 @@ class RideService : Service() {
         if (!nm.areNotificationsEnabled()) return
         val title = getString(if (e.isLastLeg) R.string.ride_get_off_title else R.string.ride_change_title)
         val n = NotificationCompat.Builder(this, CHANNEL_ALERTS)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(ContextCompat.getColor(this, R.color.brand))
             .setContentTitle(title)
             .setContentText(getString(R.string.ride_get_off_text, e.stopName))
             .setPriority(NotificationCompat.PRIORITY_HIGH)

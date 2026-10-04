@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A simple white bus on the adaptive-icon 108dp canvas (safe zone: the middle 66dp). -->
+<!-- A bold front view of a bus over a route line, inside the 66dp safe zone of the 108dp
+     adaptive-icon canvas, so every launcher mask (circle, squircle, teardrop) keeps it whole.
+     Generated with the monochrome and notification icons from one geometry: keep them in step. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- body -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M38,32h32a6,6 0,0 1,6 6v30a4,4 0,0 1,-4 4h-36a4,4 0,0 1,-4 -4v-30a6,6 0,0 1,6 -6z" />
-    <!-- windscreen -->
-    <path
-        android:fillColor="#1E88E5"
-        android:pathData="M38,40h32v14h-32z" />
-    <!-- headlights -->
-    <path
-        android:fillColor="#FFB300"
-        android:pathData="M40,62h6v4h-6zM62,62h6v4h-6z" />
-    <!-- wheels -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M38,72h8v6a2,2 0,0 1,-2 2h-4a2,2 0,0 1,-2 -2zM62,72h8v6a2,2 0,0 1,-2 2h-4a2,2 0,0 1,-2 -2z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M39.5,66H43.5A2.5,2.5 0 0 1 46,68.5V73.5A2.5,2.5 0 0 1 43.5,76H39.5A2.5,2.5 0 0 1 37,73.5V68.5A2.5,2.5 0 0 1 39.5,66ZM64.5,66H68.5A2.5,2.5 0 0 1 71,68.5V73.5A2.5,2.5 0 0 1 68.5,76H64.5A2.5,2.5 0 0 1 62,73.5V68.5A2.5,2.5 0 0 1 64.5,66Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M30.0,37H30.0A1.5,1.5 0 0 1 31.5,38.5V45.5A1.5,1.5 0 0 1 30.0,47H30.0A1.5,1.5 0 0 1 28.5,45.5V38.5A1.5,1.5 0 0 1 30.0,37ZM78.0,37H78.0A1.5,1.5 0 0 1 79.5,38.5V45.5A1.5,1.5 0 0 1 78.0,47H78.0A1.5,1.5 0 0 1 76.5,45.5V38.5A1.5,1.5 0 0 1 78.0,37Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M42,24H66A9,9 0 0 1 75,33V61A9,9 0 0 1 66,70H42A9,9 0 0 1 33,61V33A9,9 0 0 1 42,24Z" />
+    <path android:fillColor="#FFB300" android:pathData="M44,28.5H64A2,2 0 0 1 66,30.5V31.5A2,2 0 0 1 64,33.5H44A2,2 0 0 1 42,31.5V30.5A2,2 0 0 1 44,28.5Z" />
+    <path android:fillColor="#0D47A1" android:pathData="M41.5,37H66.5A4,4 0 0 1 70.5,41V51A4,4 0 0 1 66.5,55H41.5A4,4 0 0 1 37.5,51V41A4,4 0 0 1 41.5,37Z" />
+    <path android:fillColor="#FFB300" android:pathData="M39.6,62.5A3.4,3.4 0 1 1 46.4,62.5A3.4,3.4 0 1 1 39.6,62.5ZM61.6,62.5A3.4,3.4 0 1 1 68.4,62.5A3.4,3.4 0 1 1 61.6,62.5Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M30.5,80H77.5A2.5,2.5 0 0 1 80,82.5V82.5A2.5,2.5 0 0 1 77.5,85H30.5A2.5,2.5 0 0 1 28,82.5V82.5A2.5,2.5 0 0 1 30.5,80Z" />
 </vector>

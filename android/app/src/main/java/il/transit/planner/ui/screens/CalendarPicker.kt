@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +44,12 @@ import il.transit.planner.ui.CalendarViewModel
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.UiState
 import java.time.Instant
+
+/**
+ * Where the Trip tab's search card puts the calendar chip. The Activity provides [CalendarChip]
+ * (it needs the app, a ViewModel and a permission launcher); screenshots render without one.
+ */
+val LocalCalendarChip = compositionLocalOf<@Composable (UiState) -> Unit> { {} }
 
 /**
  * "From my calendar" chip for the Trip tab. The calendar permission is asked only when the

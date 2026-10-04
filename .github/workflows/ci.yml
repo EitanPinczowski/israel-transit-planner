@@ -33,3 +33,60 @@ jobs:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+  screenshots:
+    name: screenshots (Paparazzi)
+    needs: core
+    runs-on: ubuntu-latest
+    # Only this job may write, and only to the `screenshots` branch (step below).
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      # Record-only: no golden images yet (a cloud session can't render them; it has no
+      # Android SDK). The pictures are for looking at — light/dark, he/en, small/big/landscape.
+      - run: ./gradlew -p android :app:recordPaparazziDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: android/app/src/test/snapshots/
+          retention-days: 14
+      # Also onto the `screenshots` branch, one folder per source branch: artifact storage
+      # is unreachable from a cloud Claude session, raw.githubusercontent.com is not. The
+      # branch is always ONE parentless commit, so it never grows. Pushes only (a fork's
+      # pull request has a read-only token).
+      - name: publish to the screenshots branch
+        if: github.event_name == 'push'
+        env:
+          BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          dir="${BRANCH//\//_}"
+          wt="$RUNNER_TEMP/shots"
+          # Two branches finishing at once lose the lease race; the second try re-reads.
+          for attempt in 1 2; do
+            git worktree remove --force "$wt" 2>/dev/null || true
+            if git fetch -q --depth=1 origin screenshots 2>/dev/null; then
+              lease="screenshots:$(git rev-parse FETCH_HEAD)"
+              git worktree add -q --detach "$wt" FETCH_HEAD
+            else
+              lease="screenshots:"   # must not exist yet
+              git worktree add -q --detach "$wt"
+              git -C "$wt" rm -rfq --ignore-unmatch .
+            fi
+            rm -rf "${wt:?}/$dir" && mkdir -p "$wt/$dir"
+            cp android/app/src/test/snapshots/images/*.png "$wt/$dir/"
+            printf 'commit %s\nrun %s\n' "$GITHUB_SHA" "$RUN_URL" > "$wt/$dir/INFO.txt"
+            git -C "$wt" add -A
+            commit=$(git -C "$wt" commit-tree "$(git -C "$wt" write-tree)" -m "Screenshots ($BRANCH @ ${GITHUB_SHA::7})")
+            if git push -q --force-with-lease="$lease" origin "$commit:refs/heads/screenshots"; then exit 0; fi
+            sleep 10
+          done
+          exit 1

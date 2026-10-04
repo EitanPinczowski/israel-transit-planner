@@ -21,16 +21,17 @@ object Shortcuts {
     const val LINES = "lines"
 
     fun update(context: Context, places: List<SavedPlace>, now: Instant = Instant.now()) {
-        val icon = IconCompat.createWithResource(context, R.mipmap.ic_launcher)
+        // The app's own symbols, so the long-press menu is not a column of identical buses.
+        val placeIcon = IconCompat.createWithResource(context, R.mipmap.ic_shortcut_place)
         val lines = ShortcutInfoCompat.Builder(context, "lines")
             .setShortLabel(context.getString(R.string.shortcut_lines))
-            .setIcon(icon)
+            .setIcon(IconCompat.createWithResource(context, R.mipmap.ic_shortcut_lines))
             .setIntent(intent(context).putExtra(EXTRA_SHORTCUT, LINES))
             .build()
         val placeShortcuts = Routines.shortcutOrder(places, now).mapIndexed { i, p ->
             ShortcutInfoCompat.Builder(context, "place-$i")
                 .setShortLabel(p.name)
-                .setIcon(icon)
+                .setIcon(placeIcon)
                 .setRank(i + 1)
                 .setIntent(intent(context).putExtra(EXTRA_PLACE, p.name))
                 .build()
