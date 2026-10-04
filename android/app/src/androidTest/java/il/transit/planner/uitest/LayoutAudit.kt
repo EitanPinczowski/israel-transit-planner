@@ -37,11 +37,6 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  *  R7 route        the drawn route lies in the map area the panels leave visible
  */
 class LayoutAudit(private val d: AppDriver) {
-    companion object {
-        /** Rules whose findings are fixed: a new one fails the run. */
-        val BLOCKING = setOf("R1", "R7")
-    }
-
     private val density get() = d.activity.resources.displayMetrics.density
 
     fun run(state: String, screenshot: File?): List<Violation> {
@@ -249,6 +244,9 @@ class LayoutAudit(private val d: AppDriver) {
     private fun CRect.containsRect(o: CRect) = o.left >= left - 1 && o.top >= top - 1 && o.right <= right + 1 && o.bottom <= bottom + 1
 
     companion object {
+        /** Rules whose findings are fixed: a new one fails the run. */
+        val BLOCKING = setOf("R1", "R7")
+
         /** Text that must never be truncated: clock times, shekels, minute counts. */
         private val IMPORTANT = Regex("""\d{1,2}:\d{2}|₪|\d+\s?(′|min|דק)""")
     }
