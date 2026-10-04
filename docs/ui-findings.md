@@ -1,8 +1,8 @@
 # UI findings — 2026-10-03
 
 What the automated UI tests found. Nothing here has been fixed yet: you pick the order, and
-each fix turns its check from report-only into a blocking test. Source: `UI tests` runs
-37131889548 and 37132831775 (18 screens × 9 phone profiles × Hebrew/English; journeys on
+each fix turns its check from report-only into a blocking test. Source: `UI tests` run 37154148160 (all green: 491 tests passed, 0 failed, 0 crashes;
+29 runs, 437 screenshots; 18 screens × 9 phone profiles × Hebrew/English, and journeys on
 Android 8, 10, 13, 14 and 15). The latest full report and every screenshot are on the
 `ci-screens` branch; the images below are copies, so they stay valid after later runs.
 
@@ -35,7 +35,7 @@ Rules R1 and J10. Hits 10–17 of 18 screens on **every** profile.
 The results panel and the search card are stacked independently (`MainScreen.kt:120-143`).
 Once results show, the panel slides over the From/To rows and the time chips; only the
 mode tabs stay visible. It also hides the Settings and History buttons: a tap on Settings
-lands on the panel (journey J10). With the largest font (P5) or in landscape (P8), the
+lands on the panel (journey J10, confirmed on Android 8, 10, 13, 14 and 15). With the largest font (P5) or in landscape (P8), the
 panel covers the whole screen.
 
 ![P1](ui-findings/f1-results-cover-search-p1.jpg) ![P5 font 2.0](ui-findings/f1-results-cover-search-p5-font2.jpg)

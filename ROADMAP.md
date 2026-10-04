@@ -74,6 +74,7 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] `uitest` build: replayed fixtures, fixed clock, blank map — zero Transitous traffic
 - [x] Emulator CI: 18 screens × 9 phone profiles × he/en with a layout audit; journeys on
       API 26/29/33/34/35; process death; monkey; report on the `ci-screens` branch
-- [ ] UI tests green on all APIs, every profile verified to apply
+- [x] UI tests green on all APIs, every profile verified to apply (run 37154148160: 491 tests,
+      0 failures, 0 crashes, monkey clean)
 - [ ] Owner: pick the order of the UI fixes in `docs/ui-findings.md`; each fix makes its rule blocking
 - [ ] Owner: Firebase Test Lab (Spark) + keyless login, then run `devices.yml`
