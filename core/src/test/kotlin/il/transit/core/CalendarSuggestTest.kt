@@ -107,7 +107,7 @@ class CalendarSuggestTest {
     @Test fun `coordinates cost no request`() = runTest {
         val api = FakeTransitApi()
         val d = CalendarSuggest.resolve(api, event("Dentist", 1.0, location = "31.2622,34.8013"), "he", null)
-        assertEquals(CalendarDestination("Dentist", LatLon(31.2622, 34.8013)), d)
+        assertEquals(CalendarDestination("Dentist", LatLon(31.2622, 34.8013), "31.2622,34.8013", approximate = false), d)
         val named = CalendarSuggest.resolve(api, event("Class", 1.0, location = "BGU (31.2622, 34.8013)"), "he", null)
         assertEquals("BGU (31.2622, 34.8013)", named?.name)
         assertEquals(emptyList<String>(), api.calls)
@@ -124,6 +124,38 @@ class CalendarSuggestTest {
         // Recorded 2026-10-04: the house number is matched loosely (12 → 126), same street.
         assertEquals("הרצל 126", d?.name)
         assertEquals(31.2432, d!!.at.lat, 1e-3)
+        // ...so it is shown next to the event's own text, marked approximate.
+        assertEquals("הרצל 12, באר שבע", d.source)
+        assertTrue(d.approximate)
+    }
+
+    // --- is the answer really that place? ---
+
+    private fun address(name: String, house: String?, type: String = "ADDRESS", category: String? = null) =
+        GeocodeMatch(type = type, name = name, id = "", lat = 31.24, lon = 34.79, houseNumber = house, category = category)
+
+    @Test fun `recorded mismatches are approximate - another house number, or only the town`() {
+        assertTrue(CalendarSuggest.isApproximate("הרצל 12, באר שבע", recorded("geocode_calendar_herzl_he").first()))
+        assertTrue(CalendarSuggest.isApproximate("Herzl St 12, Be'er Sheva, Israel", recorded("geocode_calendar_herzl_en").first()))
+        assertTrue(CalendarSuggest.isApproximate("Herzl 12, Be'er Sheva", recorded("geocode_calendar_herzl_en_short").first()))
+    }
+
+    @Test fun `a town answer is approximate even when the text has no number`() {
+        assertTrue(CalendarSuggest.isApproximate("Be'er Sheva", address("Be'er Sheva", null, "PLACE", "place_6")))
+    }
+
+    @Test fun `a number in the text that the answer lacks is approximate - street, stop or POI`() {
+        assertTrue(CalendarSuggest.isApproximate("הרצל 12", address("הרצל", null)))
+        assertTrue(CalendarSuggest.isApproximate("הרצל 12", address("רמב\"ם/הרצל", null, "STOP")))
+    }
+
+    @Test fun `same house number, or no number to compare, is exact`() {
+        assertFalse(CalendarSuggest.isApproximate("הרצל 12, באר שבע", address("הרצל 12", "12")))
+        assertFalse(CalendarSuggest.isApproximate("הרצל 12א, באר שבע", address("הרצל 12א", "12א")))
+        assertFalse(CalendarSuggest.isApproximate("Office, Herzl 12, floor 3", address("הרצל 12", "12")))
+        assertFalse(CalendarSuggest.isApproximate("סורוקה", address("סורוקה", null, "PLACE", "hospital")))
+        // A postcode (7 digits) is not a house number.
+        assertFalse(CalendarSuggest.isApproximate("הרצל 12, באר שבע 8410501", address("הרצל 12", "12")))
     }
 
     @Test fun `a maps short link or no answer gives null - the user types the place`() = runTest {

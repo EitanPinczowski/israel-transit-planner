@@ -1,5 +1,6 @@
 package il.transit.core.plan
 
+import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.TransitApi
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
@@ -26,8 +27,12 @@ data class CalendarEvent(
 /** "09:50 · Dentist · Herzl 12, Be'er Sheva"; [tomorrow] when it is not today (Israel time). */
 data class CalendarRow(val time: String, val title: String, val location: String, val tomorrow: Boolean)
 
-/** Where a picked event takes place, ready to be the destination. */
-data class CalendarDestination(val name: String, val at: LatLon)
+/**
+ * Where a picked event takes place, ready to be the destination. [source] is the event's own
+ * location text, shown next to [name] before planning. [approximate]: the geocoder's answer may
+ * not be that place (only the town, or another house number): the user should check it.
+ */
+data class CalendarDestination(val name: String, val at: LatLon, val source: String, val approximate: Boolean = false)
 
 /** "From my calendar": which events to offer, where they are, and when to arrive. */
 object CalendarSuggest {
@@ -103,11 +108,27 @@ object CalendarSuggest {
         val text = e.location.trim()
         parseLatLon(text)?.let { at ->
             val words = !isLink(text) && COORDS.replace(text, "").any { it.isLetter() }
-            return CalendarDestination((if (words) text else e.title.trim()).ifBlank { text }, at)
+            return CalendarDestination((if (words) text else e.title.trim()).ifBlank { text }, at, text)
         }
         // A short maps link (maps.app.goo.gl/…) holds no address to look up.
         if (isLink(text)) return null
         val m = api.geocode(text, language, biasPoint(near), 1).firstOrNull() ?: return null
-        return CalendarDestination(m.name, LatLon(m.lat, m.lon))
+        return CalendarDestination(m.name, LatLon(m.lat, m.lon), text, isApproximate(text, m))
+    }
+
+    private val NUMBER = Regex("""(?<![\d.])\d{1,4}(?![\d.])""")
+
+    /**
+     * Is [m] possibly not the place [location] names? Recorded 2026-10-04: "הרצל 12, באר שבע"
+     * came back as "הרצל 126", and English addresses as the town alone. So: approximate when
+     * the location has a house number the answer does not carry (another number, a street, a
+     * stop or a town), or when the answer is a town or area itself (`place_*`).
+     */
+    fun isApproximate(location: String, m: GeocodeMatch): Boolean {
+        if (m.type == "PLACE" && m.category?.startsWith("place") == true) return true
+        val numbers = NUMBER.findAll(location).map { it.value.trimStart('0') }.toSet()
+        if (numbers.isEmpty()) return false
+        val house = m.houseNumber?.takeWhile { it.isDigit() }?.trimStart('0')
+        return house == null || house !in numbers
     }
 }

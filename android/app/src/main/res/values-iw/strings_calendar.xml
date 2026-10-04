@@ -15,4 +15,10 @@
     <string name="calendar_tomorrow_at">מחר ⁨%1$s⁩</string>
     <string name="calendar_event_row">⁨%1$s⁩ · %2$s · %3$s</string>
     <string name="calendar_buffer">אירועי יומן: להגיע לפני ההתחלה</string>
+    <string name="calendar_arrive_by">להגיע עד ⁨%1$s⁩ אל</string>
+    <string name="calendar_leave_now">כבר מאוחר מדי לפי המרווח. לצאת עכשיו אל</string>
+    <string name="calendar_matched">%1$s\n(לפי היומן: %2$s)</string>
+    <string name="calendar_approximate">מקום משוער: החיפוש לא מצא את הכתובת המדויקת. כדאי לבדוק במפה, או ללחוץ „שינוי”.</string>
+    <string name="calendar_plan">תכנון</string>
+    <string name="calendar_change">שינוי</string>
 </resources>

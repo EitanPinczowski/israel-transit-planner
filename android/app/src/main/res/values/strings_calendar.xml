@@ -15,4 +15,10 @@
     <string name="calendar_tomorrow_at">tomorrow %1$s</string>
     <string name="calendar_event_row">%1$s · %2$s · %3$s</string>
     <string name="calendar_buffer">Calendar events: arrive early by</string>
+    <string name="calendar_arrive_by">Arrive by %1$s at</string>
+    <string name="calendar_leave_now">Too late for the buffer. Leave now for</string>
+    <string name="calendar_matched">%1$s\n(from: %2$s)</string>
+    <string name="calendar_approximate">Approximate: the search did not find this exact address. Check it on the map, or tap Change.</string>
+    <string name="calendar_plan">Plan</string>
+    <string name="calendar_change">Change</string>
 </resources>

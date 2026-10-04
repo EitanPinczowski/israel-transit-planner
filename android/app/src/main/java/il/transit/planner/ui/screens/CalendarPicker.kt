@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import il.transit.core.plan.CalendarEvent
 import il.transit.core.plan.CalendarSuggest
+import il.transit.core.present.hhmm
 import il.transit.planner.R
 import il.transit.planner.TransitApp
 import il.transit.planner.ui.CalendarViewModel
@@ -81,6 +82,29 @@ internal fun CalendarChip(state: UiState, vm: MainViewModel) {
             onDismissRequest = cal::dismiss,
             text = { Text(stringResource(R.string.calendar_refused)) },
             confirmButton = { TextButton(onClick = cal::dismiss) { Text(stringResource(R.string.calendar_ok)) } },
+        )
+    }
+    cs.confirm?.let { c ->
+        AlertDialog(
+            onDismissRequest = cal::dismiss,
+            title = {
+                Text(c.arriveBy?.let { stringResource(R.string.calendar_arrive_by, hhmm(it)) } ?: stringResource(R.string.calendar_leave_now))
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.calendar_matched, c.dest.name, c.dest.source), style = MaterialTheme.typography.bodyLarge)
+                    if (c.dest.approximate) {
+                        Text(stringResource(R.string.calendar_approximate), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { cal.dismiss(); vm.fromCalendar(c.dest.name, c.dest.at, c.arriveBy) }) { Text(stringResource(R.string.calendar_plan)) }
+            },
+            // The normal search, pre-filled with the event's own text (no request until typing).
+            dismissButton = {
+                TextButton(onClick = { cal.dismiss(); vm.fromCalendar(c.dest.source, null, c.arriveBy) }) { Text(stringResource(R.string.calendar_change)) }
+            },
         )
     }
     cs.events?.let { events ->

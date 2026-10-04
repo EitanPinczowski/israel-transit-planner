@@ -29,7 +29,12 @@ data class CalendarUiState(
     val events: List<CalendarEvent>? = null,
     /** A picked event's place is being looked up (one geocode request at most). */
     val resolving: Boolean = false,
+    /** Found: shown with the event's own text (and "approximate") before anything is planned. */
+    val confirm: CalendarConfirm? = null,
 )
+
+/** [arriveBy] null = too late for the buffer: leave now. */
+data class CalendarConfirm(val dest: CalendarDestination, val arriveBy: Instant?)
 
 class CalendarViewModel(
     private val api: TransitApi,
@@ -57,10 +62,10 @@ class CalendarViewModel(
     }
 
     /**
-     * The user picked [e]: find where it is, then hand the place and arrive-by time over.
-     * [done] gets null `at` when the place was not found, so it can be typed instead.
+     * The user picked [e]: find where it is, then show it for a check ([CalendarUiState.confirm]).
+     * Not found: [notFound] gets the location text, so it can be typed instead.
      */
-    fun pick(e: CalendarEvent, near: LatLon?, bufferMin: Int, done: (place: String, at: LatLon?, arriveBy: Instant?) -> Unit) {
+    fun pick(e: CalendarEvent, near: LatLon?, bufferMin: Int, notFound: (place: String, at: LatLon?, arriveBy: Instant?) -> Unit) {
         _state.update { CalendarUiState(resolving = true) }
         viewModelScope.launch {
             val dest: CalendarDestination? = try {
@@ -70,8 +75,9 @@ class CalendarViewModel(
             } catch (x: Exception) {
                 null
             }
-            _state.update { it.copy(resolving = false) }
-            done(dest?.name ?: e.location.trim(), dest?.at, CalendarSuggest.arriveBy(e, bufferMin, Instant.now()))
+            val arriveBy = CalendarSuggest.arriveBy(e, bufferMin, Instant.now())
+            _state.update { it.copy(resolving = false, confirm = dest?.let { d -> CalendarConfirm(d, arriveBy) }) }
+            if (dest == null) notFound(e.location.trim(), null, arriveBy)
         }
     }
 

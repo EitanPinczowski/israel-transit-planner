@@ -58,8 +58,10 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 - **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
   first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
   Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
-  names are not in the index. So "From my calendar" names the destination after the match,
-  not the event text, and the user sees when only the city was found. Privacy: only the
+  names are not in the index. So "From my calendar" shows the match next to the event's
+  text before planning ("הרצל 126 (from: הרצל 12…)", with Change), and marks it approximate
+  when a house number in the text is missing from the match or the match is a town
+  (`category` `place_*`): `CalendarSuggest.isApproximate`, no extra request. Privacy: only the
   location text is sent (never the title); `lat,lon` in a location skips the request; the
   bias is rounded to 0.1° so the day cache hits (`CalendarSuggest`, fixtures `geocode_calendar_*`).
 - **Real-time and alerts — almost none for Israel (checked 2026-10-03).** Transitous' Israel
