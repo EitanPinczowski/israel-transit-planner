@@ -160,7 +160,7 @@ class ScreensTest(private val v: Variant) {
             TripRecord(t0 - 86_400, "Home", "BGU", "BETTER_START", 21, 4, 0, savedMin = 12),
             TripRecord(t0 - 3 * 86_400, "", "Soroka", "PICK_UP", 35, 9, 1, savedMin = 25),
         )
-        paparazzi.snapshot("history") { Frame { DialogBody { HistoryContent(UiState(history = records), NoActions) } } }
+        paparazzi.snapshot("history") { Frame { DialogBody { HistoryContent(UiState(history = records), NoActions, now = start) } } }
     }
 
     private fun shot(name: String, state: UiState, walkOpen: Boolean = false) = paparazzi.snapshot(name) {
