@@ -33,6 +33,21 @@ there) and that is where most of the logic is tested.
 (assembleDebug, uploads the APK as artifact `app-debug`, kept 14 days). The APK from a
 green run is how friends test a build before a release.
 
+Job `screenshots` runs Paparazzi's `:app:recordPaparazziDebug` and uploads
+`android/app/src/test/snapshots/` as artifact `screenshots`: the main screen
+(`ui/ScreensTest.kt`) in each state × 7 device variants, rendered without an emulator.
+Record-only, no goldens yet. The map is a flat placeholder and there are no system bars
+in these pictures, so inset handling still needs a phone. Test fixtures come from
+`core/src/test/resources` (shared through `sourceSets["test"]`).
+
+On pushes the same job also writes the PNGs to the `screenshots` branch, one folder per
+source branch (`/` becomes `_`, e.g. `claude_eager-curie-477jsw/`), plus `INFO.txt` with
+the commit and run. The branch is one parentless commit, force-pushed each time, so it
+never grows. A cloud session can't download artifacts (blob storage is blocked) but can
+read `https://raw.githubusercontent.com/EitanPinczowski/israel-transit-planner/screenshots/<folder>/<file>.png`;
+list a folder through `api.github.com/repos/.../contents/<folder>?ref=screenshots`.
+Check that `INFO.txt` names your commit before judging a picture.
+
 ## Emulator / device
 
 - The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled

@@ -1,6 +1,7 @@
 package il.transit.planner.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +26,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -41,6 +44,7 @@ import il.transit.core.present.AlertText
 import il.transit.core.present.StopRole
 import il.transit.core.present.TripDetails
 import il.transit.core.present.TripStopRow
+import il.transit.core.present.onColor
 import il.transit.planner.R
 import il.transit.planner.ui.TripSheet
 
@@ -50,19 +54,24 @@ import il.transit.planner.ui.TripSheet
  * (2026-10), so the usual sheet is the timetable with a "scheduled position" note.
  */
 @Composable
-internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit) {
-    BackHandler(onBack = onClose)
+internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape) {
+    // No dispatcher in screenshot tests; on a phone there always is one.
+    if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(onBack = onClose)
     val d = sheet.details
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
-        Column(Modifier.navigationBarsPadding().padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    var collapsed by rememberSaveable { mutableStateOf(false) }
+    Sheet(modifier, shape) {
+        SheetHeader(collapsed, { collapsed = it }) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f)) { if (d != null) Header(d) }
                 IconButton(onClick = onClose) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
-            if (d == null) {
-                Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                return@Column
-            }
+        }
+        if (collapsed) return@Sheet
+        if (d == null) {
+            Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            return@Sheet
+        }
+        Column(Modifier.weight(1f, fill = false).padding(end = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             if (d.tripCancelled) Text(stringResource(R.string.trip_cancelled), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.titleSmall)
             if (d.alerts.isNotEmpty()) Alerts(d.alerts)
             if (sheet.legOnly) Note(stringResource(R.string.trip_leg_only))
@@ -76,7 +85,7 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit) {
                 val target = listOfNotNull(board.takeIf { it >= 0 }, d.nextIndex).maxOrNull() ?: 0
                 list.scrollToItem((target - 1).coerceAtLeast(0))
             }
-            LazyColumn(Modifier.heightIn(max = 360.dp), state = list) {
+            LazyColumn(Modifier.weight(1f, fill = false), state = list) {
                 itemsIndexed(d.rows) { _, r -> StopRowView(r, parseColor(d.color)) }
             }
         }
@@ -86,8 +95,8 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit) {
 @Composable
 private fun Header(d: TripDetails) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.background(parseColor(d.color), RoundedCornerShape(6.dp)).padding(horizontal = 6.dp, vertical = 2.dp)) {
-            Text(d.line ?: kindName(d.kind), style = MaterialTheme.typography.labelLarge, color = Color.White)
+        Box(Modifier.background(parseColor(d.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp)) {
+            Text(d.line ?: kindName(d.kind), style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(d.color)))
         }
         Spacer(Modifier.width(8.dp))
         Text(d.headsign, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -96,7 +105,7 @@ private fun Header(d: TripDetails) {
 
 @Composable
 private fun Alerts(alerts: List<AlertText>) {
-    Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MaterialTheme.colorScheme.errorContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(8.dp)) {
             alerts.forEach { a ->
                 Text("⚠ ${a.header}", style = MaterialTheme.typography.titleSmall)
@@ -118,7 +127,7 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
     val strike = if (r.cancelled) TextDecoration.LineThrough else null
     Row(
         Modifier.fillMaxWidth()
-            .background(if (mine) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, RoundedCornerShape(8.dp))
+            .background(if (mine) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, MaterialTheme.shapes.small)
             .padding(horizontal = 6.dp, vertical = 5.dp)
             .alpha(if (r.passed && !mine) 0.5f else 1f),
         verticalAlignment = Alignment.CenterVertically,

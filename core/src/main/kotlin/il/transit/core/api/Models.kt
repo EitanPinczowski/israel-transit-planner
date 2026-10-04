@@ -136,6 +136,7 @@ data class StopTime(
     val tripTo: Place? = null,
     val routeShortName: String = "",
     val displayName: String? = null,
+    val routeColor: String? = null,
     val cancelled: Boolean = false,
     val tripCancelled: Boolean = false,
     val tripId: String? = null,

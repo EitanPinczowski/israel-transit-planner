@@ -23,7 +23,7 @@
     </plurals>
     <string name="minutes_short">%d min</string>
     <string name="walk_minutes">walk %d min</string>
-    <string name="board_line">%1$s at %2$s from %3$s</string>
+    <string name="board_line">%1$s at %2$s from \u2068%3$s\u2069</string>
 
     <string name="kind_walk">Walk</string>
     <string name="kind_bus">Bus</string>
@@ -71,7 +71,7 @@
     <string name="mode_trip">Trip</string>
     <string name="mode_better_start">Better start</string>
     <string name="drive_up_to">Someone drives me up to %d min</string>
-    <string name="drive_to">🚗 %1$d min to %2$s</string>
+    <string name="drive_to">🚗 %1$d min to \u2068%2$s\u2069</string>
     <string name="saves_min">saves %d min</string>
     <string name="fewer_transfers">fewer transfers</string>
     <string name="without_ride">Without a ride: arrive %s</string>
@@ -86,7 +86,7 @@
     <string name="detour_up_to">Driver accepts up to %d min detour</string>
     <string name="drive_takes">The drive on its own: %d min</string>
     <string name="no_stop_on_the_way">No stop on the way within a %d-min detour beats these.</string>
-    <string name="get_out_at">🚗 Get out at %1$s · driver +%2$d min</string>
+    <string name="get_out_at">🚗 Get out at \u2068%1$s\u2069 · driver +%2$d min</string>
     <string name="ride_to_end">🚗 Ride all the way, then transit</string>
     <string name="transit_from_start">🚌 Transit from the start, no ride</string>
     <string name="you_arrive">You arrive %s</string>
@@ -95,7 +95,7 @@
     <string name="driver_at">Driver at</string>
     <string name="pickup_drive_up_to">Driver drives up to %d min each way</string>
     <string name="no_pick_up">No pick-up within %d min of the driver beats going all the way by transit.</string>
-    <string name="picked_up_at">🚗 Get picked up at %1$s at %2$s</string>
+    <string name="picked_up_at">🚗 Get picked up at \u2068%1$s\u2069 at %2$s</string>
     <string name="home_at">Home at %s</string>
     <string name="driver_leaves">Driver leaves at %1$s · round trip %2$d min</string>
     <string name="transit_all_the_way">All the way by transit: arrive %s</string>
@@ -107,7 +107,7 @@
     <string name="on_day">%1$s %2$s</string>
     <string name="next_day">%1$s (+%2$d)</string>
     <string name="late_paren">(+%d min)</string>
-    <string name="remind_me">🔔 Remind me when to leave</string>
+    <string name="remind_me">Remind me to leave</string>
     <string name="reminder_set">🔔 Reminder: leave at %s (re-checked 15 min before)</string>
     <string name="channel_reminders">Trip reminders</string>
     <string name="notify_leave_title">Leave now</string>
@@ -121,7 +121,7 @@
     <string name="offline_failed">Download failed. Check the connection and try again.</string>
     <string name="offline_download">Download map of this area</string>
 
-    <string name="ride_start">▶ Start trip — buzz me before my stop</string>
+    <string name="ride_start">Buzz before my stop</string>
     <string name="ride_active">📍 Trip in progress — I\'ll buzz before your stop</string>
     <string name="ride_stop">Stop</string>
     <string name="ride_ongoing_title">Trip in progress</string>
@@ -138,7 +138,7 @@
     <string name="stat_week">this week</string>
     <string name="stat_transit_hours">hours on transit</string>
     <string name="stat_saved">min saved by car + transit</string>
-    <string name="stat_top_destination">Most frequent destination: %s</string>
+    <string name="stat_top_destination">Most frequent destination: \u2068%s\u2069</string>
 
     <string name="update_available">Update available: v%s</string>
     <string name="update_download">Download</string>
@@ -166,7 +166,7 @@
     <string name="sort_least_walking">Least walking</string>
     <string name="walk_directions_show">Walking directions</string>
     <string name="walk_directions_hide">Hide walking directions</string>
-    <string name="walk_to">Walk to %1$s</string>
+    <string name="walk_to">Walk to \u2068%1$s\u2069</string>
     <string name="meters">\u2068%1$d m\u2069</string>
     <string name="turn_start">Head out</string>
     <string name="turn_straight">Continue</string>
@@ -214,4 +214,12 @@
     <string name="by_car_check">🚗 By car?</string>
     <string name="by_car">By car ~%1$d min at this time (traffic ×%2$s) · %3$d km</string>
     <string name="taxi_calculator">Taxi price: official MOT calculator</string>
+
+    <!-- Layout: overflow menu, folded search card, results sheet handle -->
+    <string name="more_options">More options</string>
+    <string name="swap">Swap from and to</string>
+    <string name="edit_search">Edit search</string>
+    <string name="compact_from">From %1$s</string>
+    <string name="panel_collapse">Fold the results</string>
+    <string name="panel_expand">Unfold the results</string>
 </resources>

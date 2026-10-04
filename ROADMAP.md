@@ -96,6 +96,16 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Install guide for friends (`docs/install.md`, Hebrew + English)
 - [x] Owner: create the key, add the 4 secrets — v0.1.0 released 2026-09-28
 
+## Design pass — look and feel (PR #18, outside the Phase 8 packages)
+- [x] Transit-blue light + dark palette and shape tokens (`ui/Theme.kt`); readable text on
+      any route colour (`onColor`, tested); dark-aware map layers with a route halo
+- [x] Edge-to-edge on every phone: cutout on any side, keyboard, nav bar; sheet capped at
+      half the screen, foldable by drag; one-line search on short phones; side column ≥ 600dp
+- [x] Compass and OSM ⓘ kept in the visible map; camera fits use the measured panels
+- [x] Redrawn bus icon with a real themed (monochrome) layer; app notification icon
+- [x] Paparazzi screenshots in CI (artifact `screenshots`), record-only
+- [ ] Owner: check on a phone — light/dark, landscape notch, 3-button nav, keyboard, max font
+
 ## Phase 8 — parallel features
 One cloud session per package, each on its own branch and PR; rules in the `parallel-work`
 skill, the brief each session got in `docs/agents/phase8.md`. Wave 0 (A1, A2) merges before
