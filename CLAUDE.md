@@ -43,7 +43,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (Compose) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py
 ```
 
 ### The three special features (all return a Pareto front: driver cost × arrival × transfers)
@@ -62,7 +62,7 @@ Car times from free routers assume empty roads → `TrafficProfile` (×1.3 Sun�
   the guard hook blocks it). Only failures print.
 - Android APK: `./gradlew -p android :app:assembleDebug` (needs the SDK; CI does it and
   uploads `app-debug` as an artifact).
-- Docs integrity: `python tools/check_docs.py` (CI runs it).
+- Docs integrity: `python tools/check_docs.py` (CI runs it; it also runs `check_strings.py`).
 
 ## Where the rest lives
 

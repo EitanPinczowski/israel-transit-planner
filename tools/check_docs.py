@@ -40,4 +40,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # CI runs only this script, so it also runs the string-resource check.
+    sys.path.insert(0, str(ROOT / "tools"))
+    import check_strings
+
+    sys.exit(main() | check_strings.main())
