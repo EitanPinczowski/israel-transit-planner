@@ -37,7 +37,7 @@ time, so every rule below is about not breaking each other.
 | `AppMode` enum | B2 (`PARK_RIDE`) |
 | `ui/MapController.kt` | B1 (vehicle layer) |
 | `AndroidManifest.xml` | B3 (`READ_CALENDAR`), B4 (nothing expected) |
-| `android/app/build.gradle.kts`, `.github/workflows/ci.yml` | B4 (screenshot tests) |
+| `android/app/build.gradle.kts`, `.github/workflows/ci.yml` | B4 (extends #18's Paparazzi `screenshots` job) |
 | `CLAUDE.md` | B2 (4th feature row); anyone adding a skill (table row) |
 | `ROADMAP.md` | tick only your own package's `###` subsection |
 
