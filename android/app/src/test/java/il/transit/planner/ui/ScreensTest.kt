@@ -28,6 +28,9 @@ import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
 import il.transit.core.features.PickUpOption
 import il.transit.core.features.PickUpResult
+import il.transit.core.features.ParkRideOption
+import il.transit.core.features.ParkRideResult
+import il.transit.core.api.Place
 import il.transit.core.history.TripRecord
 import il.transit.core.plan.LastRide
 import il.transit.core.update.LatestRelease
@@ -129,6 +132,18 @@ class ScreensTest(private val v: Variant) {
             pickUp = PickUpResult(trip.itineraries[1], listOf(Option(o, 1800, itin.end.plusSeconds(900), itin.transfers))),
         )
         shot("pickup", state)
+    }
+
+    @Test fun parkRide() {
+        val itin = trip.itineraries.first()
+        val station = Place("באר שבע צפון", 31.262, 34.809, stopId = "il-Israel-MOT_37314", modes = listOf("RAIL"))
+        val o = ParkRideOption(station, driveSec = 1140, freeFlowSec = 877, itinerary = itin, leaveAt = itin.start.minusSeconds(1440), parkedBy = itin.start)
+        val state = tripState().copy(
+            mode = AppMode.PARK_RIDE,
+            results = null,
+            parkRide = ParkRideUi(result = ParkRideResult(trip.itineraries[1], listOf(Option(o, 1140, itin.end, itin.transfers)), 2), origin = LatLon(31.3236, 34.9381)),
+        )
+        shot("parkride", state)
     }
 
     /** The selected trip unfolded: walking directions (arrows never mirror) and a last-trip warning. */
