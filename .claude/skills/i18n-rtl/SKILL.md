@@ -17,6 +17,12 @@ description: Hebrew right-to-left and English UI rules. Load before touching any
   never parse them as ints.
 - Never put `→` between two times or places: in RTL the arrow points backwards. Use an
   en dash (`12:00–13:37`), which reads correctly in both directions.
+  Between two places ("Home → Post office", "5 → Central station") use a string resource
+  with `→` in `values/` and `←` in `values-iw/` (`chain_leg_title`, `line_to`), never a
+  literal arrow in Kotlin.
+- `tools/check_strings.py` (run by `check_docs.py`, so by CI) fails on: a key or plural in
+  only one language, different placeholders for one key, an unescaped `'`, a bare `%`
+  outside `formatted="false"`. A cloud session has no aapt, so this is the only check before CI.
 - Delay badges (`+3`) inside Hebrew strings: put an LRM (U+200E) before `+` and wrap the
   number in FSI/PDI, or the plus sign jumps to the wrong side (`late`, `late_paren`).
 - Times: 24-hour, `HH:mm`, zone `Asia/Jerusalem` (`ISRAEL` in `core/features/Common.kt`),

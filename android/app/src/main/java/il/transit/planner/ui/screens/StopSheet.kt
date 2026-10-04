@@ -64,7 +64,7 @@ internal fun FavoritesDialog(state: UiState, vm: MainViewModel) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Column(Modifier.weight(1f)) {
                                     Text(
-                                        listOf(f.line, f.headsign).filter { it.isNotBlank() }.joinToString(" → "),
+                                        if (f.headsign.isBlank()) f.line else stringResource(R.string.line_to, f.line, f.headsign),
                                         style = MaterialTheme.typography.titleSmall,
                                     )
                                     Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
