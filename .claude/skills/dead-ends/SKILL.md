@@ -12,10 +12,11 @@ description: Approaches that were considered and rejected, with the reason. Load
 | OSM's own tile servers (tile.openstreetmap.org) | tile usage policy forbids app traffic. OpenFreeMap allows it. |
 | Oracle Cloud "Always Free" VM + OpenTripPlanner | sign-up needs a card; owner said no card. |
 | Any own server in v1 | nothing to host = nothing to pay for or keep awake. Fallback only: MOTIS on the owner's PC + Cloudflare Tunnel. |
-| MOT SIRI real-time directly | needs registration + a static IP (i.e. a server). Transitous already ingests a GTFS-RT feed for Israel. |
+| MOT SIRI real-time directly | needs registration + a static IP (i.e. a server). (Transitous carries no MOT GTFS-RT either — see below.) |
 | Play Store distribution | paid developer account; the app is for friends and family. |
 | One `plan` request per candidate stop for "better start" | MOTIS does the drop-off search itself (`preTransitModes=CAR`); per-candidate plans would cost ~25 requests and break the Transitous traffic rule. |
 | `CAR_DROPOFF` as the better-start / pick-up mode | Recorded on Transitous (2026-10-02): accepted, but drives ~4 min from a 0-s stub and post-transit answers end in a walk. `CAR` gives the real station drop-off. |
+| Real-time for MOT lines via Transitous | not loaded (checked twice, 2026-10-03/04: 0 `realTime` in 105 departures); its `feeds/il.json` has GTFS-RT only for busofash. Revisit if Transitous adds MOT GTFS-RT. |
 | `CAR_PARKING` for park & ride | Recorded on Transitous (2026-10-03, Meitar → Tel Aviv, 20-min cap): parks at unnamed OSM lots near bus stops, then walk + bus; never at a station; 20′ later than `CAR` to Be'er Sheva North. Pick stations from `RailStations` instead. |
 | Raising the drop-off default detour above 10 min | Owner decided to keep 10 (2026-10-03). At peak, leaving the highway for a mid-route station costs 14–21 min (golden trip 8); the slider already lets the user allow more. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |
