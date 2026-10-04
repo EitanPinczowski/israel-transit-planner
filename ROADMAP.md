@@ -118,8 +118,9 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 
 ### B2 — Park & Ride (`claude/p8-park-ride`, `ParkRidePlanner.BUDGET = 5`)
 - [ ] Drive your own car to a station with parking, continue by train; Pareto front like the
-      other car features, traffic-adjusted (`CAR_PARKING` or bundled `RailStations`, per A1)
-- [ ] "Way back to my car": plans back to the same station, on tap only (1 request)
+      other car features, traffic-adjusted; bundled `RailStations` (A1: `CAR_PARKING` unusable)
+- [ ] "Way back to my car": plans back to the same station, on tap only (1 request), reusing
+      the existing way-back code
 - [ ] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
 
 ### B3 — Calendar → arrive by (`claude/p8-calendar`, 1 geocode, cached a day)
@@ -128,7 +129,8 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
-- [ ] Roborazzi/Robolectric screenshots of every `ui/screens/*` panel, Hebrew + English, in CI
+- [ ] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
+      the job fails on an image change the PR did not re-record
 - [ ] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
 
 ### Close-out (planner)
