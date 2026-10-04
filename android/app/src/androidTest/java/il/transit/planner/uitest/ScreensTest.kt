@@ -1,6 +1,7 @@
 package il.transit.planner.uitest
 
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -52,7 +53,9 @@ class ScreensTest {
             d.setup()
             d.settle()
             val shot = d.screenshot(name)
-            LayoutAudit(d).run(name, shot)
+            val found = LayoutAudit(d).run(name, shot).filter { it.rule in LayoutAudit.BLOCKING }
+            // After the JSON and screenshot are written, so the report still shows them.
+            assertTrue("blocking layout findings on $name: ${found.joinToString { "${it.rule} ${it.where}: ${it.detail}" }}", found.isEmpty())
         }
     }
 
@@ -182,6 +185,7 @@ class ScreensTest {
 
     @Test fun s18_save_trip_dialog() = screen("18-save-trip-dialog") {
         trip()
+        compose.onNode(hasContentDescription(str(R.string.more_options))).performClick()
         compose.onNode(hasText(str(R.string.save_trip))).performClick()
         val field = compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
         field.performClick()

@@ -83,14 +83,14 @@ class MapController(private val map: MapLibreMap, private val style: Style) {
     fun setPlaces(geoJson: String) = source(PLACES_SRC)?.setGeoJson(geoJson)
 
     /** Fit the camera around [points], leaving [bottomPaddingPx] for the results panel. */
-    fun fit(points: List<LatLon>, sidePaddingPx: Int, topPaddingPx: Int, bottomPaddingPx: Int) {
+    fun fit(points: List<LatLon>, leftPx: Int, topPx: Int, rightPx: Int, bottomPx: Int) {
         val distinct = points.distinct()
         if (distinct.size < 2) return
         // Location tracking would pull the camera straight back to the user.
         if (map.locationComponent.isLocationComponentActivated) map.locationComponent.cameraMode = CameraMode.NONE
         val bounds = LatLngBounds.Builder().includes(distinct.map { LatLng(it.lat, it.lon) }).build()
         map.animateCamera(
-            CameraUpdateFactory.newLatLngBounds(bounds, sidePaddingPx, topPaddingPx, sidePaddingPx, bottomPaddingPx),
+            CameraUpdateFactory.newLatLngBounds(bounds, leftPx, topPx, rightPx, bottomPx),
             600,
         )
     }

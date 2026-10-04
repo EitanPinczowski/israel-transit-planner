@@ -22,10 +22,9 @@ data class Violation(val rule: String, val where: String, val detail: String) {
 }
 
 /**
- * Layout rules every screen must meet on every phone profile. Report-only for now: it
- * writes `<state>.json` next to the screenshot and never fails the test, so a first run
- * lists every finding; a rule becomes blocking once its findings are fixed
- * (see .claude/skills/ui-testing).
+ * Layout rules every screen must meet on every phone profile. It writes `<state>.json` next
+ * to the screenshot; a rule in [BLOCKING] also fails the screen's test. The others are
+ * report-only until their findings are fixed (see .claude/skills/ui-testing).
  *
  *  R1 overlap      the search card (top) and the bottom panel don't overlap
  *  R2 reachable    every tappable thing is inside the screen minus status/nav bars, cutout;
@@ -38,6 +37,11 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  *  R7 route        the drawn route lies in the map area the panels leave visible
  */
 class LayoutAudit(private val d: AppDriver) {
+    companion object {
+        /** Rules whose findings are fixed: a new one fails the run. */
+        val BLOCKING = setOf("R1", "R7")
+    }
+
     private val density get() = d.activity.resources.displayMetrics.density
 
     fun run(state: String, screenshot: File?): List<Violation> {
@@ -174,20 +178,29 @@ class LayoutAudit(private val d: AppDriver) {
             }
         }
 
-        // R7
-        var route: android.graphics.RectF? = null
-        route = d.activity.routeOnScreen()
-        val rr = route
-        if (rr != null && top != null && bottom != null) {
-            val freeTop = top.boundsInWindow.bottom
-            val freeBottom = bottom.boundsInWindow.top
-            val free = freeBottom - freeTop
-            if (free < 0.25f * mainSize.second) {
-                out += Violation("R7", "map", "only ${dp(free.coerceAtLeast(0f))} dp of map left between the panels")
+        // R7: the visible map is what the panels leave. On a phone that is the band between the
+        // search card and the bottom panel; in a side column (tablet, landscape) it is the
+        // full-height area beside the column.
+        val route = d.activity.routeOnScreen()
+        if (route != null && top != null && bottom != null) {
+            val column = top.boundsInWindow
+            val side = column.width < 0.6f * mainSize.first
+            val free = if (side) {
+                val leftGap = column.left
+                val rightGap = mainSize.first - column.right
+                if (rightGap >= leftGap) android.graphics.RectF(column.right, 0f, mainSize.first.toFloat(), mainSize.second.toFloat())
+                else android.graphics.RectF(0f, 0f, column.left, mainSize.second.toFloat())
+            } else {
+                android.graphics.RectF(0f, column.bottom, mainSize.first.toFloat(), bottom.boundsInWindow.top)
+            }
+            if (side && free.width() < 0.25f * mainSize.first) {
+                out += Violation("R7", "map", "only ${dp(free.width().coerceAtLeast(0f))} dp of map left beside the column")
+            } else if (!side && free.height() < 0.25f * mainSize.second) {
+                out += Violation("R7", "map", "only ${dp(free.height().coerceAtLeast(0f))} dp of map left between the panels")
             }
             val slack = 4 * density
-            if (rr.top < freeTop - slack || rr.bottom > freeBottom + slack || rr.left < -slack || rr.right > mainSize.first + slack) {
-                out += Violation("R7", "route", "route ${rr.toShortString()} is not inside the visible map ${freeTop.toInt()}..${freeBottom.toInt()}")
+            if (route.top < free.top - slack || route.bottom > free.bottom + slack || route.left < free.left - slack || route.right > free.right + slack) {
+                out += Violation("R7", "route", "route ${route.toShortString()} is not inside the visible map ${free.toShortString()}")
             }
         }
 

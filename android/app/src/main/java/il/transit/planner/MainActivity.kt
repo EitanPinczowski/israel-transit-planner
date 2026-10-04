@@ -29,6 +29,7 @@ import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.planner.ui.MainScreen
+import il.transit.planner.ui.MapInsets
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
@@ -58,6 +59,9 @@ class MainActivity : ComponentActivity() {
 
     /** Non-null once the style has loaded; Compose effects push layer data through it. */
     private val controller = MutableStateFlow<MapController?>(null)
+
+    /** What the panels cover, measured by the screen; the camera fits routes into the rest. */
+    private val mapInsets = MutableStateFlow(MapInsets.NONE)
 
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
@@ -96,21 +100,21 @@ class MainActivity : ComponentActivity() {
                 val stops by vm.stops.collectAsState()
                 val ctl by controller.collectAsState()
                 val offlineState by offline.state.collectAsState()
+                val insets by mapInsets.collectAsState()
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
                 val selected = state.selectedItinerary
                 val carPath = state.selectedCarPath
-                LaunchedEffect(ctl, selected, carPath) {
+                LaunchedEffect(ctl, selected, carPath, insets) {
                     val c = ctl ?: return@LaunchedEffect
                     if (selected == null) {
                         lastFit = emptyList()
                         c.setRoute(MapData.EMPTY)
                     } else {
                         c.setRoute(MapData.itinerary(selected, carPath))
-                        val px = resources.displayMetrics.density
                         lastFit = carPath + MapData.bounds(selected)
-                        c.fit(lastFit, (32 * px).toInt(), (200 * px).toInt(), (380 * px).toInt())
+                        fitRoute(c, insets)
                     }
                 }
 
@@ -120,6 +124,7 @@ class MainActivity : ComponentActivity() {
                     deleteOffline = offline::delete,
                     remind = ::remind,
                     startRide = ::startRide,
+                    mapInsets = { mapInsets.value = it },
                 )
                 MainScreen(state, vm, actions) {
                     AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
@@ -130,6 +135,18 @@ class MainActivity : ComponentActivity() {
         if (!hasLocationPermission()) {
             askLocation.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
         }
+    }
+
+    /** The route inside the map the panels leave, with a margin; never squeezed to nothing. */
+    private fun fitRoute(c: MapController, insets: MapInsets) {
+        val margin = (32 * resources.displayMetrics.density).toInt()
+        val w = mapView.width
+        val h = mapView.height
+        var (l, t, r, b) = insets
+        // Not measured yet, or a screen with no room: fit the whole map instead.
+        if (w > 0 && w - l - r < w / 4) { l = 0; r = 0 }
+        if (h > 0 && h - t - b < h / 4) { t = 0; b = 0 }
+        c.fit(lastFit, l + margin, t + margin, r + margin, b + margin)
     }
 
     private fun remind() = withNotifications { vm.remindSelected() }

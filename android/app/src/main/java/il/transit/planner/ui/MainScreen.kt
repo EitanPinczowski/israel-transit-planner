@@ -10,20 +10,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
@@ -33,6 +42,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -41,6 +53,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -53,14 +67,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -80,6 +101,7 @@ import il.transit.core.present.BetterStartRow
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.DropOffRow
 import il.transit.core.present.PickUpRow
+import il.transit.core.present.ScreenLayout
 import il.transit.core.present.pickUpRow
 import il.transit.core.present.fareLabel
 import il.transit.core.fare.FareEstimate
@@ -122,45 +144,94 @@ class ScreenActions(
     val remind: () -> Unit,
     /** Same permission dance, then starts the "get off at the next stop" ride. */
     val startRide: () -> Unit,
+    /** Where the map shows between or beside the panels; the camera fits routes into it. */
+    val mapInsets: (MapInsets) -> Unit = {},
 )
+
+/** Px the panels cover from each window edge (left/right, not start/end: the map is not mirrored). */
+data class MapInsets(val left: Int, val top: Int, val right: Int, val bottom: Int) {
+    companion object {
+        val NONE = MapInsets(0, 0, 0, 0)
+    }
+}
 
 @Composable
 fun MainScreen(state: UiState, vm: MainViewModel, actions: ScreenActions, map: @Composable () -> Unit) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
 
+    val panelOpen = state.loading || state.hasResults || state.error != null || state.stopSheet != null
+    // One part open at a time: with a panel open the search shrinks to a summary; opening the
+    // search again folds the panel to its header. A new search shows its results again.
+    var searchOpen by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(state.loading, panelOpen) { if (state.loading || !panelOpen) searchOpen = false }
+
     // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
-    val panelOpen = state.loading || state.hasResults || state.error != null
-    BackHandler(enabled = state.editing != null || state.stopSheet != null || panelOpen) {
+    BackHandler(enabled = state.editing != null || panelOpen) {
         when {
             state.editing != null -> vm.cancelEditing()
             state.stopSheet != null -> vm.closeStop()
+            searchOpen -> searchOpen = false
             else -> vm.clearResults()
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
         map()
+        val density = LocalDensity.current
+        val wide = ScreenLayout.isWide(maxWidth.value)
+        val widthPx = constraints.maxWidth
+        val heightPx = constraints.maxHeight
+        // Measured in window px: where the search area ends, where the bottom panel starts, and
+        // the whole column. They size the panel and tell the map camera what it can use.
+        var topBottom by remember { mutableFloatStateOf(0f) }
+        var bottomTop by remember { mutableFloatStateOf(heightPx.toFloat()) }
+        var column by remember { mutableStateOf(Rect.Zero) }
+        val cap = ScreenLayout.panelCap(maxHeight.value, with(density) { topBottom.toDp().value }, wide)
 
-        Column(
-            Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp).testTag(UiTags.TOP),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            state.update?.let { UpdateBanner(it, vm) }
-            SearchCard(state, vm, onSavePlace = { savingPlace = it })
-            when {
-                state.editing != null -> SuggestionList(state, vm)
-                !state.hasResults && !state.loading && state.stopSheet == null -> SavedChips(state, vm)
-            }
+        LaunchedEffect(wide, topBottom, bottomTop, column, widthPx, heightPx) {
+            actions.mapInsets(
+                when {
+                    !wide -> MapInsets(0, topBottom.toInt(), 0, (heightPx - bottomTop).toInt().coerceAtLeast(0))
+                    // The column sits on the start side: left in English, right in Hebrew.
+                    column.left <= widthPx - column.right -> MapInsets(column.right.toInt(), 0, 0, 0)
+                    else -> MapInsets(0, 0, (widthPx - column.left).toInt(), 0)
+                },
+            )
         }
 
-        Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().testTag(UiTags.BOTTOM)) {
-            AttributionChip(Modifier.padding(8.dp))
-            when {
-                state.stopSheet != null -> StopPanel(state.stopSheet, vm)
-                state.loading || state.hasResults || state.error != null ->
-                    ResultsPanel(state, vm, actions, onSaveTrip = { savingTrip = true })
-                else -> Spacer(Modifier.navigationBarsPadding())
+        Column(
+            (if (wide) Modifier.width(ScreenLayout.SIDE_COLUMN_DP.dp).fillMaxHeight() else Modifier.fillMaxSize())
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                .imePadding()
+                .onGloballyPositioned { column = it.boundsInRoot() },
+        ) {
+            Column(Modifier.weight(1f).fillMaxWidth()) {
+                Column(
+                    Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp).testTag(UiTags.TOP)
+                        .onGloballyPositioned { topBottom = it.boundsInRoot().bottom },
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    state.update?.let { UpdateBanner(it, vm) }
+                    if (panelOpen && !searchOpen && state.editing == null) {
+                        SearchSummary(state, vm, onOpen = { searchOpen = true })
+                    } else {
+                        SearchCard(state, vm, onSavePlace = { savingPlace = it })
+                    }
+                    if (state.editing == null && !panelOpen) SavedChips(state, vm)
+                }
+                // The suggestions take what is left above the keyboard, never more.
+                if (state.editing != null) SuggestionList(state, vm, Modifier.weight(1f, fill = false).padding(horizontal = 12.dp))
+            }
+            Column(
+                Modifier.fillMaxWidth().heightIn(max = cap.dp).testTag(UiTags.BOTTOM)
+                    .onGloballyPositioned { bottomTop = it.boundsInRoot().top },
+            ) {
+                when {
+                    state.editing != null || !panelOpen -> AttributionChip(Modifier.navigationBarsPadding().padding(8.dp))
+                    state.stopSheet != null -> StopPanel(state.stopSheet, vm, folded = searchOpen, onUnfold = { searchOpen = false })
+                    else -> ResultsPanel(state, vm, actions, folded = searchOpen, onUnfold = { searchOpen = false }, onSaveTrip = { savingTrip = true })
+                }
             }
         }
     }
@@ -209,12 +280,7 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                         ) { vm.startEditing(Field.DRIVER_TO) }
                         HorizontalDivider()
                     }
-                    val toLabel = when (state.mode) {
-                        AppMode.DROP_OFF -> R.string.me_to
-                        AppMode.PICK_UP -> R.string.driver_at
-                        else -> R.string.to
-                    }
-                    PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
+                    PlaceRow(toLabelRes(state.mode), state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
                     IconButton(onClick = vm::swap, enabled = state.to != null) { Icon(Icons.Default.SwapVert, stringResource(R.string.swap)) }
@@ -247,14 +313,60 @@ private fun SearchCard(state: UiState, vm: MainViewModel, onSavePlace: (LatLon) 
                 )
             } else {
                 TimeRow(state, vm)
-                when (state.mode) {
-                    AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
-                    AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
-                    AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
-                    AppMode.TRIP -> Unit
-                }
+                ModeSlider(state, vm)
             }
         }
+    }
+}
+
+private fun toLabelRes(mode: AppMode): Int = when (mode) {
+    AppMode.DROP_OFF -> R.string.me_to
+    AppMode.PICK_UP -> R.string.driver_at
+    else -> R.string.to
+}
+
+/** The car modes' minutes slider; also on the summary, so a new limit needs no extra tap. */
+@Composable
+private fun ModeSlider(state: UiState, vm: MainViewModel) {
+    when (state.mode) {
+        AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
+        AppMode.DROP_OFF -> MinutesSlider(R.string.detour_up_to, state.maxDetourMin, vm::setMaxDetour)
+        AppMode.PICK_UP -> MinutesSlider(R.string.pickup_drive_up_to, state.maxPickUpDriveMin, vm::setMaxPickUpDrive)
+        AppMode.TRIP -> Unit
+    }
+}
+
+/** The search folded to its places while results show: a tap opens it, Settings stay reachable. */
+@Composable
+private fun SearchSummary(state: UiState, vm: MainViewModel, onOpen: () -> Unit) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(start = 12.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(
+                    Modifier.weight(1f).clickable(onClickLabel = stringResource(R.string.edit_search), onClick = onOpen).padding(vertical = 6.dp),
+                ) {
+                    SummaryLine(R.string.from, placeLabel(state.from))
+                    if (state.mode == AppMode.DROP_OFF) state.driverTo?.let { SummaryLine(R.string.driver_to, placeLabel(it)) }
+                    state.to?.let { SummaryLine(toLabelRes(state.mode), placeLabel(it)) }
+                }
+                IconButton(onClick = onOpen) { Icon(Icons.Default.Edit, stringResource(R.string.edit_search)) }
+                IconButton(onClick = { vm.showSettings(true) }) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
+                }
+                IconButton(onClick = { vm.showHistory(true) }) {
+                    Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.history))
+                }
+            }
+            Box(Modifier.padding(end = 8.dp)) { ModeSlider(state, vm) }
+        }
+    }
+}
+
+@Composable
+private fun SummaryLine(labelRes: Int, value: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(labelRes), style = MaterialTheme.typography.labelMedium, modifier = Modifier.widthIn(min = 48.dp).padding(end = 8.dp))
+        Text(value, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
     }
 }
 
@@ -357,8 +469,8 @@ private fun timeLabel(res: Int, state: UiState, mode: TimeMode): String {
 }
 
 @Composable
-private fun SuggestionList(state: UiState, vm: MainViewModel) {
-    Card(Modifier.fillMaxWidth().heightIn(max = 360.dp).testTag(UiTags.SUGGESTIONS)) {
+private fun SuggestionList(state: UiState, vm: MainViewModel, modifier: Modifier) {
+    Card(modifier.fillMaxWidth().testTag(UiTags.SUGGESTIONS)) {
         LazyColumn {
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
@@ -402,9 +514,16 @@ private fun SavedChips(state: UiState, vm: MainViewModel) {
 // --- results ---------------------------------------------------------------------------------
 
 @Composable
-private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActions, onSaveTrip: () -> Unit) {
+private fun ResultsPanel(
+    state: UiState,
+    vm: MainViewModel,
+    actions: ScreenActions,
+    folded: Boolean,
+    onUnfold: () -> Unit,
+    onSaveTrip: () -> Unit,
+) {
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
-        Column(Modifier.navigationBarsPadding().padding(12.dp)) {
+        Column(Modifier.navigationBarsPadding().padding(start = 12.dp, end = 12.dp, top = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.results), style = MaterialTheme.typography.titleMedium)
@@ -417,38 +536,55 @@ private fun ResultsPanel(state: UiState, vm: MainViewModel, actions: ScreenActio
                         )
                     }
                 }
-                if (state.hasResults && !state.loading) {
-                    IconButton(onClick = { vm.plan() }) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
-                }
-                if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
-                    TextButton(onClick = onSaveTrip) { Text(stringResource(R.string.save_trip)) }
+                if (folded) {
+                    IconButton(onClick = onUnfold) { Icon(Icons.Default.KeyboardArrowUp, stringResource(R.string.results)) }
+                } else {
+                    if (state.hasResults && !state.loading) {
+                        IconButton(onClick = { vm.plan() }) { Icon(Icons.Default.Refresh, stringResource(R.string.refresh)) }
+                    }
+                    // In a menu, so the title keeps its width at large font sizes.
+                    if (state.mode == AppMode.TRIP && state.to is PlaceRef.Point && state.results != null) {
+                        Box {
+                            var menu by remember { mutableStateOf(false) }
+                            IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, stringResource(R.string.more_options)) }
+                            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                                DropdownMenuItem(text = { Text(stringResource(R.string.save_trip)) }, onClick = { menu = false; onSaveTrip() })
+                            }
+                        }
+                    }
                 }
                 IconButton(onClick = vm::clearResults) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
-            state.offlineSince?.let { since ->
-                Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        stringResource(R.string.offline_showing, hhmm(since)),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(8.dp),
-                    )
-                }
+            if (!folded) ResultsBody(state, vm, actions)
+            AttributionChip(Modifier.padding(vertical = 8.dp))
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.ResultsBody(state: UiState, vm: MainViewModel, actions: ScreenActions) {
+    state.offlineSince?.let { since ->
+        Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.offline_showing, hhmm(since)),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp),
+            )
+        }
+    }
+    if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
+    if (!state.loading) RideRow(state, vm, actions)
+    when {
+        state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        state.error != null -> ErrorRow(state.error, vm)
+        state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm, Modifier.weight(1f, fill = false))
+        state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm, Modifier.weight(1f, fill = false))
+        state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, Modifier.weight(1f, fill = false))
+        else -> LazyColumn(Modifier.weight(1f, fill = false)) {
+            itemsIndexed(state.options) { i, itin ->
+                ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time ?: state.resultsAt) { vm.select(i) }
             }
-            if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm, actions)
-            if (!state.loading) RideRow(state, vm, actions)
-            when {
-                state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                state.error != null -> ErrorRow(state.error, vm)
-                state.mode == AppMode.BETTER_START && state.betterStart != null -> BetterStartList(state, state.betterStart, vm)
-                state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm)
-                state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm)
-                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) {
-                    itemsIndexed(state.options) { i, itin ->
-                        ItineraryCard(itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time ?: state.resultsAt) { vm.select(i) }
-                    }
-                    if (state.options.isNotEmpty()) item { FareNote() }
-                }
-            }
+            if (state.options.isNotEmpty()) item { FareNote() }
         }
     }
 }
@@ -593,9 +729,9 @@ private fun parseColor(hex: String): Color =
 // --- better start ---------------------------------------------------------------------------------
 
 @Composable
-private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainViewModel) {
+private fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainViewModel, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 340.dp)) {
+    LazyColumn(modifier) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -651,9 +787,9 @@ private fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () 
 // --- let me off on the way -----------------------------------------------------------------------
 
 @Composable
-private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel) {
+private fun DropOffList(state: UiState, result: DropOffResult, vm: MainViewModel, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+    LazyColumn(modifier) {
         result.directDriveSec?.let { sec ->
             item {
                 Text(
@@ -714,9 +850,9 @@ private fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit,
 // --- best pick-up point --------------------------------------------------------------------------
 
 @Composable
-private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel) {
+private fun PickUpList(state: UiState, result: PickUpResult, vm: MainViewModel, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(Modifier.heightIn(max = 360.dp)) {
+    LazyColumn(modifier) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -779,22 +915,26 @@ private fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, o
 // --- stop departures --------------------------------------------------------------------------
 
 @Composable
-private fun StopPanel(sheet: StopSheet, vm: MainViewModel) {
+private fun StopPanel(sheet: StopSheet, vm: MainViewModel, folded: Boolean, onUnfold: () -> Unit) {
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp), tonalElevation = 3.dp) {
-        Column(Modifier.navigationBarsPadding().padding(12.dp)) {
+        Column(Modifier.navigationBarsPadding().padding(start = 12.dp, end = 12.dp, top = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(sheet.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(stringResource(R.string.departures), style = MaterialTheme.typography.labelMedium)
                 }
+                if (folded) IconButton(onClick = onUnfold) { Icon(Icons.Default.KeyboardArrowUp, stringResource(R.string.departures)) }
                 IconButton(onClick = vm::closeStop) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
-            when {
-                sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
-                sheet.rows.isEmpty() -> Text(stringResource(R.string.no_departures), Modifier.padding(vertical = 12.dp))
-                else -> LazyColumn(Modifier.heightIn(max = 320.dp)) { items(sheet.rows) { DepartureView(it) } }
+            if (!folded) {
+                when {
+                    sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
+                    sheet.rows.isEmpty() -> Text(stringResource(R.string.no_departures), Modifier.padding(vertical = 12.dp))
+                    else -> LazyColumn(Modifier.weight(1f, fill = false)) { items(sheet.rows) { DepartureView(it) } }
+                }
             }
+            AttributionChip(Modifier.padding(vertical = 8.dp))
         }
     }
 }
