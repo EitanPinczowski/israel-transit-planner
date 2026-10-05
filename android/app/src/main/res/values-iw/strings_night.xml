@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="night_offline_planned">אין חיבור · תוכנן אמש ב־⁨%s⁩. מוצגות רק אפשרויות שעוד לא יצאו.</string>
+    <string name="night_refresh_title">רענון לילי</string>
+    <string name="night_refresh_toggle">לרענן את הנסיעות שלי בלילה</string>
+    <string name="night_refresh_help">בכל לילה, ב־Wi-Fi ובזמן טעינה, האפליקציה מתכננת את הנסיעות הקבועות של מחר (מהבית למקומות עם שגרה, והנסיעות השמורות), כדי שיהיו זמינות גם בלי קליטה בבוקר. עד ⁨%d⁩ חיפושים בלילה.</string>
+    <string name="night_refresh_no_home">כדי לכלול את השגרות, הגדירו מקום שמור כבית (🏠 למטה).</string>
+    <string name="set_as_home">הגדרה כבית</string>
+    <string name="home_suggest">להגדיר את „%s” כבית? הרענון הלילי מתכנן ממנו.</string>
+    <string name="home_suggest_yes">הגדרה כבית</string>
+    <string name="home_suggest_no">לא עכשיו</string>
+</resources>

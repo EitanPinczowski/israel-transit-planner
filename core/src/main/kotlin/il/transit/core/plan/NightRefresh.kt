@@ -109,6 +109,15 @@ object NightRefresh {
         return out.sortedBy { it.at }.distinctBy { it.key }.take(MAX_TRIPS)
     }
 
+    /**
+     * Whether any night of the coming week has a trip to plan: the app enqueues the job only
+     * then (and only with the setting on), so a phone with nothing to refresh never wakes.
+     */
+    fun anyJobs(places: List<SavedPlace>, trips: List<SavedTrip>, home: SavedPlace?, history: List<TripRecord>, now: Instant): Boolean {
+        val first = tomorrow(now)
+        return (0L until 7L).any { jobs(places, trips, home, history, first.plusDays(it)).isNotEmpty() }
+    }
+
     /** Minutes after midnight of the latest history record of [t] (from "my location" or Home when [t] has no `from`). */
     private fun lastTimeOfDay(t: SavedTrip, home: SavedPlace?, history: List<TripRecord>): Int? {
         val froms = if (t.from != null) setOf(t.from.name) else setOfNotNull("", home?.name)

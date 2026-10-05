@@ -82,6 +82,14 @@ class NightRefreshTest {
 
     // --- which trips ----------------------------------------------------------------------
 
+    @Test fun `the job is enqueued only when some night has a trip`() {
+        val now = il("2026-10-05T12:00")
+        assertTrue(NightRefresh.anyJobs(listOf(home, shul), emptyList(), home, emptyList(), now)) // Saturday only
+        assertFalse(NightRefresh.anyJobs(listOf(home, shul), emptyList(), null, emptyList(), now)) // no Home
+        assertFalse(NightRefresh.anyJobs(listOf(home, mom), emptyList(), home, emptyList(), now)) // no routine
+        assertFalse(NightRefresh.anyJobs(emptyList(), listOf(SavedTrip("To Mom", home, mom)), home, emptyList(), now)) // no time
+    }
+
     @Test fun `routine places from Home at the routine start`() {
         val jobs = NightRefresh.jobs(places, emptyList(), home, emptyList(), monday)
         assertEquals(listOf("University", "Gym"), jobs.map { it.label }) // earliest first

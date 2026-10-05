@@ -95,5 +95,6 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.maplibre.android)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.work.runtime)
     testImplementation(libs.junit)
 }

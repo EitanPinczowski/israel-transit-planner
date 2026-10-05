@@ -172,10 +172,10 @@ merges. Tick only your own package's lines.
       trains have no `track`)
 
 ### C2 — Night refresh + Home (`claude/p9-night-refresh`, ≤ 6 requests a night)
-- [ ] "Set as Home" on a saved place (`UserSettings.homePlace`), used by C4 and C5
-- [ ] WorkManager, once a night, Wi-Fi + charging + battery not low: tomorrow's routines and
+- [x] "Set as Home" on a saved place (`UserSettings.homePlace`), used by C4 and C5
+- [x] WorkManager, once a night, Wi-Fi + charging + battery not low: tomorrow's routines and
       saved trips into the Trip cache, `BudgetedTransitApi(6)`, never retried
-- [ ] Offline next morning: "planned last night at 02:14", options already gone hidden
+- [x] Offline next morning: "planned last night at 02:14", options already gone hidden
 
 ### C3 — History insights (`claude/p9-insights`, 0 requests)
 - [ ] "Usually 52 min · this one +8" (≥ 3 trips in 90 days, medians); best leave time for a

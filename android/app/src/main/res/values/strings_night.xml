@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="night_offline_planned">Offline · planned last night at ⁨%s⁩. Only options still ahead are shown.</string>
+    <string name="night_refresh_title">Night refresh</string>
+    <string name="night_refresh_toggle">Refresh my trips at night</string>
+    <string name="night_refresh_help">Each night, on Wi-Fi and while charging, the app plans tomorrow\'s usual trips (Home to places with a routine, and your saved trips), so they are there with no signal in the morning. At most %d searches a night.</string>
+    <string name="night_refresh_no_home">Set a saved place as Home (🏠 below) to include your routines.</string>
+    <string name="set_as_home">Set as Home</string>
+    <string name="home_suggest">Use “%s” as your Home? Night refresh plans from it.</string>
+    <string name="home_suggest_yes">Set as Home</string>
+    <string name="home_suggest_no">Not now</string>
+</resources>
