@@ -87,7 +87,8 @@ object NightRefresh {
         tomorrow: LocalDate,
     ): List<Job> {
         val day = tomorrow.dayOfWeek.value
-        fun at(min: Int): Instant = tomorrow.atStartOfDay(ISRAEL).plusMinutes(min.toLong()).toInstant()
+        // Wall-clock time: start-of-day + minutes is an hour off on the two DST days.
+        fun at(min: Int): Instant = tomorrow.atTime(min / 60, min % 60).atZone(ISRAEL).toInstant()
         fun routineStart(p: SavedPlace): Int? {
             val r = (places.firstOrNull { it.name == p.name } ?: p).routine ?: return null
             return r.fromMin.takeIf { day in r.days }

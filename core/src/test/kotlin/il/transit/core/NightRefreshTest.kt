@@ -98,6 +98,15 @@ class NightRefreshTest {
         assertEquals(il("2026-10-05T18:00"), jobs[1].at)
     }
 
+    @Test fun `a routine keeps its wall-clock time on both DST days`() {
+        // Sunday 2026-10-25: DST ends (25-h day). Friday 2026-03-27: DST starts (23-h day).
+        for ((day, dow) in listOf("2026-10-25" to 7, "2026-03-27" to 5)) {
+            val p = SavedPlace("Uni", 31.26, 34.80, PlaceRoutine(listOf(dow), 7 * 60, 10 * 60))
+            val job = NightRefresh.jobs(listOf(home, p), emptyList(), home, emptyList(), LocalDate.parse(day)).single()
+            assertEquals(day, il("${day}T07:00"), job.at)
+        }
+    }
+
     @Test fun `Shabbat is planned anyway`() {
         assertEquals(listOf("Shul"), NightRefresh.jobs(places, emptyList(), home, emptyList(), saturday).map { it.label })
     }
