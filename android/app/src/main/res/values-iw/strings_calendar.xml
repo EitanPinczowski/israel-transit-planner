@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- B3: "מהיומן שלי" ← להגיע עד. -->
+<resources>
+    <string name="calendar_chip">מהיומן שלי</string>
+    <string name="calendar_finding">מחפש את המקום…</string>
+    <string name="calendar_rationale_title">לתכנן מהיומן?</string>
+    <string name="calendar_rationale">כדי להציג את האירועים שלך ב־24 השעות הקרובות שיש להם מקום, האפליקציה קוראת את היומן בטלפון הזה. כשבוחרים אירוע, רק טקסט המיקום שלו נשלח לחיפוש המקומות של Transitous, בדיוק כמו הקלדה. הכותרות וכל השאר נשארים בטלפון.</string>
+    <string name="calendar_allow">המשך</string>
+    <string name="calendar_not_now">לא עכשיו</string>
+    <string name="calendar_refused">אין גישה ליומן. אפשר עדיין להקליד את המקום ולבחור „להגיע עד” בעצמך.</string>
+    <string name="calendar_ok">אישור</string>
+    <string name="calendar_list_title">להגיע בזמן ל…</string>
+    <string name="calendar_empty">אין אירועים עם מקום ב־24 השעות הקרובות.</string>
+    <string name="calendar_no_title">(ללא כותרת)</string>
+    <string name="calendar_tomorrow_at">מחר ⁨%1$s⁩</string>
+    <string name="calendar_event_row">⁨%1$s⁩ · %2$s · %3$s</string>
+    <string name="calendar_buffer">אירועי יומן: להגיע לפני ההתחלה</string>
+    <string name="calendar_arrive_by">להגיע עד ⁨%1$s⁩ אל</string>
+    <string name="calendar_leave_now">כבר מאוחר מדי לפי המרווח. לצאת עכשיו אל</string>
+    <string name="calendar_matched">%1$s\n(לפי היומן: %2$s)</string>
+    <string name="calendar_approximate">מקום משוער: החיפוש לא מצא את הכתובת המדויקת. כדאי לבדוק במפה, או ללחוץ „שינוי”.</string>
+    <string name="calendar_plan">תכנון</string>
+    <string name="calendar_change">שינוי</string>
+</resources>

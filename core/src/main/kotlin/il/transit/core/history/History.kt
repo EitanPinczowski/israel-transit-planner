@@ -14,7 +14,7 @@ data class TripRecord(
     val startedAtEpoch: Long,
     val from: String,
     val to: String,
-    /** The tab it was planned in: TRIP, BETTER_START, DROP_OFF, PICK_UP. */
+    /** The tab it was planned in: TRIP, BETTER_START, DROP_OFF, PICK_UP, PARK_RIDE. */
     val mode: String,
     val transitMin: Int,
     val walkMin: Int,

@@ -28,6 +28,7 @@ interface MainActions {
     fun setMaxDrive(min: Int)
     fun setMaxDetour(min: Int)
     fun setMaxPickUpDrive(min: Int)
+    fun setMaxParkRideDrive(min: Int)
     fun plan()
     fun select(index: Int)
     fun clearResults()
@@ -72,6 +73,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun setMaxDrive(min: Int) { vm.setMaxDrive(min) }
     override fun setMaxDetour(min: Int) { vm.setMaxDetour(min) }
     override fun setMaxPickUpDrive(min: Int) { vm.setMaxPickUpDrive(min) }
+    override fun setMaxParkRideDrive(min: Int) { vm.setMaxParkRideDrive(min) }
     override fun plan() { vm.plan() }
     override fun select(index: Int) { vm.select(index) }
     override fun clearResults() { vm.clearResults() }
@@ -116,6 +118,7 @@ object NoActions : MainActions {
     override fun setMaxDrive(min: Int) = Unit
     override fun setMaxDetour(min: Int) = Unit
     override fun setMaxPickUpDrive(min: Int) = Unit
+    override fun setMaxParkRideDrive(min: Int) = Unit
     override fun plan() = Unit
     override fun select(index: Int) = Unit
     override fun clearResults() = Unit

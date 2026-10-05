@@ -251,6 +251,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
             )
             Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
         }
+        item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
         item { OfflineSection(actions) }
         item { CrashLogSection(actions.crashLog) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {

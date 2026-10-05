@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Park & ride (Phase 8 B2): drive to a train station, park, go on by train. -->
+<resources>
+    <string name="mode_park_ride">Park &amp; ride</string>
+    <string name="park_ride_drive_up_to">I drive to a station up to %d min</string>
+    <string name="no_park_ride">No station within %d min beats going without the car</string>
+    <string name="park_at">Park at %1$s · %2$d min drive</string>
+    <string name="park_ride_leave">Leave %1$s · train %2$s</string>
+    <string name="without_car">Without the car: arrive %s</string>
+    <string name="navigate_to_station">Navigate to the station</string>
+    <string name="way_back_to_car">Way back to my car after</string>
+    <string name="drive_home_from">Then drive home from %1$s: about %2$d min</string>
+</resources>

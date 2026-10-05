@@ -55,6 +55,15 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
   (`needsFullNameHint` in `present/Format.kt`).
+- **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
+  first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
+  Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
+  names are not in the index. So "From my calendar" shows the match next to the event's
+  text before planning ("הרצל 126 (from: הרצל 12…)", with Change), and marks it approximate
+  when a house number in the text is missing from the match or the match is a town
+  (`category` `place_*`): `CalendarSuggest.isApproximate`, no extra request. Privacy: only the
+  location text is sent (never the title); `lat,lon` in a location skips the request; the
+  bias is rounded to 0.1° so the day cache hits (`CalendarSuggest`, fixtures `geocode_calendar_*`).
 - **Real-time and alerts — almost none for Israel (checked 2026-10-03).** Transitous' Israel
   config (`public-transport/transitous` → `feeds/il.json`) loads the MOT GTFS timetable and
   ONE GTFS-RT feed: "busofash" (Tel Aviv night/Shabbat buses). MOT lines have no live delays
@@ -103,7 +112,7 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
-`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` is pinned by a test. Raising a budget
+`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
 
 ## Fixtures

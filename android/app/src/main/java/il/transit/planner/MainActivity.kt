@@ -25,6 +25,9 @@ import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
+import il.transit.planner.ui.screens.CalendarChip
+import il.transit.planner.ui.screens.LocalCalendarChip
+import androidx.compose.runtime.CompositionLocalProvider
 import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
@@ -162,8 +165,10 @@ class MainActivity : ComponentActivity() {
                     onMapPadding = { mapPadding.value = it },
                     crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
                 )
-                MainScreen(state, ui, actions) {
-                    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
+                    MainScreen(state, ui, actions) {
+                        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                    }
                 }
             }
         }

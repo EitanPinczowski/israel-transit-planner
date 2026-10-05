@@ -138,16 +138,16 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 > near a bus stop (2–13′ drive, then up to 11′ walk), board a bus, and never park at a
 > station; best arrives 10:06. `CAR` drives 15′ to Be'er Sheva North and reaches Tel Aviv
 > Center (past HaHagana) at 09:46. Fixture `plan_car_parking_meitar`, test `ApiPhase8Test`.
-- [ ] Drive your own car to a station with parking, continue by train; Pareto front like the
+- [x] Drive your own car to a station with parking, continue by train; Pareto front like the
       other car features, traffic-adjusted; bundled `RailStations` (A1: `CAR_PARKING` unusable)
-- [ ] "Way back to my car": plans back to the same station, on tap only (1 request), reusing
+- [x] "Way back to my car": plans back to the same station, on tap only (1 request), reusing
       the existing way-back code
-- [ ] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
+- [x] Golden trip + `special-features` section + 4th row in CLAUDE.md's feature table
 
 ### B3 — Calendar → arrive by (`claude/p8-calendar`, 1 geocode, cached a day)
-- [ ] "From my calendar": next events with a location (on the phone, `READ_CALENDAR` asked on
+- [x] "From my calendar": next events with a location (on the phone, `READ_CALENDAR` asked on
       tap), "arrive by 09:50 at …" with a buffer setting (default 10 min)
-- [ ] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
+- [x] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
 - [x] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
