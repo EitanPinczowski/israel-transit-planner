@@ -56,6 +56,10 @@ leaves the app instead of closing what is open.
 **Fix:** a `BackHandler` in `MainScreen` that steps back in this order: editing, stop
 sheet, results, then the system default.
 
+**Status (#32):** fixed on Android 9 and later (one Back closes the search, keyboard or
+not). **Still open on Android 8:** with the search open, Back may not close it (J4 on
+API 26 is recorded as a finding, not a failure). Tracked in ROADMAP's Phase 9 close-out.
+
 ### F3. Almost no map is visible
 Rule R7. Hits all 16 result screens on every profile.
 

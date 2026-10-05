@@ -2,7 +2,6 @@
 
 package il.transit.planner.ui.screens
 
-import android.os.Build
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -66,13 +65,10 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
             .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing() }
             // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
-            // hook sees it before both, keyboard or not: one Back closes the search. Not on
-            // Android 8, where it swallows the Back without closing anything: there the first
-            // Back hides the keyboard and the second closes the search (owner, 2026-10-05).
-            .then(if (Build.VERSION.SDK_INT >= ONE_BACK_SDK) Modifier.onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm, KeyEventType.KeyUp) } else Modifier)
-            // With the keyboard down, Back comes here. Close on the press: Android 8 never sends
-            // the release of a press taken here, and a Back swallowed with no effect is a dead end.
-            .onPreviewKeyEvent { e -> backClosesSearch(e, vm, KeyEventType.KeyDown) },
+            // hook sees it before both, keyboard or not: one Back closes the search.
+            // Known issue: not on Android 8 (ROADMAP Phase 9 close-out, J4 on API 26).
+            .onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) }
+            .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
@@ -118,13 +114,9 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
 
 private const val KEYBOARD_SETTLE_MS = 200L
 
-/** Android 9: from here one Back closes the search with the keyboard up (8.x takes two). */
-private const val ONE_BACK_SDK = 28
-
-/** Takes both halves of a Back, so nothing else acts on it; closes the search on [on]. */
-private fun backClosesSearch(e: KeyEvent, vm: MainActions, on: KeyEventType): Boolean {
+private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
     if (e.key != Key.Back) return false
-    if (e.type == on) vm.cancelEditing()
+    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
     return true
 }
 

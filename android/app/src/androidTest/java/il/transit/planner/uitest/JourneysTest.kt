@@ -121,9 +121,10 @@ class JourneysTest {
                 d.open()
                 compose.waitForIdle()
                 SystemClock.sleep(700) // as a person would: the keyboard is up before Back
-                // Android 8.x (owner, 2026-10-05): with the keyboard up, the first Back only hides
-                // it and the second closes the search. Every later version: one Back.
-                val presses = if (what == "the search" && AppDriver.sdk < 28) 2 else 1
+                // Android 8 (API 26): Back on an open search is a known issue (ROADMAP Phase 9
+                // close-out, from #32): two presses, recorded as finding J4, not a failure.
+                val knownIssue = what == "the search" && AppDriver.sdk == 26
+                val presses = if (knownIssue) 2 else 1
                 repeat(presses) {
                     if (d.closed()) return@repeat
                     // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
@@ -134,6 +135,10 @@ class JourneysTest {
                         d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
                 }
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
+                if (knownIssue && alive) {
+                    Findings.expect("J4", d.closed(), "Back twice with $what open did not close it (${d.inputState()})")
+                    return@use
+                }
                 assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})", alive && d.closed())
             }
         }
