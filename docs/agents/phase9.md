@@ -225,7 +225,7 @@ settings change
 >
 > **Settings:**
 > - `UserSettings.homePlace: String? = null` (the saved place's name);
-> - `UserSettings.nightRefresh: Boolean = <owner decision>`.
+> - `UserSettings.nightRefresh: Boolean = true` (owner, 2026-10-05).
 >
 > Both have a JSON round-trip test. Renaming or deleting the Home place clears or renames
 > `homePlace`.
@@ -419,7 +419,7 @@ new), `plan/LastTripHome.kt` (core, new), `strings_alerts.xml`
 > silenced on its own. Turning the setting on asks `POST_NOTIFICATIONS` (API 33+) with a
 > rationale, like reminders do. If it is refused, the toggle stays off and says why.
 >
-> **Settings:** `UserSettings.lastTripAlert: Boolean = <owner decision>`, with a JSON
+> **Settings:** `UserSettings.lastTripAlert: Boolean = false` (owner, 2026-10-05: opt-in), with a JSON
 > round-trip test.
 >
 > **Tests:** `CountdownTest.kt`, `LastTripHomeTest.kt` (origin rules, near Home, `runsAllNight`,
@@ -441,6 +441,12 @@ new), `plan/LastTripHome.kt` (core, new), `strings_alerts.xml`
 ---
 
 ## Owner decisions this plan needs (ask before Wave 1)
+
+**Decided 2026-10-05:** the owner approved every proposal below as written. Night refresh
+is on, with a cap of 6. Home is set by "Set as Home". The last-trip alert is off (opt-in), checked
+at 19:00 Sun–Thu, 12:00 Fri and 20:00 Sat, with a 30-minute warning. "Away" comes from history plus
+the last foreground location. The countdown is always on. Pass prices come from HopOn's page.
+The release is v0.8.0.
 1. **Night refresh default:** on or off? Proposal: **on**, with Wi-Fi + charging only and at
    most 6 requests a night. Friends will never find the toggle.
 2. **Night refresh cap:** 6 trips a night? It costs at most 6 requests a day per phone.
