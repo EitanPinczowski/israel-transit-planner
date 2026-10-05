@@ -69,13 +69,15 @@ items = one finding per screen; behind an open dialog doesn't count) · R3 clipp
 · R4 a target under 40 dp whose grown 48 dp tap area reaches another · R5 Accessibility Test Framework
 (contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
 not squeezed. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
-closes what is open, J10 Settings reachable with results open. Broken journeys and crashes fail the run; findings never do.
+closes what is open (one Back, even with the keyboard up), J10 Settings reachable with results open. Broken journeys and crashes fail the run; findings never do.
 
 ## Adding to it
 
 - A new screen state: a `@Test` in `ScreensTest` (set up via the ViewModel, `AppDriver.place`).
 - A new journey: `JourneysTest`, through taps; assert what the user sees and
   `app.replay.calls` (it doubles as the request-budget check).
+- Popups and buttons that appear after a search (the ⋮ menu items, the results' ★ Save trip)
+  are composed a frame later: go through `AppDriver.tapMenuItem` / `tapSaveTrip`, which wait.
 - A new fixture: record it (skill `transitous-api`), add its name to `ReplayTransitApi.FIXTURES`.
 - The fixed clock means fixture dates matter: alarms/rides use 2026-10-05.
 

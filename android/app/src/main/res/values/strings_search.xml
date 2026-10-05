@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The label over the search field while a stop on the way is typed. -->
+    <string name="stop_on_the_way">Stop on the way</string>
+</resources>

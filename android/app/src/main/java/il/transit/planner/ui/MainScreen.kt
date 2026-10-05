@@ -222,8 +222,9 @@ fun MainScreen(
 
     val showPanel = state.editing == null &&
         (tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
-    // A new search always shows its answer; closing the results unfolds the search card.
-    LaunchedEffect(state.loading) { if (state.loading) collapsed = false }
+    // A new search always shows its answer (and folds the search again); closing the results
+    // unfolds the search card.
+    LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
     LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
 
     // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
@@ -255,6 +256,10 @@ fun MainScreen(
         val rootWidth = constraints.maxWidth
         val rootHeight = constraints.maxHeight
         val compactSearch = showPanel && maxHeight < SHORT && !searchOpen
+        // Short windows (landscape, small phones) can't fit the unfolded search and the results:
+        // the search gets the screen until a new search, or Back, brings the results back.
+        val searchOnly = showPanel && maxHeight < SHORT && searchOpen
+        val panelShown = showPanel && !searchOnly
         val sheetMaxHeight = maxHeight * 0.5f
 
         map()
@@ -262,7 +267,9 @@ fun MainScreen(
 
         val search: @Composable () -> Unit = {
             state.update?.let { UpdateBanner(it, vm) }
-            if (compactSearch) {
+            if (state.editing != null) {
+                EditingSearch(state, vm)
+            } else if (compactSearch) {
                 CompactSearch(state) { searchOpen = true }
             } else {
                 SearchCard(state, vm, onSavePlace = { savingPlace = it })
@@ -279,11 +286,16 @@ fun MainScreen(
                     .padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                search()
                 when {
-                    state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
-                    showPanel -> panel(Modifier.weight(1f, fill = false), MaterialTheme.shapes.extraLarge)
-                    else -> SavedChips(state, vm)
+                    state.editing != null -> {
+                        search()
+                        SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
+                    }
+                    panelShown -> {
+                        search()
+                        panel(Modifier.weight(1f, fill = false), MaterialTheme.shapes.extraLarge)
+                    }
+                    else -> ScrollingSearch(Modifier.weight(1f, fill = false), search) { if (!showPanel) SavedChips(state, vm) }
                 }
                 AttributionChip(Modifier)
             }
@@ -303,10 +315,13 @@ fun MainScreen(
                     Modifier.fillMaxWidth().testTag(UiTags.TOP).onGloballyPositioned { topEdge = it.boundsInRoot().bottom.roundToInt() },
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    search()
                     when {
-                        state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
-                        !showPanel -> SavedChips(state, vm)
+                        state.editing != null -> {
+                            search()
+                            SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
+                        }
+                        panelShown -> search()
+                        else -> ScrollingSearch(Modifier.weight(1f, fill = false), search) { if (!showPanel) SavedChips(state, vm) }
                     }
                 }
             }
@@ -315,7 +330,7 @@ fun MainScreen(
                     .onGloballyPositioned { bottomEdge = it.boundsInRoot().top.roundToInt() },
             ) {
                 AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
-                if (showPanel) {
+                if (panelShown) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
                     panel(Modifier.heightIn(max = sheetMaxHeight), top)
                 } else {
@@ -335,6 +350,16 @@ fun MainScreen(
     }
     if (savingTrip) {
         NameDialog(R.string.save_trip, onDismiss = { savingTrip = false }) { name -> vm.saveTrip(name); savingTrip = false }
+    }
+}
+
+/** The search card (and what follows it) scrolling when it is taller than the window, as in
+ *  landscape with the drop-off slider or at the largest font. Only used with no results beside it. */
+@Composable
+private fun ScrollingSearch(modifier: Modifier, search: @Composable () -> Unit, below: @Composable () -> Unit) {
+    Column(modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        search()
+        below()
     }
 }
 

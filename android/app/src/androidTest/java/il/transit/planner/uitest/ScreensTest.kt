@@ -185,8 +185,7 @@ class ScreensTest {
 
     @Test fun s18_save_trip_dialog() = screen("18-save-trip-dialog") {
         trip()
-        compose.onNode(hasContentDescription(str(R.string.more_options))).performClick()
-        compose.onNode(hasText(str(R.string.save_trip))).performClick()
+        tapSaveTrip()
         val field = compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
         field.performClick()
         field.performTextInput("עבודה")

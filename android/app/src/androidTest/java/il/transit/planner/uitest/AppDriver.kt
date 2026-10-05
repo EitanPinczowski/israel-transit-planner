@@ -3,12 +3,17 @@ package il.transit.planner.uitest
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.SystemClock
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.user.SavedPlace
 import il.transit.planner.MainActivity
+import il.transit.planner.R
 import il.transit.planner.UiTestApp
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
@@ -89,6 +94,33 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
             !s.loading && (s.hasResults || s.error != null)
         }
         compose.waitForIdle()
+    }
+
+    /**
+     * Taps the results header's ★ "Save trip". It only appears once the trip's results are
+     * in (and the header is composed), so wait for it rather than tapping right after the search.
+     */
+    fun tapSaveTrip() {
+        val star = hasContentDescription(str(R.string.save_trip)) and hasClickAction()
+        compose.waitUntil(5_000) { compose.onAllNodes(star).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(star).performClick()
+    }
+
+    /**
+     * Opens the search card's ⋮ menu and taps [labelRes] once the item has appeared (the menu
+     * is a popup: it is composed a frame after the tap). With results shown on a short screen
+     * the card is folded to one line, without the ⋮: unfold it first.
+     */
+    fun tapMenuItem(labelRes: Int) {
+        val dots = hasContentDescription(str(R.string.more_options)) and hasClickAction()
+        if (compose.onAllNodes(dots).fetchSemanticsNodes().isEmpty()) {
+            compose.onNode(hasContentDescription(str(R.string.edit_search)), useUnmergedTree = true).performClick()
+            compose.waitUntil(5_000) { compose.onAllNodes(dots).fetchSemanticsNodes().isNotEmpty() }
+        }
+        compose.onNode(dots).performClick()
+        val item = hasText(str(labelRes)) and hasClickAction()
+        compose.waitUntil(5_000) { compose.onAllNodes(item).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(item).performClick()
     }
 
     /** Lets the map camera (600 ms animation) and Compose settle before a screenshot. */

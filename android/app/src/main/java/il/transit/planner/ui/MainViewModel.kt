@@ -158,7 +158,7 @@ data class UiState(
     val carTime: CarTime? = null,
     val carLoading: Boolean = false,
 ) {
-    val historyStats: HistoryStats get() = History.stats(history, clock.instant())
+    val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
     /** The routine's place, while the destination is still the one the routine filled in. */
     val activeRoutine: String? get() = routinePlace?.takeIf { (to as? PlaceRef.Point)?.name == it }

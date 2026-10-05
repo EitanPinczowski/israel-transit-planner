@@ -121,7 +121,10 @@ class JourneysTest {
                 compose.waitForIdle()
                 // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
                 UiDevice.getInstance(d.inst).pressBack()
-                SystemClock.sleep(500)
+                // The keyboard (if up) takes this Back and slides away first: give it 2 s.
+                val until = SystemClock.uptimeMillis() + 2_000
+                do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
+                    d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
                 assertTrue("J4: Back with $what open " + if (alive) "did not close it" else "left the app", alive && d.closed())
             }
@@ -190,8 +193,7 @@ class JourneysTest {
 
     @Test fun j10_save_trip_then_one_tap_then_delete() = AppDriver(compose).launch().use { d ->
         d.tripByTaps()
-        compose.onNode(hasContentDescription(d.str(R.string.more_options))).performClick()
-        compose.onNode(hasText(d.str(R.string.save_trip))).performClick()
+        d.tapSaveTrip()
         val field = compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
         field.performClick()
         field.performTextInput("עבודה")
@@ -202,8 +204,8 @@ class JourneysTest {
         compose.onNode(hasText("↗ עבודה") and hasClickAction()).performClick()
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
-        // J10: with results open, Settings is still one tap away (the panel once covered it).
-        compose.onNode(hasContentDescription(d.str(R.string.settings))).performClick()
+        // J10: with results open, Settings can still be reached from the ⋮ menu (the panel once covered it).
+        d.tapMenuItem(R.string.settings)
         compose.waitForIdle()
         assertTrue("J10: Settings can't be tapped while results are open", d.vm.state.value.showSettings)
         // The saved rows sit at the end of the settings list: scroll there first (a lazy list
