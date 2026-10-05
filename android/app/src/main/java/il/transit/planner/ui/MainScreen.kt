@@ -177,6 +177,7 @@ class ScreenActions(
     val startRide: () -> Unit,
     /** How much of the map our panels and the system bars cover, whenever that changes. */
     val onMapPadding: (MapPadding) -> Unit = {},
+    val crashLog: il.transit.planner.ui.screens.CrashLogUi = il.transit.planner.ui.screens.CrashLogUi(),
     /** Opens the trip sheet (all stops of the vehicle) for a transit leg of the selected option. */
     val openLeg: (il.transit.core.api.Leg) -> Unit = {},
 )

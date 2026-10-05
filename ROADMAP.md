@@ -150,9 +150,9 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [x] Only the location text leaves the phone (to the geocoder); said in the rationale + docs
 
 ### B4 — UI tests + crash log (`claude/p8-qa`, no requests)
-- [ ] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
-      the job fails on an image change the PR did not re-record
-- [ ] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
+- [x] Per-panel Paparazzi screenshots (extends #18's `screenshots` job), Hebrew + English, and
+      the job fails on an image change the PR did not re-record (`tools/pull_goldens.py`)
+- [x] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
 
 ### Close-out (planner)
 - [ ] `docs/releases/v0.7.0.md` assembled from `docs/releases/next/*`; fragments removed

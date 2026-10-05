@@ -167,38 +167,42 @@ internal fun FavoritesDialog(state: UiState, vm: MainActions) {
         onDismissRequest = { vm.showFavorites(false) },
         confirmButton = { TextButton(onClick = { vm.showFavorites(false) }) { Text(stringResource(R.string.done)) } },
         title = { Text(stringResource(R.string.my_lines)) },
-        text = {
-            if (state.favorites.isEmpty()) {
-                Text(stringResource(R.string.my_lines_empty))
-            } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    state.favoritesOfflineSince?.let { at ->
-                        item { Text(stringResource(R.string.my_lines_offline, hhmm(at)), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-                    }
-                    items(state.favorites) { f ->
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Column(Modifier.weight(1f)) {
-                                    Text(
-                                        if (f.headsign.isBlank()) f.line else stringResource(R.string.line_to, f.line, f.headsign),
-                                        style = MaterialTheme.typography.titleSmall,
-                                    )
-                                    Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                                IconButton(onClick = { vm.removeFavorite(f) }) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
-                            }
-                            when {
-                                f !in state.favoriteBoards -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                                state.favoriteBoards[f] == null -> Text(stringResource(R.string.err_network), style = MaterialTheme.typography.bodySmall)
-                                state.favoriteBoards[f]!!.isEmpty() -> Text(stringResource(R.string.no_departures), style = MaterialTheme.typography.bodySmall)
-                                else -> state.favoriteBoards[f]!!.forEach { DepartureView(it) }
-                            }
+        text = { FavoritesContent(state, vm) },
+    )
+}
+
+/** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
+@Composable
+internal fun FavoritesContent(state: UiState, vm: MainActions) {
+    if (state.favorites.isEmpty()) {
+        Text(stringResource(R.string.my_lines_empty))
+    } else {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            state.favoritesOfflineSince?.let { at ->
+                item { Text(stringResource(R.string.my_lines_offline, hhmm(at)), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+            }
+            items(state.favorites) { f ->
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                if (f.headsign.isBlank()) f.line else stringResource(R.string.line_to, f.line, f.headsign),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(f.stopName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
+                        IconButton(onClick = { vm.removeFavorite(f) }) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
+                    }
+                    when {
+                        f !in state.favoriteBoards -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                        state.favoriteBoards[f] == null -> Text(stringResource(R.string.err_network), style = MaterialTheme.typography.bodySmall)
+                        state.favoriteBoards[f]!!.isEmpty() -> Text(stringResource(R.string.no_departures), style = MaterialTheme.typography.bodySmall)
+                        else -> state.favoriteBoards[f]!!.forEach { DepartureView(it) }
                     }
                 }
             }
-        },
-    )
+        }
+    }
 }
 
 @Composable

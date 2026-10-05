@@ -41,6 +41,13 @@ time, so every rule below is about not breaking each other.
 | `CLAUDE.md` | B2 (4th feature row); anyone adding a skill (table row) |
 | `ROADMAP.md` | tick only your own package's `###` subsection |
 
+## Screens have goldens (since B4)
+A Wave 1 PR that changes how any screen looks, or adds a screen, makes the `screenshots` CI
+job fail until it re-records: `python3 tools/pull_goldens.py` after the job ran on your HEAD,
+then commit the images in your PR (`android-build` skill). A new screen also gets its shots in
+`ui/PanelsTest.kt` (English + Hebrew). Never re-record another PR's screen to get yours green;
+after merging `main`, re-record only if your own screen's pictures changed.
+
 Before opening a PR, and again before saying it is done, merge `origin/main` into your branch
 (never rebase a pushed branch). Resolve conflicts by keeping both sides.
 

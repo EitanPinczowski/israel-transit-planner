@@ -6,6 +6,7 @@ import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitApi
 import il.transit.core.api.Itinerary
 import il.transit.core.remind.Reminder
+import il.transit.planner.data.CrashLogStore
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
@@ -19,6 +20,14 @@ import java.util.Locale
 
 /** Process-wide singletons. One guarded client, so the cache and the concurrency cap are shared. */
 class TransitApp : Application() {
+    /** Local crash log (Settings → Share crash log). Installed first, so it sees every crash. */
+    val crashLog: CrashLogStore by lazy { CrashLogStore(File(filesDir, "crash_log.txt"), BuildConfig.VERSION_NAME) }
+
+    override fun onCreate() {
+        super.onCreate()
+        crashLog.install()
+    }
+
     val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json")) }

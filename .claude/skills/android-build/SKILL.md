@@ -33,12 +33,31 @@ there) and that is where most of the logic is tested.
 (assembleDebug, uploads the APK as artifact `app-debug`, kept 14 days). The APK from a
 green run is how friends test a build before a release.
 
-Job `screenshots` runs Paparazzi's `:app:recordPaparazziDebug` and uploads
-`android/app/src/test/snapshots/` as artifact `screenshots`: the main screen
-(`ui/ScreensTest.kt`) in each state × 7 device variants, rendered without an emulator.
-Record-only, no goldens yet. The map is a flat placeholder and there are no system bars
-in these pictures, so inset handling still needs a phone. Test fixtures come from
-`core/src/test/resources` (shared through `sourceSets["test"]`).
+Job `screenshots` (Paparazzi, no emulator) renders `ui/ScreensTest.kt` (the whole main
+screen in each state × 7 device variants) and `ui/PanelsTest.kt` (each `ui/screens/*` panel
+alone, English light + Hebrew RTL dark, built from the recorded fixtures — the car features
+run their real planners over them). The map is a flat placeholder and there are no system
+bars, so inset handling still needs a phone. Test fixtures come from `core/src/test/resources`
+(shared through `sourceSets["test"]`).
+
+### Goldens: the job fails when a picture changes
+The committed goldens are `android/app/src/test/snapshots/images/*.png`. The job first runs
+`:app:verifyPaparazziDebug` against them (a changed picture, or a new shot with no golden,
+fails), then records and publishes fresh pictures anyway, then fails if verify did. What
+differed is published too, as `failures/delta-*.png` (golden | new | diff).
+
+To re-record (needed whenever your PR changes how a screen looks, or adds a shot):
+1. Push, and wait for the `screenshots` job of that commit (it goes red: expected).
+2. `python3 tools/pull_goldens.py` — copies CI's pictures for your branch into the goldens
+   folder (removing ones whose test is gone), after checking `INFO.txt` names your HEAD.
+3. Look at the listed new/changed images (raw URLs below), then commit them **in the same
+   PR** as the change. The next run is green.
+
+Re-record in the PR that changes the screen, never in someone else's. Don't raise
+`maxPercentDifference` to make a diff go away, and don't read a time from the clock in a
+screen that has a shot (pass `now` in, like `HistoryContent`): the goldens would rot.
+Local re-recording (`./gradlew -p android :app:recordPaparazziDebug`) also works on a machine
+with the SDK, but fonts can differ from CI's runner; prefer CI's pictures.
 
 On pushes the same job also writes the PNGs to the `screenshots` branch, one folder per
 source branch (`/` becomes `_`, e.g. `claude_eager-curie-477jsw/`), plus `INFO.txt` with
@@ -58,3 +77,11 @@ Check that `INFO.txt` names your commit before judging a picture.
   "get off next stop" alert).
 - Install on a phone: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`,
   or download the CI artifact and open it on the phone (allow "install unknown apps").
+
+## "The app crashed on my phone"
+Ask for the crash log: Settings → "Share crash log" sends the last 5 crashes (time, app and
+Android version, phone model, thread, stack trace) as plain text. `TransitApp.onCreate`
+installs the handler (`data/CrashLogStore`, format in core `diag/CrashLog`); it writes
+`filesDir/crash_log.txt` and then hands over to Android's own handler. Nothing is uploaded,
+and that stays so: sending crashes anywhere automatically would need a server or a
+third-party service (see `dead-ends`).
