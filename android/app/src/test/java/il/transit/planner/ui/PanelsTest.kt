@@ -40,6 +40,18 @@ import il.transit.core.features.Option
 import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
 import il.transit.core.features.PickUpResult
+import il.transit.core.features.ParkRidePlanner
+import il.transit.core.features.ParkRideQuery
+import il.transit.core.features.ParkRideResult
+import il.transit.core.api.Endpoint
+import il.transit.core.plan.CalendarDestination
+import il.transit.core.plan.CalendarEvent
+import il.transit.planner.ui.screens.CalendarBufferSetting
+import il.transit.planner.ui.screens.CalendarConfirmBody
+import il.transit.planner.ui.screens.CalendarEventList
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.CarTime
 import il.transit.core.plan.ChainResult
@@ -116,6 +128,50 @@ class PanelsTest(private val v: Variant) {
     @Test fun pickUpLehavim() = panel("pickup_lehavim", carState(AppMode.PICK_UP).copy(pickUp = pickUp))
 
     @Test fun pickUpNone() = panel("pickup_none", carState(AppMode.PICK_UP).copy(pickUp = PickUpResult(bgu.first(), emptyList())))
+
+    // --- Park & Ride (ParkRidePanel.kt, #23) ---
+
+    @Test fun parkRideMeitar() = panel(
+        "parkride_meitar",
+        carState(AppMode.PARK_RIDE).copy(time = sunday0730, parkRide = ParkRideUi(result = parkRide, origin = meitar)),
+    )
+
+    @Test fun parkRideNone() = panel(
+        "parkride_none",
+        carState(AppMode.PARK_RIDE).copy(parkRide = ParkRideUi(result = ParkRideResult(bgu.first(), emptyList(), 0), origin = meitar)),
+    )
+
+    /** "Way back to my car": the Trip tab to the parked station, then the drive home estimate. */
+    @Test fun parkRideWayBack() {
+        val parked = parkRide.options.first().payload
+        val state = tripState().copy(
+            to = PlaceRef.Point(parked.station.name, parked.stationAt),
+            parkRide = ParkRideUi(parked = parked),
+        )
+        panel("parkride_wayback", state)
+    }
+
+    // --- From my calendar (CalendarPicker.kt, #25) ---
+
+    @Test fun calendarEvents() {
+        val events = listOf(
+            CalendarEvent("רופא שיניים", "הרצל 12, באר שבע", start.plusSeconds(5400), start.plusSeconds(7200)),
+            CalendarEvent("Team meeting", "Azrieli Center, Tel Aviv", start.plusSeconds(10_800), start.plusSeconds(14_400)),
+            CalendarEvent("", "אוניברסיטת בן גוריון", start.plusSeconds(86_400), start.plusSeconds(90_000)),
+        )
+        dialog("calendar_events") { CalendarEventList(events, now = start) {} }
+    }
+
+    @Test fun calendarEmpty() = dialog("calendar_empty") { CalendarEventList(emptyList(), now = start) {} }
+
+    /** The match was only rough (a city, not the street): the warning shows in red. */
+    @Test fun calendarConfirm() = dialog("calendar_confirm") {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            CalendarConfirmBody(CalendarConfirm(CalendarDestination("הרצל 12, באר שבע", LatLon(31.24, 34.79), "הרצל 12 באר שבע"), start))
+            CalendarConfirmBody(CalendarConfirm(CalendarDestination("באר שבע", LatLon(31.25, 34.79), "Dr. Cohen, Beer Sheva", approximate = true), start))
+            CalendarBufferSetting(current = 10) {}
+        }
+    }
 
     // --- Trip panel states (TripPanel.kt) ---
 
@@ -243,9 +299,13 @@ class PanelsTest(private val v: Variant) {
     )
 
     /** Answers every plan from a recording; anything else is a bug in the test. */
-    private class FixtureApi(private val onPlan: (PlanRequest) -> PlanResponse) : TransitApi {
+    private class FixtureApi(
+        private val drives: List<Int?>? = null,
+        private val onPlan: (PlanRequest) -> PlanResponse,
+    ) : TransitApi {
         override suspend fun plan(req: PlanRequest) = onPlan(req)
-        override suspend fun oneToMany(one: LatLon, many: List<LatLon>, mode: String, maxSeconds: Int, arriveBy: Boolean): List<Int?> = error("not recorded")
+        override suspend fun oneToMany(one: LatLon, many: List<LatLon>, mode: String, maxSeconds: Int, arriveBy: Boolean): List<Int?> =
+            drives ?: error("not recorded")
         override suspend fun stops(box: BBox, modes: Set<String>?, language: String): List<Place> = error("not recorded")
         override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> = error("not recorded")
         override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> = error("not recorded")
@@ -278,6 +338,22 @@ class PanelsTest(private val v: Variant) {
         private val pickUp: PickUpResult = runBlocking {
             val api = FixtureApi { req -> if (req.maxPostTransitSec == null) PlanResponse() else plan("plan_car_post_pickup") }
             PickUpPlanner(api).plan(PickUpQuery(telAviv, meitar, monday17, maxDriveMin = 20))
+        }
+
+        /** Sunday 2026-10-11 07:30 in Israel, when the park & ride fixtures were recorded. */
+        private val sunday0730 = Instant.parse("2026-10-11T04:30:00Z")
+
+        /** Meitar → Tel Aviv: park at Be'er Sheva North, direct train (as ParkRideTest). */
+        private val parkRide: ParkRideResult = runBlocking {
+            val drives = MotisJson.decodeFromString(ListSerializer(JsonObject.serializer()), fixture("one_to_many_park_ride_meitar"))
+                .map { it["duration"]?.jsonPrimitive?.content?.toDouble()?.toInt() }
+            val api = FixtureApi(drives) { req ->
+                when (val from = req.from) {
+                    is Endpoint.Stop -> if (from.stopId == "il-Israel-MOT_37314") plan("plan_park_ride_bs_north") else plan("plan_park_ride_bs_center")
+                    else -> plan("plan_park_ride_baseline_meitar")
+                }
+            }
+            ParkRidePlanner(api).plan(ParkRideQuery(meitar, telAviv, sunday0730, maxDriveMin = 20))
         }
 
         private val board = MotisJson.decodeFromString(StopTimesResponse.serializer(), fixture("stoptimes_weekday_beersheva_central"))

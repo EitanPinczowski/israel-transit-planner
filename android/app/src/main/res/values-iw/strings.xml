@@ -194,7 +194,7 @@
         <item quantity="other">נשארו %d תחנות</item>
     </plurals>
     <string name="ride_progress_title">קו \u2068%1$s\u2069 · %2$s</string>
-    <string name="ride_progress_text">לרדת ב%1$s ~\u2068%2$s\u2069</string>
+    <string name="ride_progress_text">לרדת ב\u2068%1$s\u2069 ~\u2068%2$s\u2069</string>
     <string name="ride_progress_arrive">הגעה \u2068%1$s\u2069</string>
     <string name="my_lines">הקווים שלי</string>
     <string name="my_lines_empty">הקישו על תחנה במפה ואז על ☆ ליד קו, כדי לנעוץ אותו כאן עם היציאות הקרובות.</string>
