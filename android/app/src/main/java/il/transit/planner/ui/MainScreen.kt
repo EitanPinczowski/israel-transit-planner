@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -357,11 +358,17 @@ fun MainScreen(
  *  landscape with the drop-off slider or at the largest font. Only used with no results beside it. */
 @Composable
 private fun ScrollingSearch(modifier: Modifier, search: @Composable () -> Unit, below: @Composable () -> Unit) {
-    Column(modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    // A scrolling column clips at its edges: room for the card's shadow inside, drawn where it was.
+    Column(
+        modifier.offset(y = -SHADOW_ROOM).verticalScroll(rememberScrollState()).padding(vertical = SHADOW_ROOM),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         search()
         below()
     }
 }
+
+private val SHADOW_ROOM = 4.dp
 
 /** Keeps the clock and battery icons readable over a busy map. */
 @Composable
