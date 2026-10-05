@@ -74,6 +74,10 @@ class FakeTransitApi : TransitApi {
     val planRequests: MutableList<PlanRequest> = Collections.synchronizedList(ArrayList())
 
     var onPlan: (PlanRequest) -> PlanResponse = { error("unscripted plan: $it") }
+
+    /** Answers by [PlanRequest.pageCursor] ("EARLIER|…" / "LATER|…"); a cursor missing here
+     *  falls through to [onPlan]. */
+    var pages: Map<String, PlanResponse> = emptyMap()
     var onOneToMany: (one: LatLon, many: List<LatLon>, arriveBy: Boolean) -> List<Int?> =
         { _, _, _ -> error("unscripted one-to-many") }
     var onStops: (BBox, Set<String>?) -> List<Place> = { _, _ -> error("unscripted stops") }
@@ -81,7 +85,7 @@ class FakeTransitApi : TransitApi {
     override suspend fun plan(req: PlanRequest): PlanResponse {
         calls += "plan"
         planRequests += req
-        return onPlan(req)
+        return req.pageCursor?.let(pages::get) ?: onPlan(req)
     }
 
     override suspend fun oneToMany(one: LatLon, many: List<LatLon>, mode: String, maxSeconds: Int, arriveBy: Boolean): List<Int?> {
