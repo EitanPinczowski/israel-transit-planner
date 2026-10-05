@@ -265,6 +265,7 @@ fun MainScreen(
         val searchOnly = showPanel && foldsForResults && searchOpen
         val panelShown = showPanel && !searchOnly
         val sheetMaxHeight = maxHeight * 0.5f
+        val screenHeight = maxHeight // read inside nested layout scopes below
 
         map()
         StatusBarScrim()
@@ -349,7 +350,7 @@ fun MainScreen(
                     // stays map between the search and the sheet (R7): on a 640 dp phone, or at
                     // the largest font, the folded search and the credit take their part first.
                     val searchBottom = with(density) { topEdge.toDp() }
-                    val cap = minOf(sheetMaxHeight, maxHeight * (1f - MAP_SHARE) - searchBottom - CREDIT_ROOM)
+                    val cap = minOf(sheetMaxHeight, screenHeight * (1f - MAP_SHARE) - searchBottom - CREDIT_ROOM)
                     panel(Modifier.heightIn(max = cap.coerceAtLeast(MIN_SHEET)), top)
                 } else {
                     Spacer(Modifier.windowInsetsBottomHeight(bars))
