@@ -23,6 +23,14 @@ import il.transit.planner.ui.screens.HistoryContent
 import il.transit.planner.ui.screens.LocalWalkDirectionsOpen
 import il.transit.planner.ui.screens.SettingsContent
 import il.transit.core.api.PlanResponse
+import il.transit.core.api.Alert
+import il.transit.core.api.Itinerary
+import il.transit.core.present.VehicleMark
+import il.transit.core.present.tripDetails
+import il.transit.planner.ui.screens.TripDetailsSheet
+import androidx.compose.ui.graphics.Shape
+import java.time.Instant
+import java.time.OffsetDateTime
 import il.transit.core.features.BetterStartOption
 import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
@@ -153,6 +161,38 @@ class ScreensTest(private val v: Variant) {
         walkOpen = true,
     )
 
+    /** The trip sheet as Israeli MOT lines really are: timetable only, "scheduled position". */
+    @Test fun tripSheet() = shot("trip", tripState(), tripSheet = sheetFor(bus470Trip, realTime = false))
+
+    /** The same sheet with what only busofash could send: a delay, a skipped stop, alerts. */
+    @Test fun tripSheetLive() = shot("trip_live", tripState(), tripSheet = sheetFor(liveTrip(), realTime = true))
+
+    private fun sheetFor(trip: Itinerary, realTime: Boolean): @Composable (Modifier, Shape) -> Unit {
+        val t = trip.legs.single()
+        val stops = listOf(t.from) + t.intermediateStops + listOf(t.to)
+        val leg = t.copy(from = stops[1], to = stops[3], intermediateStops = listOf(stops[2]), startTime = stops[1].departure!!, endTime = stops[3].arrival!!)
+        val details = tripDetails(leg, trip, Instant.parse("2026-10-03T20:40:00Z"))
+        val sheet = TripSheet(leg, details, vehicle = VehicleMark(stops[2].latLon, realTime = realTime, atStop = false))
+        return { m, shape -> TripDetailsSheet(sheet, onClose = {}, modifier = m, shape = shape) }
+    }
+
+    /** Bus 470 with hand-made real-time data: 3 min late from Soroka on, Merkaz Oren skipped. */
+    private fun liveTrip(): Itinerary {
+        fun late(time: String?) = time?.let { OffsetDateTime.parse(it).plusMinutes(3).toString() }
+        val t = bus470Trip.legs.single()
+        val mid = t.intermediateStops.mapIndexed { i, p ->
+            p.copy(
+                arrival = late(p.arrival), departure = late(p.departure), cancelled = i == 1,
+                alerts = if (i == 1) listOf(Alert(headerText = "התחנה סגורה בשל עבודות")) else emptyList(),
+            )
+        }
+        val leg = t.copy(
+            realTime = true, intermediateStops = mid, to = t.to.copy(arrival = late(t.to.arrival)),
+            alerts = listOf(Alert(headerText = "Detour via Route 40", descriptionText = "Roadworks at Kiryat Gat junction until 18:00")),
+        )
+        return bus470Trip.copy(legs = listOf(leg))
+    }
+
     @Test fun banners() = shot(
         "banners",
         UiState(
@@ -178,11 +218,16 @@ class ScreensTest(private val v: Variant) {
         paparazzi.snapshot("history") { Frame { DialogBody { HistoryContent(UiState(history = records), NoActions, now = start) } } }
     }
 
-    private fun shot(name: String, state: UiState, walkOpen: Boolean = false) = paparazzi.snapshot(name) {
+    private fun shot(
+        name: String,
+        state: UiState,
+        walkOpen: Boolean = false,
+        tripSheet: (@Composable (Modifier, Shape) -> Unit)? = null,
+    ) = paparazzi.snapshot(name) {
         Frame {
             CompositionLocalProvider(LocalWalkDirectionsOpen provides walkOpen) {
                 val actions = ScreenActions(OfflineState(), {}, {}, {}, {})
-                MainScreen(state, NoActions, actions) {
+                MainScreen(state, NoActions, actions, tripSheet = tripSheet) {
                     Box(Modifier.fillMaxSize().background(if (v.dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)))
                 }
             }
@@ -229,6 +274,10 @@ class ScreensTest(private val v: Variant) {
             null,
         )
         private val start = trip.itineraries.first().start
+        private val bus470Trip: Itinerary = MotisJson.decodeFromString(
+            Itinerary.serializer(),
+            ScreensTest::class.java.getResource("/fixtures/trip_bus_470.json")!!.readText(),
+        )
         private val home = SavedPlace("Home", 31.25, 34.79)
 
         private val small = DeviceConfig.NEXUS_5 // 360 x 640 dp

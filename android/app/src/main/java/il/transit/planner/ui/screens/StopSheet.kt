@@ -249,6 +249,17 @@ internal fun StopPanel(
 
 @Composable
 internal fun DepartureView(r: DepartureRow) {
+    Column {
+        DepartureLine(r)
+        // ⚠ only when the answer carries alerts; Israel sent none in 2026-10.
+        r.alerts.forEach { a ->
+            Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.tertiary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        }
+    }
+}
+
+@Composable
+private fun DepartureLine(r: DepartureRow) {
     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(
             Modifier.background(parseColor(r.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),

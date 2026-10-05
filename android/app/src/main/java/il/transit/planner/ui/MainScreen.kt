@@ -178,6 +178,8 @@ class ScreenActions(
     /** How much of the map our panels and the system bars cover, whenever that changes. */
     val onMapPadding: (MapPadding) -> Unit = {},
     val crashLog: il.transit.planner.ui.screens.CrashLogUi = il.transit.planner.ui.screens.CrashLogUi(),
+    /** Opens the trip sheet (all stops of the vehicle) for a transit leg of the selected option. */
+    val openLeg: (il.transit.core.api.Leg) -> Unit = {},
 )
 
 /** Pixels of the map hidden on each side (absolute left/right, not start/end). */
@@ -193,20 +195,29 @@ internal val barsAndCutout: WindowInsets
  * and navigation bars, the camera cutout (which is on a side in landscape) and the keyboard.
  */
 @Composable
-fun MainScreen(state: UiState, vm: MainActions, actions: ScreenActions, map: @Composable () -> Unit) {
+fun MainScreen(
+    state: UiState,
+    vm: MainActions,
+    actions: ScreenActions,
+    /** The open trip sheet (TripDetailsSheet), shown in the results' place; null when closed. */
+    tripSheet: (@Composable (Modifier, Shape) -> Unit)? = null,
+    map: @Composable () -> Unit,
+) {
     var savingPlace by remember { mutableStateOf<LatLon?>(null) }
     var savingTrip by remember { mutableStateOf(false) }
     var collapsed by rememberSaveable { mutableStateOf(false) }
     var searchOpen by rememberSaveable { mutableStateOf(false) }
 
     val showPanel = state.editing == null &&
-        (state.stopSheet != null || state.loading || state.hasResults || state.error != null)
+        (tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
     // A new search always shows its answer; closing the results unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) collapsed = false }
     LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
 
     val panel: @Composable (Modifier, Shape) -> Unit = { modifier, shape ->
-        if (state.stopSheet != null) {
+        if (tripSheet != null) {
+            tripSheet(modifier, shape)
+        } else if (state.stopSheet != null) {
             StopPanel(state.stopSheet, state.favorites, vm, collapsed, { collapsed = it }, modifier, shape)
         } else {
             ResultsPanel(state, vm, actions, collapsed, { collapsed = it }, { savingTrip = true }, modifier, shape)

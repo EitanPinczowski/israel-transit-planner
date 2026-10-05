@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 8 B1: the trip-details sheet. Hebrew in values-iw/strings_trip_details.xml. -->
+<resources>
+    <string name="trip_tap_hint">Tap a line to see all its stops</string>
+    <string name="trip_board">Get on</string>
+    <string name="trip_alight">Get off</string>
+    <string name="trip_next">Next</string>
+    <string name="trip_skipped">Not stopping</string>
+    <string name="trip_cancelled">This trip is cancelled</string>
+    <string name="trip_live_time">Live %1$s</string>
+    <string name="trip_scheduled_position">● Scheduled position on the map</string>
+    <string name="trip_live_position">● Live position on the map</string>
+    <string name="trip_leg_only">No connection: showing your stops only</string>
+    <string name="trip_alert">Service alert</string>
+</resources>

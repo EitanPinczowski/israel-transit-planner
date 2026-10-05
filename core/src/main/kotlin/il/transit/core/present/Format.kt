@@ -79,6 +79,10 @@ data class LegChip(
     val color: String,
     /** Minutes late (negative = early) from real-time data; null without it. */
     val delayMin: Int? = null,
+    /** Index of the leg in the itinerary (chips skip short walks), to open its trip sheet. */
+    val legIndex: Int = -1,
+    /** The leg carries a service alert in effect at its departure: ⚠ on the chip. */
+    val alert: Boolean = false,
 )
 
 data class ItinerarySummary(
@@ -155,10 +159,10 @@ fun summarize(
     fareProfile: FareProfile = FareProfile.REGULAR,
     searchedAt: Instant? = null,
 ): ItinerarySummary {
-    val chips = it.legs
+    val chips = it.legs.withIndex()
         // Transfers inside a station show up as walks of a few seconds; they are noise.
-        .filter { leg -> leg.isTransit || leg.duration >= 60 }
-        .map { leg ->
+        .filter { (_, leg) -> leg.isTransit || leg.duration >= 60 }
+        .map { (i, leg) ->
             LegChip(
                 kind = legKind(leg.mode),
                 label = if (leg.isTransit) lineLabel(leg) else null,
@@ -166,6 +170,8 @@ fun summarize(
                 realTime = leg.realTime,
                 color = legColor(leg),
                 delayMin = if (leg.isTransit) legDelayMin(leg) else null,
+                legIndex = i,
+                alert = leg.isTransit && legAlerts(leg, leg.start).isNotEmpty(),
             )
         }
     val board = it.firstTransitLeg?.let { l ->
@@ -208,6 +214,10 @@ data class DepartureRow(
     val delayMin: Int?,
     val cancelled: Boolean,
     val instant: Instant?,
+    /** Service alerts on this departure or its stop, in effect when it leaves. Usually none. */
+    val alerts: List<AlertText> = emptyList(),
+    /** To open the trip sheet from the board; null when the answer had none. */
+    val tripId: String? = null,
     /** The line's colour ("#RRGGBB"), the kind's default when the operator sends none. */
     val color: String = defaultColor(kind),
 )
@@ -224,6 +234,8 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
         delayMin = if (st.realTime) delayMin(actual, scheduled) else null,
         cancelled = st.cancelled || st.tripCancelled,
         instant = at,
+        alerts = alertTexts(st.alerts + st.place.alerts, at ?: Instant.EPOCH),
+        tripId = st.tripId,
         color = routeColorOr(st.routeColor, legKind(st.mode)),
     )
 }
