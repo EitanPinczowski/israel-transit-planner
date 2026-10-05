@@ -116,10 +116,10 @@ times scheduled. Overlaps the existing stop sheet; this is the same board with a
 ## 7. Bike to the station — M
 **User gets:** "Bike start": cycle up to 10/15/20 min to a station, then train/bus on, shown as
 a Pareto list like Better start (no driver, so cost = bike minutes). Cheaper than asking for a
-lift, and works from Be'er Sheva neighbourhoods to the north station.
+lift, and works from Be'er Sheva neighbourhoods to a station.
 
-**Data:** `plan` with `preTransitModes=BIKE&maxPreTransitTime=…`. **Verified live** (Neve Noy
-area → Tel Aviv HaHagana, 06:00, 15-min cap): 4 itineraries; the second is **BIKE 11 min →
+**Data:** `plan` with `preTransitModes=BIKE&maxPreTransitTime=…`. **Verified live** (a Be'er Sheva point, 31.2589,34.7978 →
+Tel Aviv, 32.0853,34.7818, 06:00, 15-min cap): 4 itineraries; the second is **BIKE 11 min →
 REGIONAL_RAIL 78 min → WALK → BUS**, total 101 min; the others were BIKE 1 min then bus (88 min).
 So the router does choose bike-to-train when it helps. Requests: ≤ 4 (cap ladder + transit-only
 baseline), a `BudgetedTransitApi` budget like the other features.
