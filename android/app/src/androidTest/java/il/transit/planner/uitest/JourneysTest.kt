@@ -210,7 +210,9 @@ class JourneysTest {
     @Test fun j10_save_trip_then_one_tap_then_delete() = AppDriver(compose).launch().use { d ->
         d.tripByTaps()
         d.tapSaveTrip()
-        val field = compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
+        val nameField = hasSetTextAction() and hasAnyAncestor(isDialog())
+        d.awaitNode(nameField)
+        val field = compose.onNode(nameField)
         field.performClick()
         field.performTextInput("עבודה")
         compose.onNode(hasText(d.str(R.string.save)) and hasAnyAncestor(isDialog())).performClick()
@@ -230,6 +232,7 @@ class JourneysTest {
         assertTrue("J10: Settings can't be tapped while results are open", d.vm.state.value.showSettings)
         // The saved rows sit at the end of the settings list: scroll there first (a lazy list
         // only composes what is on screen). Trips come before places, so the first Delete is the trip's.
+        d.awaitNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog()))
         compose.onNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog())).performScrollToNode(hasText("↗ עבודה"))
         compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst().performClick()
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.isEmpty() }

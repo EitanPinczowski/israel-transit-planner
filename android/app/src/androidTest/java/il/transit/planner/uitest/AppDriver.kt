@@ -3,6 +3,7 @@ package il.transit.planner.uitest
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.SystemClock
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollToNodeAction
@@ -101,6 +102,16 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
             !s.loading && (s.hasResults || s.error != null)
         }
         compose.waitForIdle()
+    }
+
+    /**
+     * Until a node matching [m] is in the tree. A dialog or popup is composed a frame after the
+     * state change; a lookup before that fails, and Compose's "not found" message then prints the
+     * tree from the test thread while the UI thread is still laying it out, which Android 15
+     * reports as "multithreaded access to SnapshotStateObserver" instead of the missing node.
+     */
+    fun awaitNode(m: SemanticsMatcher, timeoutMs: Long = 5_000) {
+        compose.waitUntil(timeoutMs) { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() }
     }
 
     /**

@@ -155,8 +155,9 @@ class ScreensTest {
 
     @Test fun s15_settings_bottom() = screen("15-settings-bottom") {
         onMain { it.showSettings(true) }
-        compose.waitForIdle()
-        val list = compose.onAllNodes(hasScrollAction() and hasAnyAncestor(isDialog())).onFirst()
+        val scrollable = hasScrollAction() and hasAnyAncestor(isDialog())
+        awaitNode(scrollable)
+        val list = compose.onAllNodes(scrollable).onFirst()
         repeat(4) { list.performTouchInput { swipeUp() } }
     }
 
