@@ -146,6 +146,8 @@ class PanelsTest(private val v: Variant) {
         val parked = parkRide.options.first().payload
         val state = tripState().copy(
             to = PlaceRef.Point(parked.station.name, parked.stationAt),
+            // One option, so the drive-home line under it is on screen.
+            results = TripResult(listOf(bgu.first()), null),
             parkRide = ParkRideUi(parked = parked),
         )
         panel("parkride_wayback", state)
