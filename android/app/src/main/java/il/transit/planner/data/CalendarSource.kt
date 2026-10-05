@@ -13,17 +13,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.Instant
 
+/** What "From my calendar" reads: the permission, and the next day's events. A fake in tests. */
+interface CalendarReader {
+    fun hasPermission(): Boolean
+
+    /** Event instances that start in the next [CalendarSuggest.WINDOW]; empty without the permission. */
+    suspend fun upcoming(now: Instant = Instant.now()): List<CalendarEvent>
+}
+
 /**
  * Reads the next day's calendar events from the phone's own calendar provider. Nothing here
  * touches the network: titles stay on the phone. Which events to offer is decided in core
  * ([CalendarSuggest.pick]).
  */
-class CalendarSource(private val context: Context) {
-    fun hasPermission(): Boolean =
+class CalendarSource(private val context: Context) : CalendarReader {
+    override fun hasPermission(): Boolean =
         ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
 
-    /** Event instances that start in the next [CalendarSuggest.WINDOW]; empty without the permission. */
-    suspend fun upcoming(now: Instant = Instant.now()): List<CalendarEvent> = withContext(Dispatchers.IO) {
+    override suspend fun upcoming(now: Instant): List<CalendarEvent> = withContext(Dispatchers.IO) {
         if (!hasPermission()) return@withContext emptyList()
         val uri = Instances.CONTENT_URI.buildUpon().also {
             ContentUris.appendId(it, now.toEpochMilli())
