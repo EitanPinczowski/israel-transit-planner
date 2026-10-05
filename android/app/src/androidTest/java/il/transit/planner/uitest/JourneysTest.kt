@@ -26,7 +26,6 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.lifecycle.Lifecycle
-import androidx.test.uiautomator.UiDevice
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -127,8 +126,10 @@ class JourneysTest {
                 val presses = if (knownIssue) 2 else 1
                 repeat(presses) {
                     if (d.closed()) return@repeat
-                    // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
-                    UiDevice.getInstance(d.inst).pressBack()
+                    // Through the instrumentation, not UiAutomator (whose accessibility connection
+                    // stays up for later tests and may query Compose off the UI thread on Android 15)
+                    // nor Espresso (which waits for window focus, which API 26 may not give).
+                    d.inst.sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
                     // The keyboard (if up) takes a Back and slides away first: give it 2 s.
                     val until = SystemClock.uptimeMillis() + 2_000
                     do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&

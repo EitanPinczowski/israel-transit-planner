@@ -77,8 +77,16 @@ fi
 adb pull "/sdcard/Android/data/$PKG/files/ui" "$OUT/" >/dev/null 2>&1 || true
 adb logcat -d > "$OUT/logcat.txt" || true # always: the app's own warnings (RideService, …)
 adb logcat -d -b crash > "$OUT/crash.txt" || true
+if [[ $failed == 1 ]]; then
+  echo "::group::logcat tail (a step failed)"; tail -300 "$OUT/logcat.txt"; echo "::endgroup::"
+fi
 if grep -q "Process: $PKG" "$OUT/crash.txt"; then
   echo "::error::the app crashed on API $API (see crash.txt)"
+  # The artifact store is out of reach from some sessions: put the evidence in the job log.
+  echo "::group::crash.txt"; cat "$OUT/crash.txt"; echo "::endgroup::"
+  echo "::group::logcat (threads, fatal, compose)"
+  grep -n -B2 -A30 -E 'FATAL|SnapshotStateObserver|Thread-|AndroidRuntime' "$OUT/logcat.txt" | head -300
+  echo "::endgroup::"
   grep -A20 "Process: $PKG" "$OUT/crash.txt" | head -60
   failed=1
 fi

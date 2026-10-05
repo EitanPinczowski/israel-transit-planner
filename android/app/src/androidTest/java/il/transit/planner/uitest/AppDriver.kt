@@ -177,6 +177,19 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         compose.waitForIdle()
         SystemClock.sleep(900)
         compose.waitForIdle()
+        // A late layout change (a banner leaving, the sheet's cap) re-fits the camera after the
+        // first fit: wait until the drawn route stops moving (up to 3 s more), or R7 measures a
+        // camera still in flight.
+        var last: android.graphics.RectF? = null
+        val until = SystemClock.uptimeMillis() + 3_000
+        while (SystemClock.uptimeMillis() < until) {
+            var now: android.graphics.RectF? = null
+            inst.runOnMainSync { now = activity.routeOnScreen() }
+            if (now == null || now == last) break
+            last = now
+            SystemClock.sleep(300)
+        }
+        compose.waitForIdle()
     }
 
     fun screenshot(name: String): File {
