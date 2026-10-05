@@ -59,6 +59,7 @@ class NightRefreshShotsTest(private val v: Variant) {
                     from = PlaceRef.Point("בית", LatLon(31.262, 34.801)),
                     to = PlaceRef.Point("ת. רכבת תל אביב - סבידור", LatLon(32.08, 34.79)),
                     timeMode = TimeMode.NOW,
+                    time = planned,
                     results = TripResult(bgu, null),
                     resultsAt = planned,
                     offlineSince = planned,
