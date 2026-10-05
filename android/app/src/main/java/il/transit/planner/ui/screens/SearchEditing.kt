@@ -25,6 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -53,9 +58,15 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     OutlinedTextField(
         value = state.query,
         onValueChange = vm::onQuery,
-        modifier = modifier.focusRequester(focus).onFocusChanged { f ->
-            if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing()
-        },
+        modifier = modifier.focusRequester(focus)
+            .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing() }
+            // A focused text field takes a hardware or system Back for itself (it never reaches
+            // the screen's BackHandler): with no keyboard up, that Back closes the search here.
+            .onPreviewKeyEvent { e ->
+                if (e.key != Key.Back) return@onPreviewKeyEvent false
+                if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
+                true
+            },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,

@@ -204,7 +204,11 @@ class JourneysTest {
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.any { it.name == "עבודה" } }
         compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.BOTTOM))).performClick()
         compose.waitForIdle()
-        compose.onNode(hasText("↗ עבודה") and hasClickAction()).performScrollTo().performClick()
+        // The one-tap chip: "↗" is its icon, the name its label (two texts in the tree). The
+        // name dialog's keyboard may still be leaving and cover it: its click action, not a touch.
+        val chip = compose.onNode(hasText("עבודה") and hasClickAction() and hasAnyAncestor(hasTestTag(UiTags.TOP)))
+        runCatching { chip.performScrollTo() }
+        chip.performSemanticsAction(SemanticsActions.OnClick)
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
         // J10: with results open, Settings can still be reached from the ⋮ menu (the panel once covered it).
