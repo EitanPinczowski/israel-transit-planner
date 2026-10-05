@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import il.transit.core.geo.BBox
@@ -27,6 +28,7 @@ import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
 import il.transit.planner.ui.screens.CalendarChip
 import il.transit.planner.ui.screens.LocalCalendarChip
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
@@ -35,6 +37,9 @@ import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
 import il.transit.planner.ui.ViewModelActions
 import il.transit.planner.ui.Shortcuts
+import il.transit.planner.ui.TripDetailsViewModel
+import il.transit.planner.ui.screens.TripDetailsSheet
+import il.transit.core.present.vehicleGeoJson
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -57,6 +62,7 @@ import org.maplibre.android.maps.Style
  */
 class MainActivity : ComponentActivity() {
     private val vm: MainViewModel by viewModels { MainViewModel.factory(application as TransitApp) }
+    private val tripVm: TripDetailsViewModel by viewModels { TripDetailsViewModel.factory(application as TransitApp) }
 
     private lateinit var mapView: MapView
     private var map: MapLibreMap? = null
@@ -150,6 +156,16 @@ class MainActivity : ComponentActivity() {
                 }
                 LaunchedEffect(ctl, pad) { if (ctl != null) placeMapChrome(pad) }
 
+                // Trip sheet (B1): the vehicle on the map; closes when its option is no longer shown.
+                val tripSheet by tripVm.sheet.collectAsState()
+                LaunchedEffect(ctl, tripSheet?.vehicle, tripSheet?.details?.color) {
+                    ctl?.setVehicle(vehicleGeoJson(tripSheet?.vehicle, tripSheet?.details?.color ?: "#000000"))
+                }
+                LaunchedEffect(selected) {
+                    val open = tripVm.sheet.value ?: return@LaunchedEffect
+                    if (selected?.legs?.contains(open.leg) != true) tripVm.close()
+                }
+
                 val actions = ScreenActions(
                     offline = offlineState,
                     downloadOffline = ::downloadOfflineArea,
@@ -157,9 +173,13 @@ class MainActivity : ComponentActivity() {
                     remind = ::remind,
                     startRide = ::startRide,
                     onMapPadding = { mapPadding.value = it },
+                    openLeg = tripVm::open,
                 )
+                val openSheet = tripSheet
+                val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
+                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape) }) else null
                 CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
-                    MainScreen(state, ui, actions) {
+                    MainScreen(state, ui, actions, tripSheet = sheetUi) {
                         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
                     }
                 }
@@ -266,8 +286,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true) }
-    override fun onPause() { vm.onVisible(false); mapView.onPause(); super.onPause() }
+    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
+    override fun onPause() { vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }

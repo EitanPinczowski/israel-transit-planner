@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 8 B1: כרטיס פרטי הנסיעה. אנגלית ב-values/strings_trip_details.xml. -->
+<resources>
+    <string name="trip_tap_hint">הקישו על קו כדי לראות את כל התחנות שלו</string>
+    <string name="trip_board">עלייה</string>
+    <string name="trip_alight">ירידה</string>
+    <string name="trip_next">הבאה</string>
+    <string name="trip_skipped">לא עוצר</string>
+    <string name="trip_cancelled">הנסיעה הזו בוטלה</string>
+    <string name="trip_live_time">בפועל ⁨%1$s⁩</string>
+    <string name="trip_scheduled_position">● מיקום לפי לוח הזמנים על המפה</string>
+    <string name="trip_live_position">● מיקום חי על המפה</string>
+    <string name="trip_leg_only">אין חיבור: מוצגות רק התחנות שלך</string>
+    <string name="trip_alert">הודעת שירות</string>
+</resources>
