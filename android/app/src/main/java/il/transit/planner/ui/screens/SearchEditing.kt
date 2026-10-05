@@ -69,8 +69,10 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
             // hook sees it before both, keyboard or not: one Back closes the search. Not on
             // Android 8, where it swallows the Back without closing anything: there the first
             // Back hides the keyboard and the second closes the search (owner, 2026-10-05).
-            .then(if (Build.VERSION.SDK_INT >= ONE_BACK_SDK) Modifier.onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) } else Modifier)
-            .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
+            .then(if (Build.VERSION.SDK_INT >= ONE_BACK_SDK) Modifier.onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm, KeyEventType.KeyUp) } else Modifier)
+            // With the keyboard down, Back comes here. Close on the press: Android 8 never sends
+            // the release of a press taken here, and a Back swallowed with no effect is a dead end.
+            .onPreviewKeyEvent { e -> backClosesSearch(e, vm, KeyEventType.KeyDown) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
@@ -119,9 +121,10 @@ private const val KEYBOARD_SETTLE_MS = 200L
 /** Android 9: from here one Back closes the search with the keyboard up (8.x takes two). */
 private const val ONE_BACK_SDK = 28
 
-private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
+/** Takes both halves of a Back, so nothing else acts on it; closes the search on [on]. */
+private fun backClosesSearch(e: KeyEvent, vm: MainActions, on: KeyEventType): Boolean {
     if (e.key != Key.Back) return false
-    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
+    if (e.type == on) vm.cancelEditing()
     return true
 }
 
