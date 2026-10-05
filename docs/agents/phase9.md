@@ -98,7 +98,11 @@ The implementer fixes what both reviews find, on its own branch. Then the owner 
 >   the PR body, tell the boss in one message, and stop. Don't work around it.
 > - **Transitous traffic:** keep live calls to the few needed to record fixtures.
 > - **Messages:** one message to the boss when the PR is green and clean against `main`, or
->   one when blocked. No progress messages, and no self-scheduled check-ins.
+>   one when blocked. No progress messages.
+> - **After each push:** schedule exactly one `send_later` ~20 min out that re-reads the PR
+>   checks and acts on them. CI events may not reach your session; don't wait idle for them.
+> - **Emulator before goldens:** get the `UI tests` workflow green first, then pull goldens
+>   from that same head's CI run in a goldens-only commit (`parallel-work`).
 
 ---
 

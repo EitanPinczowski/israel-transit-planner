@@ -11,16 +11,16 @@ decisions already recorded.
     the build on the Pixel, then releases `0.7.0` (`release-apk` skill).
 - **Phase 9 is approved:** #27 research, #28 plan, #30 decisions. **C6** (look & welcome) was
   added by the owner on 2026-10-05 after the phone test; it is in `phase9.md` and ROADMAP.
-- **Running** (started 2026-10-05, both Opus, Auto):
-  - Tester, `session_01Tg9rSCEYux8YXXCk6DUEYH`, on `claude/gallant-mendel-4yps2i`. Its brief
-    also covers two owner findings sent later: all mode buttons fit on one screen with no
-    sideways scroll, and an address is typed in place in the field the user tapped.
-  - C2, `session_01SJEYEHM6Hf5wVrMqFpr4hn`, on `claude/p9-night-refresh`.
+- **Merged today:** #33 (C6 plan, docs), #34 (C2 night refresh + Home).
+- **Running:** the tester, `session_01Tg9rSCEYux8YXXCk6DUEYH`, on PR #32. Its last blocker is
+  API 35 j12 (ride alert); the planner's fix plan was sent 2026-10-05. Owner decisions on #32:
+  - Android 8 Back is a known issue (J4 on API 26 is recorded as a finding);
+  - merge #32 when it's green.
 
 ## Next actions, at most 2 agents at a time
-1. When the tester's PR is green: the owner merges, then 0.7.0 is released.
-2. When C2's PR is green: tester review, then designer review (both Sonnet), then the owner
-   merges.
+1. When #32 is green: merge it (owner-approved), then the owner checks 0.7.0 on the Pixel and
+   releases it.
+2. Archive the tester session after #32 merges.
 3. **C1, earlier/later + platforms:** only after the tester's PR merges, because both edit
    `TripPanel`.
 4. Then **C3 + C4**, then **C5 + C6**.
@@ -34,6 +34,11 @@ decisions already recorded.
   (2026-10-05).
 
 ## Gotchas learned
+- **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
+  to self-check once per push; if one still sits idle on a red PR, wake it with the failing job
+  and log line.
+- **Goldens go stale after every code push.** Emulator jobs first, goldens last, from the same
+  head's run (`parallel-work`).
 - **Auto mode blocks traffic redirection** (for example a Gradle mirror in `~/.gradle/init.d/`)
   and the agent stalls on a permission prompt. Interrupt it, then steer it with a message.
 - **Agents copy the boss's permission mode.** The boss must run in **Auto** on the server

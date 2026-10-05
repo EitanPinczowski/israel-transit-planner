@@ -48,6 +48,13 @@ then commit the images in your PR (`android-build` skill). A new screen also get
 `ui/PanelsTest.kt` (English + Hebrew). Never re-record another PR's screen to get yours green;
 after merging `main`, re-record only if your own screen's pictures changed.
 
+**Emulator before goldens.** Re-recording goldens and then changing code makes them stale
+again, and every round is ~15 min of CI. So: get the `UI tests` workflow (journeys + screens)
+green first, from a scratch branch via `workflow_dispatch` or from the PR run. Push no more code
+after that. Then pull goldens from the CI run of that exact head and commit them alone. If a
+journey fails, read its `logcat.txt` before guessing; a job that died outside the test body
+(emulator crash, lost window focus) may be re-run once, and you say so in the PR.
+
 Before opening a PR, and again before saying it is done, merge `origin/main` into your branch
 (never rebase a pushed branch). Resolve conflicts by keeping both sides.
 
@@ -91,9 +98,10 @@ are in `docs/agents/team.md`. Read it when you are started as one of those roles
   agents ran out of it halfway through, and each had to be resumed.
 - **Report only at the end or when blocked.** Agents send one message when the PR is green and
   clean against `main`, or when they are blocked. No progress updates.
-- **Event-driven, not polling.** Agents subscribe to their own PR's events. They don't schedule
-  self check-ins. The coordinator keeps one long fallback check-in (hours, not minutes), and
-  doesn't subscribe to every PR's CI.
+- **One self-check per push.** Agents subscribe to their own PR, but CI events don't reliably
+  reach agent sessions (Phase 9: agents sat idle on red PRs). So after each push an agent
+  schedules exactly one `send_later` ~20 min out that re-reads the PR checks and acts. No other
+  self-scheduling. The coordinator keeps one long fallback check-in (hours, not minutes).
 - **Push small and often.** If the limit hits mid-task, the work survives on the branch.
 - **Archive finished sessions** as soon as their PR merges.
 - **Sequence work that touches the same screens** instead of running it in parallel. A
