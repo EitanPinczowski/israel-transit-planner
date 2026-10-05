@@ -376,13 +376,14 @@ internal fun Section(titleRes: Int, chips: @Composable () -> Unit) {
 internal fun SavedPlaceRow(p: SavedPlace, onRoutine: () -> Unit, isHome: Boolean = false, onSetHome: (() -> Unit)? = null, onDelete: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            if (isHome) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Filled.Home, stringResource(R.string.home_mark), Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
-                    Text(" ${p.name}", maxLines = 2, overflow = TextOverflow.Ellipsis)
+            // The mark stays beside the first line; only the name wraps.
+            Row(verticalAlignment = Alignment.Top) {
+                if (isHome) {
+                    Icon(Icons.Filled.Home, stringResource(R.string.home_mark), Modifier.padding(top = 2.dp, end = 4.dp).size(18.dp), tint = MaterialTheme.colorScheme.primary)
+                } else {
+                    Text("★ ")
                 }
-            } else {
-                Text("★ ${p.name}", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(p.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             p.routine?.let { Text(routineLabel(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
