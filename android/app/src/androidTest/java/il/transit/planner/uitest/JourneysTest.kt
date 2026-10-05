@@ -155,7 +155,7 @@ class JourneysTest {
     }
 
     @Test fun j07_better_start_slider_searches_once_within_budget() = AppDriver(compose).launch().use { d ->
-        compose.onNode(hasText(d.str(R.string.mode_better_start)) and hasClickAction()).performClick()
+        compose.onNode(hasText(d.str(R.string.tab_better_start)) and hasClickAction()).performClick()
         d.place(Field.FROM, MEITAR)
         var before = d.app.replay.calls.get()
         d.place(Field.TO, TEL_AVIV)

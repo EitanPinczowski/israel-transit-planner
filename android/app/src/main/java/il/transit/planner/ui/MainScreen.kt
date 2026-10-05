@@ -269,7 +269,11 @@ fun MainScreen(
         val search: @Composable () -> Unit = {
             state.update?.let { UpdateBanner(it, vm) }
             if (state.editing != null) {
-                EditingSearch(state, vm)
+                // The tapped row turns into the text field, in place; the suggestions follow the card.
+                CompositionLocalProvider(
+                    LocalPlaceEditor provides { m -> PlaceEditor(state, vm, m) },
+                    LocalCompactEditing provides (maxHeight < SHORT),
+                ) { SearchCard(state, vm, onSavePlace = { savingPlace = it }) }
             } else if (compactSearch) {
                 CompactSearch(state) { searchOpen = true }
             } else {
