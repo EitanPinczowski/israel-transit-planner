@@ -3,7 +3,12 @@ package il.transit.planner.uitest
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.SystemClock
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasScrollToNodeAction
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -18,6 +23,7 @@ import il.transit.planner.UiTestApp
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.Suggestion
+import il.transit.planner.ui.UiTags
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 import java.io.File
@@ -121,6 +127,29 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         val item = hasText(str(labelRes)) and hasClickAction()
         compose.waitUntil(5_000) { compose.onAllNodes(item).fetchSemanticsNodes().isNotEmpty() }
         compose.onNode(item).performClick()
+    }
+
+    /**
+     * Taps [text] in the results. The sheet takes at most half the screen, so on a 640 dp phone
+     * the selected option's buttons can be below its fold: scroll its list there first.
+     */
+    fun tapInResults(text: String) {
+        val inSheet = hasAnyAncestor(hasTestTag(UiTags.BOTTOM) or hasTestTag(UiTags.TOP))
+        val target = hasText(text) and hasClickAction() and inSheet
+        val lists = compose.onAllNodes(hasScrollToNodeAction() and inSheet).fetchSemanticsNodes().size
+        for (i in 0 until lists) {
+            if (runCatching { compose.onAllNodes(hasScrollToNodeAction() and inSheet)[i].performScrollToNode(target) }.isSuccess) break
+        }
+        compose.onAllNodes(target).onFirst().performClick()
+    }
+
+    /** With results on a short screen the search card is folded to one line: unfold it. */
+    fun unfoldSearch() {
+        val fold = hasContentDescription(str(R.string.edit_search))
+        if (compose.onAllNodes(fold, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()) {
+            compose.onNode(fold, useUnmergedTree = true).performClick()
+            compose.waitForIdle()
+        }
     }
 
     /** Lets the map camera (600 ms animation) and Compose settle before a screenshot. */

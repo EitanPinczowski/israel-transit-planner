@@ -4,7 +4,7 @@ package il.transit.planner.ui.screens
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.imeAnimationTarget
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -48,10 +49,13 @@ val LocalCompactEditing = compositionLocalOf { false }
 internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     val field = state.editing ?: return
     val focus = remember { FocusRequester() }
+    var hadFocus by remember(field) { mutableStateOf(false) }
     OutlinedTextField(
         value = state.query,
         onValueChange = vm::onQuery,
-        modifier = modifier.focusRequester(focus),
+        modifier = modifier.focusRequester(focus).onFocusChanged { f ->
+            if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing()
+        },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
@@ -70,22 +74,27 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
 
 /**
  * Back with the keyboard up only closes the keyboard (the keyboard takes that Back before the
- * app sees it; Android 8 does so even where newer versions don't). Editing without a keyboard
- * is a dead end, so the keyboard closing also closes the search: one Back is enough.
+ * app sees it), and a focused field may take a Back itself to drop its focus. Typing without
+ * a keyboard or focus is a dead end, so either one ends the search: one Back is enough.
+ *
+ * Armed only once THIS field's keyboard has come up: moving from one field straight to the
+ * next, the last field's keyboard may still be on screen (or sliding away) when this one
+ * starts, and that keyboard leaving is not a Back.
  */
 @Composable
 private fun CancelWhenKeyboardCloses(vm: MainActions) {
-    // Where the keyboard is going, not where it is: moving from one field straight to the next,
-    // the last field's keyboard is still sliding away when this one asks for it.
-    val visible = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current) > 0
-    var wasVisible by remember { mutableStateOf(false) }
+    val visible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    var seenHidden by remember { mutableStateOf(!visible) }
+    var armed by remember { mutableStateOf(false) }
     LaunchedEffect(visible) {
-        if (visible) {
-            wasVisible = true
-        } else if (wasVisible) {
-            // A hide that is undone at once (the keyboard swapping fields) is not a Back.
-            delay(KEYBOARD_SETTLE_MS)
-            vm.cancelEditing()
+        when {
+            !visible && armed -> {
+                // A hide that is undone at once (the keyboard swapping fields) is not a Back.
+                delay(KEYBOARD_SETTLE_MS)
+                vm.cancelEditing()
+            }
+            !visible -> seenHidden = true
+            seenHidden -> armed = true
         }
     }
 }

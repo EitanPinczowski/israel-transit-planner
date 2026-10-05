@@ -13,6 +13,7 @@ import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -103,7 +104,7 @@ class JourneysTest {
     @Test fun j03_remind_me_arms_a_reminder() = AppDriver(compose).launch().use { d ->
         d.tripByTaps()
         d.selectTrain()
-        compose.onNode(hasText(d.str(R.string.remind_me))).performClick()
+        d.tapInResults(d.str(R.string.remind_me))
         compose.waitUntil(5_000) { d.vm.state.value.reminder != null }
         val r = d.vm.state.value.reminder!!
         if (r.leaveAt.toEpochMilli() > System.currentTimeMillis()) {
@@ -119,6 +120,7 @@ class JourneysTest {
             AppDriver(compose).launch().use { d ->
                 d.open()
                 compose.waitForIdle()
+                SystemClock.sleep(700) // as a person would: the keyboard is up before Back
                 // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
                 UiDevice.getInstance(d.inst).pressBack()
                 // The keyboard (if up) takes this Back and slides away first: give it 2 s.
@@ -162,6 +164,7 @@ class JourneysTest {
         d.awaitSearch()
         assertTrue("first search: ${d.app.replay.calls.get() - before} requests", d.app.replay.calls.get() - before <= BetterStartPlanner.BUDGET)
         before = d.app.replay.calls.get()
+        d.unfoldSearch()
         compose.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(10f, 5f..30f, 4))).performSemanticsAction(SemanticsActions.SetProgress) { it(20f) }
         compose.waitUntil(5_000) { d.vm.state.value.maxDriveMin == 20 }
         d.awaitSearch()
@@ -201,7 +204,7 @@ class JourneysTest {
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.any { it.name == "עבודה" } }
         compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.BOTTOM))).performClick()
         compose.waitForIdle()
-        compose.onNode(hasText("↗ עבודה") and hasClickAction()).performClick()
+        compose.onNode(hasText("↗ עבודה") and hasClickAction()).performScrollTo().performClick()
         d.awaitSearch()
         assertTrue(d.vm.state.value.options.isNotEmpty())
         // J10: with results open, Settings can still be reached from the ⋮ menu (the panel once covered it).
@@ -251,7 +254,7 @@ class JourneysTest {
         lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
         lm.setTestProviderEnabled(gps, true)
         try {
-            compose.onNode(hasText(d.str(R.string.ride_start))).performClick()
+            d.tapInResults(d.str(R.string.ride_start))
             compose.waitUntil(8_000) { RideService.active.value }
             val from = leg.from.latLon
             val to = leg.to.latLon
