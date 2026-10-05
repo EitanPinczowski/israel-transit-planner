@@ -5,8 +5,15 @@ when there is a job for it, and archives the session when the job is done.
 
 **Token rules** (these come first):
 - At most **2 agents run at once**. All sessions share one 5-hour usage limit.
-- Each agent sends **one message at the end**, or one when it is blocked. No progress updates
-  and no self-scheduled check-ins.
+- Each agent sends **one message at the end**, or one when it is blocked. No progress updates.
+- **One self-check per push.** CI events don't reach agent sessions, so an agent that waits for
+  them goes idle with a red PR. After each push to its PR, an agent schedules exactly one
+  `send_later` about 20 min out (one CI round) that re-reads the PR checks and acts on them.
+  Nothing else is self-scheduled (owner, 2026-10-05).
+- **Emulator before goldens.** An agent whose change can affect the UI gets the `UI tests`
+  workflow green first (`workflow_dispatch` on a scratch branch, or the PR run), and only then
+  pulls goldens, from the CI run of that same final commit, in a goldens-only commit. Every
+  failing journey must leave `logcat.txt` in its artifact (owner, 2026-10-05).
 - Agents only talk to the boss. Nobody pushes to another agent's branch.
 - Cheap work goes to a cheaper model: research and review run on Sonnet. Planning and code that
   ships run on Opus.
