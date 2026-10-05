@@ -79,6 +79,8 @@ for line in "${PROFILES[@]}"; do
       echo "::endgroup::"
       if grep -q "INSTRUMENTATION_STATUS_CODE: -2\|INSTRUMENTATION_FAILED\|Process crashed" "$OUT/instrument-$run.txt"; then
         echo "::error::ScreensTest failed on $run"
+        # Outside the folded group, so the rule findings show without opening it.
+        grep -o "blocking layout findings on .*\|Process crashed.*" "$OUT/instrument-$run.txt" | sort -u | sed "s/^/  $run: /"
         failed=1
       fi
     done
