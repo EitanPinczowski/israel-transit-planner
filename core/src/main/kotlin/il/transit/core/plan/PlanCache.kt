@@ -15,7 +15,14 @@ import kotlin.math.roundToLong
  */
 class PlanCache<T>(private val capacity: Int = CAPACITY) {
     /** [night]: planned by the night refresh, not by a search the user made. */
-    data class Entry<T>(val key: String, val savedAt: Instant, val value: T, val night: Boolean = false)
+    data class Entry<T>(val key: String, val savedAt: Instant, val value: T, val night: Boolean = false) {
+        /**
+         * A night-refresh copy from the night before [now], so "planned last night" is true.
+         * One that missed a night (no Wi-Fi or charger) is shown as an ordinary saved copy.
+         */
+        fun isLastNight(now: Instant): Boolean =
+            night && !savedAt.isAfter(now) && java.time.Duration.between(savedAt, now) < LAST_NIGHT
+    }
 
     private val entries = ArrayList<Entry<T>>()
 
@@ -36,6 +43,9 @@ class PlanCache<T>(private val capacity: Int = CAPACITY) {
 
     companion object {
         const val CAPACITY = 16
+
+        /** How old a night entry can be and still be "last night". */
+        val LAST_NIGHT: java.time.Duration = java.time.Duration.ofHours(18)
 
         /**
          * Cache key: the tab plus every place rounded to ~100 m (3 decimals ≈ 110 m of

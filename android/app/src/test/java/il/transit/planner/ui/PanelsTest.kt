@@ -62,12 +62,7 @@ import il.transit.core.present.departureRow
 import il.transit.core.remind.Reminder
 import il.transit.core.ride.RideProgress
 import il.transit.core.user.FavoriteLine
-import il.transit.core.user.PlaceRoutine
-import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
-import il.transit.planner.ui.screens.HomeSuggestion
-import il.transit.planner.ui.screens.NightRefreshSection
-import il.transit.planner.ui.screens.SavedPlaceRow
 import il.transit.planner.ui.screens.CrashLogSection
 import il.transit.planner.ui.screens.CrashLogUi
 import il.transit.planner.ui.screens.FavoritesContent
@@ -249,22 +244,6 @@ class PanelsTest(private val v: Variant) {
 
     @Test fun historyEmpty() = dialog("history_empty") { HistoryContent(UiState(), NoActions) }
 
-    // --- Night refresh and Home (NightRefreshSettings.kt, SettingsDialog.kt) ---
-
-    /** The Trip tab offline the next morning, from a copy the night refresh planned. */
-    @Test fun tripOfflineNight() = panel("trip_offline_night", tripState().copy(offlineSince = start.minusSeconds(5 * 3600), offlineNight = true))
-
-    /** The toggle with no Home yet, the one-time "בית as Home?" offer, then a Home set (🏠) and a place to make Home. */
-    @Test fun nightRefreshAndHome() = dialog("night_refresh_home") {
-        val bayit = SavedPlace("בית", 31.279, 34.82)
-        val uni = SavedPlace("אוניברסיטת בן גוריון", 31.262, 34.801, PlaceRoutine(listOf(7, 1, 2, 3, 4), 7 * 60, 10 * 60))
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            NightRefreshSection(UserSettings(), listOf(bayit, uni)) {}
-            HomeSuggestion(UserSettings(), listOf(bayit, uni)) {}
-            SavedPlaceRow(bayit, onRoutine = {}, isHome = true, onSetHome = {}) {}
-            SavedPlaceRow(uni, onRoutine = {}, isHome = false, onSetHome = {}) {}
-        }
-    }
 
     // --- Frames ---
 

@@ -541,7 +541,7 @@ class MainViewModel(
                 val cached = if (s.mode == AppMode.TRIP && s.chainStops.isEmpty()) planCache?.get(cacheKey) else null
                 _state.update {
                     if (cached != null) {
-                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.night, resultsAt = cached.savedAt)
+                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.isLastNight(Instant.now()), resultsAt = cached.savedAt)
                     } else {
                         it.copy(loading = false, error = UiError.NETWORK)
                     }

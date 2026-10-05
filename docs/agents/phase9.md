@@ -195,7 +195,7 @@ settings change
 >   once as a suggestion. C4 and C5 use Home too.
 > - **Night refresh.** Each night the app plans tomorrow's usual trips while the phone is on
 >   Wi-Fi and charging. With no signal the next morning, the Trip tab shows them with
->   "Offline · planned last night at 02:14". Only options still ahead are shown, the same as
+>   "Offline — planned last night at 02:14". Only options still ahead are shown, the same as
 >   My lines offline.
 >
 > **Which trips (pure, `plan/NightRefresh.kt`, `jobs(places, trips, home, history, tomorrow)`):**

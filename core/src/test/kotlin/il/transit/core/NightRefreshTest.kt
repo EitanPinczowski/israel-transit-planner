@@ -242,6 +242,13 @@ class NightRefreshTest {
         assertEquals(false, TripCacheJson.decode(old).single().night)
     }
 
+    @Test fun `last night is only last night`() {
+        val e = PlanCache.Entry("k", il("2026-10-05T02:14"), 0, night = true)
+        assertTrue(e.isLastNight(il("2026-10-05T07:30")))
+        assertFalse(e.isLastNight(il("2026-10-06T07:30"))) // the next night was missed
+        assertFalse(e.copy(night = false).isLastNight(il("2026-10-05T07:30")))
+    }
+
     @Test fun `six night entries leave the user's ten searches in the cache`() {
         val cache = PlanCache<Int>()
         repeat(10) { cache.put("user$it", it, Instant.ofEpochSecond(it.toLong())) }

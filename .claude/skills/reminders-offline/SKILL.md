@@ -75,8 +75,9 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
     Shabbat/holidays are planned anyway (an empty answer is not cached).
   - "Tomorrow" = the service day starting at the next 04:00 (23:50 and 00:10 plan the same day).
   - Key: `PlanCache.key("TRIP-NOW", from, to)`, the key of the Trip tab's NOW search, so the
-    morning's search finds it. Entries carry `night = true` → banner "Offline · planned last
-    night at 02:14". Capacity is 16 so 6 night entries never push out the user's last 10.
+    morning's search finds it. Entries carry `night = true` → banner "Offline — planned last
+    night at 02:14" only while the entry is under 18 h old (`Entry.isLastNight`; a missed
+    night shows the ordinary "saved at" banner). Capacity is 16 so 6 night entries never push out the user's last 10.
   - Job: one unique periodic WorkManager work (`KEEP`), 24 h with a 5-h flex window opening
     at 00:00 Israel time (`NightRefresh.initialDelay`); constraints Wi-Fi (`UNMETERED`),
     charging, battery not low. The worker returns without a request outside 22:00–06:00 or

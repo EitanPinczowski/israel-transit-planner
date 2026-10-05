@@ -54,6 +54,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
@@ -370,15 +371,22 @@ internal fun Section(titleRes: Int, chips: @Composable () -> Unit) {
     }
 }
 
-/** A saved place: its routine under the name, 🏠 to make it Home, ⏰ to edit the routine, 🗑 to delete the place. */
+/** A saved place: its routine under the name, ⌂ to make it Home (filled ⌂ marks Home), ⏰ to edit the routine, 🗑 to delete the place. */
 @Composable
 internal fun SavedPlaceRow(p: SavedPlace, onRoutine: () -> Unit, isHome: Boolean = false, onSetHome: (() -> Unit)? = null, onDelete: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text("${if (isHome) "🏠" else "★"} ${p.name}", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (isHome) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.Home, stringResource(R.string.home_mark), Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
+                    Text(" ${p.name}", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                }
+            } else {
+                Text("★ ${p.name}", maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
             p.routine?.let { Text(routineLabel(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
-        if (!isHome && onSetHome != null) IconButton(onClick = onSetHome) { Icon(Icons.Default.Home, stringResource(R.string.set_as_home)) }
+        if (!isHome && onSetHome != null) IconButton(onClick = onSetHome) { Icon(Icons.Outlined.Home, stringResource(R.string.set_as_home)) }
         TextButton(onClick = onRoutine) { Text("⏰") }
         IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, stringResource(R.string.delete)) }
     }

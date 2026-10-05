@@ -1,15 +1,17 @@
 package il.transit.planner.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,16 +26,18 @@ import il.transit.planner.R
 internal fun offlineBanner(night: Boolean, time: String): String =
     stringResource(if (night) R.string.night_offline_planned else R.string.offline_showing, time)
 
-/** "Refresh my trips at night", with what it does and what it needs. */
+/** "Refresh my trips at night": an on/off switch, what it does, and what it needs. */
 @Composable
 internal fun NightRefreshSection(s: UserSettings, places: List<SavedPlace>, set: (UserSettings) -> Unit) {
-    Column {
-        Section(R.string.night_refresh_title) {
-            FilterChip(s.nightRefresh, { set(s.copy(nightRefresh = !s.nightRefresh)) }, label = { Text(stringResource(R.string.night_refresh_toggle)) })
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(stringResource(R.string.night_refresh_title), style = MaterialTheme.typography.labelLarge)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.night_refresh_toggle), Modifier.weight(1f))
+            Switch(checked = s.nightRefresh, onCheckedChange = { set(s.copy(nightRefresh = it)) })
         }
         Text(stringResource(R.string.night_refresh_help, NightRefresh.MAX_TRIPS), style = MaterialTheme.typography.bodySmall)
         if (s.nightRefresh && Home.of(s, places) == null) {
-            Text(stringResource(R.string.night_refresh_no_home), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.night_refresh_no_home), style = MaterialTheme.typography.bodySmall)
         }
     }
 }
