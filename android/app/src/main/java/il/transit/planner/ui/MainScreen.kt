@@ -345,7 +345,12 @@ fun MainScreen(
                 AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
                 if (panelShown) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
-                    panel(Modifier.heightIn(max = sheetMaxHeight), top)
+                    // At most half the screen, and never so tall that less than [MAP_SHARE] of it
+                    // stays map between the search and the sheet (R7): on a 640 dp phone, or at
+                    // the largest font, the folded search and the credit take their part first.
+                    val searchBottom = with(density) { topEdge.toDp() }
+                    val cap = minOf(sheetMaxHeight, maxHeight * (1f - MAP_SHARE) - searchBottom - CREDIT_ROOM)
+                    panel(Modifier.heightIn(max = cap.coerceAtLeast(MIN_SHEET)), top)
                 } else {
                     Spacer(Modifier.windowInsetsBottomHeight(bars))
                 }
@@ -381,6 +386,15 @@ private fun ScrollingSearch(modifier: Modifier, search: @Composable () -> Unit, 
 }
 
 private val SHADOW_ROOM = 4.dp
+
+/** Of a phone's height, at least this much stays map while a sheet is open (layout rule R7: 25%). */
+private const val MAP_SHARE = 0.3f
+
+/** The Transitous credit chip above the sheet, with its padding. */
+private val CREDIT_ROOM = 48.dp
+
+/** A sheet is never squeezed below its header and one row. */
+private val MIN_SHEET = 160.dp
 
 /** Keeps the clock and battery icons readable over a busy map. */
 @Composable
