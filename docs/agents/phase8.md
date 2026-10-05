@@ -296,7 +296,9 @@ unnamed OSM lots by bus stops, never at stations. See `dead-ends`.
 | B4 UI tests + crash log | #26 (draft) | open; session active. **Merge first** among what is left |
 | UI tests on devices (outside Phase 8) | branch `claude/gallant-mendel-4yps2i`, no PR | far behind `main`; overlaps B4 (`ci.yml`, `build.gradle.kts`, `TransitApp.kt`) and B1 (`MapController.kt`). Waits for #26 and #24, then merges `main` and yields to their files. Its CLAUDE.md change (CI-only keyless Test Lab login) is an owner decision |
 
-Only one coordinator session runs at a time; it updates this table.
+Only one coordinator session runs at a time; it updates this table. Owner decisions on record
+(planner, 2026-10-05): B1's `map/trips` box follows the vehicle's current stretch, not the
+user's leg (accept); #24 adds a hint line to #18's screenshots.
 
 ---
 

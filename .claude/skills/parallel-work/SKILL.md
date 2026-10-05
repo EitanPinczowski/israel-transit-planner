@@ -71,6 +71,10 @@ Before opening a PR, and again before saying it is done, merge `origin/main` int
 - Exactly one coordinator session at a time. It keeps the status board at the end of
   `docs/agents/phase8.md` and is the only one that watches PRs it does not own. Other
   sessions stop their check-ins once a coordinator takes over.
+- An agent owns its branch. The coordinator and other sessions never push to it (not even a
+  `main` merge); they send the agent a message instead.
+- At most ~2 agent sessions run at once: more exhausts the 5-hour usage limit. Resume a
+  stopped agent after the reset rather than starting a new one.
 - Work that is not a package (a design pass, a test harness) follows the same ownership
   table: it waits for the package that owns a shared file to merge, then merges `main`.
 - Android code cannot compile in a cloud session (no SDK). Before pushing Kotlin in
