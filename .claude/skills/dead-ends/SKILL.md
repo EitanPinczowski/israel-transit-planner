@@ -22,3 +22,6 @@ description: Approaches that were considered and rejected, with the reason. Load
 | Automatic crash reporting (Crashlytics, Sentry, ACRA to a backend) | needs a third-party account or a server of our own, and sends data without the user's tap. B4 keeps the last 5 crashes on the phone; the user shares them by hand. |
 | Roborazzi (or a second screenshot library) | Paparazzi (#18) already renders every screen without an emulator; two libraries would mean two sets of goldens. B4 extended Paparazzi instead. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |
+| Rail platform numbers from `track` | Empty on every Israel Railways leg (fixtures + live plan, 2026-10-06, research PR #27). Bus-station platforms come from the stop `description` instead (Phase 9 C1). |
+| Bike / scooter rentals (Tel-O-Fun etc.) via Transitous | `GET /api/v1/rentals` around Tel Aviv, 3 km (2026-10-06): 0 providers, 0 stations. No Israeli feed. |
+| `refresh-itinerary` | Refreshes with real-time data, and MOT lines have none on Transitous. |
