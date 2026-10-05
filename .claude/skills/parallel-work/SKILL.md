@@ -78,3 +78,23 @@ Before opening a PR, and again before saying it is done, merge `origin/main` int
 Drive your PR to green and answer review comments. **The owner merges.** If you are blocked on
 another package or on an owner decision, say so in the PR and to the planner session. Don't work
 around it.
+
+## Team roles
+Tester, designer, researcher, planner and boss: who does what, the flow and the owner stops
+are in `docs/agents/team.md`. Read it when you are started as one of those roles.
+
+## Keep token use low (learned in Phase 8)
+- **One coordinator.** Only the planner session talks to agents, and the agents report to it.
+  Phase 8 ran three overlapping coordinators at one point, plus a long-lived session pushing
+  onto agents' branches, and paid for it twice over.
+- **At most 2 agents at a time.** All sessions share one 5-hour usage limit. Four parallel
+  agents ran out of it halfway through, and each had to be resumed.
+- **Report only at the end or when blocked.** Agents send one message when the PR is green and
+  clean against `main`, or when they are blocked. No progress updates.
+- **Event-driven, not polling.** Agents subscribe to their own PR's events. They don't schedule
+  self check-ins. The coordinator keeps one long fallback check-in (hours, not minutes), and
+  doesn't subscribe to every PR's CI.
+- **Push small and often.** If the limit hits mid-task, the work survives on the branch.
+- **Archive finished sessions** as soon as their PR merges.
+- **Sequence work that touches the same screens** instead of running it in parallel. A
+  conflict costs a re-merge on every open branch.

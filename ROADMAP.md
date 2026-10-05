@@ -155,5 +155,5 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 - [x] Crash log: last 5 crashes in `filesDir`, "Share crash log" in Settings, nothing automatic
 
 ### Close-out (planner)
-- [ ] `docs/releases/v0.7.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [x] `docs/releases/v0.7.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 8 feature checked on the Pixel against live Transitous
