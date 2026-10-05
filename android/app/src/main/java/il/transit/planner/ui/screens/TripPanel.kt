@@ -230,20 +230,6 @@ internal fun modeLabel(mode: AppMode): Int = when (mode) {
     AppMode.PARK_RIDE -> R.string.mode_park_ride
 }
 
-/** The mode chips, short labels wrapping onto a second line on small phones (never scrolling
- *  sideways: a tab out of sight is a tab nobody finds), then the ⋮ menu. */
-@Composable
-internal fun ModeRow(state: UiState, vm: MainActions) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        FlowRow(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            AppMode.entries.forEach { mode ->
-                FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(modeTabLabel(mode))) })
-            }
-        }
-        OverflowMenu(vm)
-    }
-}
-
 @Composable
 internal fun OverflowMenu(vm: MainActions) {
     var open by remember { mutableStateOf(false) }
