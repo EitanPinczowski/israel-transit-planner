@@ -110,6 +110,37 @@ class TripPagesTest {
         assertEquals(r.itineraries.sortedByDescending { it.start }.map { it.start }, r.itineraries.map { it.start })
     }
 
+    @Test fun `arrive-by pages send the same arrive-by query with the cursor`() = runTest {
+        val arrive = query.copy(timeMode = TimeMode.ARRIVE_BY)
+        val api = fake()
+        val planner = TripPlanner(api)
+        val r0 = planner.plan(arrive)
+        val r1 = planner.page(arrive, r0, EARLIER)
+        val pageReq = api.planRequests.last()
+        assertTrue(pageReq.arriveBy)
+        assertEquals(first.previousPageCursor, pageReq.pageCursor)
+        assertEquals(api.planRequests.first().copy(pageCursor = pageReq.pageCursor), pageReq) // only the cursor differs
+        // Arrive-by lists the latest departure first; the Earlier page goes to the end.
+        assertEquals(r1.itineraries.sortedByDescending { it.start }.map { it.start }, r1.itineraries.map { it.start })
+        assertEquals("2026-10-13T03:57:00Z", r1.itineraries.last().startTime)
+        assertEquals(earlier.previousPageCursor, r1.earlierCursor)
+    }
+
+    @Test fun `an Earlier page from yesterday's service day keeps the order across midnight`() {
+        // The 05:19 search moved to 00:19 Israel time (21:19 UTC the day before); the Earlier
+        // page shifted the same way lands before midnight, in the previous service day.
+        val shift = -8L * 3600
+        val r0 = TripResult(first.itineraries.map { it.shift(shift) }, null)
+        val page = earlier.copy(itineraries = earlier.itineraries.map { it.shift(shift) })
+        val r = TripPages.merge(r0, page, EARLIER, arriveBy = false)
+        assertEquals(11, r.itineraries.size)
+        assertEquals(r.itineraries.sortedBy { it.end }, r.itineraries)
+        val first = r.itineraries.first().start.atZone(il.transit.core.features.ISRAEL)
+        assertEquals(java.time.LocalDate.of(2026, 10, 12), first.toLocalDate()) // 22:57 the evening before
+        val miss = TripPages.ifIMissIt(r.itineraries.first(), r.itineraries) as TripPages.Miss.Next
+        assertTrue(miss.next.firstTransitLeg!!.start.isAfter(r.itineraries.first().firstTransitLeg!!.start))
+    }
+
     @Test fun `no cursor that way sends nothing`() = runTest {
         val api = fake()
         val r = TripResult(first.itineraries, null)
