@@ -126,10 +126,11 @@ class JourneysTest {
                 val presses = if (knownIssue) 2 else 1
                 repeat(presses) {
                     if (d.closed()) return@repeat
-                    // Through the instrumentation, not UiAutomator (whose accessibility connection
-                    // stays up for later tests and may query Compose off the UI thread on Android 15)
-                    // nor Espresso (which waits for window focus, which API 26 may not give).
-                    d.inst.sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
+                    // A shell key event: it may go to the keyboard's window (another app), which the
+                    // instrumentation's own injection may not (INJECT_EVENTS, API 26). Not UiAutomator
+                    // (its accessibility connection stays up for later tests) nor Espresso (it waits
+                    // for window focus, which API 26 may not give).
+                    d.shell("input keyevent 4")
                     // The keyboard (if up) takes a Back and slides away first: give it 2 s.
                     val until = SystemClock.uptimeMillis() + 2_000
                     do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
