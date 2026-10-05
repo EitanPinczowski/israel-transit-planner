@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class)
 
 package il.transit.planner.ui.screens
 
@@ -25,7 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -60,13 +63,11 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         onValueChange = vm::onQuery,
         modifier = modifier.focusRequester(focus)
             .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing() }
-            // A focused text field takes a hardware or system Back for itself (it never reaches
-            // the screen's BackHandler): with no keyboard up, that Back closes the search here.
-            .onPreviewKeyEvent { e ->
-                if (e.key != Key.Back) return@onPreviewKeyEvent false
-                if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
-                true
-            },
+            // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
+            // app at all when the keyboard is up (the keyboard takes it to hide itself). This
+            // hook sees it before both, keyboard or not: one Back closes the search.
+            .onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) }
+            .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
@@ -111,6 +112,12 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
 }
 
 private const val KEYBOARD_SETTLE_MS = 200L
+
+private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
+    if (e.key != Key.Back) return false
+    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
+    return true
+}
 
 /** The mode chips' labels: shorter than the names used elsewhere, so the five fit in two lines. */
 internal fun modeTabLabel(mode: AppMode): Int = when (mode) {

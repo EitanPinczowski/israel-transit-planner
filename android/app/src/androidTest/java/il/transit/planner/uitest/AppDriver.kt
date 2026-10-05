@@ -152,6 +152,19 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         }
     }
 
+    /** For a failure message: is the keyboard up, what has focus, is the window focused. */
+    fun inputState(): String {
+        var out = "?"
+        inst.runOnMainSync {
+            val root = activity.window.decorView
+            val ime = androidx.core.view.ViewCompat.getRootWindowInsets(root)
+                ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime())
+            out = "API $sdk, keyboard=$ime, focus=${activity.currentFocus?.javaClass?.simpleName}, " +
+                "windowFocus=${root.hasWindowFocus()}, editing=${vm.state.value.editing}"
+        }
+        return out
+    }
+
     /** Lets the map camera (600 ms animation) and Compose settle before a screenshot. */
     fun settle() {
         compose.waitForIdle()

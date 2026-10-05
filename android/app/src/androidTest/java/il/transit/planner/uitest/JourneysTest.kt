@@ -128,7 +128,7 @@ class JourneysTest {
                 do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
                     d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
-                assertTrue("J4: Back with $what open " + if (alive) "did not close it" else "left the app", alive && d.closed())
+                assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})", alive && d.closed())
             }
         }
         backKeepsApp({ onMain { it.startEditing(Field.TO) } }, { vm.state.value.editing == null }, "the search")

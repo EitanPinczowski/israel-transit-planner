@@ -267,7 +267,9 @@ fun MainScreen(
         StatusBarScrim()
 
         val search: @Composable () -> Unit = {
-            state.update?.let { UpdateBanner(it, vm) }
+            // On a short screen with results the banner waits until they close: the map needs
+            // the room (R7), and the update is not going anywhere.
+            if (!compactSearch) state.update?.let { UpdateBanner(it, vm) }
             if (state.editing != null) {
                 // The tapped row turns into the text field, in place; the suggestions follow the card.
                 CompositionLocalProvider(
