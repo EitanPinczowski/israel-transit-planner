@@ -290,21 +290,32 @@ class JourneysTest {
             val from = leg.from.latLon
             val to = leg.to.latLon
             val total = Geo.distanceM(from, to)
-            // Mid-ride, then 300 m out: inside the 400 m alert radius, not yet at the stop.
-            for (f in listOf(0.5, 1.0 - 300.0 / total, 1.0 - 250.0 / total)) {
-                val p = LatLon(from.lat + (to.lat - from.lat) * f, from.lon + (to.lon - from.lon) * f)
-                lm.setTestProviderLocation(gps, fix(gps, p))
-                SystemClock.sleep(5_500) // the service asks for a fix every 5 s
-            }
+            fun at(f: Double) = LatLon(from.lat + (to.lat - from.lat) * f, from.lon + (to.lon - from.lon) * f)
             val title = d.str(R.string.ride_get_off_title)
             val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
-            val deadline = SystemClock.uptimeMillis() + 15_000
+            fun alerted() = nm.activeNotifications.any { it.notification.extras.getCharSequence("android.title")?.toString() == title }
+            // What the service made of each fix (stops left; "-" = no progress yet), for the failure message.
+            val seenByService = mutableListOf<String>()
+            // Mid-ride, then 300 m and 250 m out (inside the 400 m alert radius), then 20 m closer
+            // every 5.5 s while waiting, down to 170 m (not yet at the stop), as a real GPS keeps reporting: the
+            // system may drop one mock fix on a slow emulator (API 29 once lost the alert that way).
+            // 20 m apart, as the service ignores moves under 15 m.
+            val fixes = listOf(0.5) + listOf(300.0, 250.0, 230.0, 210.0, 190.0, 170.0).map { 1.0 - it / total }
             var seen = false
-            while (!seen && SystemClock.uptimeMillis() < deadline) {
-                seen = nm.activeNotifications.any { it.notification.extras.getCharSequence("android.title")?.toString() == title }
-                if (!seen) SystemClock.sleep(500)
+            for (f in fixes) {
+                lm.setTestProviderLocation(gps, fix(gps, at(f)))
+                val next = SystemClock.uptimeMillis() + 5_500 // the service asks for a fix every 5 s
+                while (!seen && SystemClock.uptimeMillis() < next) { seen = alerted(); if (!seen) SystemClock.sleep(250) }
+                seenByService += RideService.progress.value?.stopsLeft?.toString() ?: "-"
+                if (seen) break
             }
-            assertTrue("no \"$title\" notification near ${leg.to.name}", seen)
+            if (!seen) {
+                val log = d.shell("logcat -d -s RideService LocationManagerService NotificationService").takeLast(3_000)
+                throw AssertionError(
+                    "no \"$title\" notification near ${leg.to.name} (ride active=${RideService.active.value}, " +
+                        "stops left after each fix: $seenByService)\n--- logcat ---\n$log",
+                )
+            }
         } finally {
             d.onMain { it.stopRide() }
             runCatching { lm.removeTestProvider(gps) }
