@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_trip">מסלול</string>
+    <string name="tab_better_start">יציאה טובה</string>
+    <string name="tab_drop_off">הורדה</string>
+    <string name="tab_pick_up">איסוף</string>
+    <string name="tab_park_ride">חנה וסע</string>
+    <string name="chain_stop_label">עצירה</string>
+</resources>

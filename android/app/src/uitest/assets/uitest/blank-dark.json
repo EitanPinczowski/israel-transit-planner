@@ -1,0 +1,6 @@
+{
+  "version": 8,
+  "name": "uitest-blank-dark",
+  "sources": {},
+  "layers": [{ "id": "background", "type": "background", "paint": { "background-color": "#1E2428" } }]
+}

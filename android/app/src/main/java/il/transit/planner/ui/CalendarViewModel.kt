@@ -10,6 +10,7 @@ import il.transit.core.plan.CalendarDestination
 import il.transit.core.plan.CalendarEvent
 import il.transit.core.plan.CalendarSuggest
 import il.transit.planner.TransitApp
+import il.transit.planner.data.CalendarReader
 import il.transit.planner.data.CalendarSource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +39,7 @@ data class CalendarConfirm(val dest: CalendarDestination, val arriveBy: Instant?
 
 class CalendarViewModel(
     private val api: TransitApi,
-    private val source: CalendarSource,
+    private val source: CalendarReader,
     private val language: String,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CalendarUiState())

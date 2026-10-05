@@ -9,6 +9,10 @@ Android merges every XML file in `res/values*/`, so this reads all of them (Phas
   set makes `getString(id, args)` throw or print the wrong value in one language only;
 - no unescaped `'` (aapt rejects it, but only at build time, which a cloud session can't run);
 - a literal `%` that is not a placeholder only in a `formatted="false"` string.
+RTL rules (from the `i18n-rtl` skill), which a build never catches:
+- Hebrew: no "→" (it points backwards in RTL), every `%d` inside an FSI/PDI isolate (U+2068 … U+2069) so digits don't reorder, Hebrew
+  plurals of a `%d` also have `two`, no Latin letter glued outside an isolate ("v⁨%s⁩"
+  shows as "9.9.9v"), and an LRM/RLM right before "+" in the `late*` delay strings.
 """
 from __future__ import annotations
 
@@ -21,6 +25,33 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 RES = ROOT / "android" / "app" / "src" / "main" / "res"
 LANGS = {"en": "values", "he": "values-iw"}
 PLACEHOLDER = re.compile(r"%(?:(\d+)\$)?[-#+ 0,(]*\d*(?:\.\d+)?([sdfxXc%])")
+FSI, PDI, LRM, RLM = "\u2068", "\u2069", "\u200e", "\u200f"
+
+
+def unescape(s: str) -> str:
+    """Android's \\uXXXX escapes, so a rule sees the same characters the phone does."""
+    return re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), s)
+
+
+def check_rtl(where: str, name: str, el: ET.Element, hebrew: bool, errors: list[str]) -> None:
+    text = unescape(raw_text(el))
+    if not hebrew:
+        return
+    if "\u2192" in text:
+        errors.append(f"{where}: uses \u2192, which points backwards in Hebrew; use \u2190 or an en dash")
+    for m in re.finditer(r"%(?:\d+\$)?d", text):
+        before, after = text[: m.start()], text[m.end():]
+        # Inside an isolate: the last mark before it opens one, the first after closes it.
+        opened = before.rfind(FSI) > before.rfind(PDI)
+        closed = PDI in after and (FSI not in after or after.index(PDI) < after.index(FSI))
+        if not (opened and closed):
+            errors.append(f"{where}: {m.group(0)} is not inside an FSI/PDI isolate")
+    if re.search(f"[A-Za-z]{FSI}|{PDI}[A-Za-z]", text):
+        errors.append(f"{where}: a Latin letter is glued outside an FSI/PDI isolate; move it inside")
+    if name.startswith("late"):
+        for m in re.finditer(r"\+", text):
+            if m.start() == 0 or text[m.start() - 1] not in (LRM, RLM):
+                errors.append(f"{where}: '+' needs an LRM/RLM right before it")
 
 
 def raw_text(el: ET.Element) -> str:
@@ -83,11 +114,15 @@ def main() -> int:
         folder = LANGS[lang]
         for name, el in strings.items():
             check_text(f"{folder}: {name}", el, errors)
+            check_rtl(f"{folder}: {name}", name, el, lang == "he", errors)
         for name, items in plurals.items():
             if "other" not in items:
                 errors.append(f"{folder}: plurals `{name}` has no `other` quantity")
+            if lang == "he" and "two" not in items and "%d" in unescape(raw_text(items.get("other", ET.Element("x")))):
+                errors.append(f"{folder}: plurals `{name}` counts with %d but has no `two` quantity")
             for q, el in items.items():
                 check_text(f"{folder}: {name}[{q}]", el, errors)
+                check_rtl(f"{folder}: {name}[{q}]", name, el, lang == "he", errors)
 
     for name in sorted(en_s.keys() & he_s.keys()):
         a, b = placeholders(en_s[name]), placeholders(he_s[name])

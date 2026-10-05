@@ -96,6 +96,16 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Install guide for friends (`docs/install.md`, Hebrew + English)
 - [x] Owner: create the key, add the 4 secrets — v0.1.0 released 2026-09-28
 
+## UI testing on many phones (outside the Phase 8 packages) (skill `ui-testing`)
+- [x] In-session checks: strings/RTL lint in CI, WCAG chip contrast, live golden-trip probe
+- [x] `uitest` build: replayed fixtures, fixed clock, blank map — zero Transitous traffic
+- [x] Emulator CI: 18 screens × 9 phone profiles × he/en with a layout audit; journeys on
+      API 26/29/33/34/35; process death; monkey; report on the `ci-screens` branch
+- [x] UI tests green on all APIs, every profile verified to apply (run 37154148160: 491 tests,
+      0 failures, 0 crashes, monkey clean)
+- [ ] Owner: pick the order of the UI fixes in `docs/ui-findings.md`; each fix makes its rule blocking
+- [ ] Owner: Firebase Test Lab (Spark) + keyless login, then run `devices.yml`
+
 ## Design pass — look and feel (PR #18, outside the Phase 8 packages)
 - [x] Transit-blue light + dark palette and shape tokens (`ui/Theme.kt`); readable text on
       any route colour (`onColor`, tested); dark-aware map layers with a route halo
@@ -200,3 +210,4 @@ merges. Tick only your own package's lines.
 ### Close-out (boss)
 - [ ] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)
+- [ ] Android 8: Back closes an open search (J4 on API 26, known issue from #32)

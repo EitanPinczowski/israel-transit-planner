@@ -23,7 +23,14 @@ owner's machine) and they spend real requests, so run them deliberately, not in 
 | 10 | Tel Aviv Carlebach → Petah Tikva (Red Line light rail) | light rail |
 | 11 | Park & ride: Meitar → Tel Aviv, Sunday 07:30 peak, 20′ limit | in reach at ×1.3: Be'er Sheva North (877 s free flow) and Center (902 s); Lehavim is not. Park at North, leave 08:10, direct 08:34 train, arrive 09:46 — same arrival as the baseline (walk + bus 253 + train, leaves 07:30) but no transfer and 40′ later from home. Center's same train is dominated (longer drive). 4 requests (2026-10-04 for Sun 2026-10-11, n=1; `ParkRideRecordedTest`). |
 
-Procedure: record each answer with `tools/record_fixture.py`, summarise with
+Automated first pass: `./gradlew -p core goldenTrips -q` (optional `--args=YYYY-MM-DD` for the
+weekday; default next Tuesday, trip 6 that week's Friday). Source: `core/src/golden/`, a
+separate source set so `test`/CI never run it. It checks an answer exists, the expected mode,
+legs that chain in time (≤ 60 s overlap) and space (≤ 400 m), ends within 1.5 km, arrive-by
+kept, fares present, Pareto fronts, feature budgets — and writes `core/build/golden/report.md`.
+Exit 1 if any trip fails. ~21 requests (2026-10-03: 10/10 pass, 21 requests).
+
+Then by hand: record each answer with `tools/record_fixture.py`, summarise with
 `tools/plan_summary.py`, compare by hand with Moovit/Google on the same departure time.
 Acceptable: arrival within ~10 min of Moovit. Write down any systematic gap (e.g. drives
 always 20% short at peak → tune `TrafficProfile`) in the relevant skill, with the date and n.

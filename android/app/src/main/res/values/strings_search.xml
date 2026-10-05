@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The mode chips on top of the search card: short, so all five fit without scrolling. -->
+    <string name="tab_trip">Trip</string>
+    <string name="tab_better_start">Better start</string>
+    <string name="tab_drop_off">Drop-off</string>
+    <string name="tab_pick_up">Pick-up</string>
+    <string name="tab_park_ride">Park &amp; ride</string>
+    <!-- The label of an errand stop's row while it is typed. -->
+    <string name="chain_stop_label">Stop</string>
+</resources>

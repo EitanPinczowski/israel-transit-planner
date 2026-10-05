@@ -19,6 +19,8 @@ description: Approaches that were considered and rejected, with the reason. Load
 | Real-time for MOT lines via Transitous | not loaded (checked twice, 2026-10-03/04: 0 `realTime` in 105 departures); its `feeds/il.json` has GTFS-RT only for busofash. Revisit if Transitous adds MOT GTFS-RT. |
 | `CAR_PARKING` for park & ride | Recorded on Transitous (2026-10-03, Meitar → Tel Aviv, 20-min cap): parks at unnamed OSM lots near bus stops, then walk + bus; never at a station; 20′ later than `CAR` to Be'er Sheva North. Pick stations from `RailStations` instead. |
 | Raising the drop-off default detour above 10 min | Owner decided to keep 10 (2026-10-03). At peak, leaving the highway for a mid-route station costs 14–21 min (golden trip 8); the slider already lets the user allow more. |
+| Firebase Blaze plan, BrowserStack, AWS Device Farm, Sauce Labs for device testing | need a card (or a paid plan). Test Lab on Spark + GitHub's free emulators cover it (skill `ui-testing`). |
+| Pixel-diff golden screenshots from emulators as a gate | emulator rendering and fonts drift between images; the emulator layout audit checks rules instead. Paparazzi (JVM, deterministic) is the golden gate (B4). |
 | Automatic crash reporting (Crashlytics, Sentry, ACRA to a backend) | needs a third-party account or a server of our own, and sends data without the user's tap. B4 keeps the last 5 crashes on the phone; the user shares them by hand. |
 | Roborazzi (or a second screenshot library) | Paparazzi (#18) already renders every screen without an emulator; two libraries would mean two sets of goldens. B4 extended Paparazzi instead. |
 | Keeping Android and core in one Gradle build | cloud sessions can't download the Android SDK, so the engine could no longer be tested there. |

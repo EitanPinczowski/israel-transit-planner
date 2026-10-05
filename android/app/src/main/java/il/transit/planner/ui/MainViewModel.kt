@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.time.Instant
 
 /** Where a trip starts or ends. */
@@ -201,6 +202,7 @@ class MainViewModel(
     private val updates: UpdateChecker? = null,
     private val stopsCache: StopsStore? = null,
     private val departureCache: il.transit.planner.data.DepartureCacheStore? = null,
+    private val clock: Clock = Clock.systemUTC(),
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
@@ -445,12 +447,12 @@ class MainViewModel(
                     AppMode.TRIP -> if (s.chainStops.isNotEmpty()) {
                         val r = ChainPlanner(BudgetedTransitApi(api, ChainPlanner.BUDGET)).plan(
                             from, s.chainStops, to,
-                            departAt = s.time?.takeIf { s.timeMode != TimeMode.NOW } ?: Instant.now(),
+                            departAt = s.time?.takeIf { s.timeMode != TimeMode.NOW } ?: clock.instant(),
                             settings = s.settings, language = language,
                         )
                         _state.update {
                             it.copy(
-                                loading = false, chain = r, resultsAt = Instant.now(),
+                                loading = false, chain = r, resultsAt = clock.instant(),
                                 selected = if (quiet) it.selected.coerceAtMost((r.legs.size - 1).coerceAtLeast(0)) else 0,
                                 error = if (r.legs.isEmpty()) UiError.NO_RESULTS else null,
                             )
@@ -458,13 +460,14 @@ class MainViewModel(
                     } else {
                         val r = planner.plan(
                             TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
+                            clock.instant(),
                         )
                         val empty = r.itineraries.isEmpty() && r.walkOnly == null
                         _state.update {
                             it.copy(
                                 loading = false,
                                 results = r,
-                                resultsAt = Instant.now(),
+                                resultsAt = clock.instant(),
                                 offlineSince = null,
                                 // A refresh keeps the bus the user picked, wherever it moved in the list.
                                 selected = if (quiet) {
@@ -487,7 +490,7 @@ class MainViewModel(
                             BetterStartQuery(
                                 origin = from,
                                 dest = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDriveMin = s.maxDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -503,7 +506,7 @@ class MainViewModel(
                                 a = from,
                                 b = requireNotNull(driverTo),
                                 c = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDetourMin = s.maxDetourMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -517,7 +520,7 @@ class MainViewModel(
                             PickUpQuery(
                                 me = from,
                                 home = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
                                 maxDriveMin = s.maxPickUpDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -541,7 +544,7 @@ class MainViewModel(
                 val cached = if (s.mode == AppMode.TRIP && s.chainStops.isEmpty()) planCache?.get(cacheKey) else null
                 _state.update {
                     if (cached != null) {
-                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.isLastNight(Instant.now()), resultsAt = cached.savedAt)
+                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.isLastNight(clock.instant()), resultsAt = cached.savedAt)
                     } else {
                         it.copy(loading = false, error = UiError.NETWORK)
                     }
@@ -574,7 +577,7 @@ class MainViewModel(
         val itin = s.selectedItinerary ?: return false
         if (itin.firstTransitLeg == null) return false
         rides?.start(itin, s.settings.speakAlerts)
-        val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, Instant.now(), savedMinOfSelected(s))
+        val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, clock.instant(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
     }
@@ -724,7 +727,7 @@ class MainViewModel(
         val s = _state.value
         val from = resolve(s.from) ?: return
         val to = s.to?.let(::resolve) ?: return
-        val at = s.selectedItinerary?.start ?: s.time ?: Instant.now()
+        val at = s.selectedItinerary?.start ?: s.time ?: clock.instant()
         loadLastRide(from, to, at, back, asked = true)
     }
 
@@ -839,7 +842,7 @@ class MainViewModel(
         _state.update { it.copy(to = null, routinePlace = null, results = null, error = null, lastRide = null, lastRideBack = null) }
     }
 
-    private fun routineKey(name: String) = "$name|${LastRideFinder.serviceDay(Instant.now())}"
+    private fun routineKey(name: String) = "$name|${LastRideFinder.serviceDay(clock.instant())}"
 
     /**
      * Open on the routine's destination when its window is on: only in the Trip tab, never
@@ -850,7 +853,7 @@ class MainViewModel(
         if (s.mode != AppMode.TRIP || s.editing != null || s.loading) return
         val routineSet = s.activeRoutine != null
         if (s.to != null && !routineSet) return
-        val p = Routines.active(s.savedPlaces, Instant.now()) ?: return
+        val p = Routines.active(s.savedPlaces, clock.instant()) ?: return
         if (routineKey(p.name) == dismissedRoutine) return
         if (routineSet && s.routinePlace == p.name && s.results != null) return // already showing it
         _state.update { it.copy(from = PlaceRef.MyLocation, to = PlaceRef.Point(p.name, p.latLon), routinePlace = p.name, timeMode = TimeMode.NOW, time = null) }
@@ -875,7 +878,7 @@ class MainViewModel(
         val s = _state.value
         val from = resolve(s.from) ?: return
         val to = s.to?.let(::resolve) ?: return
-        val at = s.selectedItinerary?.start ?: s.time ?: Instant.now()
+        val at = s.selectedItinerary?.start ?: s.time ?: clock.instant()
         val route = s.from to s.to
         _state.update { it.copy(carLoading = true) }
         viewModelScope.launch {
@@ -956,7 +959,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache)
+                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock)
             }
         }
     }

@@ -15,6 +15,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
@@ -25,6 +26,7 @@ import il.transit.core.geo.LatLon
 import il.transit.core.ride.RideEvent
 import il.transit.core.ride.RideTracker
 import il.transit.planner.MainActivity
+import il.transit.planner.TransitApp
 import il.transit.planner.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import il.transit.core.ride.RideProgress
@@ -80,35 +82,43 @@ class RideService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0,
         )
         if (itinerary == null) {
+            Log.w(TAG, "no itinerary in the start intent: not riding")
             stopSelf()
             return START_NOT_STICKY
         }
         tracker = RideTracker(itinerary)
+        // No location updates, no ride: never report active for a service that is stopping.
+        if (!startLocation()) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
         if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
-        startLocation()
         _active.value = true
         return START_NOT_STICKY
     }
 
     @SuppressLint("MissingPermission") // the app only offers "Start trip" with location granted
-    private fun startLocation() {
+    /** Asks GPS and network for fixes; false (logged) when location is refused. */
+    private fun startLocation(): Boolean {
         val lm = getSystemService(LocationManager::class.java)
         locationManager = lm
-        try {
+        return try {
             for (provider in listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)) {
                 if (lm.isProviderEnabled(provider)) {
                     lm.requestLocationUpdates(provider, UPDATE_MS, UPDATE_M, listener, Looper.getMainLooper())
                 }
             }
+            true
         } catch (e: SecurityException) {
-            stopSelf()
+            Log.w(TAG, "location refused, not riding: ${e.message}")
+            false
         }
     }
 
     @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS
     private fun onLocation(loc: Location) {
         val pos = LatLon(loc.latitude, loc.longitude)
-        val now = Instant.now()
+        val now = (application as TransitApp).clock.instant()
         when (val e = tracker?.update(pos, now)) {
             is RideEvent.Approaching -> getOffNext(e)
             RideEvent.Finished -> { stopSelf(); return }
@@ -211,6 +221,7 @@ class RideService : Service() {
     )
 
     companion object {
+        private const val TAG = "RideService"
         private const val ACTION_STOP = "il.transit.planner.action.STOP_RIDE"
         private const val EXTRA_ITINERARY = "itinerary"
         private const val EXTRA_SPEAK = "speak"

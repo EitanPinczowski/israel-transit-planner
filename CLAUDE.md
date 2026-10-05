@@ -13,8 +13,10 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
 
 ## Hard rules (do not silently reverse)
 
-- **Free, no card, no API key — ever.** No Google Maps SDK / Directions / Places, no
-  Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
+- **Free, no card, no API key in the app — ever.** No Google Maps SDK / Directions / Places,
+  no Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
+  CI-only test logins are allowed when keyless and on a free plan (Test Lab Spark via
+  Workload Identity, owner 2026-10-03).
 - **No server of our own.** The phone talks directly to free public services:
   - **Transitous** (`https://api.transitous.org`, runs MOTIS) — routing, geocoding, stops,
     departures. Israel MOT GTFS is loaded there; real-time only for busofash (Tel Aviv
@@ -47,7 +49,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py · pull_goldens.py · ui_*
 ```
 
 ### The four special features (all return a Pareto front: driver cost × arrival × transfers)
@@ -82,6 +84,7 @@ skill that does not exist — a note nobody can find is a note nobody has.
 | `add-feature` | adding any user-visible feature end to end |
 | `i18n-rtl` | any UI text, layout, colour or icon (Hebrew RTL + English, dark mode, insets) |
 | `golden-trips` | checking that routing results are still sane |
+| `ui-testing` | UI/UX on many phones: emulator profiles, layout audit, journeys, ci-screens, Test Lab |
 | `reminders-offline` | leave reminder, get-off alert, history, notifications, offline cache and map |
 | `release-apk` | shipping a signed APK to friends and family |
 | `dead-ends` | **before proposing an approach** — what was rejected and why |

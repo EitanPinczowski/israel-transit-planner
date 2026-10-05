@@ -163,28 +163,36 @@ import kotlin.math.roundToInt
 @Composable
 internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -> Unit) {
     ElevatedCard(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
+        // While typing, the tapped row is the text field, in place (SearchEditing.kt); nothing
+        // below it shows, so the suggestions sit right under it.
+        val e = state.editing
+        val compactEdit = e != null && LocalCompactEditing.current
         Column(Modifier.padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 8.dp)) {
-            ModeRow(state, vm)
+            if (!compactEdit) ModeRow(state, vm)
             Row(Modifier.padding(end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    PlaceRow(R.string.from, placeLabel(state.from), state.editing == Field.FROM) { vm.startEditing(Field.FROM) }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    if (state.mode == AppMode.DROP_OFF) {
-                        PlaceRow(
-                            R.string.driver_to,
-                            state.driverTo?.let { placeLabel(it) },
-                            state.editing == Field.DRIVER_TO,
-                            placeholderRes = R.string.choose_driver_destination,
-                        ) { vm.startEditing(Field.DRIVER_TO) }
+                    PlaceRow(R.string.from, placeLabel(state.from), e == Field.FROM) { vm.startEditing(Field.FROM) }
+                    if (e != Field.FROM) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        if (state.mode == AppMode.DROP_OFF) {
+                            PlaceRow(
+                                R.string.driver_to,
+                                state.driverTo?.let { placeLabel(it) },
+                                e == Field.DRIVER_TO,
+                                placeholderRes = R.string.choose_driver_destination,
+                            ) { vm.startEditing(Field.DRIVER_TO) }
+                            if (e != Field.DRIVER_TO) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
+                        if (state.mode == AppMode.TRIP && (!compactEdit || e == Field.STOP)) ChainStopsRows(state, vm)
+                        val toLabel = when (state.mode) {
+                            AppMode.DROP_OFF -> R.string.me_to
+                            AppMode.PICK_UP -> R.string.driver_at
+                            else -> R.string.to
+                        }
+                        if (e != Field.DRIVER_TO && e != Field.STOP) {
+                            PlaceRow(toLabel, state.to?.let { placeLabel(it) }, e == Field.TO) { vm.startEditing(Field.TO) }
+                        }
                     }
-                    if (state.mode == AppMode.TRIP) ChainStopsRows(state, vm)
-                    val toLabel = when (state.mode) {
-                        AppMode.DROP_OFF -> R.string.me_to
-                        AppMode.PICK_UP -> R.string.driver_at
-                        else -> R.string.to
-                    }
-                    PlaceRow(toLabel, state.to?.let { placeLabel(it) }, state.editing == Field.TO) { vm.startEditing(Field.TO) }
                 }
                 Column {
                     IconButton(onClick = vm::swap, enabled = state.to != null) {
@@ -199,21 +207,7 @@ internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -
                 }
             }
             Column(Modifier.padding(end = 8.dp)) {
-                if (state.editing != null) {
-                    OutlinedTextField(
-                        value = state.query,
-                        onValueChange = vm::onQuery,
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text(stringResource(R.string.search_hint)) },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        trailingIcon = {
-                            IconButton(onClick = vm::cancelEditing) {
-                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
-                            }
-                        },
-                    )
-                } else {
+                if (e == null) {
                     TimeRow(state, vm)
                     when (state.mode) {
                         AppMode.BETTER_START -> MinutesSlider(R.string.drive_up_to, state.maxDriveMin, vm::setMaxDrive)
@@ -236,16 +230,14 @@ internal fun modeLabel(mode: AppMode): Int = when (mode) {
     AppMode.PARK_RIDE -> R.string.mode_park_ride
 }
 
-/** One scrolling line of mode chips (never two lines, even in Hebrew), then the ⋮ menu. */
+/** The mode chips, short labels wrapping onto a second line on small phones (never scrolling
+ *  sideways: a tab out of sight is a tab nobody finds), then the ⋮ menu. */
 @Composable
 internal fun ModeRow(state: UiState, vm: MainActions) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Row(
-            Modifier.weight(1f).horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
+        FlowRow(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             AppMode.entries.forEach { mode ->
-                FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(modeLabel(mode))) })
+                FilterChip(state.mode == mode, { vm.setMode(mode) }, label = { Text(stringResource(modeTabLabel(mode))) })
             }
         }
         OverflowMenu(vm)
@@ -599,7 +591,9 @@ internal fun ChainStopsRows(state: UiState, vm: MainActions) {
         }
         HorizontalDivider()
     }
-    if (state.chainStops.size < ChainPlanner.MAX_STOPS) {
+    if (state.editing == Field.STOP) {
+        PlaceRow(R.string.chain_stop_label, null, active = true) {}
+    } else if (state.chainStops.size < ChainPlanner.MAX_STOPS) {
         TextButton(onClick = { vm.startEditing(Field.STOP) }) { Text(stringResource(R.string.add_stop)) }
     }
 }

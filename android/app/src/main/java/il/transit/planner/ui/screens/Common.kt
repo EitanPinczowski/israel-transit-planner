@@ -188,6 +188,22 @@ internal fun PlaceRow(
 ) {
     // The label column grows with the font size, so "Driver to" never clips at 200%.
     val labelWidth = 64.dp * LocalDensity.current.fontScale.coerceIn(1f, 2f)
+    val editor = LocalPlaceEditor.current
+    if (active && editor != null) {
+        // Being typed: the field takes the value's place, in this same row.
+        Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(labelRes),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.width(labelWidth).padding(end = 6.dp),
+            )
+            editor(Modifier.weight(1f))
+        }
+        return
+    }
     Row(
         Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

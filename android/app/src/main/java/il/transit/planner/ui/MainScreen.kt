@@ -5,6 +5,8 @@ package il.transit.planner.ui
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -105,6 +108,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -163,8 +167,17 @@ import kotlin.math.roundToInt
 /** Wider than this (landscape, foldables, tablets), the panels move into one side column. */
 internal val WIDE = 600.dp
 
-/** Shorter than this, the search card folds to one line while results are shown. */
+/** Shorter than this (or narrower than [WIDE]), the search card folds to one line while results are shown. */
 internal val SHORT = 700.dp
+
+/** Test tags of the screen's regions: the UI tests' layout audit checks them against each other. */
+object UiTags {
+    /** The search card column (phones), or the whole side column (wide windows). */
+    const val TOP = "top"
+    /** The results sheet with the attribution chip above it (phones only). */
+    const val BOTTOM = "bottom"
+    const val SUGGESTIONS = "suggestions"
+}
 
 /** What only the Activity can do: permissions, the map camera, the offline store. */
 class ScreenActions(
@@ -210,9 +223,22 @@ fun MainScreen(
 
     val showPanel = state.editing == null &&
         (tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
-    // A new search always shows its answer; closing the results unfolds the search card.
-    LaunchedEffect(state.loading) { if (state.loading) collapsed = false }
+    // A new search always shows its answer (and folds the search again); closing the results
+    // unfolds the search card.
+    LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
     LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
+
+    // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
+    // (The trip sheet has its own handler, composed later, so it closes first.) Screenshot
+    // tests have no back dispatcher, hence the check.
+    if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(enabled = state.editing != null || showPanel) {
+        when {
+            state.editing != null -> vm.cancelEditing()
+            state.stopSheet != null -> vm.closeStop()
+            searchOpen -> searchOpen = false
+            else -> vm.clearResults()
+        }
+    }
 
     val panel: @Composable (Modifier, Shape) -> Unit = { modifier, shape ->
         if (tripSheet != null) {
@@ -230,15 +256,31 @@ fun MainScreen(
         val bars = barsAndCutout
         val rootWidth = constraints.maxWidth
         val rootHeight = constraints.maxHeight
-        val compactSearch = showPanel && maxHeight < SHORT && !searchOpen
+        // Phones (any height: a Fold cover screen is tall but narrow, so its tabs take two
+        // lines) and short windows can't fit the whole search card and the results: the
+        // search folds to one line; unfolded, it gets the screen until a new search or Back
+        // brings the results back.
+        val foldsForResults = maxWidth < WIDE || maxHeight < SHORT
+        val compactSearch = showPanel && foldsForResults && !searchOpen
+        val searchOnly = showPanel && foldsForResults && searchOpen
+        val panelShown = showPanel && !searchOnly
         val sheetMaxHeight = maxHeight * 0.5f
+        val screenHeight = maxHeight // read inside nested layout scopes below
 
         map()
         StatusBarScrim()
 
         val search: @Composable () -> Unit = {
-            state.update?.let { UpdateBanner(it, vm) }
-            if (compactSearch) {
+            // On a short screen with results the banner waits until they close: the map needs
+            // the room (R7), and the update is not going anywhere.
+            if (!compactSearch) state.update?.let { UpdateBanner(it, vm) }
+            if (state.editing != null) {
+                // The tapped row turns into the text field, in place; the suggestions follow the card.
+                CompositionLocalProvider(
+                    LocalPlaceEditor provides { m -> PlaceEditor(state, vm, m) },
+                    LocalCompactEditing provides (maxHeight < SHORT),
+                ) { SearchCard(state, vm, onSavePlace = { savingPlace = it }) }
+            } else if (compactSearch) {
                 CompactSearch(state) { searchOpen = true }
             } else {
                 SearchCard(state, vm, onSavePlace = { savingPlace = it })
@@ -248,18 +290,23 @@ fun MainScreen(
         if (maxWidth >= WIDE) {
             var side by remember { mutableStateOf(0 to 0) } // left and right edge, px
             Column(
-                Modifier.fillMaxHeight()
+                Modifier.fillMaxHeight().testTag(UiTags.TOP)
                     .onGloballyPositioned { c -> c.boundsInRoot().let { side = it.left.roundToInt() to it.right.roundToInt() } }
                     .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start))
                     .width(minOf(420.dp, maxWidth * 0.5f))
                     .padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                search()
                 when {
-                    state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false))
-                    showPanel -> panel(Modifier.weight(1f, fill = false), MaterialTheme.shapes.extraLarge)
-                    else -> SavedChips(state, vm)
+                    state.editing != null -> {
+                        search()
+                        SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
+                    }
+                    panelShown -> {
+                        search()
+                        panel(Modifier.weight(1f, fill = false), MaterialTheme.shapes.extraLarge)
+                    }
+                    else -> ScrollingSearch(Modifier.weight(1f, fill = false), search) { if (!showPanel) SavedChips(state, vm) }
                 }
                 AttributionChip(Modifier)
             }
@@ -274,26 +321,37 @@ fun MainScreen(
         } else {
             var topEdge by remember { mutableIntStateOf(0) }
             var bottomEdge by remember { mutableIntStateOf(rootHeight) }
-            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(12.dp)) {
+            // The search column ends where the bottom part (credit, results) begins, so a long
+            // suggestion list or a tall card can never run under it.
+            val belowSearch = WindowInsets(bottom = (rootHeight - bottomEdge).coerceAtLeast(0))
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.union(belowSearch)).padding(12.dp)) {
                 Column(
-                    Modifier.fillMaxWidth().onGloballyPositioned { topEdge = it.boundsInRoot().bottom.roundToInt() },
+                    Modifier.fillMaxWidth().testTag(UiTags.TOP).onGloballyPositioned { topEdge = it.boundsInRoot().bottom.roundToInt() },
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    search()
                     when {
-                        state.editing != null -> SuggestionList(state, vm, Modifier.weight(1f, fill = false))
-                        !showPanel -> SavedChips(state, vm)
+                        state.editing != null -> {
+                            search()
+                            SuggestionList(state, vm, Modifier.weight(1f, fill = false).testTag(UiTags.SUGGESTIONS))
+                        }
+                        panelShown -> search()
+                        else -> ScrollingSearch(Modifier.weight(1f, fill = false), search) { if (!showPanel) SavedChips(state, vm) }
                     }
                 }
             }
             Column(
-                Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                Modifier.align(Alignment.BottomCenter).fillMaxWidth().testTag(UiTags.BOTTOM)
                     .onGloballyPositioned { bottomEdge = it.boundsInRoot().top.roundToInt() },
             ) {
                 AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
-                if (showPanel) {
+                if (panelShown) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
-                    panel(Modifier.heightIn(max = sheetMaxHeight), top)
+                    // At most half the screen, and never so tall that less than [MAP_SHARE] of it
+                    // stays map between the search and the sheet (R7): on a 640 dp phone, or at
+                    // the largest font, the folded search and the credit take their part first.
+                    val searchBottom = with(density) { topEdge.toDp() }
+                    val cap = minOf(sheetMaxHeight, screenHeight * (1f - MAP_SHARE) - searchBottom - CREDIT_ROOM)
+                    panel(Modifier.heightIn(max = cap.coerceAtLeast(MIN_SHEET)), top)
                 } else {
                     Spacer(Modifier.windowInsetsBottomHeight(bars))
                 }
@@ -313,6 +371,31 @@ fun MainScreen(
         NameDialog(R.string.save_trip, onDismiss = { savingTrip = false }) { name -> vm.saveTrip(name); savingTrip = false }
     }
 }
+
+/** The search card (and what follows it) scrolling when it is taller than the window, as in
+ *  landscape with the drop-off slider or at the largest font. Only used with no results beside it. */
+@Composable
+private fun ScrollingSearch(modifier: Modifier, search: @Composable () -> Unit, below: @Composable () -> Unit) {
+    // A scrolling column clips at its edges: room for the card's shadow inside, drawn where it was.
+    Column(
+        modifier.offset(y = -SHADOW_ROOM).verticalScroll(rememberScrollState()).padding(vertical = SHADOW_ROOM),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        search()
+        below()
+    }
+}
+
+private val SHADOW_ROOM = 4.dp
+
+/** Of a phone's height, at least this much stays map while a sheet is open (layout rule R7: 25%). */
+private const val MAP_SHARE = 0.3f
+
+/** The Transitous credit chip above the sheet, with its padding. */
+private val CREDIT_ROOM = 48.dp
+
+/** A sheet is never squeezed below its header and one row. */
+private val MIN_SHEET = 160.dp
 
 /** Keeps the clock and battery icons readable over a busy map. */
 @Composable

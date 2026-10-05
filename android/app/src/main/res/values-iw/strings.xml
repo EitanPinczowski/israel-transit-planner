@@ -180,8 +180,8 @@
     <string name="turn_u_turn">חזרו לאחור</string>
     <string name="turn_stairs">מדרגות</string>
     <string name="notify_time_changed_title">שעת היציאה השתנתה</string>
-    <string name="notify_late_text">קו \u2068%1$s\u2069 מאחר ב־%2$d דק׳ — צאו ב־\u2068%3$s\u2069</string>
-    <string name="notify_early_text">קו \u2068%1$s\u2069 מקדים ב־%2$d דק׳ — צאו ב־\u2068%3$s\u2069</string>
+    <string name="notify_late_text">קו \u2068%1$s\u2069 מאחר ב־\u2068%2$d\u2069 דק׳ — צאו ב־\u2068%3$s\u2069</string>
+    <string name="notify_early_text">קו \u2068%1$s\u2069 מקדים ב־\u2068%2$d\u2069 דק׳ — צאו ב־\u2068%3$s\u2069</string>
     <string name="routine_chip">⏰ שגרה: %1$s  ✕</string>
     <string name="routine_title">מתי בדרך כלל נוסעים ל%1$s?</string>
     <string name="routine_help">בימים ובשעות האלה האפליקציה תיפתח על הנסיעה לשם, עם שעת היציאה.</string>
@@ -190,8 +190,8 @@
     <string name="routine_remove">הסרה</string>
     <plurals name="stops_left">
         <item quantity="one">נשארה תחנה אחת</item>
-        <item quantity="two">נשארו %d תחנות</item>
-        <item quantity="other">נשארו %d תחנות</item>
+        <item quantity="two">נשארו \u2068%d\u2069 תחנות</item>
+        <item quantity="other">נשארו \u2068%d\u2069 תחנות</item>
     </plurals>
     <string name="ride_progress_title">קו \u2068%1$s\u2069 · %2$s</string>
     <string name="ride_progress_text">לרדת ב\u2068%1$s\u2069 ~\u2068%2$s\u2069</string>
@@ -209,12 +209,12 @@
     <string name="add_stop">+ עצירה בדרך</string>
     <string name="stay">שהייה</string>
     <string name="chain_summary">יציאה \u2068%1$s\u2069 · הגעה \u2068%2$s\u2069</string>
-    <string name="chain_failed">לא נמצאה דרך לקטע %1$d — נסו שעה או עצירה אחרת</string>
+    <string name="chain_failed">לא נמצאה דרך לקטע \u2068%1$d\u2069 — נסו שעה או עצירה אחרת</string>
     <!-- The arrow points along the reading direction: → in English, ← in Hebrew. -->
     <string name="chain_leg_title">\u2068%1$d\u2069. \u2068%2$s\u2069 ← \u2068%3$s\u2069</string>
     <string name="line_to">\u2068%1$s\u2069 ← \u2068%2$s\u2069</string>
     <string name="by_car_check">🚗 ברכב?</string>
-    <string name="by_car">ברכב ~%1$d דק׳ בשעה הזאת (פקקים ×\u2068%2$s\u2069) · \u2068%3$d ק״מ\u2069</string>
+    <string name="by_car">ברכב ~\u2068%1$d\u2069 דק׳ בשעה הזאת (פקקים ×\u2068%2$s\u2069) · \u2068%3$d ק״מ\u2069</string>
     <string name="taxi_calculator">מחיר מונית: המחשבון הרשמי של משרד התחבורה</string>
 
     <!-- Layout: overflow menu, folded search card, results sheet handle -->
