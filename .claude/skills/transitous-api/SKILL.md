@@ -134,6 +134,10 @@ departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429
 `BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
 
+| background job | requests | worst case per day | constraints |
+|---|---|---|---|
+| Night refresh (`NightRefreshWorker`, Phase 9 C2) | `plan` only | 6 (`NightRefresh.MAX_TRIPS`, `BudgetedTransitApi`) + 1 per 429/503 retry | Wi-Fi, charging, battery not low; 22:00–06:00; once per service day; never retried |
+
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`
 saves a real response into `core/src/test/resources/fixtures/` (needs network access to

@@ -5,7 +5,9 @@ import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitApi
 import il.transit.core.api.Itinerary
+import il.transit.core.plan.NightRefresh
 import il.transit.core.remind.Reminder
+import il.transit.core.user.Home
 import il.transit.planner.data.CrashLogStore
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
@@ -14,7 +16,11 @@ import il.transit.planner.data.UpdateChecker
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
+import il.transit.planner.work.NightRefreshWorker
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
 
@@ -26,6 +32,22 @@ class TransitApp : Application() {
     override fun onCreate() {
         super.onCreate()
         crashLog.install()
+        keepNightRefreshScheduled()
+    }
+
+    private val appScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Default)
+
+    /**
+     * The night refresh is enqueued only while the setting is on and some night has a trip
+     * to plan; any change to settings, places, trips or history re-checks that.
+     */
+    private fun keepNightRefreshScheduled() {
+        appScope.launch {
+            history.load()
+            combine(store.settings, store.places, store.trips, history.records) { s, p, t, h ->
+                s.nightRefresh && NightRefresh.anyJobs(p, t, Home.of(s, p), h, java.time.Instant.now())
+            }.distinctUntilChanged().collect { wanted -> NightRefreshWorker.sync(this@TransitApp, wanted) }
+        }
     }
 
     val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }

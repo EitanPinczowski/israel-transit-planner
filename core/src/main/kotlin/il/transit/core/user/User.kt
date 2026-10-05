@@ -106,6 +106,12 @@ data class UserSettings(
     val tripSort: il.transit.core.plan.TripSort = il.transit.core.plan.TripSort.FASTEST,
     /** "From my calendar": arrive this many minutes before the event starts. */
     val calendarBufferMin: Int = il.transit.core.plan.CalendarSuggest.DEFAULT_BUFFER_MIN,
+    /** The saved place that is Home (its name); see [Home]. */
+    val homePlace: String? = null,
+    /** A place called "Home" / "בית" was offered as Home and the user answered: don't ask again. */
+    val homeOffered: Boolean = false,
+    /** Plan tomorrow's usual trips each night on Wi-Fi + charging (owner, 2026-10-05: on). */
+    val nightRefresh: Boolean = true,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

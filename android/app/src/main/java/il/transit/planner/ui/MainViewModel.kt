@@ -127,6 +127,8 @@ data class UiState(
     val resultsAt: Instant? = null,
     /** Set when the results are a saved copy shown because the network failed. */
     val offlineSince: Instant? = null,
+    /** The saved copy was planned by the night refresh: "planned last night at 02:14". */
+    val offlineNight: Boolean = false,
     val reminder: Reminder? = null,
     /** A "get off at the next stop" ride is being tracked. */
     val riding: Boolean = false,
@@ -539,7 +541,7 @@ class MainViewModel(
                 val cached = if (s.mode == AppMode.TRIP && s.chainStops.isEmpty()) planCache?.get(cacheKey) else null
                 _state.update {
                     if (cached != null) {
-                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, resultsAt = cached.savedAt)
+                        it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.isLastNight(Instant.now()), resultsAt = cached.savedAt)
                     } else {
                         it.copy(loading = false, error = UiError.NETWORK)
                     }
