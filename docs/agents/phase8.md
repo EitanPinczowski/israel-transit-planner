@@ -287,16 +287,16 @@ unnamed OSM lots by bus stops, never at stations. See `dead-ends`.
 
 ---
 
-## Other work on `main` that touches Phase 8 (checked 2026-10-04)
-- **#14 / #16 / #17** (merged): on-the-bus progress, My lines, way back, spoken alerts,
-  shortcuts, errands, car vs. transit. A2 (#19) already split these into `ui/screens/`.
-  B2 reuses way back.
-- **#18 design pass** (open, another session): rewrites `MainScreen.kt` (`MainActions`, side
-  column, sheet) and adds Paparazzi. It conflicts with A2 (#19).
-  - **Recommended order: merge #18 first.** A2 then redoes its split on the new `main` by
-    re-running the mechanical move. Don't resolve conflicts hunk by hunk: a move is cheap to
-    redo, and #18's layout work is not.
-  - B4 builds on #18's screenshots instead of adding a second tool.
+## Status board (coordinator, checked 2026-10-05)
+| package | PR | state |
+|---|---|---|
+| A1 API, A2 UI split, #18 design pass | #20, #19, #18 | merged |
+| B2 Park & ride, B3 Calendar | #23, #25 | merged |
+| B1 Trip details | #24 | open; session active. Must compile after its main merge and answer #18's design review (shared sheet, readable badges, dark-safe highlights) |
+| B4 UI tests + crash log | #26 (draft) | open; session active. **Merge first** among what is left |
+| UI tests on devices (outside Phase 8) | branch `claude/gallant-mendel-4yps2i`, no PR | far behind `main`; overlaps B4 (`ci.yml`, `build.gradle.kts`, `TransitApp.kt`) and B1 (`MapController.kt`). Waits for #26 and #24, then merges `main` and yields to their files. Its CLAUDE.md change (CI-only keyless Test Lab login) is an owner decision |
+
+Only one coordinator session runs at a time; it updates this table.
 
 ---
 

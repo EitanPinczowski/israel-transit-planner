@@ -52,13 +52,18 @@ def phase() -> str:
         text = open(os.path.join(ROOT, "ROADMAP.md"), encoding="utf-8").read()
     except OSError:
         return "unknown (no ROADMAP.md)"
-    current = None
+    # "- [ ] ~~x~~" is a dropped item, and "- [ ] Owner: …" waits on the owner, not an agent:
+    # neither should pin the report to an old phase.
+    owner = 0
     for block in re.split(r"\n(?=## )", text):
-        if "- [ ]" in block:
+        open_items = [l.strip() for l in block.splitlines()
+                      if l.strip().startswith("- [ ]") and not l.strip().startswith("- [ ] ~~")]
+        mine = [l for l in open_items if not l.startswith("- [ ] Owner:")]
+        owner += len(open_items) - len(mine)
+        if mine:
             current = block.splitlines()[0].lstrip("# ").strip()
-            todo = sum(1 for line in block.splitlines() if line.strip().startswith("- [ ]"))
-            return f"{current} — {todo} open item(s)"
-    return "all phases ticked"
+            return f"{current} — {len(mine)} open item(s); {owner} owner check(s) earlier"
+    return f"all agent items ticked; {owner} owner check(s) open"
 
 
 def main() -> None:

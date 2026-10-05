@@ -67,6 +67,23 @@ Before opening a PR, and again before saying it is done, merge `origin/main` int
 - Raising a budget, polling more often, or adding a background job that calls the network is a
   policy decision. Write it in the PR body; don't hide it in a constant.
 
+## One coordinator, and work outside the packages
+- Exactly one coordinator session at a time. It keeps the status board at the end of
+  `docs/agents/phase8.md` and is the only one that watches PRs it does not own. Other
+  sessions stop their check-ins once a coordinator takes over.
+- Work that is not a package (a design pass, a test harness) follows the same ownership
+  table: it waits for the package that owns a shared file to merge, then merges `main`.
+- Android code cannot compile in a cloud session (no SDK). Before pushing Kotlin in
+  `android/`, check that every new name has its import. A missing import costs a full CI round.
+
+## Keeping token use low
+- Read the part of a file you need (`offset`/`limit`, `Grep`), not whole files; never read
+  build output (the deny list blocks it).
+- Reading another session: `list_events` with `kinds: ["assistant"]` and a small `limit`, or
+  just its `get_session` summary. Full transcripts overflow the context.
+- Don't poll. PR events wake you; one safety check-in at most, per the harness rules.
+- Messages between sessions: a few lines, the decision and the file names, no pasted diffs.
+
 ## Agents never merge
 Drive your PR to green and answer review comments. **The owner merges.** If you are blocked on
 another package or on an owner decision, say so in the PR and to the planner session. Don't work
