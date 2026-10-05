@@ -46,14 +46,23 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
-      # Record-only: no golden images yet (a cloud session can't render them; it has no
-      # Android SDK). The pictures are for looking at — light/dark, he/en, small/big/landscape.
+      # Regression check: compare against the goldens committed in src/test/snapshots/images.
+      # A changed picture, or a shot with no golden, fails the job at the end; the steps in
+      # between still record and publish the new pictures, which is how a PR re-records
+      # (`python3 tools/pull_goldens.py`, see the android-build skill).
+      - name: verify goldens
+        id: verify
+        continue-on-error: true
+        run: ./gradlew -p android :app:verifyPaparazziDebug
+      # Fresh pictures for looking at (and for re-recording): light/dark, he/en, every shape.
       - run: ./gradlew -p android :app:recordPaparazziDebug
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: screenshots
-          path: android/app/src/test/snapshots/
+          path: |
+            android/app/src/test/snapshots/
+            android/app/build/paparazzi/failures/
           retention-days: 14
       # Also onto the `screenshots` branch, one folder per source branch: artifact storage
       # is unreachable from a cloud Claude session, raw.githubusercontent.com is not. The
@@ -83,10 +92,20 @@ jobs:
             fi
             rm -rf "${wt:?}/$dir" && mkdir -p "$wt/$dir"
             cp android/app/src/test/snapshots/images/*.png "$wt/$dir/"
+            # What the verify step saw differ (golden | new | diff), when it failed.
+            if ls android/app/build/paparazzi/failures/delta-*.png >/dev/null 2>&1; then
+              mkdir -p "$wt/$dir/failures" && cp android/app/build/paparazzi/failures/delta-*.png "$wt/$dir/failures/"
+            fi
             printf 'commit %s\nrun %s\n' "$GITHUB_SHA" "$RUN_URL" > "$wt/$dir/INFO.txt"
             git -C "$wt" add -A
             commit=$(git -C "$wt" commit-tree "$(git -C "$wt" write-tree)" -m "Screenshots ($BRANCH @ ${GITHUB_SHA::7})")
             if git push -q --force-with-lease="$lease" origin "$commit:refs/heads/screenshots"; then exit 0; fi
             sleep 10
           done
+          exit 1
+      - name: fail if a golden changed
+        if: steps.verify.outcome == 'failure'
+        run: |
+          echo "::error::Screenshots differ from the committed goldens (or a shot has none)."
+          echo "If the change is intended, re-record in this PR: python3 tools/pull_goldens.py, then commit."
           exit 1

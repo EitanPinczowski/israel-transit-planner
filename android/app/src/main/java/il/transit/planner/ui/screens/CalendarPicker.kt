@@ -40,6 +40,7 @@ import il.transit.core.plan.CalendarSuggest
 import il.transit.core.present.hhmm
 import il.transit.planner.R
 import il.transit.planner.TransitApp
+import il.transit.planner.ui.CalendarConfirm
 import il.transit.planner.ui.CalendarViewModel
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.UiState
@@ -97,14 +98,7 @@ internal fun CalendarChip(state: UiState, vm: MainViewModel) {
             title = {
                 Text(c.arriveBy?.let { stringResource(R.string.calendar_arrive_by, hhmm(it)) } ?: stringResource(R.string.calendar_leave_now))
             },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.calendar_matched, c.dest.name, c.dest.source), style = MaterialTheme.typography.bodyLarge)
-                    if (c.dest.approximate) {
-                        Text(stringResource(R.string.calendar_approximate), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-            },
+            text = { CalendarConfirmBody(c) },
             confirmButton = {
                 TextButton(onClick = { cal.dismiss(); vm.fromCalendar(c.dest.name, c.dest.at, c.arriveBy) }) { Text(stringResource(R.string.calendar_plan)) }
             },
@@ -119,25 +113,45 @@ internal fun CalendarChip(state: UiState, vm: MainViewModel) {
             onDismissRequest = cal::dismiss,
             title = { Text(stringResource(R.string.calendar_list_title)) },
             text = {
-                if (events.isEmpty()) {
-                    Text(stringResource(R.string.calendar_empty))
-                } else {
-                    LazyColumn {
-                        items(events) { e ->
-                            EventRow(e) { cal.pick(e, vm.locationProvider(), state.settings.calendarBufferMin, vm::fromCalendar) }
-                            HorizontalDivider()
-                        }
-                    }
-                }
+                CalendarEventList(events) { e -> cal.pick(e, vm.locationProvider(), state.settings.calendarBufferMin, vm::fromCalendar) }
             },
             confirmButton = { TextButton(onClick = cal::dismiss) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }
 
+/** The confirm dialog's body: where the event's text matched, and a warning when only roughly. */
 @Composable
-private fun EventRow(e: CalendarEvent, onClick: () -> Unit) {
-    val row = CalendarSuggest.row(e, Instant.now())
+internal fun CalendarConfirmBody(c: CalendarConfirm) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(R.string.calendar_matched, c.dest.name, c.dest.source), style = MaterialTheme.typography.bodyLarge)
+        if (c.dest.approximate) {
+            Text(stringResource(R.string.calendar_approximate), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+/**
+ * The list dialog's body: the next events with a location, or "nothing coming up". Its own
+ * function (and [now] a parameter) so screenshot tests render it the same on any day.
+ */
+@Composable
+internal fun CalendarEventList(events: List<CalendarEvent>, now: Instant = Instant.now(), onPick: (CalendarEvent) -> Unit) {
+    if (events.isEmpty()) {
+        Text(stringResource(R.string.calendar_empty))
+    } else {
+        LazyColumn {
+            items(events) { e ->
+                EventRow(e, now) { onPick(e) }
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+@Composable
+private fun EventRow(e: CalendarEvent, now: Instant, onClick: () -> Unit) {
+    val row = CalendarSuggest.row(e, now)
     val title = row.title.ifBlank { stringResource(R.string.calendar_no_title) }
     val time = if (row.tomorrow) stringResource(R.string.calendar_tomorrow_at, row.time) else row.time
     Text(

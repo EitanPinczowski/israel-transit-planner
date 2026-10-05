@@ -192,7 +192,7 @@
         <item quantity="other">%d stops left</item>
     </plurals>
     <string name="ride_progress_title">Line \u2068%1$s\u2069 · %2$s</string>
-    <string name="ride_progress_text">Get off at %1$s ~\u2068%2$s\u2069</string>
+    <string name="ride_progress_text">Get off at \u2068%1$s\u2069 ~\u2068%2$s\u2069</string>
     <string name="ride_progress_arrive">arrive \u2068%1$s\u2069</string>
     <string name="my_lines">My lines</string>
     <string name="my_lines_empty">Tap a stop on the map, then ☆ next to a line, to pin it here with its next departures.</string>

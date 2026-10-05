@@ -253,6 +253,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
         }
         item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
         item { OfflineSection(actions) }
+        item { CrashLogSection(actions.crashLog) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
             item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
             items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
@@ -276,8 +277,9 @@ internal fun HistoryDialog(state: UiState, vm: MainActions) {
 
 /** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
 @Composable
-internal fun HistoryContent(state: UiState, vm: MainActions) {
-    val st = state.historyStats
+internal fun HistoryContent(state: UiState, vm: MainActions, now: Instant = Instant.now()) {
+    // `now` is a parameter so screenshot tests get the same "this week" count every day.
+    val st = il.transit.core.history.History.stats(state.history, now)
     LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (state.history.isEmpty()) {
             item { Text(stringResource(R.string.history_empty)) }
