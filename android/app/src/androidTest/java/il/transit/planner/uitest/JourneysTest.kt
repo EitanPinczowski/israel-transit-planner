@@ -121,12 +121,18 @@ class JourneysTest {
                 d.open()
                 compose.waitForIdle()
                 SystemClock.sleep(700) // as a person would: the keyboard is up before Back
-                // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
-                UiDevice.getInstance(d.inst).pressBack()
-                // The keyboard (if up) takes this Back and slides away first: give it 2 s.
-                val until = SystemClock.uptimeMillis() + 2_000
-                do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
-                    d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
+                // Android 8.x (owner, 2026-10-05): with the keyboard up, the first Back only hides
+                // it and the second closes the search. Every later version: one Back.
+                val presses = if (what == "the search" && AppDriver.sdk < 28) 2 else 1
+                repeat(presses) {
+                    if (d.closed()) return@repeat
+                    // UiAutomator, not Espresso: Espresso waits for window focus, which API 26 may not give.
+                    UiDevice.getInstance(d.inst).pressBack()
+                    // The keyboard (if up) takes a Back and slides away first: give it 2 s.
+                    val until = SystemClock.uptimeMillis() + 2_000
+                    do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
+                        d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
+                }
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
                 assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})", alive && d.closed())
             }

@@ -2,6 +2,7 @@
 
 package il.transit.planner.ui.screens
 
+import android.os.Build
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -65,8 +66,10 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
             .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing() }
             // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
-            // hook sees it before both, keyboard or not: one Back closes the search.
-            .onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) }
+            // hook sees it before both, keyboard or not: one Back closes the search. Not on
+            // Android 8, where it swallows the Back without closing anything: there the first
+            // Back hides the keyboard and the second closes the search (owner, 2026-10-05).
+            .then(if (Build.VERSION.SDK_INT >= ONE_BACK_SDK) Modifier.onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) } else Modifier)
             .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
@@ -113,11 +116,12 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
 
 private const val KEYBOARD_SETTLE_MS = 200L
 
-/** On the press, not the release: on Android 8 the release of a Back taken here before the
- *  keyboard never comes back to the app (the keyboard stays up and the search open). */
+/** Android 9: from here one Back closes the search with the keyboard up (8.x takes two). */
+private const val ONE_BACK_SDK = 28
+
 private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
     if (e.key != Key.Back) return false
-    if (e.type == KeyEventType.KeyDown) vm.cancelEditing()
+    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
     return true
 }
 
