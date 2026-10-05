@@ -28,6 +28,8 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
+| `trip` | `GET /api/v6/trip` | `tripId` (from a leg or a departure; contains `:` — let OkHttp encode it). Answers an `Itinerary`: one transit leg, first stop → last, every stop in `intermediateStops`. |
+| `mapTrips` | `GET /api/v6/map/trips` | `min`/`max` bbox (SW/NE, like `map/stops`), `zoom`, `startTime`/`endTime`. A list of stop-to-stop hops (`TripSegment`); **polyline precision 5**, not 6. |
 
 Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never assume `Z`.
 
@@ -49,16 +51,87 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   `il-Israel-MOT_37314`.
 - **Geocode:** without `placeBias` the `place` bias is weak ("רגר" near Be'er Sheva → Agra,
   Zagreb, Riga). `placeBias=10` keeps every answer in Israel; `MotisClient` sends it.
+- **Geocode, very short words:** matching is loose. Even with the bias, "רגר" → Hagar (הגר),
+  Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
+  Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
+  (`needsFullNameHint` in `present/Format.kt`).
+- **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
+  first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
+  Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
+  names are not in the index. So "From my calendar" shows the match next to the event's
+  text before planning ("הרצל 126 (from: הרצל 12…)", with Change), and marks it approximate
+  when a house number in the text is missing from the match or the match is a town
+  (`category` `place_*`): `CalendarSuggest.isApproximate`, no extra request. Privacy: only the
+  location text is sent (never the title); `lat,lon` in a location skips the request; the
+  bias is rounded to 0.1° so the day cache hits (`CalendarSuggest`, fixtures `geocode_calendar_*`).
+- **Real-time and alerts — almost none for Israel (checked 2026-10-03).** Transitous' Israel
+  config (`public-transport/transitous` → `feeds/il.json`) loads the MOT GTFS timetable and
+  ONE GTFS-RT feed: "busofash" (Tel Aviv night/Shabbat buses). MOT lines have no live delays
+  and no service alerts there (3 live plans: 0 alerts). MOT's own SIRI feed needs a registered
+  key → out under the "no key" rule. So delay badges/alerts only fire on busofash lines;
+  "on the bus" delay is GPS vs timetable and does not depend on it. Service alerts: not built.
+- **Last trip of the day (2026-10-03, live):** `arriveBy=true` at 03:00 the next morning
+  returns the evening's latest trips — Fri 9 Oct Be'er Sheva → Tel Aviv: 15:29. Two traps,
+  handled in `LastRideFinder`: a late trip that arrives after 03:00 (night line 469, hourly
+  all night) is invisible to that search; and a depart-at search after the last Friday trip
+  offers a 16:20 bus that **waits out Shabbat** (arrives Saturday night) — not a "next trip".
+- **`pedestrianProfile=WHEELCHAIR`** is accepted and changes the answer (BGU → Tel Aviv: a bus
+  to the station instead of the 836 m walk). `map/stops` carries no wheelchair field, so
+  vehicle/stop accessibility is unknown — the app says so.
+- **Walking `steps[]`:** only `CONTINUE` or `STAIRS` (2,612 recorded steps), `streetName` on
+  ~16% of steps overall but most of a street walk, and a polyline per step. Turns are computed
+  from the polylines in `present/WalkDirections.kt`; `plan_walk_beersheva_streets.json` pins
+  a real 1.4 km walk (Bialik → Basel → Ussishkin → Weizmann → Wolfson → HaTikva).
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
   `lineLabel()` / `headsignText()`.
-- Still open: real-time coverage (the spike ran on a Friday evening — Shabbat, no service).
-  Record a `stoptimes` for "now" on a weekday and check for `realTime: true`.
+- **Real-time on MOT lines: confirmed none (closed 2026-10-04).** Sat 2026-10-03 23:20, late buses running: 0 of 36 departures
+  at Be'er Sheva Central and 0 of 20 at Savidor (6 operators) had `realTime: true`; nor did
+  the `trip`/`map/trips` answers. Departure = scheduled everywhere (`stoptimes_now_*`).
+  **Sun 2026-10-04 10:16 (weekday, full service): still 0 of 49** at the same two stops
+  (7 operators; `stoptimes_weekday_*`). Matches the feed config above (GTFS-RT only for
+  busofash). The app stays tolerant: it shows live times whenever `realTime` is true.
+- **No service alerts** (2026-10-03/04): no `alerts` on any leg, place or stop time in 9 answers.
+  `Alert` is modelled from the MOTIS schema (header/description text, cause, effect,
+  `impactPeriod` = validity) but has never been seen from Israel.
+- **`cancelled` on WALK legs is noise:** some transfer walks between two stops come back
+  `cancelled: true`, with both their places (both plans of 2026-10-03). Only trust it on
+  transit legs and their stops.
+- **Saturday-night trips appear twice**, one per service day (`…_031026` and `…_041026`, same
+  line, same minute) in `stoptimes`. De-duplicate by line + time if it shows.
+- **`trip`** (bus 470, train 7026, 2026-10-03): `transfers` 0, a single leg from the trip's
+  first stop to its last, `intermediateStops` with arrival + departure each, precision-6
+  geometry. Train: `routeShortName` empty, `headsign` = train number, as in `plan`.
+- **`map/trips`** (Be'er Sheva box, 1-min window, zoom 14): 134 hops, each with one trip
+  (`tripId` + `displayName`), from/to stop and their times, `realTime`, polyline at
+  **precision 5**. A train's `displayName` is the long "A<->B" route name, not the number.
+  `distance` is not the hop's length. One **Rome → Naples** hop (bad stop at 10.1,40.1)
+  crossed the box — select by `tripId`, never trust the box alone.
+- **`CAR_PARKING` (pre-transit) is unusable** — see `dead-ends` and `special-features`.
+
+## How the app uses `trip` and `map/trips` (trip sheet, Phase 8 B1)
+All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest`.
+- **`trip`: one per tap** on a bus/train chip of the selected option (`TripDetailsSession.open`);
+  the guard caches it 30 s, so close + re-open is free. No answer (offline, no `tripId`) → the
+  sheet shows the plan leg's own stops (`legOnly`). Boarding/alighting are matched to the trip's
+  stops by stop id, else the nearest stop within 150 m (sibling platforms), nearest in time.
+- **`map/trips`: at most one per 30 s** (`TripDetailsSession.REFRESH`), only while the sheet is
+  open **and the app is in front**, and only while the timetable has the vehicle on the road
+  (from 2 min before its first stop to its last). Window `now … now+60 s`, zoom 14.
+- **The box is not the user's leg** but the stretch of the trip between the last stop served and
+  the next (`vehicleBox`, +1 km): the sheet is usually opened while waiting, when the vehicle is
+  still before the boarding stop. It also keeps answers small (the leg box of a Be'er Sheva →
+  Tel Aviv train would cover thousands of hops).
+- The mark is matched **by `tripId`** and interpolated by time along the hop's precision-5
+  polyline every 2 s between refreshes (`vehicleAt`); between hops it waits at the stop.
+  `realTime: false` (every MOT line) → the sheet says "scheduled position".
+- Live times, skipped stops and ⚠ alerts render only when present (`TripStopRow.live`,
+  `cancelled`, `alertTexts`); alerts are kept only while `inEffectAt` and folded by text.
 
 ## Budget
 `GuardedTransitApi` wraps the client everywhere: cache (plan 60 s, stops/geocode 1 day,
-departures 30 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
-`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` is pinned by a test. Raising a budget
+departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
+`BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
 
 ## Fixtures

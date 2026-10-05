@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.paparazzi)
 }
 
 android {
@@ -86,6 +87,8 @@ android {
         compose = true
         buildConfig = true
     }
+    // Screenshot tests (Paparazzi) render real answers recorded for core's own tests.
+    sourceSets["test"].resources.srcDir("../../core/src/test/resources")
     packaging {
         resources.excludes += setOf("META-INF/INDEX.LIST", "META-INF/DEPENDENCIES", "META-INF/*.kotlin_module")
     }

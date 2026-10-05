@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="crash_log">יומן קריסות</string>
+    <string name="crash_log_none">לא נרשמו קריסות.</string>
+    <plurals name="crash_log_count">
+        <item quantity="one">נרשמה קריסה אחת בטלפון הזה. היא נשארת כאן עד שתשתפו אותה.</item>
+        <item quantity="two">נרשמו \u2068%d\u2069 קריסות בטלפון הזה. הן נשארות כאן עד שתשתפו אותן.</item>
+        <item quantity="other">נרשמו \u2068%d\u2069 קריסות בטלפון הזה. הן נשארות כאן עד שתשתפו אותן.</item>
+    </plurals>
+    <string name="crash_log_share">שיתוף יומן הקריסות</string>
+    <string name="crash_log_clear">מחיקה</string>
+</resources>

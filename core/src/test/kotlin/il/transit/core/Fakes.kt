@@ -9,6 +9,7 @@ import il.transit.core.api.PlanRequest
 import il.transit.core.api.PlanResponse
 import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.TransitApi
+import il.transit.core.api.TripSegment
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import java.time.Instant
@@ -108,5 +109,19 @@ class FakeTransitApi : TransitApi {
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
         calls += "stopTimes"
         return StopTimesResponse()
+    }
+
+    var onTrip: (String) -> Itinerary = { error("unscripted trip: $it") }
+    var onMapTrips: (box: BBox, start: Instant, end: Instant, zoom: Double) -> List<TripSegment> =
+        { _, _, _, _ -> error("unscripted mapTrips") }
+
+    override suspend fun trip(tripId: String, language: String): Itinerary {
+        calls += "trip"
+        return onTrip(tripId)
+    }
+
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<TripSegment> {
+        calls += "mapTrips"
+        return onMapTrips(box, start, end, zoom)
     }
 }

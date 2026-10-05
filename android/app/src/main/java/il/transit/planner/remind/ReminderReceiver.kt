@@ -51,11 +51,23 @@ class ReminderReceiver : BroadcastReceiver() {
                             language = app.language,
                         ),
                     )
-                }.getOrNull() ?: return
+                }.getOrNull()
+                // The user may have cancelled or replaced it while the plan was loading.
+                if (app.store.reminder.first() != r) return
+                if (fresh == null) {
+                    // No signal: keep the reminder as it is and try at the next re-check.
+                    ReminderScheduler.schedule(app, r)
+                    return
+                }
                 when (val u = ReminderLogic.update(r, fresh.itineraries)) {
                     is ReminderUpdate.Updated -> {
-                        app.store.setReminder(u.reminder)
-                        ReminderScheduler.scheduleLeave(app, u.reminder)
+                        var next = u.reminder
+                        ReminderLogic.alertMinutes(next)?.let { moved ->
+                            Notifications.timeChanged(app, next, moved)
+                            next = next.copy(alertedLeaveAtEpoch = next.leaveAtEpoch)
+                        }
+                        app.store.setReminder(next)
+                        ReminderScheduler.schedule(app, next) // the leave alarm and the next re-check
                     }
                     ReminderUpdate.Gone -> {
                         Notifications.changed(app, r)

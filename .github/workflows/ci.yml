@@ -36,3 +36,79 @@ jobs:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+  screenshots:
+    name: screenshots (Paparazzi)
+    needs: core
+    runs-on: ubuntu-latest
+    # Only this job may write, and only to the `screenshots` branch (step below).
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      # Regression check: compare against the goldens committed in src/test/snapshots/images.
+      # A changed picture, or a shot with no golden, fails the job at the end; the steps in
+      # between still record and publish the new pictures, which is how a PR re-records
+      # (`python3 tools/pull_goldens.py`, see the android-build skill).
+      - name: verify goldens
+        id: verify
+        continue-on-error: true
+        run: ./gradlew -p android :app:verifyPaparazziDebug
+      # Fresh pictures for looking at (and for re-recording): light/dark, he/en, every shape.
+      - run: ./gradlew -p android :app:recordPaparazziDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: |
+            android/app/src/test/snapshots/
+            android/app/build/paparazzi/failures/
+          retention-days: 14
+      # Also onto the `screenshots` branch, one folder per source branch: artifact storage
+      # is unreachable from a cloud Claude session, raw.githubusercontent.com is not. The
+      # branch is always ONE parentless commit, so it never grows. Pushes only (a fork's
+      # pull request has a read-only token).
+      - name: publish to the screenshots branch
+        if: github.event_name == 'push'
+        env:
+          BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          dir="${BRANCH//\//_}"
+          wt="$RUNNER_TEMP/shots"
+          # Two branches finishing at once lose the lease race; the second try re-reads.
+          for attempt in 1 2; do
+            git worktree remove --force "$wt" 2>/dev/null || true
+            if git fetch -q --depth=1 origin screenshots 2>/dev/null; then
+              lease="screenshots:$(git rev-parse FETCH_HEAD)"
+              git worktree add -q --detach "$wt" FETCH_HEAD
+            else
+              lease="screenshots:"   # must not exist yet
+              git worktree add -q --detach "$wt"
+              git -C "$wt" rm -rfq --ignore-unmatch .
+            fi
+            rm -rf "${wt:?}/$dir" && mkdir -p "$wt/$dir"
+            cp android/app/src/test/snapshots/images/*.png "$wt/$dir/"
+            # What the verify step saw differ (golden | new | diff), when it failed.
+            if ls android/app/build/paparazzi/failures/delta-*.png >/dev/null 2>&1; then
+              mkdir -p "$wt/$dir/failures" && cp android/app/build/paparazzi/failures/delta-*.png "$wt/$dir/failures/"
+            fi
+            printf 'commit %s\nrun %s\n' "$GITHUB_SHA" "$RUN_URL" > "$wt/$dir/INFO.txt"
+            git -C "$wt" add -A
+            commit=$(git -C "$wt" commit-tree "$(git -C "$wt" write-tree)" -m "Screenshots ($BRANCH @ ${GITHUB_SHA::7})")
+            if git push -q --force-with-lease="$lease" origin "$commit:refs/heads/screenshots"; then exit 0; fi
+            sleep 10
+          done
+          exit 1
+      - name: fail if a golden changed
+        if: steps.verify.outcome == 'failure'
+        run: |
+          echo "::error::Screenshots differ from the committed goldens (or a shot has none)."
+          echo "If the change is intended, re-record in this PR: python3 tools/pull_goldens.py, then commit."
+          exit 1

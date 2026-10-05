@@ -13,27 +13,41 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.view.Gravity
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
+import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
-import il.transit.planner.ui.MapInsets
+import il.transit.planner.ui.screens.CalendarChip
+import il.transit.planner.ui.screens.LocalCalendarChip
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
+import il.transit.planner.ui.screens.CrashLogUi
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import il.transit.planner.ui.ViewModelActions
+import il.transit.planner.ui.Shortcuts
+import il.transit.planner.ui.TripDetailsViewModel
+import il.transit.planner.ui.screens.TripDetailsSheet
+import il.transit.core.present.vehicleGeoJson
+import android.content.Intent
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
@@ -42,6 +56,7 @@ import org.maplibre.android.location.LocationComponentActivationOptions
 import org.maplibre.android.location.modes.CameraMode
 import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 
@@ -52,6 +67,7 @@ import org.maplibre.android.maps.Style
  */
 class MainActivity : ComponentActivity() {
     private val vm: MainViewModel by viewModels { MainViewModel.factory(application as TransitApp) }
+    private val tripVm: TripDetailsViewModel by viewModels { TripDetailsViewModel.factory(application as TransitApp) }
 
     private lateinit var mapView: MapView
     private var map: MapLibreMap? = null
@@ -60,14 +76,22 @@ class MainActivity : ComponentActivity() {
     /** Non-null once the style has loaded; Compose effects push layer data through it. */
     private val controller = MutableStateFlow<MapController?>(null)
 
-    /** What the panels cover, measured by the screen; the camera fits routes into the rest. */
-    private val mapInsets = MutableStateFlow(MapInsets.NONE)
+    /** How much of the map the Compose panels and system bars cover, measured by MainScreen. */
+    private val mapPadding = MutableStateFlow(MapPadding())
 
     private lateinit var offline: OfflineMapManager
     private var styleUrl: String = MAP_STYLE
 
     /** What the camera was last fitted around, for [routeOnScreen]. */
     private var lastFit: List<LatLon> = emptyList()
+
+    /** A shortcut intent waiting for the saved places to load. */
+    private var pendingShortcut by mutableStateOf<Intent?>(null)
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
+    }
 
     /** What to do once the notification-permission prompt is answered. */
     private var afterNotificationPrompt: () -> Unit = {}
@@ -85,14 +109,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
-        mapView = MapView(this).apply { onCreate(savedInstanceState) }
+        // Before the first tiles arrive the map shows this colour, not a white flash at night.
+        val options = MapLibreMapOptions.createFromAttributes(this, null)
+            .foregroundLoadColor(getColor(R.color.window_background))
+        mapView = MapView(this, options).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
+        // Only a fresh launch: after a rotation, a theme change or a reopen from Recents the same
+        // intent comes back, and acting on it again would undo whatever the user did since.
+        val fresh = savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0
+        if (fresh && (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE))) pendingShortcut = intent
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
                 ?.let { LatLon(it.latitude, it.longitude) }
         }
+
+        lifecycleScope.launch { app.crashLog.refresh() }
 
         setContent {
             AppTheme {
@@ -100,22 +133,49 @@ class MainActivity : ComponentActivity() {
                 val stops by vm.stops.collectAsState()
                 val ctl by controller.collectAsState()
                 val offlineState by offline.state.collectAsState()
-                val insets by mapInsets.collectAsState()
+                val pad by mapPadding.collectAsState()
+                val crashes by app.crashLog.count.collectAsState()
+                val ui = remember { ViewModelActions(vm) }
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
+                LaunchedEffect(state.savedPlaces) { Shortcuts.update(this@MainActivity, state.savedPlaces) }
+                // An app-icon shortcut opened us: once the saved places are loaded, act on it.
+                LaunchedEffect(state.savedPlaces, pendingShortcut) {
+                    val i = pendingShortcut ?: return@LaunchedEffect
+                    when {
+                        i.getStringExtra(Shortcuts.EXTRA_SHORTCUT) == Shortcuts.LINES -> { vm.showFavorites(true); pendingShortcut = null }
+                        i.getStringExtra(Shortcuts.EXTRA_PLACE) != null && state.savedPlaces.isNotEmpty() -> {
+                            vm.goToPlaceNamed(i.getStringExtra(Shortcuts.EXTRA_PLACE)!!)
+                            pendingShortcut = null
+                        }
+                    }
+                }
                 val selected = state.selectedItinerary
                 val carPath = state.selectedCarPath
-                LaunchedEffect(ctl, selected, carPath, insets) {
+                LaunchedEffect(ctl, selected, carPath) {
                     val c = ctl ?: return@LaunchedEffect
-                    if (selected == null) {
-                        lastFit = emptyList()
-                        c.setRoute(MapData.EMPTY)
-                    } else {
-                        c.setRoute(MapData.itinerary(selected, carPath))
-                        lastFit = carPath + MapData.bounds(selected)
-                        fitRoute(c, insets)
-                    }
+                    c.setRoute(if (selected == null) MapData.EMPTY else MapData.itinerary(selected, carPath))
+                }
+                // Re-fit when the panels change size too (sheet folded, search card unfolded):
+                // the route always sits in the part of the map that is actually visible.
+                LaunchedEffect(ctl, selected, carPath, pad) {
+                    val c = ctl ?: return@LaunchedEffect
+                    if (selected == null) { lastFit = emptyList(); return@LaunchedEffect }
+                    lastFit = carPath + MapData.bounds(selected)
+                    val margin = (24 * resources.displayMetrics.density).toInt()
+                    c.fit(lastFit, pad, margin, mapView.width, mapView.height)
+                }
+                LaunchedEffect(ctl, pad) { if (ctl != null) placeMapChrome(pad) }
+
+                // Trip sheet (B1): the vehicle on the map; closes when its option is no longer shown.
+                val tripSheet by tripVm.sheet.collectAsState()
+                LaunchedEffect(ctl, tripSheet?.vehicle, tripSheet?.details?.color) {
+                    ctl?.setVehicle(vehicleGeoJson(tripSheet?.vehicle, tripSheet?.details?.color ?: "#000000"))
+                }
+                LaunchedEffect(selected) {
+                    val open = tripVm.sheet.value ?: return@LaunchedEffect
+                    if (selected?.legs?.contains(open.leg) != true) tripVm.close()
                 }
 
                 val actions = ScreenActions(
@@ -124,10 +184,17 @@ class MainActivity : ComponentActivity() {
                     deleteOffline = offline::delete,
                     remind = ::remind,
                     startRide = ::startRide,
-                    mapInsets = { mapInsets.value = it },
+                    onMapPadding = { mapPadding.value = it },
+                    crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
+                    openLeg = tripVm::open,
                 )
-                MainScreen(state, vm, actions) {
-                    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                val openSheet = tripSheet
+                val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
+                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape) }) else null
+                CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
+                    MainScreen(state, ui, actions, tripSheet = sheetUi) {
+                        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                    }
                 }
             }
         }
@@ -137,16 +204,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** The route inside the map the panels leave, with a margin; never squeezed to nothing. */
-    private fun fitRoute(c: MapController, insets: MapInsets) {
-        val margin = (32 * resources.displayMetrics.density).toInt()
-        val w = mapView.width
-        val h = mapView.height
-        var (l, t, r, b) = insets
-        // Not measured yet, or a screen with no room: fit the whole map instead.
-        if (w > 0 && w - l - r < w / 4) { l = 0; r = 0 }
-        if (h > 0 && h - t - b < h / 4) { t = 0; b = 0 }
-        c.fit(lastFit, l + margin, t + margin, r + margin, b + margin)
+    private val app get() = application as TransitApp
+
+    /** Plain text to whatever app the user picks (mail, WhatsApp…). Nothing leaves without that tap. */
+    private fun shareCrashLog() {
+        lifecycleScope.launch {
+            val text = app.crashLog.report() ?: return@launch
+            val send = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " – " + getString(R.string.crash_log))
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
+            startActivity(Intent.createChooser(send, getString(R.string.crash_log_share)))
+        }
     }
 
     private fun remind() = withNotifications { vm.remindSelected() }
@@ -180,10 +250,18 @@ class MainActivity : ComponentActivity() {
     private fun onMapReady(m: MapLibreMap) {
         map = m
         m.cameraPosition = CameraPosition.Builder().target(BEER_SHEVA).zoom(12.0).build()
+        m.uiSettings.apply {
+            // Our attribution chip names MapLibre's data sources; the logo only adds clutter.
+            // The ⓘ (OpenStreetMap credits, required) moves to the bottom end, away from the chip.
+            isLogoEnabled = false
+            attributionGravity = Gravity.BOTTOM or Gravity.END
+            setAttributionTintColor(getColor(R.color.brand))
+        }
+        placeMapChrome(mapPadding.value)
         styleUrl = (application as TransitApp).mapStyle(isNight())
         m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
             style = s
-            controller.value = MapController(m, s)
+            controller.value = MapController(m, s, isNight())
             enableLocationIfAllowed()
         }
         m.addOnMapLongClickListener { p ->
@@ -216,6 +294,17 @@ class MainActivity : ComponentActivity() {
         return RectF(pts.minOf { it.x }, pts.minOf { it.y }, pts.maxOf { it.x }, pts.maxOf { it.y })
     }
 
+    /**
+     * Keeps the compass and the ⓘ inside the visible map: below the search card, above the
+     * results sheet, beside a side panel, and clear of bars, notches and rounded corners.
+     */
+    private fun placeMapChrome(p: MapPadding) {
+        val m = map ?: return
+        val g = (12 * resources.displayMetrics.density).toInt()
+        m.uiSettings.setCompassMargins(p.left + g, p.top + g, p.right + g, p.bottom + g)
+        m.uiSettings.setAttributionMargins(p.left + g, p.top + g, p.right + g, p.bottom + g)
+    }
+
     private fun isNight(): Boolean =
         (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
@@ -237,8 +326,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true) }
-    override fun onPause() { vm.onVisible(false); mapView.onPause(); super.onPause() }
+    override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
+    override fun onPause() { vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }
@@ -251,9 +340,4 @@ class MainActivity : ComponentActivity() {
         const val MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
         const val MAP_STYLE_DARK = "https://tiles.openfreemap.org/styles/dark"
     }
-}
-
-@Composable
-private fun AppTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme(), content = content)
 }

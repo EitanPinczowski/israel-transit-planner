@@ -54,14 +54,32 @@ class ReminderTest {
     private val settings = UserSettings(maxTransfers = 1)
     private fun reminder() = Reminder.from(busTrip(), home.latLon, campus.latLon, settings)!!
 
-    @Test fun `a reminder leaves when the itinerary starts and re-checks 15 min earlier`() {
+    @Test fun `a reminder leaves when the itinerary starts and re-checks 30, 20, 12, 6 and 2 min before`() {
         val r = reminder()
         assertEquals(NOON.plusSeconds(120), r.leaveAt)
-        assertEquals(NOON.plusSeconds(120 - 900), r.recheckAt)
+        assertEquals(r.leaveAt, r.toldLeaveAt)
         assertEquals("5", r.line)
         assertEquals("12:07", r.boardingTime)
-        assertEquals(NOON.plusSeconds(60), ReminderLogic.recheckTime(r, NOON.plusSeconds(60))) // past: re-check now
+        val leave = r.leaveAt
+        assertEquals(leave.minusSeconds(30 * 60), ReminderLogic.nextRecheck(r, leave.minusSeconds(3600)))
+        assertEquals(leave.minusSeconds(6 * 60), ReminderLogic.nextRecheck(r, leave.minusSeconds(10 * 60))) // set 10 min ahead
+        assertEquals(leave.minusSeconds(2 * 60), ReminderLogic.nextRecheck(r, leave.minusSeconds(6 * 60))) // right after the -6 check
+        assertNull(ReminderLogic.nextRecheck(r, leave.minusSeconds(60)))
         assertNull(Reminder.from(itinerary(leg(StreetModes.WALK, home, campus, NOON, NOON.plusSeconds(900))), home.latLon, campus.latLon, settings))
+    }
+
+    @Test fun `alerts at 3 min or more, early or late, measured from what the user was told`() {
+        val r = reminder()
+        fun moved(min: Long, base: Reminder = r) = base.copy(leaveAtEpoch = base.leaveAtEpoch + min * 60)
+        assertNull(ReminderLogic.alertMinutes(moved(2)))
+        assertEquals(4L, ReminderLogic.alertMinutes(moved(4)))
+        assertEquals(-3L, ReminderLogic.alertMinutes(moved(-3))) // comes early: leave sooner
+        // Told about +4; it creeps to +6: only 2 more, no second alert. At +7 (3 more) - alert.
+        val told = moved(4).let { it.copy(alertedLeaveAtEpoch = it.leaveAtEpoch) }
+        assertNull(ReminderLogic.alertMinutes(moved(2, told)))
+        assertEquals(3L, ReminderLogic.alertMinutes(moved(3, told)))
+        // A reminder stored before this field existed measures from its own leave time.
+        assertNull(ReminderLogic.alertMinutes(r.copy(alertedLeaveAtEpoch = null)))
     }
 
     @Test fun `a delay moves the leave time, matched by trip id`() {

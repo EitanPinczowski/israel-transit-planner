@@ -6,6 +6,7 @@ import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitApi
 import il.transit.core.api.Itinerary
 import il.transit.core.remind.Reminder
+import il.transit.planner.data.CrashLogStore
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
@@ -24,11 +25,22 @@ import java.util.Locale
  * blank map: UI tests, monkey runs and Test Lab crawlers then never reach Transitous.
  */
 open class TransitApp : Application() {
+    /** Local crash log (Settings → Share crash log). Installed first, so it sees every crash. */
+    val crashLog: CrashLogStore by lazy { CrashLogStore(File(filesDir, "crash_log.txt"), BuildConfig.VERSION_NAME) }
+
+    override fun onCreate() {
+        super.onCreate()
+        crashLog.install()
+    }
+
     /** "Now" for searches and labels. */
     open val clock: Clock = Clock.systemUTC()
     open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
+    val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {
+        il.transit.planner.data.DepartureCacheStore(File(filesDir, "departures_cache.json"))
+    }
     val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
@@ -39,7 +51,8 @@ open class TransitApp : Application() {
 
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active
-        override fun start(itinerary: Itinerary) = RideService.start(this@TransitApp, itinerary)
+        override val progress: StateFlow<il.transit.core.ride.RideProgress?> = RideService.progress
+        override fun start(itinerary: Itinerary, speak: Boolean) = RideService.start(this@TransitApp, itinerary, speak)
         override fun stop() = RideService.stop(this@TransitApp)
     }
 
@@ -65,6 +78,10 @@ interface Reminders {
 /** Start/stop the "get off at the next stop" service, without the ViewModel holding a Context. */
 interface Rides {
     val active: StateFlow<Boolean>
-    fun start(itinerary: Itinerary)
+
+    /** Live progress of the ride ("3 stops left · arrive 08:47"); null between fixes or when idle. */
+    val progress: StateFlow<il.transit.core.ride.RideProgress?>
+    /** [speak]: also say the get-off alert out loud. */
+    fun start(itinerary: Itinerary, speak: Boolean)
     fun stop()
 }

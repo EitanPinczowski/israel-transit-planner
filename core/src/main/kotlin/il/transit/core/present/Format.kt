@@ -37,31 +37,38 @@ fun defaultColor(kind: LegKind): String = when (kind) {
 }
 
 /** MOTIS route colours come as "RRGGBB" without '#'; anything malformed falls back. */
-fun legColor(leg: Leg): String {
-    val c = leg.routeColor?.trim()?.removePrefix("#")
+fun legColor(leg: Leg): String = routeColorOr(leg.routeColor, legKind(leg.mode))
+
+private fun routeColorOr(raw: String?, kind: LegKind): String {
+    val c = raw?.trim()?.removePrefix("#")
     return if (c != null && c.length == 6 && c.all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) "#${c.uppercase()}"
-    else defaultColor(legKind(leg.mode))
+    else defaultColor(kind)
 }
 
-/** WCAG 2 relative luminance of "#RRGGBB". */
-fun luminance(hex: String): Double {
-    val h = hex.removePrefix("#")
-    fun channel(i: Int): Double {
-        val c = h.substring(i, i + 2).toInt(16) / 255.0
-        return if (c <= 0.03928) c / 12.92 else Math.pow((c + 0.055) / 1.055, 2.4)
+/**
+ * Text colour for a label drawn on [background] ("#RRGGBB"): white while it reaches the
+ * WCAG 3:1 minimum for UI labels (the Material convention on mid blues and greens),
+ * otherwise whichever of black/white contrasts more. Route colours come from the operator
+ * and can be anything (yellow light rail, white night lines).
+ */
+fun onColor(background: String): String {
+    val c = background.trim().removePrefix("#")
+    if (c.length != 6) return WHITE
+    val rgb = c.toLongOrNull(16) ?: return WHITE
+    fun channel(shift: Int): Double {
+        val v = ((rgb shr shift) and 0xFF) / 255.0
+        return if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
     }
-    return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4)
+    val l = 0.2126 * channel(16) + 0.7152 * channel(8) + 0.0722 * channel(0)
+    val onWhite = 1.05 / (l + 0.05)
+    val onBlack = (l + 0.05) / 0.05
+    return if (onWhite >= MIN_CONTRAST || onWhite >= onBlack) WHITE else BLACK
 }
 
-/** WCAG 2 contrast ratio between two "#RRGGBB" colours: 1.0 (same) to 21.0 (black on white). */
-fun contrastRatio(a: String, b: String): Double {
-    val (hi, lo) = listOf(luminance(a), luminance(b)).sortedDescending()
-    return (hi + 0.05) / (lo + 0.05)
-}
+private const val MIN_CONTRAST = 3.0
 
-/** Chip label colour that reads on [bg]: white or black, whichever contrasts more. */
-fun chipTextColor(bg: String): String =
-    if (contrastRatio(bg, "#FFFFFF") >= contrastRatio(bg, "#000000")) "#FFFFFF" else "#000000"
+private const val WHITE = "#FFFFFF"
+private const val BLACK = "#000000"
 
 data class LegChip(
     val kind: LegKind,
@@ -72,6 +79,10 @@ data class LegChip(
     val color: String,
     /** Minutes late (negative = early) from real-time data; null without it. */
     val delayMin: Int? = null,
+    /** Index of the leg in the itinerary (chips skip short walks), to open its trip sheet. */
+    val legIndex: Int = -1,
+    /** The leg carries a service alert in effect at its departure: ⚠ on the chip. */
+    val alert: Boolean = false,
 )
 
 data class ItinerarySummary(
@@ -148,10 +159,10 @@ fun summarize(
     fareProfile: FareProfile = FareProfile.REGULAR,
     searchedAt: Instant? = null,
 ): ItinerarySummary {
-    val chips = it.legs
+    val chips = it.legs.withIndex()
         // Transfers inside a station show up as walks of a few seconds; they are noise.
-        .filter { leg -> leg.isTransit || leg.duration >= 60 }
-        .map { leg ->
+        .filter { (_, leg) -> leg.isTransit || leg.duration >= 60 }
+        .map { (i, leg) ->
             LegChip(
                 kind = legKind(leg.mode),
                 label = if (leg.isTransit) lineLabel(leg) else null,
@@ -159,6 +170,8 @@ fun summarize(
                 realTime = leg.realTime,
                 color = legColor(leg),
                 delayMin = if (leg.isTransit) legDelayMin(leg) else null,
+                legIndex = i,
+                alert = leg.isTransit && legAlerts(leg, leg.start).isNotEmpty(),
             )
         }
     val board = it.firstTransitLeg?.let { l ->
@@ -201,6 +214,12 @@ data class DepartureRow(
     val delayMin: Int?,
     val cancelled: Boolean,
     val instant: Instant?,
+    /** Service alerts on this departure or its stop, in effect when it leaves. Usually none. */
+    val alerts: List<AlertText> = emptyList(),
+    /** To open the trip sheet from the board; null when the answer had none. */
+    val tripId: String? = null,
+    /** The line's colour ("#RRGGBB"), the kind's default when the operator sends none. */
+    val color: String = defaultColor(kind),
 )
 
 fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
@@ -215,6 +234,9 @@ fun departureRow(st: il.transit.core.api.StopTime): DepartureRow {
         delayMin = if (st.realTime) delayMin(actual, scheduled) else null,
         cancelled = st.cancelled || st.tripCancelled,
         instant = at,
+        alerts = alertTexts(st.alerts + st.place.alerts, at ?: Instant.EPOCH),
+        tripId = st.tripId,
+        color = routeColorOr(st.routeColor, legKind(st.mode)),
     )
 }
 
@@ -309,3 +331,55 @@ fun pickUpRow(
         summary = summarize(p.itinerary, fareProfile),
     )
 }
+
+/**
+ * True when a short one-word search (2–4 characters) got answers but none of them contains
+ * what was typed. Transitous matches very short words loosely ("רגר" finds Hagar, not Rager
+ * Boulevard, which is not even in the top 30), so re-ranking cannot help; the UI suggests
+ * typing the full name instead.
+ */
+fun needsFullNameHint(query: String, names: List<String>): Boolean {
+    val q = normalizeForMatch(query.trim())
+    if (q.length !in 2..4 || q.any { it.isWhitespace() } || names.isEmpty()) return false
+    return names.none { normalizeForMatch(it).contains(q) }
+}
+
+/** Lower case without quote marks, so "צה\"ל", "צה״ל" and "צהל" compare equal. */
+private fun normalizeForMatch(s: String): String = s.lowercase().filterNot { it in "\"'״׳`" }
+
+/** What the trip list says about the evening's last trip. */
+data class LastRideNote(
+    /** HH:mm of the last trip. */
+    val lastTime: String,
+    /** The selected option is that last trip. */
+    val selectedIsLast: Boolean,
+    /** Service stops for hours after it (Shabbat, a holiday): when it resumes, if known. */
+    val longGap: Boolean,
+    val resumesDay: java.time.DayOfWeek?,
+    val resumesTime: String?,
+)
+
+/**
+ * The note for [lr], or null when there is nothing worth saying: the selected trip is not
+ * the last, the last is more than [SOON] away, and service does not stop for long after it.
+ * [always] skips that filter (the "last trip back" button, which the user asked for).
+ */
+fun lastRideNote(lr: il.transit.core.plan.LastRide, selected: Itinerary?, always: Boolean = false): LastRideNote? {
+    val last = lr.last ?: return null
+    if (lr.runsAllNight) return null
+    val sel = selected?.start
+    val selectedIsLast = sel != null && Duration.between(sel, last.start).abs() < Duration.ofMinutes(1)
+    val soon = sel != null && !sel.isAfter(last.start) && Duration.between(sel, last.start) <= SOON
+    if (!always && !selectedIsLast && !soon && !lr.longGap) return null
+    val next = lr.next?.takeIf { lr.longGap }
+    val nextDay = next?.start?.atZone(ISRAEL)?.toLocalDate()
+    return LastRideNote(
+        lastTime = hhmm(last.start),
+        selectedIsLast = selectedIsLast,
+        longGap = lr.longGap,
+        resumesDay = nextDay?.takeIf { it != last.start.atZone(ISRAEL).toLocalDate() }?.dayOfWeek,
+        resumesTime = next?.let { hhmm(it.start) },
+    )
+}
+
+private val SOON: Duration = Duration.ofHours(3)

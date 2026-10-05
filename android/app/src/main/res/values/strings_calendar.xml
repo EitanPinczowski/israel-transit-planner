@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- B3: "From my calendar" → arrive by. -->
+<resources>
+    <string name="calendar_chip">From my calendar</string>
+    <string name="calendar_finding">Finding the place…</string>
+    <string name="calendar_rationale_title">Plan from your calendar?</string>
+    <string name="calendar_rationale">To list your events in the next 24 hours that have a place, the app reads your calendar on this phone. When you pick one, only its location text is sent to Transitous\'s place search, the same as typing it. Titles and everything else stay on the phone.</string>
+    <string name="calendar_allow">Continue</string>
+    <string name="calendar_not_now">Not now</string>
+    <string name="calendar_refused">No calendar access. You can still type the place and set “Arrive by” yourself.</string>
+    <string name="calendar_ok">OK</string>
+    <string name="calendar_list_title">Arrive on time for…</string>
+    <string name="calendar_empty">No events with a place in the next 24 hours.</string>
+    <string name="calendar_no_title">(no title)</string>
+    <string name="calendar_tomorrow_at">tomorrow %1$s</string>
+    <string name="calendar_event_row">\u2068%1$s\u2069 · \u2068%2$s\u2069 · \u2068%3$s\u2069</string>
+    <string name="calendar_buffer">Calendar events: arrive early by</string>
+    <string name="calendar_arrive_by">Arrive by %1$s at</string>
+    <string name="calendar_leave_now">Too late for the buffer. Leave now for</string>
+    <string name="calendar_matched">%1$s\n(from: %2$s)</string>
+    <string name="calendar_approximate">Approximate: the search did not find this exact address. Check it on the map, or tap Change.</string>
+    <string name="calendar_plan">Plan</string>
+    <string name="calendar_change">Change</string>
+</resources>

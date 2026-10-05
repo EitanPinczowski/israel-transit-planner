@@ -33,20 +33,27 @@ data class Reminder(
     /** When to start walking. Moves when the re-check finds a delay. */
     val leaveAtEpoch: Long,
     val boardingDelayMin: Int? = null,
+    /** The leave time the user was last told (set, or notified of); alerts measure from it. */
+    val alertedLeaveAtEpoch: Long? = null,
 ) {
     val from: LatLon get() = LatLon(fromLat, fromLon)
     val to: LatLon get() = LatLon(toLat, toLon)
     val leaveAt: Instant get() = Instant.ofEpochSecond(leaveAtEpoch)
     val scheduledBoarding: Instant get() = Instant.ofEpochSecond(scheduledBoardingEpoch)
 
-    /** Re-check real-time data this long before leaving. */
-    val recheckAt: Instant get() = leaveAt.minus(RECHECK_BEFORE)
+    /** The leave time the user knows about; older stored reminders fall back to [leaveAt]. */
+    val toldLeaveAt: Instant get() = Instant.ofEpochSecond(alertedLeaveAtEpoch ?: leaveAtEpoch)
 
     /** "line 5 at 12:14 from X" pieces for the notification. */
     val boardingTime: String get() = hhmm(scheduledBoarding.plusSeconds(60L * (boardingDelayMin ?: 0)))
 
     companion object {
-        val RECHECK_BEFORE: Duration = Duration.ofMinutes(15)
+        /** Real-time re-checks this long before leaving: often enough to catch a delay while
+         *  the user can still act, at most 5 requests per reminder. */
+        val RECHECKS: List<Duration> = listOf(30L, 20L, 12L, 6L, 2L).map(Duration::ofMinutes)
+
+        /** Notify when the leave time moves by at least this much, earlier or later. */
+        const val ALERT_MIN = 3L
 
         /** Null for an itinerary with no transit leg (walking only: nothing to remind about). */
         fun from(itinerary: Itinerary, from: LatLon, to: LatLon, settings: UserSettings): Reminder? {
@@ -63,7 +70,17 @@ data class Reminder(
                 scheduledBoardingEpoch = scheduled(board).epochSecond,
                 leaveAtEpoch = itinerary.start.epochSecond,
                 boardingDelayMin = legDelayMin(board),
+                alertedLeaveAtEpoch = itinerary.start.epochSecond,
             )
+        }
+
+        /**
+         * For one leg of an errand chain: the re-check must plan that leg (stop to stop), not
+         * the whole trip, or it never finds the same bus and reports it gone.
+         */
+        fun forOwnEndpoints(itinerary: Itinerary, settings: UserSettings): Reminder? {
+            val first = itinerary.legs.firstOrNull() ?: return null
+            return from(itinerary, first.from.latLon, itinerary.legs.last().to.latLon, settings)
         }
 
         private fun scheduled(l: Leg): Instant = l.scheduledStartTime?.let(::parseTime) ?: l.start
@@ -91,8 +108,19 @@ object ReminderLogic {
         return ReminderUpdate.Updated(updated, Duration.ofSeconds(updated.leaveAtEpoch - r.leaveAtEpoch).toMinutes())
     }
 
-    /** When the re-check should run: [Reminder.recheckAt], or right away if that has passed. */
-    fun recheckTime(r: Reminder, now: Instant): Instant = maxOf(r.recheckAt, now)
+    /** The next re-check: the first of leave − [Reminder.RECHECKS] still ahead of [now]; null when none is left. */
+    fun nextRecheck(r: Reminder, now: Instant): Instant? =
+        Reminder.RECHECKS.map { r.leaveAt.minus(it) }.firstOrNull { it.isAfter(now) }
+
+    /**
+     * Minutes the leave time moved since the user was last told (positive = later, the bus is
+     * late; negative = earlier, it comes early), or null below [Reminder.ALERT_MIN]. Measured
+     * from the last told time, so a delay that creeps up 2 min at a time still alerts once at 4.
+     */
+    fun alertMinutes(updated: Reminder): Long? {
+        val moved = Duration.between(updated.toldLeaveAt, updated.leaveAt).toMinutes()
+        return moved.takeIf { kotlin.math.abs(it) >= Reminder.ALERT_MIN }
+    }
 
     private fun Itinerary.boardsSameVehicle(r: Reminder): Boolean {
         val l = firstTransitLeg ?: return false

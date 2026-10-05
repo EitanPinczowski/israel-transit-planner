@@ -10,8 +10,65 @@ import kotlinx.serialization.json.Json
 
 /** A named point the user saved: home, work, university... */
 @Serializable
-data class SavedPlace(val name: String, val lat: Double, val lon: Double) {
+data class SavedPlace(
+    val name: String,
+    val lat: Double,
+    val lon: Double,
+    /** When the user usually heads here: the app then opens on "to <name>". */
+    val routine: PlaceRoutine? = null,
+) {
     val latLon: LatLon get() = LatLon(lat, lon)
+}
+
+/**
+ * "University: Sun–Thu 07:00–10:00". [days] are ISO day numbers (1 = Monday … 7 = Sunday);
+ * minutes are Israel local time. [toMin] < [fromMin] is an overnight window (22:00–02:00),
+ * which belongs to the day it starts on.
+ */
+@Serializable
+data class PlaceRoutine(val days: List<Int>, val fromMin: Int, val toMin: Int) {
+    fun contains(t: java.time.ZonedDateTime): Boolean {
+        val m = t.hour * 60 + t.minute
+        return if (fromMin <= toMin) {
+            t.dayOfWeek.value in days && m >= fromMin && m < toMin
+        } else {
+            (t.dayOfWeek.value in days && m >= fromMin) || (t.minusDays(1).dayOfWeek.value in days && m < toMin)
+        }
+    }
+
+    val lengthMin: Int get() = if (fromMin <= toMin) toMin - fromMin else 24 * 60 - fromMin + toMin
+
+    companion object {
+        /** The Israeli week, for the day chips: Sunday first. */
+        val WEEK: List<Int> = listOf(7, 1, 2, 3, 4, 5, 6)
+    }
+}
+
+object Routines {
+    /**
+     * Saved places for the app-icon shortcuts: the routine on right now first, then other
+     * places with a routine, then the rest; at most [max].
+     */
+    fun shortcutOrder(places: List<SavedPlace>, now: java.time.Instant, max: Int = 3): List<SavedPlace> {
+        val active = active(places, now)
+        return places.sortedWith(compareBy<SavedPlace>({ it != active }, { it.routine == null })).take(max)
+    }
+
+    /** The saved place whose routine covers [now] (Israel time); the narrowest window wins. */
+    fun active(places: List<SavedPlace>, now: java.time.Instant): SavedPlace? {
+        val t = now.atZone(il.transit.core.features.ISRAEL)
+        return places.filter { it.routine?.contains(t) == true }.minByOrNull { it.routine!!.lengthMin }
+    }
+}
+
+/**
+ * A pinned line at a stop ("3 to Ramot from Rager/Oren"), to see its next departures in one
+ * tap. Matched against departure rows by line and headsign, so the other direction of the
+ * same line at the same stop is not mixed in.
+ */
+@Serializable
+data class FavoriteLine(val stopId: String, val stopName: String, val line: String, val headsign: String) {
+    fun matches(row: il.transit.core.present.DepartureRow): Boolean = row.line == line && row.headsign == headsign
 }
 
 /** A one-tap trip. [from] null means "from wherever I am when I tap it". */
@@ -41,12 +98,21 @@ data class UserSettings(
     val peakFactor: Double = 1.3,
     /** Which fare the estimate shows (regular, 50% discount, free). */
     val fareProfile: FareProfile = FareProfile.REGULAR,
+    /** Wheelchair / stroller: step-free walking parts. */
+    val accessible: Boolean = false,
+    /** Say "next stop: X, get off" out loud during a tracked ride, besides buzzing. */
+    val speakAlerts: Boolean = true,
+    /** How the Trip tab orders its options. */
+    val tripSort: il.transit.core.plan.TripSort = il.transit.core.plan.TripSort.FASTEST,
+    /** "From my calendar": arrive this many minutes before the event starts. */
+    val calendarBufferMin: Int = il.transit.core.plan.CalendarSuggest.DEFAULT_BUFFER_MIN,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,
         maxTransfers = maxTransfers,
         pedestrianSpeedMps = walkSpeed.metersPerSecond,
         maxWalkSec = maxWalkMin * 60,
+        wheelchair = accessible,
     )
 
     fun traffic() = TrafficProfile(peakFactor = peakFactor)
@@ -77,6 +143,10 @@ object UserJson {
         r?.let { json.encodeToString(il.transit.core.remind.Reminder.serializer(), it) } ?: ""
     fun decodeReminder(s: String?): il.transit.core.remind.Reminder? =
         s?.takeIf { it.isNotBlank() }?.let { runCatching { json.decodeFromString(il.transit.core.remind.Reminder.serializer(), it) }.getOrNull() }
+
+    fun encodeFavorites(f: List<FavoriteLine>): String = json.encodeToString(ListSerializer(FavoriteLine.serializer()), f)
+    fun decodeFavorites(s: String?): List<FavoriteLine> =
+        s?.let { runCatching { json.decodeFromString(ListSerializer(FavoriteLine.serializer()), it) }.getOrNull() }.orEmpty()
 
     fun encodeTrips(t: List<SavedTrip>): String = json.encodeToString(ListSerializer(SavedTrip.serializer()), t)
     fun decodeTrips(s: String?): List<SavedTrip> =

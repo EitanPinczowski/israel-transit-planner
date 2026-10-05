@@ -1,0 +1,251 @@
+{
+ "duration": 5400,
+ "startTime": "2026-10-03T20:30:00Z",
+ "endTime": "2026-10-03T22:00:00Z",
+ "transfers": 0,
+ "id": "CpUBCgM0NzASLTIwMjYxMDAzXzIzOjMwX2lsLUlzcmFlbC1NT1RfNTg1MTcyNDMxXzAzMTAyNhoTaWwtSXNyYWVsLU1PVF80Nzg5OSE9X7NcNj4/QCkhtYmT+2VBQDITaWwtSXNyYWVsLU1PVF8xMTczNDm93CdHAco/QEGO6nQg65lBQEjIy4XWBlDg9YXWBloDQlVTYAE=",
+ "legs": [
+  {
+   "mode": "BUS",
+   "from": {
+    "name": "ת.מרכזית באר שבע/רציפים בינעירוני",
+    "stopId": "il-Israel-MOT_47899",
+    "parentId": "il-Israel-MOT_26652",
+    "importance": 3.6762794479727745e-05,
+    "lat": 31.243017,
+    "lon": 34.79674000000001,
+    "tz": "Asia/Jerusalem",
+    "departure": "2026-10-03T20:30:00Z",
+    "scheduledDeparture": "2026-10-03T20:30:00Z",
+    "stopCode": "13907",
+    "description": "רחוב:   עיר: באר שבע רציף: 10  קומה:",
+    "vertexType": "TRANSIT",
+    "pickupType": "NORMAL",
+    "dropoffType": "NOT_ALLOWED",
+    "cancelled": false,
+    "modes": [
+     "BUS"
+    ]
+   },
+   "to": {
+    "name": "ת. מרכזית ירושלים/הורדה",
+    "stopId": "il-Israel-MOT_11734",
+    "importance": 0.00013522566587198526,
+    "lat": 31.789081999999997,
+    "lon": 35.202488,
+    "tz": "Asia/Jerusalem",
+    "arrival": "2026-10-03T22:00:00Z",
+    "scheduledArrival": "2026-10-03T22:00:00Z",
+    "stopCode": "6109",
+    "description": "רחוב:   עיר: ירושלים רציף:  קומה:",
+    "vertexType": "TRANSIT",
+    "pickupType": "NOT_ALLOWED",
+    "dropoffType": "NORMAL",
+    "cancelled": false,
+    "modes": [
+     "BUS"
+    ]
+   },
+   "duration": 5400,
+   "startTime": "2026-10-03T20:30:00Z",
+   "endTime": "2026-10-03T22:00:00Z",
+   "scheduledStartTime": "2026-10-03T20:30:00Z",
+   "scheduledEndTime": "2026-10-03T22:00:00Z",
+   "realTime": false,
+   "scheduled": true,
+   "interlineWithPreviousLeg": false,
+   "headsign": "ירושלים_תחנה מרכזית",
+   "tripFrom": {
+    "name": "ת.מרכזית באר שבע/רציפים בינעירוני",
+    "stopId": "il-Israel-MOT_47899",
+    "parentId": "il-Israel-MOT_26652",
+    "importance": 3.6762794479727745e-05,
+    "lat": 31.243017,
+    "lon": 34.79674000000001,
+    "tz": "Asia/Jerusalem",
+    "departure": "2026-10-03T20:30:00Z",
+    "scheduledDeparture": "2026-10-03T20:30:00Z",
+    "stopCode": "13907",
+    "description": "רחוב:   עיר: באר שבע רציף: 10  קומה:",
+    "vertexType": "TRANSIT",
+    "pickupType": "NORMAL",
+    "dropoffType": "NOT_ALLOWED",
+    "cancelled": false,
+    "modes": [
+     "BUS"
+    ]
+   },
+   "tripTo": {
+    "name": "ת. מרכזית ירושלים/הורדה",
+    "stopId": "il-Israel-MOT_11734",
+    "importance": 0.00013522566587198526,
+    "lat": 31.789081999999997,
+    "lon": 35.202488,
+    "tz": "Asia/Jerusalem",
+    "arrival": "2026-10-03T22:00:00Z",
+    "scheduledArrival": "2026-10-03T22:00:00Z",
+    "stopCode": "6109",
+    "description": "רחוב:   עיר: ירושלים רציף:  קומה:",
+    "vertexType": "TRANSIT",
+    "pickupType": "NOT_ALLOWED",
+    "dropoffType": "NORMAL",
+    "cancelled": false,
+    "modes": [
+     "BUS"
+    ]
+   },
+   "routeId": "il-Israel-MOT_7005",
+   "routeUrl": "",
+   "directionId": "0",
+   "routeType": 3,
+   "agencyName": "אגד",
+   "agencyUrl": "http://www.egged.co.il",
+   "agencyFareUrl": "",
+   "agencyId": "3",
+   "tripId": "20261003_23:30_il-Israel-MOT_585172431_031026",
+   "routeShortName": "470",
+   "routeLongName": "ת.מרכזית באר שבע/רציפים בינעירוני-באר שבע<->ת. מרכזית ירושלים/הורדה-ירושלים-1#",
+   "tripShortName": "",
+   "displayName": "470",
+   "cancelled": false,
+   "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:9948700:9948707",
+   "intermediateStops": [
+    {
+     "name": "מרכז רפואי סורוקה/אוניברסיטת בן גוריון",
+     "stopId": "il-Israel-MOT_27623",
+     "importance": 5.3272120567271486e-05,
+     "lat": 31.25922,
+     "lon": 34.79836300000001,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T20:37:00Z",
+     "departure": "2026-10-03T20:37:00Z",
+     "scheduledArrival": "2026-10-03T20:37:00Z",
+     "scheduledDeparture": "2026-10-03T20:37:00Z",
+     "stopCode": "15333",
+     "description": "רחוב: יצחק רגר 84 עיר: באר שבע רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NORMAL",
+     "dropoffType": "NOT_ALLOWED",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    },
+    {
+     "name": "מרכז אורן/יצחק רגר",
+     "stopId": "il-Israel-MOT_27649",
+     "importance": 2.6847048502531834e-05,
+     "lat": 31.272045,
+     "lon": 34.79807000000001,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T20:42:00Z",
+     "departure": "2026-10-03T20:42:00Z",
+     "scheduledArrival": "2026-10-03T20:42:00Z",
+     "scheduledDeparture": "2026-10-03T20:42:00Z",
+     "stopCode": "15359",
+     "description": "רחוב: יצחק רגר עיר: באר שבע רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NORMAL",
+     "dropoffType": "NOT_ALLOWED",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    },
+    {
+     "name": "מחנה נחל שורק",
+     "stopId": "il-Israel-MOT_22319",
+     "importance": 5.529210284294095e-06,
+     "lat": 31.809128,
+     "lon": 34.87054,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T21:27:00Z",
+     "departure": "2026-10-03T21:27:00Z",
+     "scheduledArrival": "2026-10-03T21:27:00Z",
+     "scheduledDeparture": "2026-10-03T21:27:00Z",
+     "stopCode": "34290",
+     "description": "רחוב: 3 עיר: נחל שורק רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NOT_ALLOWED",
+     "dropoffType": "NORMAL",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    },
+    {
+     "name": "צומת חטיבה שבע/לטרון",
+     "stopId": "il-Israel-MOT_8439",
+     "importance": 1.0302921509719454e-05,
+     "lat": 31.835052,
+     "lon": 34.978367,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T21:36:00Z",
+     "departure": "2026-10-03T21:36:00Z",
+     "scheduledArrival": "2026-10-03T21:36:00Z",
+     "scheduledDeparture": "2026-10-03T21:36:00Z",
+     "stopCode": "61192",
+     "description": "רחוב: 3 עיר: מטה בנימין רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NOT_ALLOWED",
+     "dropoffType": "NORMAL",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    },
+    {
+     "name": "מחלף חמד",
+     "stopId": "il-Israel-MOT_41132",
+     "importance": 9.173297439701855e-05,
+     "lat": 31.80033,
+     "lon": 35.12624,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T21:47:00Z",
+     "departure": "2026-10-03T21:47:00Z",
+     "scheduledArrival": "2026-10-03T21:47:00Z",
+     "scheduledDeparture": "2026-10-03T21:47:00Z",
+     "stopCode": "640",
+     "description": "רחוב: יציאה לכביש 1 עיר: מטה יהודה רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NOT_ALLOWED",
+     "dropoffType": "NORMAL",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    },
+    {
+     "name": "מחלף הראל/מבשרת ציון",
+     "stopId": "il-Israel-MOT_11234",
+     "importance": 1.8723620087257586e-05,
+     "lat": 31.798619999999996,
+     "lon": 35.145720000000004,
+     "tz": "Asia/Jerusalem",
+     "arrival": "2026-10-03T21:49:00Z",
+     "departure": "2026-10-03T21:49:00Z",
+     "scheduledArrival": "2026-10-03T21:49:00Z",
+     "scheduledDeparture": "2026-10-03T21:49:00Z",
+     "stopCode": "5602",
+     "description": "רחוב: יציאה לכביש 1 עיר: מבשרת ציון רציף:  קומה:",
+     "vertexType": "TRANSIT",
+     "pickupType": "NOT_ALLOWED",
+     "dropoffType": "NORMAL",
+     "cancelled": false,
+     "modes": [
+      "BUS"
+     ]
+    }
+   ],
+   "legGeometry": {
+    "points": "qo|qz@gkyjaAzAcB?~[pA?nN?nYo@Fod@zZsRfBcBhBoCh@kBVkAPgBNYz@sAbAq@h@_@vA[nBK`@?lClAhAz@dAxC`BbKnAdJzAvIR`BXrAgJrGcGzFqIvHuJtJ_KvNyE`HqTb[{ClE}E~H_IhMcDbFiFhHc[|b@iOzGoDVoC[qJiDcFaNmIsWuGiPo@kAoLmVwAuCkGaMiE{FyFgIsScVcMcL}TwNqMqHgOuI_SsLcPeJcC}AmNuHaK}EoTiH{SmEmOgCkJ}@qLe@gJo@kcAwGw]iGyEsAiiBeZaFg@_Y_CmYsAw[ToXrAs`@|Eo`@~EsFf@kVbCkLjAyp@nJi`@~CuMr@mJNqWl@aHNsDE_}BhFyYu@{D?{O?{k@RaRJknAZkDH}THyPJit@Fiv@z@{SRumDvBmTLsnADwg@?{PrA_VjBuv@~LsItAyG`BwK`C}JxDuLfE{K~EoGfDwK`IiGtFgJrJqDzDePnPeEvCaMzIqO|KmJxHuJtI}M`M}SxRiKtJky@jv@{c@b`@_SfOeKtHcN|IsPzJmRxIyJlDcIjCyOrDkThDiS`BkhE~Xa|@zFwRvA{tAxIuLl@gL|@wEDwXbBaCNkqAvIo^vBoo@fEyHl@kKl@up@nEuZnBoJd@ecDnSkuBfNghCjPa^lBckBvL{z@rFwkCjPkn@~D{wBxMsk@tDesB~Mk[nB{PnAq[bBiF\\iRxA{iAjHwkCxPab@pCi{BfNqo@bEeaGv_@kFJoKfAsIjAarFv\\c^jBeg@Vms@gAmZiAcoA_N_m@_JcxAgXyoBy]yzCmh@_tBg^kxBe_@_v@oM}fBuZ{e@mIyvAwV_p@cLg^}Geb@_Iqh@{L{f@aMyzBqk@idBgc@_`Cam@_jCkp@}aBwa@ydBuc@uU}FsUsEed@_Hc[sDq{@wFqUOkHGat@l@}i@~Ca\\vCag@xHuyAjVqi@~IoARmkAnTiv@pMozBxa@}p@zKgGbAeZzEkVfEwb@nHgvA~Vk]|GkjAxRwHxAmmA`S}RfDcFz@{rBn_@qf@lIsuB~]ia@xGcBTkyAfYws@hMehBrZe_@vFca@fF_PvAsR`A{WhA{UHwPOkOe@od@{AoYgCq\\gEgxAcZui@kM{NsDgf@yH{OaCkWqCk]eAcZR_^bBwm@tMqa@bLmX`Hi{@bViYxF}OhDaMbB{StCePjAiO|@qGFmOV}OLmn@d@gi@ZqOn@iWjAud@nDye@tE}^tFiqAbQqs@`KioA|OgqAjQg|@fL_qBrXyjAtOgf@zFg[lEwj@`G_lAlQsw@jJqd@bFomE|n@m^rFqq@zQ_XxIyT~Ho[rNuWpMoHlE{XzPqRzMu\\xUyE|DaUrSwO`PcUjVcb@zi@kXh_@{dAbwAsc@dn@kbAzsAuPtUwDzEq_@xf@oJpLmNzOyOfPog@bd@aUfPgQpLm^hSgH|DoFdCkMbG{KnEsS`Ig[pJid@vLw]nFaK|A{]tEibBjNuqB~PmWzBuDBkiHjn@{nAnKkyCrXwfKfw@aW|BklA]{[sAyj@mEc^eDwa@kHa^{Jua@yMqeAed@wIcFm_DkdBgrAgt@soBogA{IqEcDaBmJmEiEsBkCkAi]mOef@wNaXuEuF{@sJmBcNoAy^aC}Uq@ur@q@cLOqiEyHwrFmIk_AqCst@kFsn@gHqrAiW_sAgc@oDeAmEyAuYqJ}TeH{C}@}JcDe]wKeq@eTivDmnAmsCe~@slAs_@st@yWqtBqp@ssAs`@}e@uJwe@sGe`@wCc]{@gk@?we@nCkVrCe_BbZsfAtS{l@lKwdAfPcqAnLesAxGiv@|@yn@_@qp@}DqJm@sr@sF_UoCyC_@s|@qLgGu@wo@mOai@mNwjAc`@g|@a^wr@ka@ou@mc@kjBksAceCyjBoLiIym@gc@i}@cj@mb@oWuWmOaO}Ii}Am~@gsAiv@igB{z@_|C}qAu_Byn@}yAsg@_cAwYc_AgXypB_i@mqCal@__UeiEajKsrBakAgTquCoi@gQcD{oAkUq^}FmxB}[gvAwQc~BoX_Z_Dsk@iHcKuAcl@oG{tD{b@akAsNy_Fyk@_s@iH_vBiW_j@oHsaAcRs^_I{l@aOoyAid@ih@cRaX{JmYgJeb@uO}{@k[un@{Pg|@uTuq@aPiaA_Pm^_Ges@sIaj@gDgh@gCqJc@ua@wB}Nc@{p@qBssDwIsIMqw@sAyO[sOa@eP]alEmJ{sF{Qgp@gCabAwDuhD}Ls\\_Bk`EuOgn@yBoxFwS}{AMkrATurAfDc_@xC{SxAuy@zH_sYnvDsi@hHopGdy@e`C~[k_BzTm_Hz|@_d@zFiwCn]cvKtwAyvAdRe}@bIkzAzGqjAhBypAe@wpA_GwaA{Jkk@yF{}AyU{`Bm`@yjA}]qjBwt@ozAak@ipFatBeiEs`Bm_Bgo@}pKocE{rCuhA_hBil@oy@wVq~@uUqy@mN_b@mGsGeA}GaAgSiCcIcAqb@wFcw@uHekAaGuZ}@edAyBgaDbC}iER_sA^{g@s@aHSkGKafAcBqn@}@auAeEmk@_CioB_JyeUemAqtB{KysIud@qpAyGkfFgYcxAeNaxA{O}wBi_@{kA}Y}qFkyAu|DohAimJkoCuz@_XcQeFqX}IynAw`@u_@gLqkAe_@iQaFaf@yN{jAiZcc@sIy{@wMmj@wFur@cGs`@_Bur@aBgMEwU?c\\Ze[r@{ZdAoSrAmF\\wk@|EgWvDwHdAud@fGmpAhSgLxAcj@~I}f@hHkbAzFeo@xGai@jF}^bFs]~CwXt@sR`@aP{@cVkCmSoEcX_JwTkH}KsD}QyFwNuCcJg@yF_@mSkAyVgAuRq@qLyB_D}@mE}B_FaEsg@se@kP}OsHgIqJoKiH{IsIkKkGqH_HuH}GsIwFgG{DmEgDoDaEsF{IeKs|@{cAs_@ab@oTwS}YiWi\\cVoqA_}@ce@w_@cD_D_NkNqH_JcFqHmFmJcKcQgJ_S}FoRkNwe@yM_f@s^_uAu[cqAg^qtAgc@a{Aoj@{gBiR_n@{Msf@kNop@kLmo@}I}s@yCs_@ic@elGkJewAaFk_AcBwu@_@kz@`@giAdCsvAzHogA~Fys@hJw{@zA}L~Hoi@tGwd@pC{VdEik@p@m_@Xg}DY{e@cA_^q@yQgBs[eGmn@}BkPgFwYcYauAeKuh@qIwm@cE_j@mDwu@aL{gCsDcdA{Bgr@Gyq@|B_}@hCmx@jIi~BfI{|BzA{}AW{o@wAit@wEchAgEcj@wCsZsCqWwFqh@iFwV{EgYqG_b@gGs\\iK_m@yOgbA{Jyu@_Eya@mEkj@wH{~AiEglAsFgvAoF_r@iEc_@iH_b@yJcc@cOof@iQgd@__Ag{BmM}Yc\\mn@cDiGcLeNaS_Swc@ga@ed@u^ac@c`@on@wr@kReU_e@ms@}s@yoAkm@enAu^uw@km@g{Acd@aqAuLu^gNme@{Wu_Ag\\gtAqK}c@yIuf@iDkRgQg~@sKow@i@uEe\\}zC_SaxC_HqcCqBuaB?m@Qun@Rwl@dFifCpRo`EfQwwCRmGrGoeBa@q`Aa@a]?eAgAsToDst@aPw|AuT{vA{_@gxAq_@ggAuR}c@gl@olAyaAetBa{@kkByv@eaBsj@urAcD_I}BsF_BwD_~@icC{nAqwD{Pmi@gTyp@cFyQsDoN_DqR_G}_@sEmSmFoOaHkQoDsKcDaMuB}Im@yCoFoSgF}OuHiWiQuc@uTu_@mYal@aB_IaDsMoBsIu@cGgAmJ}@wNk@wN[qMa@kM?cNl@_OnAcIvAkHtGqRtKiS`LeO`HqHxHqGbDiBdEkCxEoBxG{AdTkFfc@sL~oBw]tmD_v@be@gPr`@yQbp@ia@h\\e[hd@ik@hW_c@nXwm@dNs_@xP_t@nI{c@lHsz@bC_x@oCg_DwCkpE?qe@p@m_@jC}c@lEmd@rFse@vFk_@~Kks@tEuWpk@{oDrGm`@zRkdAbQau@bYqaA|[i`AzQyd@`LoZrLqWxWuh@fUsb@`Yod@fYid@jM{PvBmDtEkG|Ys^hb@ac@vImKta@_a@lJsIpqB{wA|f@ab@dR_S~PeRxT_XlMoPvQ_Z`p@qkA~R}^`Xkh@fh@cbAjQk[dRuYhMyQlLoNfGcHbVkWpa@kf@fk@wo@vn@kt@pRkVpR_YpMwSrK}ThLoX~G_StIyWzK_e@rFc[rGcd@lDob@jB_c@fAkm@hB{vAdCovAnAm_@bAoRlAaMnAwJnCiQhCqLrFkQtB{FvCaHti@ogArFeKxRg^|LqV~HiRfGyQzHmYxHsa@nCwR~AeZPmPWcRc@yPkB_XkFe_@eCiN{E_SoGoSaJqWyZsu@_Zyu@mK_YaKiZ}GgTcN}_@oSmi@sIoYcHsZ{Kcm@}Cc[u@gYj@oUbAwVvA{TdCsSfCyNdE}PjLaa@~JkUrO{[xYqm@lTce@d_@{|@vXqm@zIyP`HsNvKcVvHoUzp@gxBpGqVrC_NrK{d@dX_gAfLuf@fKmb@xJe_@|Lch@xMyi@|GmVfQyn@tGwYnFe^`BeU|@eUCyQi@aSeEcj@cB{QyAcKoBsQ{Fol@qB{SmBeW}@qR]eUSsZl@uZlC{t@t@mO~Cuu@d@cJfFs}AfAgd@rAec@^qa@Dac@iEevB{DizAMuDqDcdByBmn@{Ayk@iC{aAqEscBkIk~CyJggEa@}O}@iWaIuuCmAmn@s@oj@G{SCmFvAah@fA{TvAeUfFkd@fJej@rHw]dJuc@bk@efCb[_xAjYstA~Ksh@hE}UjDqV|BsP|BcVfAeZn@aUf@{SCsKVgc@cBwd@{Dwa@yIkj@qEsU}G{WiEmSsG}VoD{O_BeI{@mIa@cGE{GIcE\\sI`AkJnAmJbBeKd@wGBiD]oDi@yCq@uCa@mBGoAFcBZg@RSR_@NWH]La@La@D]F_@Fe@B]B]B{A]qBG_@O[K_@M[Sa@QUS]UWWUWWYMUOYM_@OYO[G]E]?w@G_AF[?_@DYF]NYN[LYNWTYNQTg@p@yL_SsHwLeDgEkEoGmEsGeFeJsC}FgDsIaCaHmBuHkBeHqBaKiBkMsAcLwFux@`@ePhBq[vBwXrEg^jGij@dEaZlGsd@pEmQ~I{c@fF_]nKep@`Ss~@vN}q@nM_q@bBkT?sPsDoYUcBwDg[a@gEc@{Ec@_KWmJb@cQtA_SjEw^tEac@nCcVdBcZt@iWF}Ze@}b@aAeZWa\\dAuWhCaUl@eFhB_IbDoI~IwRpDyG`FaI|D{FxEcF`FwClOsKdLoIzXkVhFmEvJaK|JkNfIwSbEgQvCwPv@oMl@oO?{KcAwP}@wPiBmZkCum@_E}s@iEgr@}Dyl@eAs`@e@e_@t@om@tBik@zDce@dGyf@vDgY|DsUtM}i@`HaXjD_N~Jc[jL{[tJyUxGwQfIiUbFeNzFgTrFoUfEiQbHu^hEeZxBuPfBkOfA{TReHZuJRkNEkICkFi@mOyBa\\aC}TgBmN_DsSoH{YyG}U_E}L}BkHeGsNyGcOkI_PgKuRcOiWgDoGgJ{OgHaKoNcQeHuJwIeKcLeOmQwR{lAqkA_s@en@sRkRsLoMcKmOiJgOwKkUsImUoDqMyDmOkBqLmBqO}@_Nc@iKg@oNBePp@_c@`@wUXwQf@sg@@gOw@cb@gBeUkC}QcD{T_BkKwFoXwCyQoDcQwAwHcAiH_AgHm@_I_@wGEgGD_GZgJz@sIjAmIhAaGxAwFtBcGzBaFfD}FhD{EbD}D~D}DdE_DbTgNlr@gd@~L_I`K_HlBcBdBiBjDyDfDsEbDcFrCkGlBsFhBkGhAkFtAoHpA_IzAyHfAuEvAsE`CoF~C{ErDkEhB_BlC}BvC}AvEwBxFiBnAe@pQ_GlWsIjYgJjFgB`EkBxGoDbDoBlE_DxB}AlHqHvCmD|O}VfBeCfAqBp@{AjA_DbL_^lDcLjGyQzAuFnAyFp@wDh@eDbAcHl@aGrAyRd@eKTaFZoF\\sEl@qG`@eCp@eCz@iBfAwBrBkCdBsApBsAnB{@jA_@`B]~Fm@v^wC`E_@fAMjD}@jAk@jC{A~AwAvA_BrAqBbAqBdAqCp@iDLiAVeE?qBGeCYaE{@kFyDaWu@uFSyCEgCFoC\\qCn@eCf@mBp@aB|@cBdBoBtBwBzPkNfI_H`S_PxXkUhQsRrPsPtRyQ`R_T~EaHfJuOhj@ipAnBuDnEiHtCwDfEsEbSwNYqBc@eC{@_Dm@oBm@gDaCyFyBgEcDqEq@g@cAu@eB}@kBs@oC}@kFaByE{A{DcBwAu@wCaB{C_DkAwAsPg[wA_De@{AvUgXdMiSlTe^R?XD\\?^ExFlEpCxAx@^n@Lt@NX?^EXSTKNWJWl@wB~@mEzA}Ez@zA",
+    "precision": 6,
+    "length": 1453
+   },
+   "bikesAllowed": false,
+   "wheelchairAccessible": "ACCESSIBLE",
+   "reservation": "NONE",
+   "alternatives": []
+  }
+ ]
+}

@@ -9,6 +9,23 @@ import java.time.Instant
 
 enum class TimeMode { NOW, DEPART_AT, ARRIVE_BY }
 
+/** How the Trip tab orders its options; a re-ordering of the same answers, never a new search. */
+@kotlinx.serialization.Serializable
+enum class TripSort { FASTEST, FEWEST_TRANSFERS, LEAST_WALKING }
+
+/**
+ * [options] in [sort] order. FASTEST keeps the planner's order (earliest arrival, or latest
+ * departure for arrive-by); the others break ties by that same order.
+ */
+fun sortOptions(options: List<Itinerary>, sort: TripSort): List<Itinerary> = when (sort) {
+    TripSort.FASTEST -> options
+    TripSort.FEWEST_TRANSFERS -> options.sortedBy { it.transfers }
+    TripSort.LEAST_WALKING -> options.sortedBy { it.walkSec }
+}
+
+/** Seconds spent walking, all legs. */
+val Itinerary.walkSec: Int get() = legs.filter { it.mode == il.transit.core.api.StreetModes.WALK }.sumOf { it.duration }
+
 data class TripQuery(
     val from: Endpoint,
     val to: Endpoint,

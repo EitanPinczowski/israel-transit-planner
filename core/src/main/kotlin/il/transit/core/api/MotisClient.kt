@@ -96,6 +96,25 @@ class MotisClient(
         return get("api/v6/stoptimes", params) { MotisJson.decodeFromString(StopTimesResponse.serializer(), it) }
     }
 
+    override suspend fun trip(tripId: String, language: String): Itinerary =
+        get("api/v6/trip", listOf("tripId" to tripId, "language" to language)) {
+            MotisJson.decodeFromString(Itinerary.serializer(), it)
+        }
+
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<TripSegment> {
+        val params = listOf(
+            "min" to box.min.comma(),
+            "max" to box.max.comma(),
+            "zoom" to zoom.toString(),
+            "startTime" to start.toString(),
+            "endTime" to end.toString(),
+            "language" to language,
+        )
+        return get("api/v6/map/trips", params) {
+            MotisJson.decodeFromString(ListSerializer(TripSegment.serializer()), it)
+        }
+    }
+
     private suspend fun <T> get(path: String, params: List<Pair<String, String>>, parse: (String) -> T): T =
         withContext(Dispatchers.IO) {
             val url = base.newBuilder().addPathSegments(path).apply {

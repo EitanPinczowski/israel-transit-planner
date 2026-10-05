@@ -30,12 +30,29 @@ data class Place(
     val scheduledDeparture: String? = null,
     val track: String? = null,
     val modes: List<String>? = null,
+    /** The vehicle skips this stop (real-time). Also set on both ends of some transfer walks —
+     *  see [Leg.cancelled]. */
+    val cancelled: Boolean = false,
+    val alerts: List<Alert> = emptyList(),
 ) {
     val latLon: LatLon get() = LatLon(lat, lon)
 }
 
 @Serializable
 data class EncodedPolyline(val points: String, val precision: Int, val length: Int = 0)
+
+/**
+ * One piece of a walking leg. Transitous only ever sends `CONTINUE` or `STAIRS` here (2,612
+ * recorded steps, 2026-10), and names the street on some of them; turns are worked out from
+ * [polyline] by `walkSteps()`.
+ */
+@Serializable
+data class StepInstruction(
+    val relativeDirection: String = "CONTINUE",
+    val distance: Double = 0.0,
+    val streetName: String = "",
+    val polyline: EncodedPolyline? = null,
+)
 
 @Serializable
 data class Leg(
@@ -58,9 +75,14 @@ data class Leg(
     val routeColor: String? = null,
     val agencyName: String? = null,
     val tripId: String? = null,
+    /** Meaningful on transit legs only: MOTIS also sets it on some transfer walks between two
+     *  stops, together with their places (both recorded plans of 2026-10-03). */
     val cancelled: Boolean = false,
+    val alerts: List<Alert> = emptyList(),
     val intermediateStops: List<Place> = emptyList(),
     val legGeometry: EncodedPolyline? = null,
+    /** Walking legs only: the path piece by piece. */
+    val steps: List<StepInstruction> = emptyList(),
 ) {
     val start: Instant get() = parseTime(startTime)
     val end: Instant get() = parseTime(endTime)
@@ -103,6 +125,8 @@ data class GeocodeMatch(
     val street: String? = null,
     val houseNumber: String? = null,
     val modes: List<String>? = null,
+    /** For PLACE answers: "place_6" etc. for a town or area itself, else the kind of POI. */
+    val category: String? = null,
 )
 
 @Serializable
@@ -114,8 +138,11 @@ data class StopTime(
     val tripTo: Place? = null,
     val routeShortName: String = "",
     val displayName: String? = null,
+    val routeColor: String? = null,
     val cancelled: Boolean = false,
     val tripCancelled: Boolean = false,
+    val tripId: String? = null,
+    val alerts: List<Alert> = emptyList(),
 )
 
 @Serializable
