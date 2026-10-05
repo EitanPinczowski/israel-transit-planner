@@ -28,7 +28,14 @@ decisions already recorded.
    - The boss merges only when the owner says so.
 5. **Close-out:** `docs/releases/v0.8.0.md` from `docs/releases/next/*`.
 
+## Owner standing orders
+- When an agent asks a question, the boss answers it if the answer is clear from the briefs,
+  the skills and the owner's recorded decisions; otherwise it passes the question to the owner
+  (2026-10-05).
+
 ## Gotchas learned
+- **Auto mode blocks traffic redirection** (for example a Gradle mirror in `~/.gradle/init.d/`)
+  and the agent stalls on a permission prompt. Interrupt it, then steer it with a message.
 - **Agents copy the boss's permission mode.** The boss must run in **Auto** on the server
   (check `permission_mode` with `get_session`), or agents stall in plan/default mode.
 - **The shared 5-hour usage limit:** resume stalled agents after the reset. Keep it to 2 agents.
