@@ -105,7 +105,8 @@ private fun Header(d: TripDetails) {
 
 @Composable
 private fun Alerts(alerts: List<AlertText>) {
-    Surface(color = MaterialTheme.colorScheme.errorContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
+    // A service alert warns, it is not an app error: tertiary, like the offline banner.
+    Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(8.dp)) {
             alerts.forEach { a ->
                 Text("⚠ ${a.header}", style = MaterialTheme.typography.titleSmall)
@@ -127,7 +128,7 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
     val strike = if (r.cancelled) TextDecoration.LineThrough else null
     Row(
         Modifier.fillMaxWidth()
-            .background(if (mine) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, MaterialTheme.shapes.small)
+            .background(if (mine) MaterialTheme.colorScheme.primaryContainer else Color.Transparent, MaterialTheme.shapes.small)
             .padding(horizontal = 6.dp, vertical = 5.dp)
             .alpha(if (r.passed && !mine) 0.5f else 1f),
         verticalAlignment = Alignment.CenterVertically,
@@ -155,7 +156,7 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
                 stringResource(R.string.trip_skipped).takeIf { r.cancelled },
             )
             if (tags.isNotEmpty()) Text(tags.joinToString(" · "), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-            r.alerts.forEach { a -> Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error) }
+            r.alerts.forEach { a -> Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.tertiary) }
         }
         // Live time: only with real-time data, which MOT lines never have (2026-10).
         val delay = r.delayMin

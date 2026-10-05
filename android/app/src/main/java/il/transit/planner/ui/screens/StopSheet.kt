@@ -249,7 +249,7 @@ internal fun DepartureView(r: DepartureRow) {
         DepartureLine(r)
         // ⚠ only when the answer carries alerts; Israel sent none in 2026-10.
         r.alerts.forEach { a ->
-            Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.tertiary, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }
