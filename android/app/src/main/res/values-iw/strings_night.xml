@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="night_offline_planned">אין חיבור — תוכנן אמש ב־⁨%s⁩</string>
+    <string name="night_offline_planned">אין חיבור · תוכנן אמש ב־⁨%s⁩</string>
     <string name="night_refresh_title">רענון לילי</string>
     <string name="night_refresh_toggle">לרענן את הנסיעות שלי בלילה</string>
     <string name="night_refresh_help">בכל לילה, ב־Wi-Fi ובזמן טעינה, האפליקציה מתכננת את הנסיעות הקבועות של מחר (מהבית למקומות עם שגרה, והנסיעות השמורות), כדי שיהיו זמינות גם בלי קליטה בבוקר. מוצגות רק אפשרויות שעוד לא יצאו. עד ⁨%d⁩ חיפושים בלילה.</string>

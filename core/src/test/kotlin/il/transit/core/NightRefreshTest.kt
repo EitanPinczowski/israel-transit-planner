@@ -26,6 +26,7 @@ import org.junit.Test
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class NightRefreshTest {
     private val sunToThu = listOf(7, 1, 2, 3, 4)
@@ -49,7 +50,20 @@ class NightRefreshTest {
         assertEquals(monday, NightRefresh.tomorrow(il("2026-10-04T23:50")))
         assertEquals(monday, NightRefresh.tomorrow(il("2026-10-05T00:10")))
         assertEquals(monday, NightRefresh.tomorrow(il("2026-10-05T03:59")))
-        assertEquals(monday.plusDays(1), NightRefresh.tomorrow(il("2026-10-05T04:00")))
+        assertEquals(monday, NightRefresh.tomorrow(il("2026-10-05T04:00"))) // this morning
+        assertEquals(monday.plusDays(1), NightRefresh.tomorrow(il("2026-10-05T06:00"))) // daytime: the next day
+    }
+
+    @Test fun `a run at 04-30 plans today's morning, not the day after`() {
+        assertEquals(sunday, NightRefresh.tomorrow(il("2026-10-04T04:30")))
+    }
+
+    @Test fun `a 04-30 run after a 00-10 run the same night sends nothing`() = runBlocking {
+        val api = FakeTransitApi().also(::answering)
+        val first = NightRefresher(api).run({ eightTrips() }, null, il("2026-10-05T00:10"), UserSettings(), "he") { _, _ -> }!!
+        assertEquals(6, api.calls.size)
+        assertNull(NightRefresher(api).run({ eightTrips() }, first.day, il("2026-10-05T04:30"), UserSettings(), "he") { _, _ -> error("no") })
+        assertEquals(6, api.calls.size)
     }
 
     @Test fun `a Sunday routine is seen from Saturday night`() {
@@ -98,13 +112,16 @@ class NightRefreshTest {
         assertEquals(il("2026-10-05T18:00"), jobs[1].at)
     }
 
-    @Test fun `a routine keeps its wall-clock time on both DST days`() {
-        // Sunday 2026-10-25: DST ends (25-h day). Friday 2026-03-27: DST starts (23-h day).
-        for ((day, dow) in listOf("2026-10-25" to 7, "2026-03-27" to 5)) {
-            val p = SavedPlace("Uni", 31.26, 34.80, PlaceRoutine(listOf(dow), 7 * 60, 10 * 60))
-            val job = NightRefresh.jobs(listOf(home, p), emptyList(), home, emptyList(), LocalDate.parse(day)).single()
-            assertEquals(day, il("${day}T07:00"), job.at)
-        }
+    @Test fun `a 07-00 routine on the day DST ends is still 07-00 local`() {
+        val uni = SavedPlace("Uni", 31.26, 34.80, PlaceRoutine(listOf(7), 7 * 60, 10 * 60))
+        val job = NightRefresh.jobs(listOf(home, uni), emptyList(), home, emptyList(), LocalDate.parse("2026-10-25")).single()
+        assertEquals(LocalTime.of(7, 0), job.at.atZone(ISRAEL).toLocalTime())
+    }
+
+    @Test fun `a 07-00 routine on the day DST starts is still 07-00 local`() {
+        val uni = SavedPlace("Uni", 31.26, 34.80, PlaceRoutine(listOf(5), 7 * 60, 10 * 60))
+        val job = NightRefresh.jobs(listOf(home, uni), emptyList(), home, emptyList(), LocalDate.parse("2026-03-27")).single()
+        assertEquals(LocalTime.of(7, 0), job.at.atZone(ISRAEL).toLocalTime())
     }
 
     @Test fun `Shabbat is planned anyway`() {

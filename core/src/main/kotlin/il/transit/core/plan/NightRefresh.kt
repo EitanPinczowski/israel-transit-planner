@@ -45,10 +45,16 @@ object NightRefresh {
     }
 
     /**
-     * "Tomorrow": the service day that starts at the next 04:00 ([LastRideFinder.DAY_STARTS]),
-     * so a run at 23:50 and one at 00:10 plan the same day.
+     * The day a run plans: the coming morning. From 22:00 to 03:59 that is the service day
+     * starting at the next 04:00 ([LastRideFinder.DAY_STARTS]), so a run at 23:50 and one at
+     * 00:10 plan the same day; from 04:00 to [WINDOW_END] it is the service day that has just
+     * started (a 04:30 run plans this morning, and `lastRunDay` keeps a second run at 0).
      */
-    fun tomorrow(now: Instant): LocalDate = LastRideFinder.serviceDay(now).plusDays(1)
+    fun tomorrow(now: Instant): LocalDate {
+        val day = LastRideFinder.serviceDay(now)
+        val t = now.atZone(ISRAEL).toLocalTime()
+        return if (t >= LastRideFinder.DAY_STARTS && t < WINDOW_END) day else day.plusDays(1)
+    }
 
     fun inWindow(now: Instant): Boolean {
         val t = now.atZone(ISRAEL).toLocalTime()

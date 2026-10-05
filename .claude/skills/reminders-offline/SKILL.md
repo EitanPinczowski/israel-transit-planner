@@ -73,9 +73,12 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
     from its `from` or Home, at the destination's routine start, else the time of day of its
     latest history record, else skipped. Earliest first, deduped by key, ≤ `MAX_TRIPS = 6`.
     Shabbat/holidays are planned anyway (an empty answer is not cached).
-  - "Tomorrow" = the service day starting at the next 04:00 (23:50 and 00:10 plan the same day).
+  - The day planned is the coming morning (`NightRefresh.tomorrow`): 22:00–03:59 → the service
+    day starting at the next 04:00 (23:50 and 00:10 plan the same day); 04:00–05:59 → the service
+    day that just started (a 04:30 run plans this morning; after a 00:10 run, `lastRunDay` keeps
+    it at 0 requests). Boss decision on the tester review, 2026-10-05.
   - Key: `PlanCache.key("TRIP-NOW", from, to)`, the key of the Trip tab's NOW search, so the
-    morning's search finds it. Entries carry `night = true` → banner "Offline — planned last
+    morning's search finds it. Entries carry `night = true` → banner "Offline · planned last
     night at 02:14" only while the entry is under 18 h old (`Entry.isLastNight`; a missed
     night shows the ordinary "saved at" banner). Capacity is 16 so 6 night entries never push out the user's last 10.
   - Job: one unique periodic WorkManager work (`KEEP`), 24 h with a 5-h flex window opening
