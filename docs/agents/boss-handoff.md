@@ -7,27 +7,23 @@ decisions already recorded.
 ## State
 - **Phase 8 is done and merged** (#15, #18–#26, #29); v0.7.0 notes are in
   `docs/releases/v0.7.0.md`.
-  - **Owner to do:** check the build on the Pixel, then release `0.7.0` (`release-apk` skill).
-- **Phase 9 is approved:** #27 research, #28 plan, #30 decisions. None of it has started yet.
-- **No agent sessions are running.** Every finished session is archived.
+  - **0.7.0 waits for the tester's PR** (owner, 2026-10-05). Once it merges, the owner checks
+    the build on the Pixel, then releases `0.7.0` (`release-apk` skill).
+- **Phase 9 is approved:** #27 research, #28 plan, #30 decisions. **C6** (look & welcome) was
+  added by the owner on 2026-10-05 after the phone test; it is in `phase9.md` and ROADMAP.
+- **Running** (started 2026-10-05, both Opus, Auto):
+  - Tester, `session_01Tg9rSCEYux8YXXCk6DUEYH`, on `claude/gallant-mendel-4yps2i`. Its brief
+    also covers two owner findings sent later: all mode buttons fit on one screen with no
+    sideways scroll, and an address is typed in place in the field the user tapped.
+  - C2, `session_01SJEYEHM6Hf5wVrMqFpr4hn`, on `claude/p9-night-refresh`.
 
 ## Next actions, at most 2 agents at a time
-1. **Tester** (Opus): continue on `claude/gallant-mendel-4yps2i`.
-   - Merge `origin/main` (no rebase), keeping `main`'s design-pass structure.
-   - Fix the round-2 UI findings:
-     - landscape/tablet panel squeezes the search;
-     - suggestions hidden behind the keyboard, so show only the edited field while editing;
-     - first Back on API 26 only hides the keyboard;
-     - tests must wait for the ⋮ "Save trip" item.
-   - Add edge-case tests for Phase 8: trip details with no tripId or a failed request; Park &
-     Ride with no station in range; calendar with permission denied, no events, all-day events
-     only, or an approximate match; crash log empty and full.
-   - One PR. Keep `TripPanel.kt` edits minimal.
-2. **C2, night refresh + Home** (Opus): brief in `phase9.md`. Run it in parallel with the tester,
-   since they touch different code.
+1. When the tester's PR is green: the owner merges, then 0.7.0 is released.
+2. When C2's PR is green: tester review, then designer review (both Sonnet), then the owner
+   merges.
 3. **C1, earlier/later + platforms:** only after the tester's PR merges, because both edit
    `TripPanel`.
-4. Then **C3 + C4**, then **C5**.
+4. Then **C3 + C4**, then **C5 + C6**.
    - Each PR gets a tester review and a designer review (both Sonnet) before the owner merges.
    - The boss merges only when the owner says so.
 5. **Close-out:** `docs/releases/v0.8.0.md` from `docs/releases/next/*`.
