@@ -113,9 +113,11 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
 
 private const val KEYBOARD_SETTLE_MS = 200L
 
+/** On the press, not the release: on Android 8 the release of a Back taken here before the
+ *  keyboard never comes back to the app (the keyboard stays up and the search open). */
 private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
     if (e.key != Key.Back) return false
-    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
+    if (e.type == KeyEventType.KeyDown) vm.cancelEditing()
     return true
 }
 
