@@ -41,6 +41,9 @@ import il.transit.core.plan.sortOptions
 import il.transit.core.plan.reselect
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
+import il.transit.core.plan.TripPages
+import il.transit.core.present.StopPlatform
+import il.transit.core.present.stopPlatform
 import il.transit.core.present.needsFullNameHint
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
@@ -90,7 +93,15 @@ enum class UiError { NO_LOCATION, NETWORK, NO_RESULTS }
 
 data class Suggestion(val name: String, val detail: String?, val at: LatLon, val saved: Boolean, val isStop: Boolean)
 
-data class StopSheet(val stopId: String, val name: String, val loading: Boolean, val rows: List<DepartureRow>, val failed: Boolean)
+data class StopSheet(
+    val stopId: String,
+    val name: String,
+    val loading: Boolean,
+    val rows: List<DepartureRow>,
+    val failed: Boolean,
+    /** "Platform 12 · stop 47899" for the header, once the departures answer names the stop. */
+    val platform: StopPlatform = StopPlatform(),
+)
 
 data class UiState(
     val mode: AppMode = AppMode.TRIP,
@@ -159,6 +170,8 @@ data class UiState(
     /** "🚗 By car?" for the shown trip. */
     val carTime: CarTime? = null,
     val carLoading: Boolean = false,
+    /** Earlier / Later under the Trip options. */
+    val pages: TripPagesUi = TripPagesUi(),
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -436,7 +449,7 @@ class MainViewModel(
                     loading = true, error = null, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(),
                     selected = 0, stopSheet = null, offlineSince = null,
                     lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
-                    chain = null, carTime = null, carLoading = false,
+                    chain = null, carTime = null, carLoading = false, pages = TripPagesUi(),
                 )
             }
         }
@@ -458,10 +471,11 @@ class MainViewModel(
                             )
                         }
                     } else {
-                        val r = planner.plan(
-                            TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language),
-                            clock.instant(),
-                        )
+                        val q = TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language)
+                        if (!quiet) tripQuery = q
+                        val fresh = planner.plan(q, clock.instant())
+                        // A refresh keeps the Earlier / Later pages already loaded.
+                        val r = if (quiet) TripPages.refresh(_state.value.results, fresh, clock.instant(), s.timeMode == TimeMode.ARRIVE_BY) else fresh
                         val empty = r.itineraries.isEmpty() && r.walkOnly == null
                         _state.update {
                             it.copy(
@@ -548,6 +562,46 @@ class MainViewModel(
                     } else {
                         it.copy(loading = false, error = UiError.NETWORK)
                     }
+                }
+            }
+        }
+    }
+
+    // --- Earlier / Later (Phase 9 C1) ------------------------------------------------------
+
+    /** The search the shown Trip options answer: pages must repeat it, whatever the GPS did since. */
+    private var tripQuery: TripQuery? = null
+
+    fun earlier() = loadPage(TripPages.Direction.EARLIER)
+
+    fun later() = loadPage(TripPages.Direction.LATER)
+
+    /** One `plan` request per tap (none for a cursor already loaded: the guard cache), merged
+     *  into the list; a failure keeps the list and says so under the buttons. */
+    private fun loadPage(direction: TripPages.Direction) {
+        val s = _state.value
+        val current = s.results ?: return
+        val q = tripQuery ?: return
+        if (s.mode != AppMode.TRIP || s.chain != null || s.loading || s.pages.loading != null) return
+        _state.update { it.copy(pages = TripPagesUi(loading = direction)) }
+        viewModelScope.launch {
+            val merged = try {
+                planner.page(q, current, direction)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            }
+            _state.update {
+                when {
+                    it.results !== current -> it.copy(pages = TripPagesUi()) // a new search replaced the list
+                    merged == null -> it.copy(pages = TripPagesUi(failed = true))
+                    else -> it.copy(
+                        results = merged,
+                        // The option the user picked stays picked, wherever the new page put it.
+                        selected = reselect(it.selectedItinerary, sortOptions(merged.itineraries, it.settings.tripSort) + listOfNotNull(merged.walkOnly), it.selected),
+                        pages = TripPagesUi(),
+                    )
                 }
             }
         }
@@ -798,17 +852,18 @@ class MainViewModel(
     fun openStop(stopId: String, name: String) {
         _state.update { it.copy(stopSheet = StopSheet(stopId, name, loading = true, rows = emptyList(), failed = false)) }
         viewModelScope.launch {
-            val rows = try {
-                api.stopTimes(stopId, null, 12, language).stopTimes.map(::departureRow)
+            val resp = try {
+                api.stopTimes(stopId, null, 12, language)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 null
             }
+            val rows = resp?.stopTimes?.map(::departureRow)
             _state.update { st ->
                 val sheet = st.stopSheet
                 if (sheet?.stopId != stopId) st
-                else st.copy(stopSheet = sheet.copy(loading = false, rows = rows.orEmpty(), failed = rows == null))
+                else st.copy(stopSheet = sheet.copy(loading = false, rows = rows.orEmpty(), failed = rows == null, platform = resp?.place?.let { p -> stopPlatform(p) } ?: StopPlatform()))
             }
         }
     }

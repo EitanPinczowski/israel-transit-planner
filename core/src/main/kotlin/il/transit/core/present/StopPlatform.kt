@@ -9,6 +9,8 @@ import il.transit.core.api.TransitModes
  */
 data class StopPlatform(val platform: String? = null, val floor: String? = null, val stopCode: String? = null) {
     val isEmpty: Boolean get() = platform == null && floor == null && stopCode == null
+
+    fun ifEmpty(other: () -> StopPlatform): StopPlatform = if (isEmpty) other() else this
 }
 
 /**

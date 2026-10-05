@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 9 C1: Earlier / Later, "if I miss this", platform and stop code. -->
+<resources>
+    <string name="page_earlier">Earlier</string>
+    <string name="page_later">Later</string>
+    <string name="page_failed">No connection. The list above stays as it is.</string>
+    <string name="miss_next">If I miss this: next at %1$s (+%2$d min)</string>
+    <string name="miss_show_later">If I miss this: show later</string>
+    <string name="stop_platform">Platform %s</string>
+    <string name="stop_floor">floor %s</string>
+    <string name="stop_code">stop %s</string>
+</resources>

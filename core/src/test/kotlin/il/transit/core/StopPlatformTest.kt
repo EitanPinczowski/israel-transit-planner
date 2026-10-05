@@ -60,4 +60,16 @@ class StopPlatformTest {
         val withPlatform = all.mapNotNull { parseStopDescription(it.description).platform }.toSet()
         assertTrue(withPlatform.toString(), "2" in withPlatform)
     }
+
+    @Test fun `trip sheet shows platform and code on the boarding and alighting rows only`() {
+        val trip = MotisJson.decodeFromString(il.transit.core.api.Itinerary.serializer(), fixture("trip_bus_470"))
+        val t = trip.legs.single()
+        val stops = listOf(t.from) + t.intermediateStops + listOf(t.to)
+        // Boarding at the first stop: Be'er Sheva central station, platform 10.
+        val leg = t.copy(to = stops[3], intermediateStops = stops.subList(1, 3), endTime = stops[3].arrival!!)
+        val d = il.transit.core.present.tripDetails(leg, trip, java.time.Instant.parse("2026-10-03T20:00:00Z"))
+        assertEquals(StopPlatform("10", null, "13907"), d.rows[0].platform)
+        assertEquals(StopPlatform(null, null, "34290"), d.rows[3].platform)
+        assertTrue(d.rows.filterIndexed { i, _ -> i != 0 && i != 3 }.all { it.platform.isEmpty })
+    }
 }
