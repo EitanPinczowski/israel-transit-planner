@@ -28,6 +28,7 @@ import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
 import il.transit.planner.ui.screens.CalendarChip
 import il.transit.planner.ui.screens.LocalCalendarChip
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
