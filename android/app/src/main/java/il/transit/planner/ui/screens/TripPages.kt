@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -89,6 +91,12 @@ internal fun PageButtons(state: UiState, vm: MainActions) {
 @Composable
 private fun PageButton(label: Int, enabled: Boolean, loading: Boolean, onClick: () -> Unit, modifier: Modifier) {
     OutlinedButton(onClick = onClick, enabled = enabled, modifier = modifier) {
-        if (loading) CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp) else Text(stringResource(label))
+        // Keep the label while loading: a lone spinner is unlabelled for TalkBack and nearly
+        // invisible at the disabled alpha, so it sits beside the text in full colour.
+        if (loading) {
+            CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(stringResource(label))
     }
 }

@@ -573,11 +573,12 @@ internal fun ItineraryCard(
             }
             stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
-        Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
-        // Where to stand for the first boarding: "Platform 12 · stop 47899" (buses; trains have none).
+        board?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+        // Where to stand, right under the boarding line: "Platform 12 · stop 47899" (buses; trains have none).
         itin.firstTransitLeg?.let { first ->
             PlatformLine(remember(first) { stopPlatform(first.from, legKind(first.mode) == LegKind.TRAIN) })
         }
+        Text("$transfers · $walk", style = MaterialTheme.typography.bodySmall)
         if (selected) extra?.invoke()
         if (selected) {
             WalkDirections(itin)
