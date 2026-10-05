@@ -167,7 +167,7 @@ import kotlin.math.roundToInt
 /** Wider than this (landscape, foldables, tablets), the panels move into one side column. */
 internal val WIDE = 600.dp
 
-/** Shorter than this, the search card folds to one line while results are shown. */
+/** Shorter than this (or narrower than [WIDE]), the search card folds to one line while results are shown. */
 internal val SHORT = 700.dp
 
 /** Test tags of the screen's regions: the UI tests' layout audit checks them against each other. */
@@ -256,10 +256,13 @@ fun MainScreen(
         val bars = barsAndCutout
         val rootWidth = constraints.maxWidth
         val rootHeight = constraints.maxHeight
-        val compactSearch = showPanel && maxHeight < SHORT && !searchOpen
-        // Short windows (landscape, small phones) can't fit the unfolded search and the results:
-        // the search gets the screen until a new search, or Back, brings the results back.
-        val searchOnly = showPanel && maxHeight < SHORT && searchOpen
+        // Phones (any height: a Fold cover screen is tall but narrow, so its tabs take two
+        // lines) and short windows can't fit the whole search card and the results: the
+        // search folds to one line; unfolded, it gets the screen until a new search or Back
+        // brings the results back.
+        val foldsForResults = maxWidth < WIDE || maxHeight < SHORT
+        val compactSearch = showPanel && foldsForResults && !searchOpen
+        val searchOnly = showPanel && foldsForResults && searchOpen
         val panelShown = showPanel && !searchOnly
         val sheetMaxHeight = maxHeight * 0.5f
 
@@ -317,7 +320,10 @@ fun MainScreen(
         } else {
             var topEdge by remember { mutableIntStateOf(0) }
             var bottomEdge by remember { mutableIntStateOf(rootHeight) }
-            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(12.dp)) {
+            // The search column ends where the bottom part (credit, results) begins, so a long
+            // suggestion list or a tall card can never run under it.
+            val belowSearch = WindowInsets(bottom = (rootHeight - bottomEdge).coerceAtLeast(0))
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.union(belowSearch)).padding(12.dp)) {
                 Column(
                     Modifier.fillMaxWidth().testTag(UiTags.TOP).onGloballyPositioned { topEdge = it.boundsInRoot().bottom.roundToInt() },
                     verticalArrangement = Arrangement.spacedBy(8.dp),
