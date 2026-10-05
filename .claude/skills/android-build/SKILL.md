@@ -24,8 +24,10 @@ there) and that is where most of the logic is tested.
 - Test failures: summarise `core/build/test-results/test/*.xml`, don't open the HTML report.
 - A Gradle error: read the FIRST `What went wrong:` block only; the rest is cascade.
 - `429 Too Many Requests` from Maven Central inside a cloud session is the sandbox proxy,
-  not the build. Retry with `--max-workers=1`; a session-local init script in
-  `~/.gradle/init.d/` may point at Google's Central mirror. Never commit that script.
+  not the build. Retry with `--max-workers=1` once or twice, a minute apart. Still 429:
+  push and let CI run the tests (`get_job_logs` for failures). Never point Gradle at
+  another repository (`~/.gradle/init.d/` mirror scripts): Auto mode blocks it as
+  traffic redirection and the session stalls on a permission prompt.
 
 ## CI
 
