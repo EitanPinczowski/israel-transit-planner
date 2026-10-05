@@ -1,5 +1,6 @@
 package il.transit.core.present
 
+import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.Itinerary
 import il.transit.core.api.Leg
 import il.transit.core.api.StreetModes
@@ -342,6 +343,36 @@ fun needsFullNameHint(query: String, names: List<String>): Boolean {
     val q = normalizeForMatch(query.trim())
     if (q.length !in 2..4 || q.any { it.isWhitespace() } || names.isEmpty()) return false
     return names.none { normalizeForMatch(it).contains(q) }
+}
+
+/**
+ * The town a geocode answer is in (admin level 8, else the area Transitous marks default),
+ * or null when there is none or the answer is that town itself. Shown under each suggestion,
+ * so "הרצל 10" in Haifa and in Hadera can be told apart.
+ */
+fun geocodeTown(m: GeocodeMatch): String? {
+    val town = m.areas.lastOrNull { it.adminLevel == 8.0 }
+        ?: m.areas.lastOrNull { it.default && it.adminLevel >= 6.0 }
+        ?: return null
+    return town.name.takeUnless { normalizeForMatch(it) == normalizeForMatch(m.name) }
+}
+
+/** The grey line under a suggestion: street and number when they add something, then the town. */
+fun geocodeDetail(m: GeocodeMatch): String? {
+    val street = m.street?.let { listOfNotNull(it, m.houseNumber).joinToString(" ") }?.takeIf { it != m.name }
+    return listOfNotNull(street, geocodeTown(m)).joinToString(" · ").ifEmpty { null }
+}
+
+/**
+ * When the search names a town ("הרצל חיפה"), answers in that town come first; Transitous
+ * otherwise ranks by distance and puts a nearby "הרצל" in another town on top. Stable, so
+ * Transitous's order holds within each group. Districts (level < 7) don't count: "חיפה"
+ * also matches Haifa District, which covers Hadera.
+ */
+fun rankByTypedTown(matches: List<GeocodeMatch>): List<GeocodeMatch> {
+    fun inTypedTown(m: GeocodeMatch) = m.areas.any { it.matched && it.adminLevel >= 7.0 }
+    if (matches.none(::inTypedTown)) return matches
+    return matches.sortedByDescending(::inTypedTown)
 }
 
 /** Lower case without quote marks, so "צה\"ל", "צה״ל" and "צהל" compare equal. */
