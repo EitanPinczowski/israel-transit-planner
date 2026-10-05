@@ -270,7 +270,18 @@ class JourneysTest {
         lm.setTestProviderEnabled(gps, true)
         try {
             d.tapInResults(d.str(R.string.ride_start))
-            compose.waitUntil(8_000) { RideService.active.value }
+            val started = SystemClock.uptimeMillis() + 8_000
+            while (!RideService.active.value && SystemClock.uptimeMillis() < started) SystemClock.sleep(200)
+            if (!RideService.active.value) {
+                fun granted(p: String) = d.app.checkSelfPermission(p) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                val services = d.shell("dumpsys activity services $pkg").take(3_000)
+                val log = d.shell("logcat -d -s RideService ActivityManager LocationManagerService").takeLast(4_000)
+                throw AssertionError(
+                    "J12: the ride did not start in 8 s (${d.inputState()}, fineLocation=${granted(android.Manifest.permission.ACCESS_FINE_LOCATION)}, " +
+                        "notifications=${AppDriver.sdk < 33 || granted("android.permission.POST_NOTIFICATIONS")})\n" +
+                        "--- dumpsys activity services ---\n$services\n--- logcat ---\n$log",
+                )
+            }
             val from = leg.from.latLon
             val to = leg.to.latLon
             val total = Geo.distanceM(from, to)

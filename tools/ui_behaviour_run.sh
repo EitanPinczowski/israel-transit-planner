@@ -75,6 +75,7 @@ if [[ $API == 35 ]]; then
 fi
 
 adb pull "/sdcard/Android/data/$PKG/files/ui" "$OUT/" >/dev/null 2>&1 || true
+adb logcat -d > "$OUT/logcat.txt" || true # always: the app's own warnings (RideService, …)
 adb logcat -d -b crash > "$OUT/crash.txt" || true
 if grep -q "Process: $PKG" "$OUT/crash.txt"; then
   echo "::error::the app crashed on API $API (see crash.txt)"

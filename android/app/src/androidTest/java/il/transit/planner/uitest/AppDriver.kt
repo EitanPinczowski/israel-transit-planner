@@ -13,6 +13,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
@@ -140,7 +141,13 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         for (i in 0 until lists) {
             if (runCatching { compose.onAllNodes(hasScrollToNodeAction() and inSheet)[i].performScrollToNode(target) }.isSuccess) break
         }
-        compose.onAllNodes(target).onFirst().performClick()
+        // Let the sheet and the map camera settle, then bring the button itself fully into view
+        // (not just its list item) before a real tap.
+        compose.waitForIdle()
+        val button = compose.onAllNodes(target).onFirst()
+        runCatching { button.performScrollTo() }
+        compose.waitForIdle()
+        button.performClick()
     }
 
     /** With results on a short screen the search card is folded to one line: unfold it. */
