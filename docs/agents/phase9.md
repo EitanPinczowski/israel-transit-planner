@@ -14,6 +14,7 @@ owner's list of 2026-10-05. They are grouped into five packages:
 | C3 History insights | "your usual trip"; monthly pass advisor | 2 | 0 |
 | C4 Quick Settings tile | "Next trip home" tile | 2 | 0 to draw, ≤ 1 per tap |
 | C5 Alerts | leave-now countdown; "last trip home" alert | 3 | 0 + ≤ 3 per evening |
+| C6 Look & welcome | language + light/dark setting; first-run tour of the modes; distinct leg colours | 3 | 0 |
 
 Order:
 - **Before Wave 1:** Phase 8 is closed out (B4 merged, so the `screenshots` job fails on an
@@ -21,8 +22,11 @@ Order:
 - **Wave 1:** C1 and C2, in parallel. They share no file.
 - **Wave 2:** C3 and C4, in parallel, after C1 and C2 are merged. C3 edits `TripPanel.kt`
   after C1. C4 reads C2's Home setting and night cache.
-- **Wave 3:** C5 alone, after Wave 2 is merged. It owns the reminder code, uses C2's Home,
-  C3's history fields and C4's "open the trip home" intent.
+- **Wave 3:** C5 and C6, in parallel, after Wave 2 is merged. C5 owns the reminder code, uses
+  C2's Home, C3's history fields and C4's "open the trip home" intent. C6 (added by the owner
+  on 2026-10-05 after the phone test) owns appearance, the welcome tour and leg colours; it
+  shares only `SettingsDialog` (a different section), `user/User.kt` (different fields),
+  `AndroidManifest.xml` (different lines) and `MainViewModel` (one hook each) with C5.
 
 Why this order. These shared files would conflict if two packages edited them at once, so
 each has only one editor per wave:
@@ -31,16 +35,17 @@ each has only one editor per wave:
 |---|---|---|---|
 | `api/Models.kt`, `api/TransitApi.kt`, test `Fakes.kt` | C1 | | |
 | `ui/screens/TripPanel.kt` | C1 | C3 (one line) | |
-| `ui/screens/SettingsDialog.kt` | C2 (Home, night refresh) | C3 (history section) + C4 (one button), different sections | C5 (one toggle) |
-| `user/User.kt` (`UserSettings`) | C2 | | C5 |
+| `ui/screens/SettingsDialog.kt` | C2 (Home, night refresh) | C3 (history section) + C4 (one button), different sections | C5 (one toggle) + C6 (Appearance section) |
+| `user/User.kt` (`UserSettings`) | C2 | | C5 + C6, different fields |
 | `history/History.kt`, `fare/Fares.kt` | | C3 | |
 | `data/PlanCacheStore.kt`, `plan/PlanCache.kt` | C2 | C4 (reads; one helper in a new file) | |
 | `android/app/build.gradle.kts`, `gradle/libs.versions.toml` (WorkManager) | C2 | | |
-| `AndroidManifest.xml` | | C4 (tile service) | C5 (receiver) |
+| `AndroidManifest.xml` | | C4 (tile service) | C5 (receiver) + C6 (`localeConfig` attribute) |
 | `TransitApp.kt` | C2 | | C5 |
-| `MainActivity.kt` (intent extras) | | C4 | |
+| `MainActivity.kt` (intent extras) | | C4 | C6 (theme + locale wiring) |
 | `remind/*` (Notifications, ReminderReceiver, ReminderScheduler) | | | C5 |
-| `ui/MainViewModel.kt` | C1, C2: one hook each, different functions | C3, C4: one hook each | C5: one hook |
+| `ui/MainViewModel.kt` | C1, C2: one hook each, different functions | C3, C4: one hook each | C5, C6: one hook each |
+| `ui/Theme.kt`, `ui/MainScreen.kt`, core `present/Format.kt` | | | C6 |
 
 The owner merges every PR; agents never merge.
 
@@ -437,6 +442,64 @@ new), `plan/LastTripHome.kt` (core, new), `strings_alerts.xml`
 > - the `transitous-api` skill: the evening check in the budget table;
 > - a release fragment `docs/releases/next/c5-alerts.md`;
 > - tick ROADMAP C5.
+
+---
+
+## C6: Look & welcome (language, light/dark, first-run tour, leg colours)
+**Branch:** `claude/p9-look-welcome`
+**Skills:** `i18n-rtl`, `add-feature`, `android-build`
+**Needs:** Wave 2 merged; the tester's round-2 PR merged (it reworks the mode buttons in
+`MainScreen`)
+**Owns:** `ui/Theme.kt`, `ui/MainScreen.kt`, `ui/screens/WelcomeTour.kt` (new),
+core `present/Format.kt` (leg colours), `present/LegPalette.kt` (core, new),
+`res/xml/locales_config.xml` (new), `strings_look.xml`
+**Shared-file hooks:** `SettingsDialog`: one "Appearance" section (language, theme, "Show the
+tour again"); `user/User.kt`: the new `UserSettings` fields; `MainActivity.kt`: apply the theme
+and locale; `AndroidManifest.xml`: the `android:localeConfig` attribute; `MainViewModel`: one
+hook that saves the new settings
+
+Added by the owner on 2026-10-05, after testing `main` on the Pixel. **0 requests.**
+
+> **1. Language and light/dark in Settings.**
+> - **Language:** System / עברית / English. Use the per-app locale API
+>   (`AppCompatDelegate.setApplicationLocales`, which also feeds Android 13's own per-app
+>   language page through `locales_config.xml`). The change applies at once and survives a
+>   restart. The geocoding `language` sent to Transitous follows the app language, not the
+>   phone's.
+> - **Theme:** System / Light / Dark. `AppTheme(dark = …)` reads the setting; System keeps
+>   `isSystemInDarkTheme()`. The map style follows it too.
+> - `UserSettings.language: String? = null` (null = System) and
+>   `UserSettings.theme: String = "SYSTEM"`, each with a JSON round-trip test, and old files
+>   still decode.
+>
+> **2. Welcome tour on first launch.** A short pager (4–6 pages, skippable, "Next" / "Done"):
+> one page per mode on the top bar (Trip, Better start, Let me off on the way, Pick-up, Park &
+> ride, …), each with its icon, one sentence on what it does and one on when to use it, plus
+> one page on saved places and reminders. Shown once (`UserSettings.tourSeen: Boolean =
+> false`). It can be shown again from Settings. RTL-correct swipe direction; Hebrew and
+> English; light and dark.
+>
+> **3. Distinct leg colours on the map.** Today a leg uses the operator's `routeColor` or one
+> colour per mode, so two buses in the same trip look identical. Keep the operator colour when
+> a trip has only one leg of that colour. When two or more transit legs of one itinerary
+> would get the same colour, give each one its own colour from a fixed palette
+> (`present/LegPalette.kt`, ≥ 6 colours, each ≥ 3:1 against both map styles, colour-blind
+> safe order). Use the same colour for the leg's chip in the list, the line on the map and its
+> stop dots. Walk legs stay grey and dashed. Pure and tested: `LegPaletteTest.kt` (two buses
+> → two colours, operator colour kept when unique, stable across recomposition, contrast).
+>
+> **Screens:** Paparazzi states for the Appearance section, every tour page, and a two-bus
+> trip on the map/list (Hebrew and English, light and dark).
+>
+> **Tester edge cases:** switch language while a search is open (the state survives); System
+> theme while the phone flips dark at night; the first launch after an update from v0.7.0 (the
+> tour shows once, and settings are kept); Android 8 (API 26) per-app locale fallback; a trip
+> with 3 buses and a train; a white or yellow operator colour.
+>
+> **Docs:**
+> - the `i18n-rtl` skill: the language and theme settings, and the leg palette;
+> - a release fragment `docs/releases/next/c6-look-welcome.md`;
+> - tick ROADMAP C6.
 
 ---
 

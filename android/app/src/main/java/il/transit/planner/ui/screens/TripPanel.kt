@@ -419,7 +419,7 @@ internal fun ResultsPanel(
                 // A warning, not an error: the answers are still useful, just maybe stale.
                 Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
                     Text(
-                        stringResource(R.string.offline_showing, hhmm(since)),
+                        offlineBanner(state.offlineNight, hhmm(since)),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(8.dp),
                     )

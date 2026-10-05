@@ -171,7 +171,7 @@ Wave 1 (B1–B4) starts. Tick only your own package's lines.
 ## Phase 9 — everyday helpers
 Owner's picks from `docs/research/phase9-ideas.md` (PR #27). One cloud session per package;
 briefs, shared-file table and owner decisions in `docs/agents/phase9.md`. Wave 1 (C1, C2) →
-Wave 2 (C3, C4) → Wave 3 (C5); each PR gets a tester + designer review before the owner
+Wave 2 (C3, C4) → Wave 3 (C5, C6); each PR gets a tester + designer review before the owner
 merges. Tick only your own package's lines.
 
 ### C1 — Earlier / Later + platforms (`claude/p9-trip-pages`, 1 request per tap)
@@ -182,10 +182,10 @@ merges. Tick only your own package's lines.
       trains have no `track`)
 
 ### C2 — Night refresh + Home (`claude/p9-night-refresh`, ≤ 6 requests a night)
-- [ ] "Set as Home" on a saved place (`UserSettings.homePlace`), used by C4 and C5
-- [ ] WorkManager, once a night, Wi-Fi + charging + battery not low: tomorrow's routines and
+- [x] "Set as Home" on a saved place (`UserSettings.homePlace`), used by C4 and C5
+- [x] WorkManager, once a night, Wi-Fi + charging + battery not low: tomorrow's routines and
       saved trips into the Trip cache, `BudgetedTransitApi(6)`, never retried
-- [ ] Offline next morning: "planned last night at 02:14", options already gone hidden
+- [x] Offline next morning: "planned last night at 02:14", options already gone hidden
 
 ### C3 — History insights (`claude/p9-insights`, 0 requests)
 - [ ] "Usually 52 min · this one +8" (≥ 3 trips in 90 days, medians); best leave time for a
@@ -200,6 +200,12 @@ merges. Tick only your own package's lines.
 - [ ] Leave-now countdown: the leave notification turns ongoing and counts down to boarding
 - [ ] "Last trip home 23:10 — leave in 30 min": opt-in, once per evening, no background
       location, `LastRideFinder` under `BudgetedTransitApi(3)`
+
+### C6 — Look & welcome (`claude/p9-look-welcome`, 0 requests; owner, 2026-10-05)
+- [ ] Settings → Appearance: language (System / עברית / English) and theme (System / Light /
+      Dark), applied at once
+- [ ] First-run tour of every mode, skippable, shown again from Settings
+- [ ] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
 
 ### Close-out (boss)
 - [ ] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed

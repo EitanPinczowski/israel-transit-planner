@@ -244,6 +244,7 @@ class PanelsTest(private val v: Variant) {
 
     @Test fun historyEmpty() = dialog("history_empty") { HistoryContent(UiState(), NoActions) }
 
+
     // --- Frames ---
 
     /** The panel as the bottom sheet of a phone: rounded top, over a flat stand-in for the map. */

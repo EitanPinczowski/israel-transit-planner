@@ -3,14 +3,17 @@ package il.transit.planner.data
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TripCacheJson
 import il.transit.core.plan.TripResult
+import il.transit.core.plan.stillAhead
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Clock
+import java.time.Instant
 
 /**
  * The Trip tab's last successful searches, on disk, so a search with no signal can show
  * what was found before. Logic (LRU, keys, codec) is in core's PlanCache / TripCacheJson.
+ * The night refresh writes here too ([putNight]), under the key of a NOW search.
  */
 class PlanCacheStore(private val file: File, private val clock: Clock = Clock.systemUTC()) {
     private val cache = PlanCache<TripResult>()
@@ -22,18 +25,27 @@ class PlanCacheStore(private val file: File, private val clock: Clock = Clock.sy
         loaded = true
     }
 
-    suspend fun put(key: String, value: TripResult) = withContext(Dispatchers.IO) {
+    suspend fun put(key: String, value: TripResult) = save(key, value, night = false)
+
+    /** A trip planned by the night refresh, shown as "planned last night at 02:14". */
+    suspend fun putNight(key: String, value: TripResult) = save(key, value, night = true)
+
+    private suspend fun save(key: String, value: TripResult, night: Boolean) = withContext(Dispatchers.IO) {
         synchronized(this@PlanCacheStore) {
             loadOnce()
-            cache.put(key, value, clock.instant())
+            cache.put(key, value, clock.instant(), night)
             runCatching { file.writeText(TripCacheJson.encode(cache.all)) }
         }
     }
 
-    suspend fun get(key: String): PlanCache.Entry<TripResult>? = withContext(Dispatchers.IO) {
+    /**
+     * The saved entry as the offline Trip view shows it at [now]: options already gone are
+     * dropped, and an entry with nothing left is no entry.
+     */
+    suspend fun get(key: String, now: Instant = clock.instant()): PlanCache.Entry<TripResult>? = withContext(Dispatchers.IO) {
         synchronized(this@PlanCacheStore) {
             loadOnce()
-            cache.get(key)
+            cache.get(key)?.let { e -> e.value.stillAhead(now)?.let { e.copy(value = it) } }
         }
     }
 

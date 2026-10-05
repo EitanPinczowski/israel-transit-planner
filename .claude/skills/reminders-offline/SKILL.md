@@ -56,11 +56,42 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   saved board shows departures still ahead only, marked "Offline — timetable saved at HH:MM",
   never a delay or cancellation.
 
-- **Trip results**: `core/plan/PlanCache` (LRU, 10) + `TripCacheJson`, persisted by
+- **Trip results**: `core/plan/PlanCache` (LRU, 16) + `TripCacheJson`, persisted by
   `data/PlanCacheStore` in `filesDir/trip_cache.json`. Key = tab + time mode + places rounded
   to 3 decimals (~110 m), so "my location" a few steps away still hits. On a NETWORK error
   the Trip tab shows the cached entry with an "Offline — saved at HH:MM" banner. Car tabs
   are not cached: their whole point is live combinations.
+  Every offline view drops options whose vehicle already left (`TripResult.stillAhead`,
+  applied in `PlanCacheStore.get`); an entry with nothing left shows the network error.
+- **Home** (`UserSettings.homePlace`, the saved place's name; `core/user/Home.kt`): "Set as
+  Home" (🏠) on a place row in Settings. A place named "Home"/"בית" is offered once
+  (`homeOffered`). Deleting the Home place clears it; `Home.of` ignores a dangling name.
+  Night refresh, the Quick Settings tile (C4) and the evening alerts (C5) use it.
+- **Night refresh** (`core/plan/NightRefresh.kt`, `work/NightRefreshWorker.kt`): plans
+  tomorrow's usual trips into the Trip cache so the morning works offline.
+  - Which: Home → each saved place whose routine has tomorrow (at its start); each saved trip
+    from its `from` or Home, at the destination's routine start, else the time of day of its
+    latest history record, else skipped. Earliest first, deduped by key, ≤ `MAX_TRIPS = 6`.
+    Shabbat/holidays are planned anyway (an empty answer is not cached).
+  - The day planned is the coming morning (`NightRefresh.tomorrow`): 22:00–03:59 → the service
+    day starting at the next 04:00 (23:50 and 00:10 plan the same day); 04:00–05:59 → the service
+    day that just started (a 04:30 run plans this morning; after a 00:10 run, `lastRunDay` keeps
+    it at 0 requests). Boss decision on the tester review, 2026-10-05.
+  - Key: `PlanCache.key("TRIP-NOW", from, to)`, the key of the Trip tab's NOW search, so the
+    morning's search finds it. Entries carry `night = true` → banner "Offline · planned last
+    night at 02:14" only while the entry is under 18 h old (`Entry.isLastNight`; a missed
+    night shows the ordinary "saved at" banner). Capacity is 16 so 6 night entries never push out the user's last 10.
+  - Job: one unique periodic WorkManager work (`KEEP`), 24 h with a 5-h flex window opening
+    at 00:00 Israel time (`NightRefresh.initialDelay`); constraints Wi-Fi (`UNMETERED`),
+    charging, battery not low. The worker returns without a request outside 22:00–06:00 or
+    when the service day was already done (`filesDir/night_refresh_day.txt`), and never asks
+    WorkManager to retry: a failed trip waits for the next night.
+  - **Worst case per day: 6 `plan`** (`BudgetedTransitApi(6)`), + 1 each on a 429/503 retry.
+  - Enqueued only while the setting is on (default on, owner 2026-10-05) **and** some night
+    of the coming week has a trip (`NightRefresh.anyJobs`); `TransitApp` re-checks on every
+    change of settings, places, trips or history, and cancels the work otherwise.
+  - Check on a phone: `adb shell cmd jobscheduler` / `adb shell dumpsys jobscheduler | grep -A5 night`;
+    Doze can push the run later in the window; a run after 06:00 does nothing.
 - **Background refresh**: Trip tab re-plans every 2 min while the app is in front
   (`MainViewModel.onVisible`), quietly — failures are ignored, the selection is kept.
   Car tabs refresh only on ↻ (up to 10 requests each).
