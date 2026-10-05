@@ -593,13 +593,13 @@ class MainViewModel(
                 null
             }
             _state.update {
-                when {
-                    it.results !== current -> it.copy(pages = TripPagesUi()) // a new search replaced the list
-                    merged == null -> it.copy(pages = TripPagesUi(failed = true))
-                    else -> it.copy(
-                        results = merged,
+                when (val o = TripPages.outcome(current, it.results, merged)) {
+                    TripPages.PageOutcome.Stale -> it.copy(pages = TripPagesUi())
+                    TripPages.PageOutcome.Failed -> it.copy(pages = TripPagesUi(failed = true))
+                    is TripPages.PageOutcome.Merged -> it.copy(
+                        results = o.result,
                         // The option the user picked stays picked, wherever the new page put it.
-                        selected = reselect(it.selectedItinerary, sortOptions(merged.itineraries, it.settings.tripSort) + listOfNotNull(merged.walkOnly), it.selected),
+                        selected = reselect(it.selectedItinerary, sortOptions(o.result.itineraries, it.settings.tripSort) + listOfNotNull(o.result.walkOnly), it.selected),
                         pages = TripPagesUi(),
                     )
                 }

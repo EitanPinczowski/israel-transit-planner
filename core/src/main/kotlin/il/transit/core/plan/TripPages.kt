@@ -71,6 +71,28 @@ object TripPages {
         return current.copy(itineraries = order(sane(fresh.itineraries + kept), arriveBy).take(MAX_OPTIONS), walkOnly = fresh.walkOnly)
     }
 
+    /** What an Earlier / Later tap does to the shown list once its answer is back. */
+    sealed interface PageOutcome {
+        /** The page merged: show [result]. */
+        data class Merged(val result: TripResult) : PageOutcome
+
+        /** The request failed (offline): keep the list as it is and say so under the buttons. */
+        data object Failed : PageOutcome
+
+        /** A new search replaced the list while the page loaded: drop the page quietly. */
+        data object Stale : PageOutcome
+    }
+
+    /**
+     * [requested] is the list the tap paged, [shown] the list on screen now, [merged] the
+     * answer (null = the request failed). Never touches the shown list on failure.
+     */
+    fun outcome(requested: TripResult, shown: TripResult?, merged: TripResult?): PageOutcome = when {
+        shown !== requested -> PageOutcome.Stale
+        merged == null -> PageOutcome.Failed
+        else -> PageOutcome.Merged(merged)
+    }
+
     /** What "if I miss this" says about [selected]. */
     sealed interface Miss {
         /** [next] is the first loaded option whose bus or train leaves after [selected]'s;

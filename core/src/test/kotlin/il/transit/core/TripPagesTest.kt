@@ -141,6 +141,24 @@ class TripPagesTest {
         assertTrue(miss.next.firstTransitLeg!!.start.isAfter(r.itineraries.first().firstTransitLeg!!.start))
     }
 
+    @Test fun `offline, a failed tap keeps the list and says so`() = runTest {
+        val api = fake()
+        val planner = TripPlanner(api)
+        val shown = planner.plan(query)
+        api.pages = emptyMap()
+        api.onPlan = { throw java.io.IOException("offline") }
+        val merged = runCatching { planner.page(query, shown, LATER) }.getOrNull()
+        assertNull(merged)
+        assertEquals(TripPages.PageOutcome.Failed, TripPages.outcome(shown, shown, merged))
+        // The list on screen is untouched: same options, same cursors (a later tap can retry).
+        assertEquals(first.nextPageCursor, shown.laterCursor)
+        // A new search replaced the list while the page loaded: the late answer is dropped.
+        val newer = shown.copy(itineraries = shown.itineraries.drop(1))
+        val late = TripPages.merge(shown, later, LATER, false)
+        assertEquals(TripPages.PageOutcome.Stale, TripPages.outcome(shown, newer, late))
+        assertEquals(TripPages.PageOutcome.Merged(late), TripPages.outcome(shown, shown, late))
+    }
+
     @Test fun `no cursor that way sends nothing`() = runTest {
         val api = fake()
         val r = TripResult(first.itineraries, null)
