@@ -106,4 +106,19 @@ class ReplayTransitApiTest {
             assertTrue(replay.calls.get() == 1)
         }
     }
+
+    @Test fun `a train leg's trip sheet replays the train, anything else the bus, five minutes from now`() = runTest {
+        val r = TripPlanner(replay).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv)), now)
+        val rail = r.itineraries.flatMap { it.legs }.first { it.mode.contains("RAIL") }
+        val train = replay.trip(rail.tripId!!)
+        assertTrue(train.legs.single().mode.contains("RAIL"))
+        assertEquals("08:00", hhmm(train.start))
+        assertEquals("BUS", replay.trip("no-such-trip").legs.single().mode)
+    }
+
+    @Test fun `vehicles on the map start at the window asked`() = runTest {
+        val segs = replay.mapTrips(il.transit.core.geo.BBox(bgu, telAviv), now, now.plusSeconds(600), 14.0)
+        assertTrue(segs.isNotEmpty())
+        assertEquals(now, segs.minOf { it.depart })
+    }
 }

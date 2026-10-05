@@ -99,6 +99,33 @@ class ReplayTransitApi(
         return shifted.copy(stopTimes = shifted.stopTimes.take(n))
     }
 
+    /** A train's trip for a train leg of the recorded plans, the bus 470's for anything else;
+     *  moved so it leaves 5 min from [clock]'s now. */
+    override suspend fun trip(tripId: String, language: String): Itinerary {
+        hit()
+        val name = if (tripId in railTripIds) "trip_train_bs_telaviv" else "trip_bus_470"
+        val raw = MotisJson.parseToJsonElement(load(name))
+        val recorded = MotisJson.decodeFromJsonElement(Itinerary.serializer(), raw)
+        val delta = wholeMinutes(Duration.between(parseTime(recorded.startTime), clock.instant().plus(Duration.ofMinutes(5))))
+        return MotisJson.decodeFromJsonElement(Itinerary.serializer(), shift(raw, delta))
+    }
+
+    /** The recorded vehicles, moved so the first hop starts at [start]. */
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<TripSegment> {
+        hit()
+        val raw = MotisJson.parseToJsonElement(load("map_trips_beersheva"))
+        val serializer = ListSerializer(TripSegment.serializer())
+        val first = MotisJson.decodeFromJsonElement(serializer, raw).minOfOrNull { it.depart } ?: return emptyList()
+        return MotisJson.decodeFromJsonElement(serializer, shift(raw, wholeMinutes(Duration.between(first, start))))
+    }
+
+    /** Trip ids of the rail legs in the recorded plans. */
+    private val railTripIds: Set<String> by lazy {
+        listOf("plan_bgu_telaviv", "plan_friday_bs_telaviv").flatMap { name ->
+            MotisJson.decodeFromString(PlanResponse.serializer(), load(name)).itineraries.flatMap { it.legs }
+        }.filter { it.mode.contains("RAIL") }.mapNotNull { it.tripId }.toSet()
+    }
+
     /** `Duration.truncatedTo` is Java 9: absent on Android 8, which this also runs on. */
     private fun wholeMinutes(d: Duration): Duration = Duration.ofMinutes(d.toMinutes())
 
@@ -133,7 +160,8 @@ class ReplayTransitApi(
         val FIXTURES = listOf(
             "plan_direct_car", "plan_car_pre_meitar", "plan_car_post_pickup", "plan_friday_bs_telaviv",
             "plan_bgu_telaviv", "map_stops_beersheva_north", "geocode_rager",
-            "reverse_geocode_bgu", "stoptimes_beersheva_north",
+            "reverse_geocode_bgu", "stoptimes_beersheva_north", "trip_train_bs_telaviv", "trip_bus_470",
+            "map_trips_beersheva",
         )
 
         private val INSTANT = Regex("""\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d(\.\d+)?)?Z""")
