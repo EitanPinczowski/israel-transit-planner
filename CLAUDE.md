@@ -8,6 +8,9 @@ only sometimes needs belongs in a skill (table below). No status, no history, no
 measurements here — live state is printed by `.claude/hooks/session_start.py`, and the
 phase checklist is `ROADMAP.md`.
 
+**Times for the owner are Israel time** (Asia/Jerusalem: UTC+3 in summer, UTC+2 in winter).
+Convert CI and tool timestamps (UTC) before writing them in messages, PRs or docs.
+
 ## Hard rules (do not silently reverse)
 
 - **Free, no card, no API key — ever.** No Google Maps SDK / Directions / Places, no
