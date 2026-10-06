@@ -136,6 +136,17 @@ data class GeocodeMatch(
     val modes: List<String>? = null,
     /** For PLACE answers: "place_6" etc. for a town or area itself, else the kind of POI. */
     val category: String? = null,
+    /** Where it is, country first: district, town (adminLevel 8), neighbourhood. */
+    val areas: List<GeocodeArea> = emptyList(),
+)
+
+/** One admin area of a geocode answer. [matched]: the query named it ("הרצל חיפה"). */
+@Serializable
+data class GeocodeArea(
+    val name: String,
+    val adminLevel: Double = 0.0,
+    val matched: Boolean = false,
+    val default: Boolean = false,
 )
 
 @Serializable
