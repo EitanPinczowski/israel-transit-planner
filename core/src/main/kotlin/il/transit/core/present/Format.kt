@@ -37,7 +37,10 @@ fun defaultColor(kind: LegKind): String = when (kind) {
     LegKind.OTHER -> "#455A64"
 }
 
-/** MOTIS route colours come as "RRGGBB" without '#'; anything malformed falls back. */
+/**
+ * MOTIS route colours come as "RRGGBB" without '#'; anything malformed falls back. This is
+ * one leg alone; inside an itinerary use [LegPalette.colors], which keeps two buses apart.
+ */
 fun legColor(leg: Leg): String = routeColorOr(leg.routeColor, legKind(leg.mode))
 
 private fun routeColorOr(raw: String?, kind: LegKind): String {
@@ -160,6 +163,7 @@ fun summarize(
     fareProfile: FareProfile = FareProfile.REGULAR,
     searchedAt: Instant? = null,
 ): ItinerarySummary {
+    val colors = LegPalette.colors(it.legs)
     val chips = it.legs.withIndex()
         // Transfers inside a station show up as walks of a few seconds; they are noise.
         .filter { (_, leg) -> leg.isTransit || leg.duration >= 60 }
@@ -169,7 +173,7 @@ fun summarize(
                 label = if (leg.isTransit) lineLabel(leg) else null,
                 minutes = minutes(leg.duration),
                 realTime = leg.realTime,
-                color = legColor(leg),
+                color = colors[i],
                 delayMin = if (leg.isTransit) legDelayMin(leg) else null,
                 legIndex = i,
                 alert = leg.isTransit && legAlerts(leg, leg.start).isNotEmpty(),

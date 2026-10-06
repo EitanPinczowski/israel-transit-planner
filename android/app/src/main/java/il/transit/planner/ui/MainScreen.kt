@@ -354,6 +354,8 @@ fun MainScreen(
             val pad = MapPadding(bars.getLeft(density, dir), topEdge, bars.getRight(density, dir), rootHeight - bottomEdge)
             LaunchedEffect(pad) { actions.onMapPadding(pad) }
         }
+        // First run (C6), over everything; waits for the stored settings so it never flashes.
+        if (state.settingsLoaded && !state.settings.tourSeen) WelcomeTour(onFinish = { vm.updateSettings(state.settings.copy(tourSeen = true)) })
     }
 
     UpdateLaunchers(state.updateState, vm) // Android's install prompt / permission screen, banner or not

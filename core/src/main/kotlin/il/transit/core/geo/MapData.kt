@@ -5,7 +5,7 @@ import il.transit.core.api.Place
 import il.transit.core.api.TransitModes
 import il.transit.core.present.LegKind
 import il.transit.core.present.defaultColor
-import il.transit.core.present.legColor
+import il.transit.core.present.LegPalette
 import il.transit.core.present.legKind
 import il.transit.core.user.SavedPlace
 import kotlinx.serialization.json.JsonArray
@@ -27,7 +27,7 @@ object MapData {
     const val EMPTY = """{"type":"FeatureCollection","features":[]}"""
 
     /**
-     * One LineString per leg (`kind`, `color` properties) + a Point at each boarding/alighting
+     * One LineString per leg (`kind`, `color` from [LegPalette]) + a Point at each boarding/alighting
      * stop. [carPath], when given, is drawn first as a CAR line: the ride before the itinerary.
      */
     fun itinerary(it: Itinerary, carPath: List<LatLon> = emptyList()): String = collection {
@@ -37,18 +37,19 @@ object MapData {
                 put("color", defaultColor(LegKind.CAR))
             })
         }
-        for (leg in it.legs) {
+        val colors = LegPalette.colors(it.legs)
+        for ((i, leg) in it.legs.withIndex()) {
             val pts = leg.legGeometry?.let { g -> Geo.decodePolyline(g.points, g.precision) }
                 ?.takeIf { p -> p.size >= 2 }
                 ?: listOf(leg.from.latLon, leg.to.latLon)
             add(feature(lineString(pts)) {
                 put("kind", legKind(leg.mode).name)
-                put("color", legColor(leg))
+                put("color", colors[i])
             })
         }
-        for (leg in it.legs.filter { l -> l.isTransit }) {
+        for ((i, leg) in it.legs.withIndex().filter { (_, l) -> l.isTransit }) {
             for (p in listOf(leg.from, leg.to)) {
-                add(feature(point(p.latLon)) { put("name", p.name); put("color", legColor(leg)) })
+                add(feature(point(p.latLon)) { put("name", p.name); put("color", colors[i]) })
             }
         }
     }

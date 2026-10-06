@@ -183,6 +183,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item { AppearanceSection(s, ::set, showTour = { set(s.copy(tourSeen = false)); vm.showSettings(false) }) }
         item {
             Section(R.string.max_transfers) {
                 UserSettings.TRANSFER_CHOICES.forEach { n ->

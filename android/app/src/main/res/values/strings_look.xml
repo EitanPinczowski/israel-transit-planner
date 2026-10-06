@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings → Appearance (Phase 9 C6) -->
+    <string name="appearance">Appearance</string>
+    <string name="app_language">Language</string>
+    <string name="language_system">System</string>
+    <!-- Each language is named in itself, so it can be found whatever the app shows now. -->
+    <string name="language_he">עברית</string>
+    <string name="language_en">English</string>
+    <string name="app_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="tour_again">Show the tour again</string>
+
+    <!-- The welcome tour -->
+    <string name="tour_skip">Skip</string>
+    <string name="tour_next">Next</string>
+    <string name="tour_done">Done</string>
+    <string name="tour_page">Page %1$d of %2$d</string>
+    <string name="tour_trip_what">From here to there by bus, train and light rail, with the fare and when to leave.</string>
+    <string name="tour_trip_when">Use it for any everyday trip.</string>
+    <string name="tour_better_start_what">Someone drives you to a better stop or station to start from.</string>
+    <string name="tour_better_start_when">Use it when a short drive saves a long wait or a transfer.</string>
+    <string name="tour_drop_off_what">You are in a car going somewhere else; it lets you off at a station on its way.</string>
+    <string name="tour_drop_off_when">Use it when you share part of a ride and go on by train or bus.</string>
+    <string name="tour_pick_up_what">Finds the stop where someone should pick you up on your way home.</string>
+    <string name="tour_pick_up_when">Use it when a ride for the last part beats the last bus.</string>
+    <string name="tour_park_ride_what">Drive your own car to a train station, park, and take the train.</string>
+    <string name="tour_park_ride_when">Use it for long trips where the train beats traffic.</string>
+    <string name="tour_saved_title">Saved places and reminders</string>
+    <string name="tour_saved_what">Save home, work and favourite stops; one tap plans the trip, and a reminder tells you when to leave.</string>
+    <string name="tour_saved_when">Use them for the trips you take every week.</string>
+    <string name="tour_saved_tile">Add the Quick Settings tile for the next trip home.</string>
+    <string name="tour_saved_last_trip">Turn on the last trip home alert in Settings.</string>
+</resources>

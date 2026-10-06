@@ -100,7 +100,7 @@ class TripHomeViewModelTest {
         }
         val cache = PlanCacheStore(tmp.newFile("trip_cache.json").also { it.delete() }, clock)
         if (cached) cache.put(PlanCache.key("TRIP-NOW", bs, homePlace.latLon), recordedResult)
-        MainViewModel(api, store, "en", planCache = cache, clock = clock).also { it.locationProvider = { fix }; vms += it }
+        MainViewModel(api, store, { "en" }, planCache = cache, clock = clock).also { it.locationProvider = { fix }; vms += it }
     }
 
     @Test fun `a tap with a fix plans home once, from my location, first option selected`() = runBlocking {

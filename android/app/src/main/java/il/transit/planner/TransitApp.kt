@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.Clock
-import java.util.Locale
 
 /**
  * Process-wide singletons. One guarded client, so the cache and the concurrency cap are shared.
@@ -88,12 +87,13 @@ open class TransitApp : Application() {
         override fun cancel() = ReminderScheduler.cancel(this@TransitApp)
     }
 
-    /** Language for stop names and geocoding: Hebrew unless the phone is set to something else. */
+    /**
+     * Language for stop names and geocoding: the app's own (Settings → Appearance), else the
+     * phone's; Hebrew unless that is something else. Read on every call, so a switch applies
+     * to the next request.
+     */
     val language: String
-        get() = when (Locale.getDefault().language) {
-            "iw", "he" -> "he"
-            else -> "en"
-        }
+        get() = il.transit.planner.ui.AppLocale.transitLanguage(this)
 }
 
 interface Reminders {

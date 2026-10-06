@@ -45,7 +45,8 @@ class UiTestApp : TransitApp() {
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
         latestRelease = null
-        store.setSettings(UserSettings())
+        // Journeys start past the first-run welcome tour (C6).
+        store.setSettings(UserSettings(tourSeen = true))
         store.setPlaces(places)
         store.setTrips(emptyList())
         store.setReminder(null)
