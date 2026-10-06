@@ -167,7 +167,7 @@ import kotlin.math.roundToInt
 internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions) {
     var editingRoutine by remember { mutableStateOf<SavedPlace?>(null) }
     editingRoutine?.let { p ->
-        RoutineDialog(p, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
+        RoutineDialog(p, state.history, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
     }
     AlertDialog(
         onDismissRequest = { vm.showSettings(false) },
@@ -307,6 +307,7 @@ internal fun HistoryContent(state: UiState, vm: MainActions, now: Instant = Inst
                     }
                 }
             }
+            item { PassAdviceLine(state.history, state.settings.fareProfile, now) }
             st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
                 item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
             }
@@ -404,7 +405,7 @@ internal fun hhmmOf(min: Int) = String.format(Locale.US, "%02d:%02d", min / 60, 
 
 /** Days (Sunday first) and a window; Save, Remove (when one is set) or Cancel. */
 @Composable
-internal fun RoutineDialog(p: SavedPlace, onDismiss: () -> Unit, onSave: (PlaceRoutine?) -> Unit) {
+internal fun RoutineDialog(p: SavedPlace, history: List<il.transit.core.history.TripRecord>, onDismiss: () -> Unit, onSave: (PlaceRoutine?) -> Unit) {
     val r = p.routine
     val days = remember { mutableStateListOf<Int>().apply { addAll(r?.days ?: listOf(7, 1, 2, 3, 4)) } }
     val from = rememberTimePickerState(initialHour = (r?.fromMin ?: 420) / 60, initialMinute = (r?.fromMin ?: 420) % 60, is24Hour = true)
@@ -415,6 +416,7 @@ internal fun RoutineDialog(p: SavedPlace, onDismiss: () -> Unit, onSave: (PlaceR
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(stringResource(R.string.routine_help), style = MaterialTheme.typography.bodySmall)
+                BestLeaveLine(history, p, days.toList())
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     PlaceRoutine.WEEK.forEach { d ->
                         FilterChip(

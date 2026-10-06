@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- תובנות מההיסטוריה (שלב 9 C3). -->
+    <string name="insights_usual_slower">בדרך כלל ⁨%1$d⁩ דק׳ · הפעם ‎+⁨%2$d⁩</string>
+    <string name="insights_usual_faster">בדרך כלל ⁨%1$d⁩ דק׳ · הפעם ‎−⁨%2$d⁩</string>
+    <string name="insights_usual_same">בדרך כלל ⁨%1$d⁩ דק׳, כמו הפעם</string>
+    <string name="insights_best_leave">הכי מהיר כשיוצאים בסביבות ⁨%1$s⁩ (בדרך כלל ⁨%2$d⁩ דק׳)</string>
+    <string name="insights_pass_saves">חופשי חודשי היה חוסך ⁨₪%1$s⁩ ב%2$s</string>
+    <string name="insights_single_cheaper">תשלום לפי נסיעה היה זול ב־⁨₪%1$s⁩ ב%2$s</string>
+    <string name="insights_pass_same">חופשי חודשי היה עולה בערך אותו דבר ב%1$s</string>
+    <plurals name="insights_based_on">
+        <item quantity="one">הערכה לפי נסיעה ⁨%d⁩ שהתחלת באפליקציה</item>
+        <item quantity="two">הערכה לפי ⁨%d⁩ נסיעות שהתחלת באפליקציה</item>
+        <item quantity="other">הערכה לפי ⁨%d⁩ נסיעות שהתחלת באפליקציה</item>
+    </plurals>
+</resources>

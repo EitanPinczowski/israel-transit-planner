@@ -35,6 +35,10 @@ class FareTest {
         assertEquals(listOf(1150, 2100, 2700, 3050, 5250), FareTable.TRAIN)
         assertEquals(listOf(1750, 2900, 3750, 3750, 6050, 7950), FareTable.DAILY_CAP_BUS)
         assertEquals(listOf(2300, 3250, 4200, 4700, 8050), FareTable.DAILY_CAP_WITH_TRAIN)
+        assertEquals(listOf(31500, 31500, 31500, 31500, 31500, 68400), FareTable.MONTHLY_BUS)
+        assertEquals(listOf(32300, 32300, 46400, 68400, 68400), FareTable.MONTHLY_WITH_TRAIN)
+        assertEquals(68400, FareTable.monthlyPass(5, withTrain = true))
+        assertEquals("2026-10-06", FareTable.CHECKED)
         assertEquals(0, FareTable.band(15.0)) // limits are inclusive
         assertEquals(1, FareTable.band(15.1))
         assertEquals(5, FareTable.band(300.0))
