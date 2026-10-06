@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appearance">מראה</string>
+    <string name="app_language">שפה</string>
+    <string name="language_system">כמו בטלפון</string>
+    <string name="language_he">עברית</string>
+    <string name="language_en">English</string>
+    <string name="app_theme">ערכת נושא</string>
+    <string name="theme_system">כמו בטלפון</string>
+    <string name="theme_light">בהיר</string>
+    <string name="theme_dark">כהה</string>
+    <string name="tour_again">הצגת הסיור שוב</string>
+
+    <string name="tour_skip">דילוג</string>
+    <string name="tour_next">הבא</string>
+    <string name="tour_done">סיום</string>
+    <string name="tour_page">עמוד ⁨%1$d⁩ מתוך ⁨%2$d⁩</string>
+    <string name="tour_trip_what">מכאן לשם באוטובוס, ברכבת וברכבת הקלה, עם המחיר ומתי לצאת.</string>
+    <string name="tour_trip_when">לכל נסיעה יומיומית.</string>
+    <string name="tour_better_start_what">מישהו מסיע אותך לתחנה טובה יותר להתחיל ממנה.</string>
+    <string name="tour_better_start_when">כשנסיעה קצרה חוסכת המתנה ארוכה או החלפה.</string>
+    <string name="tour_drop_off_what">יש לך טרמפ שנוסע למקום אחר; הוא מוריד אותך בתחנה שבדרך.</string>
+    <string name="tour_drop_off_when">כשחלק מהדרך משותף וממשיכים ברכבת או באוטובוס.</string>
+    <string name="tour_pick_up_what">מוצא את התחנה שבה כדאי שיאספו אותך בדרך הביתה.</string>
+    <string name="tour_pick_up_when">כשאיסוף לקטע האחרון עדיף על האוטובוס האחרון.</string>
+    <string name="tour_park_ride_what">נוסעים ברכב שלך לתחנת רכבת, חונים וממשיכים ברכבת.</string>
+    <string name="tour_park_ride_when">לנסיעות ארוכות שבהן הרכבת עוקפת את הפקקים.</string>
+    <string name="tour_saved_title">מקומות שמורים ותזכורות</string>
+    <string name="tour_saved_what">שומרים בית, עבודה ותחנות אהובות; לחיצה אחת מתכננת את הנסיעה, ותזכורת אומרת מתי לצאת.</string>
+    <string name="tour_saved_when">לנסיעות שחוזרות כל שבוע.</string>
+    <string name="tour_saved_tile">אפשר להוסיף אריח להגדרות המהירות עם הנסיעה הבאה הביתה.</string>
+    <string name="tour_saved_last_trip">אפשר להפעיל בהגדרות התראה על הנסיעה האחרונה הביתה.</string>
+</resources>

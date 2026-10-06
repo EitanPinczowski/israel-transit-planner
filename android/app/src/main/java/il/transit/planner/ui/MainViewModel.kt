@@ -136,6 +136,8 @@ data class UiState(
     val stopSheet: StopSheet? = null,
     val showSettings: Boolean = false,
     val settings: UserSettings = UserSettings(),
+    /** [settings] come from the store, not the defaults: the first-run tour waits for this. */
+    val settingsLoaded: Boolean = false,
     val savedPlaces: List<SavedPlace> = emptyList(),
     val savedTrips: List<SavedTrip> = emptyList(),
     /** When the shown results were fetched (Trip tab), for "Updated 12:07". */
@@ -212,7 +214,8 @@ data class UiState(
 class MainViewModel(
     private val api: TransitApi,
     private val store: UserStore,
-    private val language: String,
+    /** Read per request: the app language can change while this ViewModel lives (C6). */
+    private val languageOf: () -> String,
     private val planCache: PlanCacheStore? = null,
     private val reminders: Reminders? = null,
     private val rides: Rides? = null,
@@ -222,6 +225,7 @@ class MainViewModel(
     private val departureCache: il.transit.planner.data.DepartureCacheStore? = null,
     private val clock: Clock = Clock.systemUTC(),
 ) : ViewModel() {
+    private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -248,7 +252,7 @@ class MainViewModel(
         viewModelScope.launch {
             combine(store.settings, store.places, store.trips) { s, p, t -> Triple(s, p, t) }.collect { (s, p, t) ->
                 val first = _state.value.savedPlaces.isEmpty() && p.isNotEmpty()
-                _state.update { it.copy(settings = s, savedPlaces = p, savedTrips = t) }
+                _state.update { it.copy(settings = s, settingsLoaded = true, savedPlaces = p, savedTrips = t) }
                 if (first) applyRoutine()
             }
         }
@@ -1093,7 +1097,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, app.language, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock)
             }
         }
     }

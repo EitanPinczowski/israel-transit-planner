@@ -10,7 +10,14 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
+import il.transit.core.user.Appearance
+import il.transit.planner.ui.AppLocale
+import il.transit.planner.ui.DarkColors
+import il.transit.planner.ui.LightColors
+import androidx.compose.ui.graphics.toArgb
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import android.view.Gravity
@@ -47,6 +54,7 @@ import il.transit.planner.remind.LastTripReceiver
 import il.transit.planner.remind.Notifications
 import il.transit.planner.ui.TripDetailsViewModel
 import il.transit.planner.ui.screens.TripDetailsSheet
+import il.transit.core.present.LegPalette
 import il.transit.core.present.vehicleGeoJson
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
@@ -110,13 +118,23 @@ class MainActivity : ComponentActivity() {
         enableLocationIfAllowed()
     }
 
+    /** Below Android 13 the app language (Settings → Appearance) is applied here; see [AppLocale]. */
+    override fun attachBaseContext(newBase: android.content.Context) = super.attachBaseContext(AppLocale.wrap(newBase))
+
+    /** Dark UI and map, from Settings → Appearance and the phone; set by the Compose tree. */
+    private var dark: Boolean = false
+
+    /** The first stored settings were checked against the phone's per-app language page. */
+    private var localeChecked = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
+        dark = Appearance.dark(AppLocale.theme(this), isNight())
+        edgeToEdge(dark)
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
         // Before the first tiles arrive the map shows this colour, not a white flash at night.
         val options = MapLibreMapOptions.createFromAttributes(this, null)
-            .foregroundLoadColor(getColor(R.color.window_background))
+            .foregroundLoadColor(windowColor(dark))
         mapView = MapView(this, options).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
@@ -137,8 +155,16 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { app.crashLog.refresh() }
 
         setContent {
-            AppTheme {
-                val state by vm.state.collectAsState()
+            val state by vm.state.collectAsState()
+            // Until the store answers, the theme mirrored at the last change: no light flash.
+            val theme = if (state.settingsLoaded) state.settings.theme else AppLocale.theme(this)
+            val dark = Appearance.dark(theme, isSystemInDarkTheme())
+            LaunchedEffect(dark) { applyDark(dark) }
+            LaunchedEffect(state.settingsLoaded, state.settings.theme) {
+                if (state.settingsLoaded) AppLocale.saveTheme(this@MainActivity, state.settings.theme)
+            }
+            LaunchedEffect(state.settingsLoaded, state.settings.language) { if (state.settingsLoaded) syncLocale(state.settings.language) }
+            AppTheme(dark = dark) {
                 val stops by vm.stops.collectAsState()
                 val ctl by controller.collectAsState()
                 val offlineState by offline.state.collectAsState()
@@ -195,7 +221,8 @@ class MainActivity : ComponentActivity() {
                     startRide = ::startRide,
                     onMapPadding = { mapPadding.value = it },
                     crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
-                    openLeg = tripVm::open,
+                    // The sheet and the vehicle dot in the leg's own colour, as on its chip (C6).
+                    openLeg = { leg -> tripVm.open(leg, state.selectedItinerary?.let { LegPalette.colorOf(it.legs, leg) }) },
                 )
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
@@ -276,12 +303,7 @@ class MainActivity : ComponentActivity() {
             setAttributionTintColor(getColor(R.color.brand))
         }
         placeMapChrome(mapPadding.value)
-        styleUrl = (application as TransitApp).mapStyle(isNight())
-        m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
-            style = s
-            controller.value = MapController(m, s, isNight())
-            enableLocationIfAllowed()
-        }
+        loadMapStyle(m)
         m.addOnMapLongClickListener { p ->
             vm.setDestinationFromMap(LatLon(p.latitude, p.longitude))
             true
@@ -323,6 +345,62 @@ class MainActivity : ComponentActivity() {
         m.uiSettings.setAttributionMargins(p.left + g, p.top + g, p.right + g, p.bottom + g)
     }
 
+    /** OpenFreeMap light or dark, as [dark] says. The layers are re-pushed to the new controller. */
+    private fun loadMapStyle(m: MapLibreMap) {
+        val night = dark
+        styleUrl = (application as TransitApp).mapStyle(night)
+        mapDark = night
+        controller.value = null
+        style = null
+        m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
+            if (mapDark != night) return@setStyle // switched again while loading
+            style = s
+            controller.value = MapController(m, s, night)
+            enableLocationIfAllowed()
+        }
+    }
+
+    /** The style [loadMapStyle] last asked for. */
+    private var mapDark: Boolean? = null
+
+    private fun applyDark(d: Boolean) {
+        if (d != dark) { dark = d; edgeToEdge(d) }
+        // Before the map is ready, onMapReady picks the style from [dark].
+        val m = map ?: return
+        if (mapDark != null && mapDark != d) loadMapStyle(m)
+    }
+
+    /** Status and navigation bar icons that read on the app's own theme, not only the phone's. */
+    private fun edgeToEdge(d: Boolean) {
+        // The window behind the map follows the app's theme too: no light flash under a forced
+        // Dark (the XML theme only knows the phone's night mode).
+        window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(windowColor(d)))
+        val transparent = android.graphics.Color.TRANSPARENT
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(transparent, transparent) { d },
+            navigationBarStyle = SystemBarStyle.auto(NAV_SCRIM_LIGHT, NAV_SCRIM_DARK) { d },
+        )
+    }
+
+    /**
+     * Applies the stored language. Once per Activity on Android 13+, a language picked on the
+     * phone's own per-app page since our last change wins and is stored instead.
+     */
+    private fun syncLocale(language: String?) {
+        val now = AppLocale.current(this)
+        val first = !localeChecked
+        localeChecked = true
+        if (now == language) return
+        if (first && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            vm.updateSettings(vm.state.value.settings.copy(language = now))
+        } else {
+            AppLocale.apply(this, language)
+        }
+    }
+
+    /** Theme.kt's background, light or dark: the window and the map before its first tiles. */
+    private fun windowColor(d: Boolean): Int = (if (d) DarkColors else LightColors).background.toArgb()
+
     private fun isNight(): Boolean =
         (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
@@ -357,5 +435,9 @@ class MainActivity : ComponentActivity() {
         /** OpenFreeMap: free, no key, allowed in apps. */
         const val MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
         const val MAP_STYLE_DARK = "https://tiles.openfreemap.org/styles/dark"
+
+        /** enableEdgeToEdge's own default scrims for 3-button navigation. */
+        private val NAV_SCRIM_LIGHT = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+        private val NAV_SCRIM_DARK = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
     }
 }

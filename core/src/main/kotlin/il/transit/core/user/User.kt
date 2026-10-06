@@ -114,6 +114,12 @@ data class UserSettings(
     val nightRefresh: Boolean = true,
     /** "Last trip home" evening alert (Phase 9 C5; owner, 2026-10-05: opt-in, off). */
     val lastTripAlert: Boolean = false,
+    /** App language, a BCP 47 tag ("he", "en"); null = the phone's (Phase 9 C6). See [Appearance]. */
+    val language: String? = null,
+    /** "SYSTEM", "LIGHT" or "DARK"; see [Appearance.dark]. */
+    val theme: String = Appearance.SYSTEM,
+    /** The welcome tour was finished or skipped; Settings sets it back to false to show it again. */
+    val tourSeen: Boolean = false,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

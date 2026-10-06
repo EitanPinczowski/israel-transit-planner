@@ -40,6 +40,22 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
 - Corners: `MaterialTheme.shapes` (`extraSmall` 6 chips · `small` 8 · `medium` 12 option
   cards · `large` 16 cards · `extraLarge` 28 sheets). No ad-hoc `RoundedCornerShape`.
 - Text on an operator's route colour: `onColor(hex)` (core, tested) picks black or white.
+- Leg colours inside one itinerary come from `LegPalette.colors(legs)` (core
+  `present/LegPalette.kt`), never `legColor(leg)` alone: chip, map line and stop dots all
+  use it. A transit leg keeps its operator colour only when no other leg of the trip has it
+  and it reads on both maps (≥ 1.5:1); otherwise it takes the next of 6 Okabe–Ito based
+  colours, each ≥ 3:1 on OpenFreeMap's light `#F8F4F0` and dark `#0C0C0C` (the `background`
+  layer; parks and water can be closer). Walks stay grey. Colours are per itinerary, not per
+  line: line 370 can be blue in one option and orange in the next. The trip sheet and the
+  vehicle dot take the same colour (`LegPalette.colorOf`).
+- **Settings → Appearance** (C6): `UserSettings.language` (null = phone, "he", "en") and
+  `.theme` ("SYSTEM"/"LIGHT"/"DARK", `Appearance.dark`). `ui/AppLocale` applies them: API
+  33+ `LocaleManager` (+ `res/xml/locales_config.xml`, the phone's per-app page; a choice
+  made there wins once at the next start), API 26–32 a wrapped base context in
+  `MainActivity.attachBaseContext`. Both are mirrored in SharedPreferences for the first
+  frame. The Transitous `language` is `TransitApp.language`, read per request: the app's
+  language, else the phone's. The map style and bar icons follow the theme, not only the
+  phone. A screen never reads `isSystemInDarkTheme()` itself: `AppTheme(dark)` is set once.
 - Map layers (`MapController`) take `dark` and use their own `Palette`; a new layer needs
   both values. Rides get a casing (halo) so any line colour reads on any map.
 - Insets: edge-to-edge everywhere. Overlays pad with `WindowInsets.safeDrawing` (bars +

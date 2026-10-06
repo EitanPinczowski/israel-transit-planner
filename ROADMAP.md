@@ -202,10 +202,10 @@ merges. Tick only your own package's lines.
       location, `LastRideFinder` under `BudgetedTransitApi(3)`
 
 ### C6 — Look & welcome (`claude/p9-look-welcome`, 0 requests; owner, 2026-10-05)
-- [ ] Settings → Appearance: language (System / עברית / English) and theme (System / Light /
+- [x] Settings → Appearance: language (System / עברית / English) and theme (System / Light /
       Dark), applied at once
-- [ ] First-run tour of every mode, skippable, shown again from Settings
-- [ ] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
+- [x] First-run tour of every mode, skippable, shown again from Settings
+- [x] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
 
 ### Close-out (boss)
 - [ ] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
