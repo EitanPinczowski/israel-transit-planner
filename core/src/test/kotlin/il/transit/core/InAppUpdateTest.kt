@@ -112,7 +112,7 @@ class InAppUpdateTest {
         assertSame(UpdateState.Idle, UpdateFlow.onUpdate(UpdateState.Idle, canInstall = true))
     }
 
-    @Test fun `Android's answer: cancel keeps Ready, a signature clash says different build`() {
+    @Test fun `Android's answer - cancel keeps Ready, a signature clash says different build`() {
         val ready = UpdateState.Ready(release, "/c/u.apk")
         assertSame(ready, UpdateFlow.installResult(ready, UpdateFlow.RESULT_CANCELED, null))
         assertEquals(
