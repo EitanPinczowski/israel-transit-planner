@@ -64,9 +64,15 @@ class UsualTripTest {
         assertNull(UsualTrip.usual(listOf(rec(1, 50, home, work), rec(2, 50, home, work), rec(3, 50, home, work)), workEnd, homeEnd, now))
     }
 
-    @Test fun `old records match by saved place names, never by blank ones`() {
-        val old = { d: Long, m: Int -> TripRecord(now.minusSeconds(d * 86_400).epochSecond, "Home", "Work", "TRIP", m - 5, 5, 0) }
-        val r = listOf(old(1, 40), old(2, 44), old(3, 48))
+    @Test fun `old records without a door-to-door time are left out`() {
+        // Riding + walking only, no waits: three at 40 min would make a 95 min option read "+55".
+        val old = { d: Long -> TripRecord(now.minusSeconds(d * 86_400).epochSecond, "Home", "Work", "TRIP", 35, 5, 0) }
+        assertNull(UsualTrip.usual(listOf(old(1), old(2), old(3)), TripEnd(home, "Home"), workEnd, now))
+    }
+
+    @Test fun `a record with no coordinates matches by saved place names, never by blank ones`() {
+        val named = { d: Long, m: Int -> TripRecord(now.minusSeconds(d * 86_400).epochSecond, "Home", "Work", "TRIP", m - 5, 5, 0, totalMin = m) }
+        val r = listOf(named(1, 40), named(2, 44), named(3, 48))
         assertEquals(44, UsualTrip.usual(r, TripEnd(home, "Home"), workEnd, now)!!.medianMin)
         assertNull(UsualTrip.usual(r, homeEnd, workEnd, now))
     }
@@ -94,7 +100,6 @@ class UsualTripTest {
         assertNull(r.totalMin)
         assertNull(r.fareAgorot)
         assertNull(r.toCell)
-        assertEquals(38, r.doorToDoorMin)
         assertEquals(r, History.decode(History.encode(listOf(r))).single())
     }
 

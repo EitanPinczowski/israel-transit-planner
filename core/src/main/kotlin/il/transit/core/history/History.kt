@@ -37,9 +37,6 @@ data class TripRecord(
 ) {
     val startedAt: Instant get() = Instant.ofEpochSecond(startedAtEpoch)
 
-    /** [totalMin], or for an old record the riding and walking it knew (no waits). */
-    val doorToDoorMin: Int get() = totalMin ?: (transitMin + walkMin)
-
     companion object {
         fun from(it: Itinerary, from: String, to: String, mode: String, startedAt: Instant, savedMin: Int?): TripRecord {
             val transit = it.legs.filter { l -> l.isTransit }.sumOf { l -> l.duration }

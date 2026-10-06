@@ -92,6 +92,16 @@ class PassAdvisorTest {
         assertNull(PassAdvisor.advise(commute(22), FareProfile.FREE, october))
     }
 
+    @Test fun `a month that spans a profile change is priced at today's profile`() {
+        // Records keep the full fare, so the half profile set mid-month halves the whole month.
+        val month = commute(22)
+        val regular = PassAdvisor.advise(month, FareProfile.REGULAR, october)!!
+        val half = PassAdvisor.advise(month, FareProfile.HALF, october)!!
+        assertEquals(regular.singleAgorot / 2, half.singleAgorot)
+        assertEquals(regular.passAgorot / 2, half.passAgorot)
+        assertEquals(regular.trips, half.trips)
+    }
+
     @Test fun `old records without a fare are left out`() {
         val old = TripRecord(ZonedDateTime.of(LocalDateTime.parse("2026-09-15T08:00"), ISRAEL).toEpochSecond(), "", "x", "TRIP", 10, 5, 0)
         assertNull(PassAdvisor.advise(commute(4) + List(5) { old }, FareProfile.REGULAR, october))

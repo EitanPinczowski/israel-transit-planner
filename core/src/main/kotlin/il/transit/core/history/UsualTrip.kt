@@ -22,7 +22,10 @@ data class BestLeave(val leaveMin: Int, val medianMin: Int, val trips: Int)
  * must not move them.
  */
 object UsualTrip {
-    /** Start and end within this of the record's rounded cells count as the same trip. */
+    /**
+     * Start and end within this of the record's rounded cells count as the same trip. Cells are
+     * rounded to about 100 m, so the effective radius is up to ~380 m: "about 300 m".
+     */
     const val SAME_PLACE_M = 300.0
     const val MIN_TRIPS = 3
     val WINDOW: Duration = Duration.ofDays(90)
@@ -30,26 +33,36 @@ object UsualTrip {
     const val BUCKET_MIN = 15
     const val MIN_PER_BUCKET = 2
 
-    /** The usual time from [from] to [to], from at least [MIN_TRIPS] records of the last [WINDOW]; else null. */
+    /**
+     * The usual time from [from] to [to], from at least [MIN_TRIPS] records of the last [WINDOW]; else null.
+     *
+     * Only records with [TripRecord.totalMin] count: older ones knew riding + walking but not the
+     * waits, so they would make every new option look slower ("+N" too high).
+     */
     fun usual(records: List<TripRecord>, from: TripEnd, to: TripEnd, now: Instant): Usual? {
         val since = now.minus(WINDOW)
         val same = records.filter { r ->
-            !r.startedAt.isBefore(since) && !r.startedAt.isAfter(now) &&
+            r.totalMin != null && !r.startedAt.isBefore(since) && !r.startedAt.isAfter(now) &&
                 same(r.fromCell, r.from, from) && same(r.toCell, r.to, to)
         }
         if (same.size < MIN_TRIPS) return null
-        return Usual(median(same.map { it.doorToDoorMin }), same.size)
+        return Usual(median(same.map { it.totalMin!! }), same.size)
     }
 
     /**
      * The 15-minute leave slot with the shortest median trip to [place], on the routine's days,
      * among slots with at least [MIN_PER_BUCKET] records. Null when the data is too thin.
+     *
+     * The routine's time window is ignored on purpose: the point is to find a better time than
+     * the routine's own. Days and slots are wall-clock Israel time (a 00:10 trip on Monday is
+     * Monday, not Sunday's service day), which is fine for daytime routines. Like [usual], only
+     * records with [TripRecord.totalMin] count.
      */
     fun bestLeave(records: List<TripRecord>, routine: PlaceRoutine, place: SavedPlace): BestLeave? {
         val dest = TripEnd(place.latLon, place.name)
         val slots = records
-            .filter { same(it.toCell, it.to, dest) }
-            .map { it.startedAt.atZone(ISRAEL) to it.doorToDoorMin }
+            .filter { it.totalMin != null && same(it.toCell, it.to, dest) }
+            .map { it.startedAt.atZone(ISRAEL) to it.totalMin!! }
             .filter { (t, _) -> t.dayOfWeek.value in routine.days }
             .groupBy({ (t, _) -> (t.hour * 60 + t.minute) / BUCKET_MIN * BUCKET_MIN }, { it.second })
             .filterValues { it.size >= MIN_PER_BUCKET }

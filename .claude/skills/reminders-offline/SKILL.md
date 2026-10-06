@@ -51,11 +51,11 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `filesDir/history.json`, newest first, capped at 500 — `core/history/History.kt`).
 - Since Phase 9 C3 a record also has `totalMin` (door to door), `fareAgorot` (full fare,
   before the profile's discount), `fareBand`, `withTrain`, and `fromCell` / `toCell` (start
-  and end rounded to 3 decimals). All nullable: older records decode with them null, and
-  `doorToDoorMin` falls back to riding + walking for those.
+  and end rounded to 3 decimals). All nullable: older records decode with them null; insights
+  skip records with no `totalMin` (no waits known) and pass advice skips those with no fare.
 - **Insights** read only this history, 0 requests. `history/UsualTrip`: "Usually 52 min ·
   this one +8" on the selected option (≥ 3 records in 90 days, both ends within 300 m of the
-  cells, or the same saved-place names for old records) and the routine dialog's best leave
+  cells, or the same saved-place names when a record has no coordinates) and the routine dialog's best leave
   time (median per 15-min slot on the routine's days, ≥ 2 records per slot). `fare/PassAdvisor`:
   the last finished month (service days, 04:00 boundary) priced per ride with daily caps
   against the cheapest monthly pass covering its bands; ≥ 10 trips with a fare, none for the

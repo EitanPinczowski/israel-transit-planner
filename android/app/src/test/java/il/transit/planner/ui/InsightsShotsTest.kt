@@ -124,6 +124,7 @@ class InsightsShotsTest(private val v: Variant) {
             Variant("en_dark", phone.copy(nightMode = NightMode.NIGHT), dark = true, rtl = false),
             Variant("he_light", hebrew, dark = false, rtl = true),
             Variant("he_dark", hebrew.copy(nightMode = NightMode.NIGHT), dark = true, rtl = true),
+            Variant("en_bigtext", phone.copy(fontScale = 1.5f), dark = false, rtl = false),
             Variant("he_bigtext", hebrew.copy(fontScale = 1.5f), dark = false, rtl = true),
         )
     }

@@ -50,7 +50,8 @@ internal fun BestLeaveLine(history: List<TripRecord>, place: SavedPlace, days: L
     Text(
         stringResource(R.string.insights_best_leave, hhmmOf(best.leaveMin), best.medianMin),
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.tertiary,
+        // Not tertiary: amber on the light dialog surface is under 4.5:1 at this size.
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
 
