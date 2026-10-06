@@ -61,6 +61,9 @@ prompt; `ui_behaviour_run.sh` disables the lock screen and waits for it to go fi
 crashed on every API 26 run (2026-10-03), so FirstLaunchTest ends there as "not verifiable on
 this emulator" (finding J1, an assumption, not a pass) when it saw that crash; Test Lab's oldest
 real phone covers Android 8. Without a SystemUI crash, a missing prompt still fails.
+That crash leaves an "Application Error" dialog holding the **key focus**: a shell Back goes
+to the dialog, not the app (J4's "two Backs on Android 8", 2026-10-06). Before a key journey,
+`AppDriver.focusApp()` (clears it), and `focusedWindow()` (`mCurrentFocus`) in the message.
 
 ## Rules (`LayoutAudit.kt`, report-only until each is fixed, then make it blocking)
 

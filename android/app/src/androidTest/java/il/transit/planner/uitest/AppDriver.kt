@@ -174,6 +174,25 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         }
     }
 
+    /** The window that gets keys now, from the window manager (`mCurrentFocus`). */
+    fun focusedWindow(): String =
+        shell("dumpsys window windows").lines().firstOrNull { "mCurrentFocus" in it }?.trim() ?: "?"
+
+    /**
+     * Gives the app the key focus back. The API 26 emulator's SystemUI crashes during the run, and
+     * its "System UI has stopped" dialog then holds the key focus: a Back goes to that dialog, never
+     * to the app (J4 took two presses for this, 2026-10-06). Back closes such a dialog; call this
+     * only while nothing in the app is open that a stray Back could close.
+     */
+    fun focusApp() {
+        repeat(5) {
+            val w = focusedWindow()
+            if (app.packageName in w) return
+            if ("Application Error" in w || "Application Not Responding" in w) shell("input keyevent 4")
+            SystemClock.sleep(700)
+        }
+    }
+
     /** For a failure message: is the keyboard up, what has focus, is the window focused. */
     fun inputState(): String {
         var out = "?"

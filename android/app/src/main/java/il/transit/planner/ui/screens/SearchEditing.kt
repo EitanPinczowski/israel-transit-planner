@@ -66,7 +66,6 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
             // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
             // hook sees it before both, keyboard or not: one Back closes the search.
-            // Known issue: not on Android 8 (ROADMAP Phase 9 close-out, J4 on API 26).
             .onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) }
             .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },

@@ -57,9 +57,10 @@ leaves the app instead of closing what is open.
 sheet, results, then the system default.
 
 **Status (#32):** fixed on Android 9 and later (one Back closes the search, keyboard or
-not). **Still open on Android 8:** with the search open, Back may not close it (J4 on
-API 26 is recorded as a finding, not a failure); the ✕ in the field or picking a place
-closes it. Tracked in ROADMAP's Phase 9 close-out.
+not). **Android 8 (2026-10-06):** not an app bug. On the API 26 emulator SystemUI's crash
+dialog ("System UI has stopped") held the key focus, so the first Back closed that dialog
+and never reached the app. J4 now clears the dialog first and needs one Back on every API
+(blocking).
 
 ### F3. Almost no map is visible
 Rule R7. Hits all 16 result screens on every profile.
