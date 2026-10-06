@@ -67,8 +67,8 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
             // hook sees it before both, keyboard or not: one Back closes the search.
             // Known issue: not on Android 8 (ROADMAP Phase 9 close-out, J4 on API 26).
-            .onPreInterceptKeyBeforeSoftKeyboard { e -> backClosesSearch(e, vm) }
-            .onPreviewKeyEvent { e -> backClosesSearch(e, vm) },
+            .onPreInterceptKeyBeforeSoftKeyboard { e -> android.util.Log.i("J4dbg", "preIme ${e.key} ${e.type} native=${e.nativeKeyEvent}"); backClosesSearch(e, vm) }
+            .onPreviewKeyEvent { e -> android.util.Log.i("J4dbg", "preview ${e.key} ${e.type}"); backClosesSearch(e, vm) },
         placeholder = { Text(stringResource(R.string.search_hint), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
@@ -100,6 +100,7 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
     var seenHidden by remember { mutableStateOf(!visible) }
     var armed by remember { mutableStateOf(false) }
     LaunchedEffect(visible) {
+        android.util.Log.i("J4dbg", "ime visible=$visible seenHidden=$seenHidden armed=$armed")
         when {
             !visible && armed -> {
                 // A hide that is undone at once (the keyboard swapping fields) is not a Back.
@@ -116,7 +117,7 @@ private const val KEYBOARD_SETTLE_MS = 200L
 
 private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
     if (e.key != Key.Back) return false
-    if (e.type == KeyEventType.KeyUp) vm.cancelEditing()
+    if (e.type == KeyEventType.KeyUp) { android.util.Log.i("J4dbg", "cancelEditing from key"); vm.cancelEditing() }
     return true
 }
 

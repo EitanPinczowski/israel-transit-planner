@@ -421,6 +421,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        val r = super.dispatchKeyEvent(event)
+        android.util.Log.i("J4dbg", "activity dispatchKeyEvent $event -> $r focus=${currentFocus?.javaClass?.simpleName}")
+        return r
+    }
+    override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); android.util.Log.i("J4dbg", "windowFocus=$hasFocus") }
     override fun onStart() { super.onStart(); mapView.onStart() }
     override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
     override fun onPause() { if (vm.state.value.settings.lastTripAlert) LastTripReceiver.saveSeen(this, vm.locationProvider()); vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }

@@ -123,7 +123,9 @@ class JourneysTest {
                 SystemClock.sleep(700) // as a person would: the keyboard is up before Back
                 // Android 8 (API 26): Back on an open search is a known issue (ROADMAP Phase 9
                 // close-out, from #32): two presses, recorded as finding J4, not a failure.
-                val knownIssue = what == "the search" && AppDriver.sdk == 26
+                val knownIssue = false
+                val focusBefore = d.shell("dumpsys window windows").lines().filter { "mCurrentFocus" in it || "mFocusedApp" in it || "mInputMethodWindow" in it || "mInputMethodTarget" in it }.joinToString(" | ")
+                d.shell("logcat -c")
                 val presses = if (knownIssue) 2 else 1
                 repeat(presses) {
                     if (d.closed()) return@repeat
@@ -142,7 +144,8 @@ class JourneysTest {
                     Findings.expect("J4", d.closed(), "Back twice with $what open did not close it (${d.inputState()})")
                     return@use
                 }
-                assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})", alive && d.closed())
+                val diag = if (alive && d.closed()) "" else " BEFORE[" + focusBefore + "] AFTER[" + d.shell("dumpsys window windows").lines().filter { "mCurrentFocus" in it || "mFocusedApp" in it || "mInputMethodWindow" in it || "mInputMethodTarget" in it }.joinToString(" | ") + "] LOG[" + d.shell("logcat -d -v brief").lines().filter { "J4dbg" in it || "InputDispatcher" in it || "InputMethod" in it || "ViewRootImpl" in it }.takeLast(60).joinToString(" || ") + "]"
+                assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})" + diag, alive && d.closed())
             }
         }
         backKeepsApp({ onMain { it.startEditing(Field.TO) } }, { vm.state.value.editing == null }, "the search")

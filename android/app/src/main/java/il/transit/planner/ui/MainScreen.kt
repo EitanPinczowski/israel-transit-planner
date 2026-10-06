@@ -229,6 +229,7 @@ fun MainScreen(
     // (The trip sheet has its own handler, composed later, so it closes first.) Screenshot
     // tests have no back dispatcher, hence the check.
     if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(enabled = state.editing != null || showPanel) {
+        android.util.Log.i("J4dbg", "BackHandler editing=${state.editing}")
         when {
             state.editing != null -> vm.cancelEditing()
             state.stopSheet != null -> vm.closeStop()
