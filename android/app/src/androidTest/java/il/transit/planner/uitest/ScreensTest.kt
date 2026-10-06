@@ -1,5 +1,7 @@
 package il.transit.planner.uitest
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
@@ -8,6 +10,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
@@ -24,7 +27,10 @@ import il.transit.planner.UiTestApp.Companion.REHOVOT
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
+import il.transit.planner.ui.screens.modeTabLabel
+import il.transit.planner.ui.screens.modeTabTag
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.FixMethodOrder
 import org.junit.Rule
@@ -66,7 +72,27 @@ class ScreensTest {
         assertTrue("trip search found nothing", vm.state.value.options.isNotEmpty())
     }
 
-    @Test fun s01_home_empty() = screen("01-home-empty", places = emptyList()) {}
+    @Test fun s01_home_empty() = screen("01-home-empty", places = emptyList()) { modeTabsOnOneLine() }
+
+    /** The owner's rule (2026-10-05): the five mode tabs on ONE line, all on screen, each a full
+     *  tap target that says its name, on every profile (font 2.0 and 320 dp wide included). */
+    private fun AppDriver.modeTabsOnOneLine() {
+        compose.waitForIdle()
+        val density = activity.resources.displayMetrics.density
+        val width = activity.window.decorView.width
+        val tabs = AppMode.entries.map { mode ->
+            val node = compose.onNodeWithTag(modeTabTag(mode)).fetchSemanticsNode("mode tab $mode")
+            val said = node.config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString()
+            assertEquals("tab $mode says its name", str(modeTabLabel(mode)), said)
+            mode to node.boundsInWindow
+        }
+        tabs.forEach { (mode, b) ->
+            assertTrue("tab $mode on screen: $b in $width px", b.left >= 0f && b.right <= width)
+            assertTrue("tab $mode tall enough: ${b.height / density} dp", b.height / density >= 47.5f)
+            assertTrue("tab $mode wide enough: ${b.width / density} dp", b.width / density >= 40f)
+            assertEquals("tab $mode on the same line as Trip", tabs[0].second.top, b.top, 1f)
+        }
+    }
 
     @Test fun s02_home_saved() = screen("02-home-saved") {
         runBlocking {

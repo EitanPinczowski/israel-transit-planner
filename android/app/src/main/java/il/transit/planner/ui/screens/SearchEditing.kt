@@ -120,7 +120,7 @@ private fun backClosesSearch(e: KeyEvent, vm: MainActions): Boolean {
     return true
 }
 
-/** The mode chips' labels: shorter than the names used elsewhere, so the five fit in two lines. */
+/** The mode tabs' names (ModeTabs.kt): shorter than the names used elsewhere, so they fit under the icons. */
 internal fun modeTabLabel(mode: AppMode): Int = when (mode) {
     AppMode.TRIP -> R.string.tab_trip
     AppMode.BETTER_START -> R.string.tab_better_start
