@@ -2,6 +2,8 @@ package il.transit.core.history
 
 import il.transit.core.api.Itinerary
 import il.transit.core.api.StreetModes
+import il.transit.core.fare.FareEstimator
+import il.transit.core.geo.LatLon
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -21,6 +23,17 @@ data class TripRecord(
     val transfers: Int,
     /** Minutes a car feature saved against its no-car baseline; null for a plain trip. */
     val savedMin: Int? = null,
+    // Since Phase 9 C3; null on records written before it (old history.json still decodes).
+    /** Door to door, first leg's start to last leg's end. */
+    val totalMin: Int? = null,
+    /** Full single-fare estimate in agorot, before any discount: the profile is applied when read. */
+    val fareAgorot: Int? = null,
+    /** The longest fare band ridden ([il.transit.core.fare.FareTable.band]). */
+    val fareBand: Int? = null,
+    val withTrain: Boolean? = null,
+    /** Start and end rounded to [CELL_DECIMALS] decimals ("31.262,34.801"), about 100 m. */
+    val fromCell: String? = null,
+    val toCell: String? = null,
 ) {
     val startedAt: Instant get() = Instant.ofEpochSecond(startedAtEpoch)
 
@@ -28,6 +41,7 @@ data class TripRecord(
         fun from(it: Itinerary, from: String, to: String, mode: String, startedAt: Instant, savedMin: Int?): TripRecord {
             val transit = it.legs.filter { l -> l.isTransit }.sumOf { l -> l.duration }
             val walk = it.legs.filter { l -> l.mode == StreetModes.WALK }.sumOf { l -> l.duration }
+            val fare = FareEstimator.estimate(it)
             return TripRecord(
                 startedAtEpoch = startedAt.epochSecond,
                 from = from,
@@ -37,7 +51,24 @@ data class TripRecord(
                 walkMin = Math.round(walk / 60.0).toInt(),
                 transfers = it.transfers,
                 savedMin = savedMin?.takeIf { s -> s > 0 },
+                totalMin = Math.round(it.duration / 60.0).toInt(),
+                fareAgorot = fare?.agorot,
+                fareBand = fare?.maxBand,
+                withTrain = fare?.hasTrain,
+                fromCell = it.legs.firstOrNull()?.from?.latLon?.let(::cellOf),
+                toCell = it.legs.lastOrNull()?.to?.latLon?.let(::cellOf),
             )
+        }
+
+        const val CELL_DECIMALS = 3
+
+        fun cellOf(p: LatLon): String = String.format(java.util.Locale.US, "%.${CELL_DECIMALS}f,%.${CELL_DECIMALS}f", p.lat, p.lon)
+
+        fun parseCell(cell: String?): LatLon? {
+            val parts = cell?.split(',') ?: return null
+            val lat = parts.getOrNull(0)?.toDoubleOrNull() ?: return null
+            val lon = parts.getOrNull(1)?.toDoubleOrNull() ?: return null
+            return LatLon(lat, lon)
         }
     }
 }

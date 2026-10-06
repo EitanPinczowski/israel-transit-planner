@@ -188,9 +188,9 @@ merges. Tick only your own package's lines.
 - [x] Offline next morning: "planned last night at 02:14", options already gone hidden
 
 ### C3 — History insights (`claude/p9-insights`, 0 requests)
-- [ ] "Usually 52 min · this one +8" (≥ 3 trips in 90 days, medians); best leave time for a
+- [x] "Usually 52 min · this one +8" (≥ 3 trips in 90 days, medians); best leave time for a
       routine
-- [ ] Monthly pass advisor from history + `fare/` ("would have saved ₪74 in September")
+- [x] Monthly pass advisor from history + `fare/` ("would have saved ₪74 in September")
 
 ### C4 — Quick Settings tile (`claude/p9-tile`, 0 to draw, ≤ 1 request per tap)
 - [ ] "Home · 22:40 → 23:35" from the Trip cache; tap opens the planned trip home

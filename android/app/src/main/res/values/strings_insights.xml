@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- History insights (Phase 9 C3). -->
+    <string name="insights_usual_slower">Usually %1$d min · this one +%2$d</string>
+    <string name="insights_usual_faster">Usually %1$d min · this one −%2$d</string>
+    <string name="insights_usual_same">Usually %1$d min, like this one</string>
+    <string name="insights_best_leave">Quickest when you leave around %1$s (usually %2$d min)</string>
+    <string name="insights_pass_saves">A monthly pass would have saved ₪%1$s in %2$s</string>
+    <string name="insights_single_cheaper">Paying per ride was ₪%1$s cheaper in %2$s</string>
+    <string name="insights_pass_same">A monthly pass would have cost about the same in %1$s</string>
+    <plurals name="insights_based_on">
+        <item quantity="one">An estimate based on %d trip you started in the app</item>
+        <item quantity="other">An estimate based on %d trips you started in the app</item>
+    </plurals>
+</resources>
