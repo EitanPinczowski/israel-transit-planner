@@ -19,6 +19,8 @@ interface MainActions {
     fun dismissUpdate()
     fun checkForUpdates()
     fun startUpdate()
+    fun updatePermissionReturned()
+    fun updateScreenShown()
     fun updateInstallFinished(resultCode: Int, installCode: Int?)
     fun startEditing(field: Field)
     fun cancelEditing()
@@ -69,6 +71,8 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun dismissUpdate() { vm.dismissUpdate() }
     override fun checkForUpdates() { vm.checkForUpdates() }
     override fun startUpdate() { vm.startUpdate() }
+    override fun updatePermissionReturned() { vm.updatePermissionReturned() }
+    override fun updateScreenShown() { vm.updateScreenShown() }
     override fun updateInstallFinished(resultCode: Int, installCode: Int?) { vm.updateInstallFinished(resultCode, installCode) }
     override fun startEditing(field: Field) { vm.startEditing(field) }
     override fun cancelEditing() { vm.cancelEditing() }
@@ -119,6 +123,8 @@ object NoActions : MainActions {
     override fun dismissUpdate() = Unit
     override fun checkForUpdates() = Unit
     override fun startUpdate() = Unit
+    override fun updatePermissionReturned() = Unit
+    override fun updateScreenShown() = Unit
     override fun updateInstallFinished(resultCode: Int, installCode: Int?) = Unit
     override fun startEditing(field: Field) = Unit
     override fun cancelEditing() = Unit

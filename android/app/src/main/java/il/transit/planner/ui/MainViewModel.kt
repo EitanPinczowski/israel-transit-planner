@@ -739,9 +739,11 @@ class MainViewModel(
         }
     }
 
-    fun dismissUpdate() = _state.update { it.copy(update = null) }
+    fun dismissUpdate() { updater?.dismiss() ?: _state.update { it.copy(update = null) } }
     fun checkForUpdates() { updater?.checkNow() }
     fun startUpdate() { updater?.start() }
+    fun updatePermissionReturned() { updater?.permissionReturned() }
+    fun updateScreenShown() { updater?.shown() }
     fun updateInstallFinished(resultCode: Int, installCode: Int?) { updater?.installFinished(resultCode, installCode) }
 
     fun clearHistory() = viewModelScope.launch { historyStore?.clear() }

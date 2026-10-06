@@ -29,7 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-/** The in-app update: the banner's states and the Settings row, Hebrew and English × light and dark. */
+/** The in-app update: the banner's states and the Settings row, Hebrew and English × light and dark, plus big text. */
 @RunWith(Parameterized::class)
 class UpdateTest(private val v: Variant) {
 
@@ -42,21 +42,28 @@ class UpdateTest(private val v: Variant) {
 
     private val release = LatestRelease("0.8.0", "https://github.com/x/y/releases/tag/v0.8.0", "https://github.com/x/y/a.apk", "ab".repeat(32))
 
-    /** Banner: available, downloading 40 %, needs permission, a failure, the signature clash. */
+    /** Banner: available, downloading 40 %, needs permission, downloaded (Install). */
     @Test fun banner() = shot("update_banner", Color(0xFFEDEAE4), Color(0xFF2B2E33)) {
         UpdateBanner(release, UpdateState.Available(release), NoActions)
         UpdateBanner(release, UpdateState.Downloading(release, 40), NoActions)
         UpdateBanner(release, UpdateState.NeedsPermission(release), NoActions)
+        UpdateBanner(release, UpdateState.Ready(release, "/c/u.apk"), NoActions)
+    }
+
+    /** Banner failures: the cut download and the longest line, the signature clash. */
+    @Test fun bannerFailed() = shot("update_banner_failed", Color(0xFFEDEAE4), Color(0xFF2B2E33)) {
         UpdateBanner(release, UpdateState.Failed(release, UpdateFailure.NETWORK), NoActions)
         UpdateBanner(release, UpdateState.Failed(release, UpdateFailure.DIFFERENT_BUILD), NoActions)
     }
 
-    /** Settings → Check for updates: before, latest, available, couldn't check. */
+    /** Settings → Check for updates: before, checking, latest, available, couldn't check, downloaded. */
     @Test fun settingsRow() = shot("update_settings", null, null) {
         UpdateSettingsRow(UpdateState.Idle, NoActions, version = "0.7.0")
+        UpdateSettingsRow(UpdateState.Checking, NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.UpToDate("0.7.0"), NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.Available(release), NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.CheckFailed, NoActions, version = "0.7.0")
+        UpdateSettingsRow(UpdateState.Ready(release, "/c/u.apk"), NoActions, version = "0.7.0")
     }
 
     /** Over a flat stand-in for the map (banner), or on the dialog's surface (Settings). */
@@ -84,6 +91,13 @@ class UpdateTest(private val v: Variant) {
             Variant("en_dark", phone.copy(nightMode = NightMode.NIGHT), dark = true, rtl = false),
             Variant("he_light", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL), dark = false, rtl = true),
             Variant("he_dark", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, nightMode = NightMode.NIGHT), dark = true, rtl = true),
+            // The long Hebrew lines and the two-button row on a 360 dp phone at large text.
+            Variant(
+                "small_he_bigtext",
+                DeviceConfig.NEXUS_5.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.5f),
+                dark = false,
+                rtl = true,
+            ),
         )
     }
 }

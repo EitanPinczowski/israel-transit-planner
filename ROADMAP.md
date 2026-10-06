@@ -207,6 +207,10 @@ merges. Tick only your own package's lines.
 - [ ] First-run tour of every mode, skippable, shown again from Settings
 - [ ] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
 
+### U1 — One-tap in-app update (`claude/in-app-update`, 0 Transitous; GitHub: daily + ≤ 1 manual check a minute + 1 APK per tap; owner, 2026-10-05)
+- [x] Update banner downloads in-app, verifies GitHub's sha256 digest, opens Android's install prompt (permission screen when needed)
+- [x] Settings → "Check for updates" (debounced 1/min); failures with Try again + browser fallback
+
 ### Close-out (boss)
 - [ ] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)

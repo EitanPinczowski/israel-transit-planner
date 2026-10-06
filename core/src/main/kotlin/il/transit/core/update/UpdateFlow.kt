@@ -33,10 +33,13 @@ sealed interface UpdateState {
     data class Available(override val release: LatestRelease) : WithRelease
     /** [percent] is null while the size is unknown. */
     data class Downloading(override val release: LatestRelease, val percent: Int?) : WithRelease
-    /** Android hasn't let this app install apps. [file] is the verified APK, if already downloaded. */
-    data class NeedsPermission(override val release: LatestRelease, val file: String? = null) : WithRelease
-    /** Verified APK at [file]; Android's install prompt is (or can be) open. */
-    data class Ready(override val release: LatestRelease, val file: String) : WithRelease
+    /**
+     * Android hasn't let this app install apps. [file] is the verified APK, if already downloaded.
+     * [shown]: the settings screen was opened for this tap, so it is not opened again by itself.
+     */
+    data class NeedsPermission(override val release: LatestRelease, val file: String? = null, val shown: Boolean = false) : WithRelease
+    /** Verified APK at [file]. [shown]: Android's prompt was opened for this tap (once per tap). */
+    data class Ready(override val release: LatestRelease, val file: String, val shown: Boolean = false) : WithRelease
     data class Failed(override val release: LatestRelease, val reason: UpdateFailure) : WithRelease
 }
 
@@ -54,9 +57,9 @@ object UpdateFlow {
     }
 
     /**
-     * A tap on Update (or Try again, or coming back from the permission screen). Downloading
-     * ignores it. Without the install permission → NeedsPermission, keeping a file already
-     * verified; with it → Ready again for that file, or a fresh download from an allowed URL.
+     * A tap on Update, Allow, Install or Try again. Downloading ignores it. Without the install
+     * permission → NeedsPermission, keeping a file already verified; with it → Ready again for
+     * that file, or a fresh download from an allowed URL. Either opens its screen once more.
      */
     fun onUpdate(state: UpdateState, canInstall: Boolean): UpdateState {
         if (state !is UpdateState.WithRelease || state is UpdateState.Downloading) return state
@@ -73,6 +76,36 @@ object UpdateFlow {
             else -> UpdateState.Downloading(r, 0)
         }
     }
+
+    /**
+     * Back from Android's "Install unknown apps" screen. Allowed → continue as a tap would;
+     * not allowed → stay, without opening the screen again by itself.
+     */
+    fun onPermissionReturn(state: UpdateState, canInstall: Boolean): UpdateState =
+        if (state is UpdateState.NeedsPermission && !canInstall) state.copy(shown = true) else onUpdate(state, canInstall)
+
+    /** The app just opened the screen this state asks for (the prompt or the permission screen). */
+    fun shown(state: UpdateState): UpdateState = when (state) {
+        is UpdateState.Ready -> state.copy(shown = true)
+        is UpdateState.NeedsPermission -> state.copy(shown = true)
+        else -> state
+    }
+
+    /** Should the app open a screen by itself now? Once per tap, never again on its own. */
+    fun needsScreen(state: UpdateState): Boolean =
+        (state is UpdateState.Ready && !state.shown) || (state is UpdateState.NeedsPermission && !state.shown)
+
+    /**
+     * The banner's X. A running download stops (back to Available, the file is dropped); any
+     * other state is kept, so Settings can still pick it up.
+     */
+    fun dismissed(state: UpdateState): UpdateState =
+        if (state is UpdateState.Downloading) UpdateState.Available(state.release) else state
+
+    /** "Check now" would throw away a download, a verified file or a pending permission: skip it. */
+    fun canCheck(state: UpdateState): Boolean =
+        state !is UpdateState.Checking && state !is UpdateState.Downloading &&
+            state !is UpdateState.Ready && state !is UpdateState.NeedsPermission
 
     /** Bytes so far of [total] (≤ 0 when unknown). Only whole-percent changes produce a new state. */
     fun progress(state: UpdateState, read: Long, total: Long): UpdateState {

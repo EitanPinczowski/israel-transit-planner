@@ -356,6 +356,7 @@ fun MainScreen(
         }
     }
 
+    UpdateLaunchers(state.updateState, vm) // Android's install prompt / permission screen, banner or not
     if (state.showSettings) SettingsDialog(state, vm, actions)
     if (state.showHistory) HistoryDialog(state, vm)
     if (state.showFavorites) FavoritesDialog(state, vm)

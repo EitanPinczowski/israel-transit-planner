@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateCheck
 import il.transit.core.update.UpdateFailure
+import il.transit.core.update.UpdateFlow
 import il.transit.core.update.UpdateState
 import il.transit.planner.BuildConfig
 import il.transit.planner.R
@@ -39,24 +39,18 @@ import il.transit.planner.ui.MainActions
 
 /**
  * "Version 0.8.0 is ready · Update" over the map. One tap downloads inside the app (progress
- * here), then opens Android's own "Update this app?" prompt. Without the install permission it
- * opens that settings screen and continues when the user comes back.
+ * here), then [UpdateLaunchers] opens Android's own "Update this app?" prompt. Without the
+ * install permission it opens that settings screen and continues when the user comes back.
  */
 @Composable
 internal fun UpdateBanner(latest: LatestRelease, state: UpdateState, vm: MainActions) {
     val phase = state as? UpdateState.WithRelease ?: UpdateState.Available(latest)
     val context = LocalContext.current
-    val launch = updateLaunchers(phase, vm)
     Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(start = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(updateLine(phase), modifier = Modifier.weight(1f).padding(vertical = 8.dp), style = MaterialTheme.typography.bodyMedium)
-                when (phase) {
-                    is UpdateState.Available -> TextButton(onClick = vm::startUpdate) { Text(stringResource(R.string.update_action)) }
-                    is UpdateState.NeedsPermission -> TextButton(onClick = { launch?.permission?.invoke() }) { Text(stringResource(R.string.update_allow)) }
-                    is UpdateState.Ready -> TextButton(onClick = { launch?.install?.invoke(phase.file) }) { Text(stringResource(R.string.update_install)) }
-                    else -> Unit
-                }
+                UpdateAction(phase, vm)
                 IconButton(onClick = vm::dismissUpdate) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
             when (phase) {
@@ -91,13 +85,25 @@ internal fun UpdateSettingsRow(state: UpdateState, vm: MainActions, version: Str
             line?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
         }
         when (state) {
-            is UpdateState.Available -> TextButton(onClick = vm::startUpdate) { Text(stringResource(R.string.update_action)) }
             is UpdateState.Failed -> TextButton(onClick = vm::startUpdate) { Text(stringResource(R.string.update_retry)) }
+            is UpdateState.WithRelease -> UpdateAction(state, vm)
             UpdateState.Idle, is UpdateState.UpToDate, UpdateState.CheckFailed ->
                 TextButton(onClick = vm::checkForUpdates) { Text(stringResource(R.string.update_check)) }
-            else -> Unit // checking, downloading, or the banner is asking Android
+            UpdateState.Checking -> Unit
         }
     }
+}
+
+/** Update / Allow / Install: each is a tap that moves the update on (none while downloading). */
+@Composable
+private fun UpdateAction(s: UpdateState.WithRelease, vm: MainActions) {
+    val label = when (s) {
+        is UpdateState.Available -> R.string.update_action
+        is UpdateState.NeedsPermission -> R.string.update_allow
+        is UpdateState.Ready -> R.string.update_install
+        else -> return
+    }
+    TextButton(onClick = vm::startUpdate) { Text(stringResource(label)) }
 }
 
 @Composable
@@ -128,37 +134,32 @@ private fun openInBrowser(context: Context, r: LatestRelease) {
     runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
 }
 
-private class UpdateLaunchers(val install: (String) -> Unit, val permission: () -> Unit)
-
 /**
- * Android's install prompt and "Install unknown apps" screen, each opened once when the update
- * gets there (and again from the banner's button). Null without an Activity (screenshot tests).
+ * Opens Android's install prompt or its "Install unknown apps" screen when the update asks for
+ * one: once per tap (the state remembers it was shown), so rotating or the banner coming back
+ * never opens it again. Lives in MainScreen whether or not the banner is shown. Draws nothing,
+ * and does nothing without an Activity (screenshot tests).
  */
 @Composable
-private fun updateLaunchers(phase: UpdateState.WithRelease, vm: MainActions): UpdateLaunchers? {
-    if (LocalActivityResultRegistryOwner.current == null) return null
+internal fun UpdateLaunchers(state: UpdateState, vm: MainActions) {
+    if (LocalActivityResultRegistryOwner.current == null) return
     val context = LocalContext.current
     val installer = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
         val code = r.data?.takeIf { it.hasExtra(ApkInstaller.EXTRA_INSTALL_RESULT) }?.getIntExtra(ApkInstaller.EXTRA_INSTALL_RESULT, 0)
         vm.updateInstallFinished(r.resultCode, code)
     }
-    // Back from the settings screen, allowed or not: try again (it asks again only on a tap).
-    val settings = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { vm.startUpdate() }
-    val launchers = remember(installer, settings) {
-        UpdateLaunchers(
-            install = { file ->
-                runCatching { installer.launch(ApkInstaller.installIntent(context, file)) }
-                    .onFailure { vm.updateInstallFinished(NO_INSTALLER, null) }
-            },
-            permission = { runCatching { settings.launch(ApkInstaller.permissionIntent(context)) } },
-        )
+    // Back from the settings screen, allowed or not. Not allowed: it is not opened again by itself.
+    val settings = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { vm.updatePermissionReturned() }
+    if (!UpdateFlow.needsScreen(state)) return
+    LaunchedEffect(state) {
+        when (state) {
+            is UpdateState.Ready -> runCatching { installer.launch(ApkInstaller.installIntent(context, state.file)) }
+                .onFailure { vm.updateInstallFinished(NO_INSTALLER, null) }
+            is UpdateState.NeedsPermission -> runCatching { settings.launch(ApkInstaller.permissionIntent(context)) }
+            else -> Unit
+        }
+        vm.updateScreenShown()
     }
-    when (phase) {
-        is UpdateState.Ready -> LaunchedEffect(phase.file) { launchers.install(phase.file) }
-        is UpdateState.NeedsPermission -> LaunchedEffect(Unit) { launchers.permission() }
-        else -> Unit
-    }
-    return launchers
 }
 
 /** Activity.RESULT_FIRST_USER: what we report when no installer could be opened at all. */

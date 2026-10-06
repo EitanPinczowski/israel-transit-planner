@@ -13,7 +13,6 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import java.io.File
 import java.io.IOException
 import java.security.MessageDigest
@@ -28,6 +27,8 @@ import kotlin.coroutines.coroutineContext
 open class ApkInstaller(
     private val context: Context,
     private val http: OkHttpClient = OkHttpClient.Builder()
+        .followRedirects(false)
+        .followSslRedirects(false)
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build(),
@@ -40,60 +41,71 @@ open class ApkInstaller(
     /** Has the user let this app install apps ("Install unknown apps")? */
     open fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
 
-    /** One request (plus GitHub's redirect to its asset host). Progress as bytes read / total (≤ 0 unknown). */
+    /**
+     * One request, plus GitHub's redirect to its asset host. Redirects are followed by hand so
+     * every hop is checked before anything is sent to it. Progress as bytes read / total (≤ 0
+     * unknown). Anything but a finished download leaves no file behind.
+     */
     open suspend fun download(url: String, onProgress: (Long, Long) -> Unit): Download = withContext(Dispatchers.IO) {
-        if (!UpdateCheck.isAllowedApkUrl(url)) return@withContext Download.Failed(UpdateFailure.BAD_URL)
         val dir = File(context.cacheDir, DIR).apply { mkdirs() }
-        dir.listFiles()?.forEach { it.delete() } // one APK at a time; older ones are spent
+        discard() // one APK at a time; older ones are spent
         val out = File(dir, "update.apk")
+        var done = false
         try {
-            val req = Request.Builder().url(url).header("User-Agent", MotisClient.USER_AGENT).build()
-            http.newCall(req).execute().use { r ->
-                if (!redirectsAllowed(r)) return@withContext Download.Failed(UpdateFailure.BAD_URL)
-                val body = r.body
-                if (!r.isSuccessful || body == null) return@withContext Download.Failed(UpdateFailure.NETWORK)
-                val total = body.contentLength()
-                if (total > 0 && dir.usableSpace < total + SPARE_BYTES) return@withContext Download.Failed(UpdateFailure.NO_SPACE)
-                val digest = MessageDigest.getInstance("SHA-256")
-                var read = 0L
-                body.byteStream().use { input ->
-                    out.outputStream().use { output ->
-                        val buf = ByteArray(64 * 1024)
-                        while (true) {
-                            coroutineContext.ensureActive()
-                            val n = input.read(buf)
-                            if (n < 0) break
-                            output.write(buf, 0, n)
-                            digest.update(buf, 0, n)
-                            read += n
-                            onProgress(read, total)
+            var next = url
+            repeat(MAX_HOPS) {
+                if (!UpdateCheck.isAllowedApkUrl(next)) return@withContext Download.Failed(UpdateFailure.BAD_URL)
+                val req = Request.Builder().url(next).header("User-Agent", MotisClient.USER_AGENT).build()
+                http.newCall(req).execute().use { r ->
+                    if (r.isRedirect) {
+                        next = r.header("Location")?.let { r.request.url.resolve(it)?.toString() }
+                            ?: return@withContext Download.Failed(UpdateFailure.BAD_URL)
+                        return@use
+                    }
+                    val body = r.body
+                    if (!r.isSuccessful || body == null) return@withContext Download.Failed(UpdateFailure.NETWORK)
+                    val total = body.contentLength()
+                    if (total > 0 && dir.usableSpace < total + SPARE_BYTES) return@withContext Download.Failed(UpdateFailure.NO_SPACE)
+                    val digest = MessageDigest.getInstance("SHA-256")
+                    var read = 0L
+                    body.byteStream().use { input ->
+                        out.outputStream().use { output ->
+                            val buf = ByteArray(64 * 1024)
+                            while (true) {
+                                coroutineContext.ensureActive()
+                                val n = input.read(buf)
+                                if (n < 0) break
+                                output.write(buf, 0, n)
+                                digest.update(buf, 0, n)
+                                read += n
+                                onProgress(read, total)
+                            }
                         }
                     }
+                    if (total > 0 && read != total) return@withContext Download.Failed(UpdateFailure.NETWORK)
+                    done = true
+                    return@withContext Download.Done(out, digest.digest().joinToString("") { "%02x".format(it) })
                 }
-                if (total > 0 && read != total) return@withContext Download.Failed(UpdateFailure.NETWORK)
-                Download.Done(out, digest.digest().joinToString("") { "%02x".format(it) })
             }
+            Download.Failed(UpdateFailure.BAD_URL) // a redirect loop
         } catch (e: IOException) {
-            out.delete()
             val full = e.message?.contains("ENOSPC") == true || dir.usableSpace < SPARE_BYTES
             Download.Failed(if (full) UpdateFailure.NO_SPACE else UpdateFailure.NETWORK)
+        } finally {
+            if (!done) out.delete() // cut, refused or cancelled: nothing half-written stays
         }
     }
 
-    /** Every hop GitHub redirected through must be an allowed https host too. */
-    private fun redirectsAllowed(r: Response): Boolean {
-        var hop: Response? = r
-        while (hop != null) {
-            if (!UpdateCheck.isAllowedApkUrl(hop.request.url.toString())) return false
-            hop = hop.priorResponse
-        }
-        return true
+    /** Drops any downloaded APK: after a failed check, and at start (a past update is spent). */
+    open fun discard() {
+        File(context.cacheDir, DIR).listFiles()?.forEach { it.delete() }
     }
 
     companion object {
         /** Under cacheDir; matches `res/xml/update_paths.xml`. */
         const val DIR = "updates"
         private const val SPARE_BYTES = 20L * 1024 * 1024
+        private const val MAX_HOPS = 5
 
         /** Android's "Install unknown apps" screen for this app; the user comes back with Back. */
         fun permissionIntent(context: Context): Intent =

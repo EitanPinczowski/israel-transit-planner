@@ -122,4 +122,30 @@ class InAppUpdateTest {
         assertEquals(UpdateState.Failed(release, UpdateFailure.INSTALL), UpdateFlow.installResult(ready, 1, -4))
         assertEquals(UpdateState.Failed(release, UpdateFailure.INSTALL), UpdateFlow.installResult(ready, 1, null))
     }
+
+    @Test fun `each screen opens once per tap, not again on rotation or when the user came back`() {
+        val ready = UpdateState.Ready(release, "/c/u.apk")
+        assertTrue(UpdateFlow.needsScreen(ready))
+        val opened = UpdateFlow.shown(ready)
+        assertFalse(UpdateFlow.needsScreen(opened))
+        assertSame(opened, UpdateFlow.installResult(opened, UpdateFlow.RESULT_CANCELED, null)) // cancel: no re-prompt
+        assertTrue(UpdateFlow.needsScreen(UpdateFlow.onUpdate(opened, canInstall = true))) // Install tap: again
+        val asked = UpdateFlow.shown(UpdateState.NeedsPermission(release))
+        assertFalse(UpdateFlow.needsScreen(UpdateFlow.onPermissionReturn(asked, canInstall = false)))
+        assertEquals(UpdateState.Downloading(release, 0), UpdateFlow.onPermissionReturn(asked, canInstall = true))
+        assertTrue(UpdateFlow.needsScreen(UpdateFlow.onUpdate(asked, canInstall = false))) // Allow tap: again
+    }
+
+    @Test fun `X stops a download, and check now never throws away an update in progress`() {
+        assertEquals(UpdateState.Available(release), UpdateFlow.dismissed(UpdateState.Downloading(release, 40)))
+        val ready = UpdateState.Ready(release, "/c/u.apk", shown = true)
+        assertSame(ready, UpdateFlow.dismissed(ready))
+        assertFalse(UpdateFlow.canCheck(ready))
+        assertFalse(UpdateFlow.canCheck(UpdateState.Downloading(release, 1)))
+        assertFalse(UpdateFlow.canCheck(UpdateState.NeedsPermission(release)))
+        assertFalse(UpdateFlow.canCheck(UpdateState.Checking))
+        assertTrue(UpdateFlow.canCheck(UpdateState.Available(release)))
+        assertTrue(UpdateFlow.canCheck(UpdateState.Failed(release, UpdateFailure.NETWORK)))
+        assertTrue(UpdateFlow.canCheck(UpdateState.CheckFailed))
+    }
 }
