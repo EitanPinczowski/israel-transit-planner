@@ -1,6 +1,7 @@
 package il.transit.planner.ui
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.lifecycle.viewModelScope
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisJson
@@ -81,9 +82,13 @@ class TripHomeViewModelTest {
     private val homePlace = SavedPlace("Home", 32.053978, 34.78484) // the recorded destination
 
     @Before fun setUp() = Dispatchers.setMain(main)
+    /** Every ViewModel made, so its collectors stop before Main is reset (else they resume on Android's Main). */
+    private val vms = mutableListOf<MainViewModel>()
+
     @After fun tearDown() {
-        Dispatchers.resetMain()
+        vms.forEach { it.viewModelScope.cancel() }
         io.cancel()
+        Dispatchers.resetMain()
         main.close()
     }
 
@@ -95,7 +100,7 @@ class TripHomeViewModelTest {
         }
         val cache = PlanCacheStore(tmp.newFile("trip_cache.json").also { it.delete() }, clock)
         if (cached) cache.put(PlanCache.key("TRIP-NOW", bs, homePlace.latLon), recordedResult)
-        MainViewModel(api, store, "en", planCache = cache, clock = clock).also { it.locationProvider = { fix } }
+        MainViewModel(api, store, "en", planCache = cache, clock = clock).also { it.locationProvider = { fix }; vms += it }
     }
 
     @Test fun `a tap with a fix plans home once, from my location, first option selected`() = runBlocking {
