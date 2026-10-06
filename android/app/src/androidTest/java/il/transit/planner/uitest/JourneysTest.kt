@@ -118,31 +118,25 @@ class JourneysTest {
     @Test fun j04_back_closes_before_leaving() {
         fun backKeepsApp(open: AppDriver.() -> Unit, closed: AppDriver.() -> Boolean, what: String) {
             AppDriver(compose).launch().use { d ->
+                // API 26: a crashed SystemUI's dialog may hold the key focus; clear it while
+                // nothing is open, so the one Back below is the app's (every API, blocking).
+                d.focusApp()
                 d.open()
                 compose.waitForIdle()
                 SystemClock.sleep(700) // as a person would: the keyboard is up before Back
-                // Android 8 (API 26): Back on an open search is a known issue (ROADMAP Phase 9
-                // close-out, from #32): two presses, recorded as finding J4, not a failure.
-                val knownIssue = what == "the search" && AppDriver.sdk == 26
-                val presses = if (knownIssue) 2 else 1
-                repeat(presses) {
-                    if (d.closed()) return@repeat
-                    // A shell key event: it may go to the keyboard's window (another app), which the
-                    // instrumentation's own injection may not (INJECT_EVENTS, API 26). Not UiAutomator
-                    // (its accessibility connection stays up for later tests) nor Espresso (it waits
-                    // for window focus, which API 26 may not give).
-                    d.shell("input keyevent 4")
-                    // The keyboard (if up) takes a Back and slides away first: give it 2 s.
-                    val until = SystemClock.uptimeMillis() + 2_000
-                    do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
-                        d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
-                }
+                val focus = d.focusedWindow()
+                // A shell key event: it may go to the keyboard's window (another app), which the
+                // instrumentation's own injection may not (INJECT_EVENTS, API 26). Not UiAutomator
+                // (its accessibility connection stays up for later tests) nor Espresso (it waits
+                // for window focus, which API 26 may not give).
+                d.shell("input keyevent 4")
+                // The keyboard (if up) takes a Back and slides away first: give it 2 s.
+                val until = SystemClock.uptimeMillis() + 2_000
+                do SystemClock.sleep(100) while (SystemClock.uptimeMillis() < until &&
+                    d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true && !d.closed())
                 val alive = d.scenarioState?.isAtLeast(Lifecycle.State.RESUMED) == true
-                if (knownIssue && alive) {
-                    Findings.expect("J4", d.closed(), "Back twice with $what open did not close it (${d.inputState()})")
-                    return@use
-                }
-                assertTrue("J4: Back with $what open " + (if (alive) "did not close it" else "left the app") + " (${d.inputState()})", alive && d.closed())
+                assertTrue("J4: one Back with $what open " + (if (alive) "did not close it" else "left the app") +
+                    " (${d.inputState()}; key focus at the press: $focus)", alive && d.closed())
             }
         }
         backKeepsApp({ onMain { it.startEditing(Field.TO) } }, { vm.state.value.editing == null }, "the search")

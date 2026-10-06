@@ -210,4 +210,4 @@ merges. Tick only your own package's lines.
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)
-- [ ] Android 8: Back closes an open search (J4 on API 26, known issue from #32)
+- [x] Android 8: Back closes an open search (J4 on API 26, known issue from #32)
