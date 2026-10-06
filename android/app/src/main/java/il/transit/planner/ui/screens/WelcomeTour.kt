@@ -68,14 +68,18 @@ internal const val TOUR_TAG = "welcome_tour"
 
 /**
  * The first-run tour over the whole screen: one page per mode, swiped or stepped with
- * "Next", skippable at any page. [onFinish] runs on Skip, Done and Back; the caller marks the
- * tour seen. The pager follows the layout direction, so in Hebrew the next page comes from
- * the left, like turning a Hebrew book's page.
+ * "Next", skippable at any page. [onFinish] runs on Skip and Done; the caller marks the tour
+ * seen. Back steps to the previous page, and on the first page [onLater] closes the tour
+ * without marking it seen (an edge swipe should not end it for good). The pager follows the
+ * layout direction, so in Hebrew the next page comes from the left, like a Hebrew book.
  */
 @Composable
-internal fun WelcomeTour(onFinish: () -> Unit, startPage: Int = 0) {
-    if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(onBack = onFinish)
+internal fun WelcomeTour(onFinish: () -> Unit, onLater: () -> Unit, startPage: Int = 0) {
+    val scope = rememberCoroutineScope()
     val pager = rememberPagerState(initialPage = startPage) { TOUR_PAGES.size }
+    if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler {
+        if (pager.currentPage > 0) scope.launch { pager.animateScrollToPage(pager.currentPage - 1) } else onLater()
+    }
     WelcomeTourContent(pager, onFinish)
 }
 

@@ -44,7 +44,10 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
   `present/LegPalette.kt`), never `legColor(leg)` alone: chip, map line and stop dots all
   use it. A transit leg keeps its operator colour only when no other leg of the trip has it
   and it reads on both maps (≥ 1.5:1); otherwise it takes the next of 6 Okabe–Ito based
-  colours, each ≥ 3:1 on OpenFreeMap's light `#F8F4F0` and dark `#0C0C0C`. Walks stay grey.
+  colours, each ≥ 3:1 on OpenFreeMap's light `#F8F4F0` and dark `#0C0C0C` (the `background`
+  layer; parks and water can be closer). Walks stay grey. Colours are per itinerary, not per
+  line: line 370 can be blue in one option and orange in the next. The trip sheet and the
+  vehicle dot take the same colour (`LegPalette.colorOf`).
 - **Settings → Appearance** (C6): `UserSettings.language` (null = phone, "he", "en") and
   `.theme` ("SYSTEM"/"LIGHT"/"DARK", `Appearance.dark`). `ui/AppLocale` applies them: API
   33+ `LocaleManager` (+ `res/xml/locales_config.xml`, the phone's per-app page; a choice

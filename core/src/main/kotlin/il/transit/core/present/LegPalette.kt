@@ -16,9 +16,12 @@ import il.transit.core.api.Leg
  */
 object LegPalette {
     /**
-     * Okabe–Ito based, darkened where needed so each is ≥ 3:1 against both map backgrounds.
-     * The order alternates hue families (blue, orange, green, magenta, purple, ochre), so
-     * the first legs differ for every common kind of colour blindness too.
+     * Okabe–Ito based, darkened where needed so each is ≥ 3:1 against both map backgrounds
+     * (the styles' `background` layer; parks and water can be a little closer). Every chip
+     * also carries its line number, so colour is never the only cue.
+     * Order: blue and orange first, the pair that stays apart for every common kind of colour
+     * blindness (most clashes are two buses); orange, green and magenta can look alike to
+     * red-green colour blindness, which the line number on each chip covers.
      */
     val COLORS: List<String> = listOf("#0072B2", "#D55E00", "#009E73", "#C2185B", "#8E5CC4", "#AD7A00")
 
@@ -46,6 +49,13 @@ object LegPalette {
         var next = 0
         return legs.indices.map { i -> if (i in replace) free[next++ % free.size] else base[i] }
     }
+
+    /**
+     * [leg]'s colour inside [legs] (the trip sheet, the vehicle dot), or null when the leg is
+     * not one of them. Colours are per itinerary, not per line: the same line can differ in
+     * two itineraries.
+     */
+    fun colorOf(legs: List<Leg>, leg: Leg): String? = legs.indexOf(leg).takeIf { it >= 0 }?.let { colors(legs)[it] }
 
     /** WCAG contrast ratio between two "#RRGGBB" colours, 1..21. */
     fun contrast(a: String, b: String): Double {

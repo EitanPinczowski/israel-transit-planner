@@ -15,6 +15,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import il.transit.core.user.Appearance
 import il.transit.planner.ui.AppLocale
+import il.transit.planner.ui.DarkColors
+import il.transit.planner.ui.LightColors
+import androidx.compose.ui.graphics.toArgb
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import android.view.Gravity
@@ -51,6 +54,7 @@ import il.transit.planner.remind.LastTripReceiver
 import il.transit.planner.remind.Notifications
 import il.transit.planner.ui.TripDetailsViewModel
 import il.transit.planner.ui.screens.TripDetailsSheet
+import il.transit.core.present.LegPalette
 import il.transit.core.present.vehicleGeoJson
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
@@ -130,7 +134,7 @@ class MainActivity : ComponentActivity() {
         MapLibre.getInstance(this)
         // Before the first tiles arrive the map shows this colour, not a white flash at night.
         val options = MapLibreMapOptions.createFromAttributes(this, null)
-            .foregroundLoadColor(getColor(R.color.window_background))
+            .foregroundLoadColor(windowColor(dark))
         mapView = MapView(this, options).apply { onCreate(savedInstanceState) }
         mapView.getMapAsync(::onMapReady)
         offline = OfflineMapManager(this)
@@ -217,7 +221,8 @@ class MainActivity : ComponentActivity() {
                     startRide = ::startRide,
                     onMapPadding = { mapPadding.value = it },
                     crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
-                    openLeg = tripVm::open,
+                    // The sheet and the vehicle dot in the leg's own colour, as on its chip (C6).
+                    openLeg = { leg -> tripVm.open(leg, state.selectedItinerary?.let { LegPalette.colorOf(it.legs, leg) }) },
                 )
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
@@ -367,6 +372,9 @@ class MainActivity : ComponentActivity() {
 
     /** Status and navigation bar icons that read on the app's own theme, not only the phone's. */
     private fun edgeToEdge(d: Boolean) {
+        // The window behind the map follows the app's theme too: no light flash under a forced
+        // Dark (the XML theme only knows the phone's night mode).
+        window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(windowColor(d)))
         val transparent = android.graphics.Color.TRANSPARENT
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(transparent, transparent) { d },
@@ -389,6 +397,9 @@ class MainActivity : ComponentActivity() {
             AppLocale.apply(this, language)
         }
     }
+
+    /** Theme.kt's background, light or dark: the window and the map before its first tiles. */
+    private fun windowColor(d: Boolean): Int = (if (d) DarkColors else LightColors).background.toArgb()
 
     private fun isNight(): Boolean =
         (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES

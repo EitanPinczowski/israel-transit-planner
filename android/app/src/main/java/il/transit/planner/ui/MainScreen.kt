@@ -215,6 +215,8 @@ fun MainScreen(
     var savingTrip by remember { mutableStateOf(false) }
     var collapsed by rememberSaveable { mutableStateOf(false) }
     var searchOpen by rememberSaveable { mutableStateOf(false) }
+    /** Back on the tour's first page: closed for now, shown again at the next launch. */
+    var tourLater by rememberSaveable { mutableStateOf(false) }
 
     val showPanel = state.editing == null &&
         (tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
@@ -355,11 +357,13 @@ fun MainScreen(
             LaunchedEffect(pad) { actions.onMapPadding(pad) }
         }
         // First run (C6), over everything; waits for the stored settings so it never flashes.
-        if (state.settingsLoaded && !state.settings.tourSeen) WelcomeTour(onFinish = { vm.updateSettings(state.settings.copy(tourSeen = true)) })
+        if (state.settingsLoaded && !state.settings.tourSeen && !tourLater) {
+            WelcomeTour(onFinish = { vm.updateSettings(state.settings.copy(tourSeen = true)) }, onLater = { tourLater = true })
+        }
     }
 
     UpdateLaunchers(state.updateState, vm) // Android's install prompt / permission screen, banner or not
-    if (state.showSettings) SettingsDialog(state, vm, actions)
+    if (state.showSettings) SettingsDialog(state, vm, actions, onShowTour = { tourLater = false })
     if (state.showHistory) HistoryDialog(state, vm)
     if (state.showFavorites) FavoritesDialog(state, vm)
     savingPlace?.let { at ->

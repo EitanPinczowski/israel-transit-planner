@@ -40,18 +40,20 @@ class TripDetailsViewModel(private val api: TransitApi, private val language: ()
 
     @Volatile private var visible = true
 
-    fun open(leg: Leg) {
+    /** [color]: the leg's colour in its itinerary (`LegPalette`), so the sheet matches the chip. */
+    fun open(leg: Leg, color: String? = null) {
         if (!leg.isTransit) return
         job?.cancel()
         _sheet.value = TripSheet(leg, details = null)
         val session = TripDetailsSession(api, leg, language())
         job = viewModelScope.launch {
-            val d = session.open(Instant.now())
+            fun TripDetails.tinted() = if (color != null) copy(color = color) else this
+            val d = session.open(Instant.now()).tinted()
             _sheet.update { it?.copy(details = d, legOnly = session.legOnly) }
             while (isActive) {
                 val now = Instant.now()
                 val mark = session.tick(now, visible)
-                _sheet.update { s -> s?.let { it.copy(details = session.at(now) ?: it.details, vehicle = mark) } }
+                _sheet.update { s -> s?.let { it.copy(details = session.at(now)?.tinted() ?: it.details, vehicle = mark) } }
                 delay(TICK_MS)
             }
         }

@@ -164,7 +164,7 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
-internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions) {
+internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions, onShowTour: () -> Unit = {}) {
     var editingRoutine by remember { mutableStateOf<SavedPlace?>(null) }
     editingRoutine?.let { p ->
         RoutineDialog(p, state.history, onDismiss = { editingRoutine = null }) { r -> vm.setRoutine(p, r); editingRoutine = null }
@@ -173,17 +173,23 @@ internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActi
         onDismissRequest = { vm.showSettings(false) },
         confirmButton = { TextButton(onClick = { vm.showSettings(false) }) { Text(stringResource(R.string.done)) } },
         title = { Text(stringResource(R.string.settings)) },
-        text = { SettingsContent(state, vm, actions, onRoutine = { editingRoutine = it }) },
+        text = { SettingsContent(state, vm, actions, onRoutine = { editingRoutine = it }, onShowTour = onShowTour) },
     )
 }
 
 /** The dialog's body on its own, so screenshot tests can render it (Paparazzi draws no dialog windows). */
 @Composable
-internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenActions, onRoutine: (SavedPlace) -> Unit = {}) {
+internal fun SettingsContent(
+    state: UiState,
+    vm: MainActions,
+    actions: ScreenActions,
+    onRoutine: (SavedPlace) -> Unit = {},
+    onShowTour: () -> Unit = {},
+) {
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        item { AppearanceSection(s, ::set, showTour = { set(s.copy(tourSeen = false)); vm.showSettings(false) }) }
+        item { AppearanceSection(s, ::set, showTour = { set(s.copy(tourSeen = false)); onShowTour(); vm.showSettings(false) }) }
         item {
             Section(R.string.max_transfers) {
                 UserSettings.TRANSFER_CHOICES.forEach { n ->

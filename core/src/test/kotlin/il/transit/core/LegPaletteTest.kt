@@ -92,6 +92,13 @@ class LegPaletteTest {
         assertEquals(listOf(chips[0], chips[0], chips[1], chips[1]), dots)
     }
 
+    @Test fun `the trip sheet gets the leg's own colour`() {
+        val it = itinerary(l("BUS", a, b, 0), l("BUS", b, c, 20))
+        val colors = LegPalette.colors(it.legs)
+        assertEquals(colors[1], LegPalette.colorOf(it.legs, it.legs[1]))
+        assertEquals(null, LegPalette.colorOf(it.legs, l("BUS", d, e, 90)))
+    }
+
     @Test fun `palette has six colours, each 3 to 1 on both maps`() {
         assertTrue(LegPalette.COLORS.size >= 6)
         assertEquals(LegPalette.COLORS.size, LegPalette.COLORS.toSet().size)
