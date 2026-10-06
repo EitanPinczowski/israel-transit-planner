@@ -2,11 +2,11 @@
 <resources>
     <string name="appearance">מראה</string>
     <string name="app_language">שפה</string>
-    <string name="language_system">ברירת המחדל של הטלפון</string>
+    <string name="language_system">כמו בטלפון</string>
     <string name="language_he">עברית</string>
     <string name="language_en">English</string>
     <string name="app_theme">ערכת נושא</string>
-    <string name="theme_system">ברירת המחדל של הטלפון</string>
+    <string name="theme_system">כמו בטלפון</string>
     <string name="theme_light">בהיר</string>
     <string name="theme_dark">כהה</string>
     <string name="tour_again">הצגת הסיור שוב</string>

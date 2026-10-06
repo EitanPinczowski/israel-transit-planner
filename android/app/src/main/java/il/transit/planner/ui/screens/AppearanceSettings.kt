@@ -18,7 +18,7 @@ import il.transit.planner.R
 @Composable
 internal fun AppearanceSection(s: UserSettings, set: (UserSettings) -> Unit, showTour: () -> Unit) {
     Column {
-        Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
         Section(R.string.app_language) {
             Appearance.LANGUAGES.forEach { l ->
                 val label = when (l) {
