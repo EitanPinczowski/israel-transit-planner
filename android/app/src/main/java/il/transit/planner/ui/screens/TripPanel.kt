@@ -437,7 +437,7 @@ internal fun ResultsPanel(
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
-                            extra = { if (state.canPage()) MissLine(state, vm) },
+                            extra = { UsualLine(state, itin); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
                     }
                     if (state.canPage()) item { PageButtons(state, vm) }
