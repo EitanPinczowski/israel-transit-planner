@@ -208,6 +208,6 @@ merges. Tick only your own package's lines.
 - [x] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
 
 ### Close-out (boss)
-- [ ] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)
 - [ ] Android 8: Back closes an open search (J4 on API 26, known issue from #32)
