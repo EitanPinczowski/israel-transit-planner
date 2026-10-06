@@ -1,5 +1,6 @@
 package il.transit.planner.ui.screens
 
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import il.transit.core.api.Itinerary
 import il.transit.core.fare.FareProfile
+import il.transit.core.fare.PassAdvice
 import il.transit.core.fare.PassAdvisor
 import il.transit.core.history.TripEnd
 import il.transit.core.history.TripRecord
@@ -52,10 +54,17 @@ internal fun BestLeaveLine(history: List<TripRecord>, place: SavedPlace, days: L
     )
 }
 
-/** The history section's monthly pass advice for the last finished month; nothing when it can't tell. */
+/**
+ * The history section's monthly pass advice for the last finished month. No item at all when
+ * it can't tell, so the list's spacing doesn't change.
+ */
+internal fun LazyListScope.passAdviceItem(history: List<TripRecord>, profile: FareProfile, now: Instant) {
+    val a = PassAdvisor.advise(history, profile, now) ?: return
+    item { PassAdviceLine(a) }
+}
+
 @Composable
-internal fun PassAdviceLine(history: List<TripRecord>, profile: FareProfile, now: Instant) {
-    val a = remember(history, profile, now) { PassAdvisor.advise(history, profile, now) } ?: return
+private fun PassAdviceLine(a: PassAdvice) {
     val month = a.month.month.getDisplayName(TextStyle.FULL_STANDALONE, LocalConfiguration.current.locales[0])
     val shekels = ((abs(a.passSavesAgorot) + 50) / 100).toString()
     val line = when {

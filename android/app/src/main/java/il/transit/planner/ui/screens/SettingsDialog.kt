@@ -307,7 +307,7 @@ internal fun HistoryContent(state: UiState, vm: MainActions, now: Instant = Inst
                     }
                 }
             }
-            item { PassAdviceLine(state.history, state.settings.fareProfile, now) }
+            passAdviceItem(state.history, state.settings.fareProfile, now)
             st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
                 item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
             }
