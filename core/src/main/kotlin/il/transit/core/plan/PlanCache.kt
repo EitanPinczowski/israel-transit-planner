@@ -81,5 +81,5 @@ object TripCacheJson {
  */
 fun TripResult.stillAhead(now: Instant): TripResult? {
     val ahead = itineraries.filter { (it.firstTransitLeg?.let { l -> il.transit.core.api.parseTime(l.startTime) } ?: it.start) >= now }
-    return if (ahead.isEmpty() && walkOnly == null) null else TripResult(ahead, walkOnly)
+    return if (ahead.isEmpty() && walkOnly == null) null else copy(itineraries = ahead)
 }

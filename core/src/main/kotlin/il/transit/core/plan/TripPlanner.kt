@@ -42,34 +42,51 @@ data class TripResult(
     val itineraries: List<Itinerary>,
     /** Walking all the way, when MOTIS offers it and it is not absurdly long. */
     val walkOnly: Itinerary?,
+    /** Cursors for the windows before and after everything loaded so far ("Earlier" /
+     *  "Later"); null = none, or a result saved before paging existed. */
+    val earlierCursor: String? = null,
+    val laterCursor: String? = null,
+    /** The search's own time (epoch seconds), sent again with every page so a repeated cursor
+     *  is the same query and the guard cache answers it. */
+    val searchEpoch: Long? = null,
+    /** An Earlier or Later page has been merged in. */
+    val paged: Boolean = false,
 )
 
 /** The ordinary A→B search: one `plan` request. */
 class TripPlanner(private val api: TransitApi) {
     suspend fun plan(q: TripQuery, now: Instant = Instant.now()): TripResult {
         val time = if (q.timeMode == TimeMode.NOW) now else requireNotNull(q.time) { "time needed for ${q.timeMode}" }
-        val resp = api.plan(
-            PlanRequest(
-                from = q.from,
-                to = q.to,
-                time = time,
-                arriveBy = q.timeMode == TimeMode.ARRIVE_BY,
-                preferences = q.settings.preferences(),
-                language = q.language,
-            ),
-        )
-        // MOTIS also returns trips that wait out a night or Shabbat (Friday 16:19, arrive
-        // Saturday 17:25: 25 h). Nobody wants those next to a 91-min option.
-        val fastest = resp.itineraries.minOfOrNull { it.duration } ?: 0
-        val sane = resp.itineraries.filter { it.duration <= maxOf(2 * fastest, fastest + MAX_EXTRA_SEC) }
-        val sorted = if (q.timeMode == TimeMode.ARRIVE_BY) {
-            sane.sortedWith(compareByDescending<Itinerary> { it.start }.thenBy { it.transfers })
-        } else {
-            sane.sortedWith(compareBy<Itinerary> { it.end }.thenBy { it.transfers })
-        }
+        val resp = api.plan(request(q, time))
+        val sorted = TripPages.order(TripPages.sane(resp.itineraries), q.timeMode == TimeMode.ARRIVE_BY)
         val walk = resp.direct.minByOrNull { it.duration }?.takeIf { it.duration <= MAX_WALK_ONLY_SEC }
-        return TripResult(sorted, walk)
+        return TripResult(sorted, walk, resp.previousPageCursor, resp.nextPageCursor, time.epochSecond)
     }
+
+    /**
+     * "Earlier" / "Later": one `plan` request for the window next to [current], merged into it
+     * ([TripPages.merge]). The request repeats [current]'s search time, so the same cursor
+     * twice is the same query (the guard cache answers it). [current] unchanged when there is
+     * no cursor that way.
+     */
+    suspend fun page(q: TripQuery, current: TripResult, direction: TripPages.Direction): TripResult {
+        val cursor = when (direction) {
+            TripPages.Direction.EARLIER -> current.earlierCursor
+            TripPages.Direction.LATER -> current.laterCursor
+        } ?: return current
+        val time = current.searchEpoch?.let(Instant::ofEpochSecond) ?: q.time ?: Instant.now()
+        val resp = api.plan(request(q, time).copy(pageCursor = cursor))
+        return TripPages.merge(current, resp, direction, q.timeMode == TimeMode.ARRIVE_BY)
+    }
+
+    private fun request(q: TripQuery, time: Instant) = PlanRequest(
+        from = q.from,
+        to = q.to,
+        time = time,
+        arriveBy = q.timeMode == TimeMode.ARRIVE_BY,
+        preferences = q.settings.preferences(),
+        language = q.language,
+    )
 
     companion object {
         const val MAX_WALK_ONLY_SEC = 45 * 60
