@@ -1,5 +1,6 @@
 package il.transit.core.plan
 
+import il.transit.core.api.BudgetExceededException
 import il.transit.core.api.BudgetedTransitApi
 import il.transit.core.api.Endpoint
 import il.transit.core.api.Itinerary
@@ -37,6 +38,21 @@ object LastTripHome {
     /** A notification this late (an inexact fallback alarm) says "leave now" instead of "leave in N min". */
     val LATE: Duration = Duration.ofMinutes(5)
 
+    /** A failed check (no signal) is tried again this much later, while the day's budget lasts. */
+    val RETRY: Duration = Duration.ofMinutes(15)
+
+    /**
+     * 02:00–03:59 belongs to the evening's service day, but its last trip home has gone or
+     * is a night line: a check then would spend requests for nothing.
+     */
+    val QUIET_FROM: LocalTime = LocalTime.of(2, 0)
+
+    /** True from [QUIET_FROM] until the next service day starts at 04:00. */
+    fun quiet(now: Instant): Boolean {
+        val t = now.atZone(ISRAEL).toLocalTime()
+        return !t.isBefore(QUIET_FROM) && t.isBefore(LastRideFinder.DAY_STARTS)
+    }
+
     /** When the day's check runs: 19:00 Sun–Thu, 12:00 Friday (service ends in the afternoon), 20:00 Saturday. */
     fun checkTime(day: LocalDate): LocalTime = when (day.dayOfWeek) {
         DayOfWeek.FRIDAY -> LocalTime.of(12, 0)
@@ -48,15 +64,17 @@ object LastTripHome {
 
     /**
      * When the check alarm should go off, seen from an app start or a reboot: today's check
-     * time while it is ahead; [now] when it has passed and today was not checked yet (the
-     * phone was off at 19:00), still inside the same service day; else the next day's.
+     * time while it is ahead; [now] when it has passed and today was not finished yet (the
+     * phone was off at 19:00, or the check had no signal), still inside the same service day
+     * and before [QUIET_FROM]; else the next day's.
      */
-    fun nextCheck(now: Instant, checkedDay: LocalDate?): Instant {
+    fun nextCheck(now: Instant, record: LastTripDay?): Instant {
         val day = LastRideFinder.serviceDay(now)
         val today = checkAt(day)
         return when {
             today.isAfter(now) -> today
-            checkedDay != day -> now
+            quiet(now) -> following(now)
+            record?.finished(day) != true -> now
             else -> following(now)
         }
     }
@@ -145,28 +163,57 @@ data class LastTripAlert(
 }
 
 /**
- * Runs one evening check. 0 requests when the day was already checked or there is no
- * origin; otherwise [markChecked] is called first (so even a failure leaves the day checked:
- * never more than [LastRideFinder.BUDGET] requests a day) and [LastRideFinder] runs under a
- * [BudgetedTransitApi] of that size. Network errors propagate; the day stays checked.
+ * What a service day's checks have done so far, stored between checks: the requests spent
+ * and whether the day is finished (an answer came back, or the budget is gone).
+ */
+@Serializable
+data class LastTripDay(val serviceDay: String, val spent: Int, val done: Boolean) {
+    val day: LocalDate get() = LocalDate.parse(serviceDay)
+
+    /** Nothing more to do on [day]. */
+    fun finished(day: LocalDate): Boolean = this.day == day && (done || spent >= LastRideFinder.BUDGET)
+}
+
+/**
+ * Runs one evening check. 0 requests when the day is finished, in the quiet hours, or there
+ * is no origin. Otherwise [LastRideFinder] runs under a [BudgetedTransitApi] holding what is
+ * left of the day's [LastRideFinder.BUDGET], so all checks of one service day together send
+ * at most 3. Before the first request [save] stores the day as if the whole budget were
+ * spent (a process killed mid-check cannot exceed it); afterwards it stores what was really
+ * spent. A failure (no signal) leaves the day open: [Outcome.retry] says another check may
+ * run [LastTripHome.RETRY] later, while some budget is left.
  */
 class LastTripChecker(private val api: TransitApi) {
-    data class Outcome(val alert: LastTripAlert?, val requests: Int)
+    data class Outcome(val alert: LastTripAlert?, val requests: Int, val retry: Boolean = false)
 
     suspend fun check(
-        checkedDay: LocalDate?,
+        record: LastTripDay?,
         origin: LatLon?,
         home: LatLon,
         now: Instant,
         settings: UserSettings,
         language: String,
-        markChecked: suspend (LocalDate) -> Unit,
+        save: suspend (LastTripDay) -> Unit,
     ): Outcome? {
         val day = LastRideFinder.serviceDay(now)
-        if (day == checkedDay || origin == null) return null
-        markChecked(day)
-        val budgeted = BudgetedTransitApi(api, LastRideFinder.BUDGET)
-        val lr = LastRideFinder(budgeted).find(Endpoint.Coord(origin), Endpoint.Coord(home), day, settings.preferences(), language)
+        if (record?.finished(day) == true || LastTripHome.quiet(now) || origin == null) return null
+        val spentBefore = record?.takeIf { it.day == day }?.spent ?: 0
+        val budgeted = BudgetedTransitApi(api, LastRideFinder.BUDGET - spentBefore)
+        save(LastTripDay(day.toString(), LastRideFinder.BUDGET, done = true))
+        val lr = try {
+            LastRideFinder(budgeted).find(Endpoint.Coord(origin), Endpoint.Coord(home), day, settings.preferences(), language)
+        } catch (e: BudgetExceededException) {
+            // A retry with less than the full budget saw only night buses: as "runs all night".
+            save(LastTripDay(day.toString(), spentBefore + budgeted.used, done = true))
+            return Outcome(null, budgeted.used)
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            val spent = spentBefore + budgeted.used
+            save(LastTripDay(day.toString(), spent, done = false))
+            return Outcome(null, budgeted.used, retry = budgeted.used > 0 && spent < LastRideFinder.BUDGET)
+        }
+        save(LastTripDay(day.toString(), spentBefore + budgeted.used, done = true))
         return Outcome(LastTripHome.alert(lr, now), budgeted.used)
     }
 }

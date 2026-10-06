@@ -345,7 +345,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() { super.onStart(); mapView.onStart() }
     override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
-    override fun onPause() { LastTripReceiver.saveSeen(this, vm.locationProvider()); vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
+    override fun onPause() { if (vm.state.value.settings.lastTripAlert) LastTripReceiver.saveSeen(this, vm.locationProvider()); vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }

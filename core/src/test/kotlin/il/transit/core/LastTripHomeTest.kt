@@ -7,6 +7,7 @@ import il.transit.core.history.TripRecord
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.LastTripChecker
+import il.transit.core.plan.LastTripDay
 import il.transit.core.plan.LastTripHome
 import il.transit.core.plan.LastTripHome.Message
 import il.transit.core.plan.LastTripHome.Seen
@@ -34,6 +35,8 @@ class LastTripHomeTest {
     private val telAvivCell = TripRecord.parseCell(TripRecord.cellOf(telAviv))!!
 
     private fun t(iso: String) = Instant.parse(iso)
+
+    private fun done(d: LocalDate) = LastTripDay(d.toString(), 2, true)
 
     private fun record(startedAt: String, to: LatLon?, totalMin: Int? = 60) = TripRecord(
         startedAtEpoch = t(startedAt).epochSecond, from = "", to = "x", mode = "TRIP",
@@ -66,7 +69,11 @@ class LastTripHomeTest {
         // Wednesday 21:00, rebooted and not checked yet → now.
         assertEquals(t("2026-10-07T18:00:00Z"), LastTripHome.nextCheck(t("2026-10-07T18:00:00Z"), null))
         // Already checked → Thursday 19:00.
-        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-07T18:00:00Z"), LocalDate.of(2026, 10, 7)))
+        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-07T18:00:00Z"), done(LocalDate.of(2026, 10, 7))))
+        // Checked, but with no signal and budget left → again now.
+        assertEquals(t("2026-10-07T18:00:00Z"), LastTripHome.nextCheck(t("2026-10-07T18:00:00Z"), LastTripDay("2026-10-07", 1, false)))
+        // Unchecked, but in the quiet hours (Thursday 02:30, Wednesday's service day) → Thursday 19:00.
+        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-07T23:30:00Z"), null))
         // Thursday evening checked → Friday 12:00.
         assertEquals(t("2026-10-09T09:00:00Z"), LastTripHome.following(t("2026-10-08T17:00:00Z")))
     }
@@ -74,9 +81,13 @@ class LastTripHomeTest {
     @Test fun `the 04 00 service-day edge`() {
         val wed = LocalDate.of(2026, 10, 7)
         // Thursday 03:59 still belongs to Wednesday, which was checked → Thursday 19:00.
-        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-08T00:59:00Z"), wed))
+        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-08T00:59:00Z"), done(wed)))
         // Thursday 04:00 is Thursday: its own check is ahead.
-        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-08T01:00:00Z"), wed))
+        assertEquals(t("2026-10-08T16:00:00Z"), LastTripHome.nextCheck(t("2026-10-08T01:00:00Z"), done(wed)))
+        // Thursday 01:30 (before the quiet hours), Wednesday not checked: at once.
+        assertEquals(t("2026-10-07T22:30:00Z"), LastTripHome.nextCheck(t("2026-10-07T22:30:00Z"), null))
+        assertTrue(LastTripHome.quiet(t("2026-10-07T23:00:00Z"))) // 02:00
+        assertFalse(LastTripHome.quiet(t("2026-10-08T01:00:00Z"))) // 04:00
         // A trip started Wednesday 23:30 counts for a check at Thursday 00:30, not for Thursday 05:00.
         val late = listOf(record("2026-10-07T20:30:00Z", telAviv, totalMin = 30))
         assertEquals(telAvivCell, LastTripHome.origin(late, null, home, t("2026-10-07T21:30:00Z")))
@@ -180,34 +191,37 @@ class LastTripHomeTest {
         }
     }
 
-    private suspend fun check(api: FakeTransitApi, checked: LocalDate?, origin: LatLon?, now: Instant, marks: MutableList<LocalDate>) =
-        LastTripChecker(api).check(checked, origin, home, now, UserSettings(), "he") { marks += it }
+    /** Runs a check against the stored [days] record, as the receiver does. */
+    private suspend fun check(api: FakeTransitApi, days: MutableList<LastTripDay>, origin: LatLon?, now: Instant) =
+        LastTripChecker(api).check(days.lastOrNull(), origin, home, now, UserSettings(), "he") { days += it }
 
     @Test fun `a check sends at most 3, a second the same service day 0`() = runBlocking {
         val api = api()
-        val marks = mutableListOf<LocalDate>()
+        val days = mutableListOf<LastTripDay>()
         val now = t("2026-10-07T16:00:00Z")
-        val out = check(api, null, telAviv, now, marks)!!
+        val out = check(api, days, telAviv, now)!!
         assertTrue(api.calls.size <= LastRideFinder.BUDGET)
         assertEquals(LastRideFinder.BUDGET, 3)
         assertEquals(api.calls.size, out.requests)
-        assertEquals(listOf(LocalDate.of(2026, 10, 7)), marks)
+        assertEquals(LastTripDay("2026-10-07", 3, true), days.last())
         // Night buses kept coming until the budget ran out: runs all night, no alert.
         assertNull(out.alert)
+        assertFalse(out.retry)
 
         val before = api.calls.size
-        assertNull(check(api, marks.last(), telAviv, t("2026-10-07T19:00:00Z"), marks))
+        assertNull(check(api, days, telAviv, t("2026-10-07T19:00:00Z")))
         // Past midnight is still the same service day.
-        assertNull(check(api, marks.last(), telAviv, t("2026-10-07T23:00:00Z"), marks))
+        assertNull(check(api, days, telAviv, t("2026-10-07T22:00:00Z")))
         assertEquals(before, api.calls.size)
     }
 
-    @Test fun `no origin sends 0`() = runBlocking {
+    @Test fun `no origin sends 0, nor do the quiet hours`() = runBlocking {
         val api = api()
-        val marks = mutableListOf<LocalDate>()
-        assertNull(check(api, null, null, t("2026-10-07T16:00:00Z"), marks))
+        val days = mutableListOf<LastTripDay>()
+        assertNull(check(api, days, null, t("2026-10-07T16:00:00Z")))
+        assertNull(check(api, days, telAviv, t("2026-10-07T23:30:00Z"))) // 02:30
         assertEquals(0, api.calls.size)
-        assertTrue(marks.isEmpty())
+        assertTrue(days.isEmpty())
     }
 
     @Test fun `an ordinary evening - 2 requests, an alert at 23 10`() = runBlocking {
@@ -215,17 +229,48 @@ class LastTripHomeTest {
         val api = FakeTransitApi().apply {
             onPlan = { req -> PlanResponse(if (req.arriveBy) listOf(tripHome("2026-10-07T19:02:00Z"), last) else listOf(tripHome("2026-10-08T02:30:00Z")).filter { it.start >= req.time }) }
         }
-        val marks = mutableListOf<LocalDate>()
-        val out = check(api, null, telAviv, t("2026-10-07T16:00:00Z"), marks)!!
+        val days = mutableListOf<LastTripDay>()
+        val out = check(api, days, telAviv, t("2026-10-07T16:00:00Z"))!!
         assertEquals(2, out.requests)
         assertEquals("23:10", out.alert!!.boardTime)
+        assertEquals(LastTripDay("2026-10-07", 2, true), days.last())
     }
 
-    @Test fun `a failed check leaves the day checked`() = runBlocking {
+    @Test fun `no signal - retried later, and all tries of a day still send at most 3`() = runBlocking {
+        var online = false
+        val last = tripHome("2026-10-07T20:02:00Z")
+        val api = FakeTransitApi().apply {
+            onPlan = { req ->
+                if (!online) throw java.io.IOException("offline")
+                PlanResponse(if (req.arriveBy) listOf(last) else listOf(tripHome("2026-10-08T02:30:00Z")).filter { it.start >= req.time })
+            }
+        }
+        val days = mutableListOf<LastTripDay>()
+        // The whole budget is stored before the first request (a killed process cannot exceed it).
+        val first = check(api, days, telAviv, t("2026-10-07T16:00:00Z"))!!
+        assertEquals(LastTripDay("2026-10-07", 3, true), days[0])
+        assertTrue(first.retry)
+        assertNull(first.alert)
+        assertEquals(LastTripDay("2026-10-07", 1, false), days.last())
+        // Signal back 15 min later: the retry has 2 left and finds the alert.
+        online = true
+        val second = check(api, days, telAviv, t("2026-10-07T16:15:00Z"))!!
+        assertEquals("23:10", second.alert!!.boardTime)
+        assertEquals(LastTripDay("2026-10-07", 3, true), days.last())
+        assertEquals(3, api.calls.size)
+        // Done for the day.
+        assertNull(check(api, days, telAviv, t("2026-10-07T17:00:00Z")))
+        assertEquals(3, api.calls.size)
+    }
+
+    @Test fun `offline all evening - 3 tries, 3 requests, then nothing`() = runBlocking {
         val api = FakeTransitApi().apply { onPlan = { throw java.io.IOException("offline") } }
-        val marks = mutableListOf<LocalDate>()
-        val r = runCatching { check(api, null, telAviv, t("2026-10-07T16:00:00Z"), marks) }
-        assertTrue(r.isFailure)
-        assertEquals(listOf(LocalDate.of(2026, 10, 7)), marks)
+        val days = mutableListOf<LastTripDay>()
+        assertTrue(check(api, days, telAviv, t("2026-10-07T16:00:00Z"))!!.retry)
+        assertTrue(check(api, days, telAviv, t("2026-10-07T16:15:00Z"))!!.retry)
+        assertFalse(check(api, days, telAviv, t("2026-10-07T16:30:00Z"))!!.retry)
+        assertNull(check(api, days, telAviv, t("2026-10-07T16:45:00Z")))
+        assertEquals(3, api.calls.size)
+        assertTrue(days.last().finished(LocalDate.of(2026, 10, 7)))
     }
 }

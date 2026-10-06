@@ -1,11 +1,9 @@
 package il.transit.planner.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -30,7 +28,8 @@ import org.junit.runners.Parameterized
 
 /**
  * "Last trip home alert" in Settings (Phase 9 C5), in both languages and both themes plus
- * Hebrew large text: off (the default), refused notifications, and on with no Home set.
+ * large text in both: off (the default), refused notifications, and on with no Home set, one
+ * shot each so large text is never cut.
  * The countdown and the alert themselves are system notifications, which Paparazzi cannot draw.
  */
 @RunWith(Parameterized::class)
@@ -43,19 +42,23 @@ class AlertsShotsTest(private val v: Variant) {
     @get:Rule
     val paparazzi = Paparazzi(deviceConfig = v.device, maxPercentDifference = 0.1)
 
-    @Test fun lastTripSetting() = paparazzi.snapshot("last_trip_setting") {
-        Frame {
-            Box(Modifier.fillMaxSize().background(Color(0x99000000)).padding(24.dp), contentAlignment = Alignment.Center) {
-                Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    val bayit = SavedPlace("בית", 31.279, 34.82)
-                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        LastTripSection(UserSettings(homePlace = "בית"), listOf(bayit), denied = false) {}
-                        HorizontalDivider()
-                        LastTripSection(UserSettings(homePlace = "בית"), listOf(bayit), denied = true) {}
-                        HorizontalDivider()
-                        LastTripSection(UserSettings(lastTripAlert = true), listOf(bayit), denied = false) {}
-                    }
-                }
+    private val bayit = SavedPlace("בית", 31.279, 34.82)
+
+    /** Off, the default. */
+    @Test fun lastTripOff() = paparazzi.snapshot("last_trip_off") { Card { LastTripSection(UserSettings(homePlace = "בית"), listOf(bayit), denied = false) {} } }
+
+    /** Notifications refused: stays off and says why. */
+    @Test fun lastTripDenied() = paparazzi.snapshot("last_trip_denied") { Card { LastTripSection(UserSettings(homePlace = "בית"), listOf(bayit), denied = true) {} } }
+
+    /** On, but no Home set yet. */
+    @Test fun lastTripNoHome() = paparazzi.snapshot("last_trip_no_home") { Card { LastTripSection(UserSettings(lastTripAlert = true), listOf(bayit), denied = false) {} } }
+
+    /** One state in a settings-like card, so large text has the whole screen. */
+    @Composable
+    private fun Card(content: @Composable () -> Unit) = Frame {
+        Box(Modifier.fillMaxSize().background(Color(0x99000000)).padding(24.dp), contentAlignment = Alignment.Center) {
+            Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+                Column(Modifier.padding(24.dp)) { content() }
             }
         }
     }
@@ -76,6 +79,7 @@ class AlertsShotsTest(private val v: Variant) {
         fun variants() = listOf(
             Variant("en_light", phone, dark = false, rtl = false),
             Variant("en_dark", phone.copy(nightMode = NightMode.NIGHT), dark = true, rtl = false),
+            Variant("en_bigtext", phone.copy(fontScale = 1.5f), dark = false, rtl = false),
             Variant("he_light", hebrew, dark = false, rtl = true),
             Variant("he_dark", hebrew.copy(nightMode = NightMode.NIGHT), dark = true, rtl = true),
             Variant("he_bigtext", hebrew.copy(fontScale = 1.5f), dark = false, rtl = true),

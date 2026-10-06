@@ -76,7 +76,11 @@ class ReminderReceiver : BroadcastReceiver() {
                         }
                         app.store.setReminder(next)
                         ReminderScheduler.schedule(app, next) // the leave alarm and the next re-check
-                        if (next.counting) Notifications.countdown(app, next) // the new boarding time
+                        if (next.counting) {
+                            // Only a late re-check lands here (they run before leaving): new boarding time, new end.
+                            Notifications.countdown(app, next)
+                            Countdown.of(next, java.time.Instant.now())?.let { ReminderScheduler.scheduleEnd(app, it.endAt) }
+                        }
                     }
                     ReminderUpdate.Gone -> {
                         Notifications.changed(app, r)

@@ -625,6 +625,7 @@ class MainViewModel(
         // An errand leg is re-checked on its own stops; the chain's A → B would never find its bus.
         val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings, nameOf(s.from), s.to?.let(::nameOf)))
             ?: return false
+        reminders?.cancel() // a countdown still showing for the old one goes, with its alarms
         viewModelScope.launch { store.setReminder(r) }
         reminders?.schedule(r)
         return true
