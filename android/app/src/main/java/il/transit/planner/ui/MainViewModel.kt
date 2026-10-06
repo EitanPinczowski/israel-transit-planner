@@ -623,7 +623,7 @@ class MainViewModel(
         val from = resolve(s.from) ?: return false
         val to = s.to?.let(::resolve) ?: return false
         // An errand leg is re-checked on its own stops; the chain's A → B would never find its bus.
-        val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings))
+        val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings, nameOf(s.from), s.to?.let(::nameOf)))
             ?: return false
         viewModelScope.launch { store.setReminder(r) }
         reminders?.schedule(r)
@@ -641,6 +641,15 @@ class MainViewModel(
         val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, clock.instant(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
+    }
+
+    /** "Start trip" on the leave-now countdown (C5): the reminder's own option, as the in-app button rides it. */
+    fun startReminderRide() = viewModelScope.launch {
+        val r = store.reminder.first() ?: return@launch
+        val itin = r.itinerary ?: return@launch
+        rides?.start(itin, store.settings.first().speakAlerts)
+        historyStore?.add(TripRecord.from(itin, r.fromName.orEmpty(), r.toName.orEmpty(), AppMode.TRIP.name, clock.instant(), null))
+        cancelReminder()
     }
 
     fun stopRide() {

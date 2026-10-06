@@ -93,6 +93,7 @@ class RideService : Service() {
             return START_NOT_STICKY
         }
         if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
+        il.transit.planner.remind.Notifications.cancelCountdown(this) // riding now: the leave countdown is done
         _active.value = true
         return START_NOT_STICKY
     }

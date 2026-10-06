@@ -197,8 +197,8 @@ merges. Tick only your own package's lines.
       (`EXTRA_TRIP_HOME`, one `plan`); "Add to Quick Settings" in Settings
 
 ### C5 — Alerts (`claude/p9-alerts`, 0 + ≤ 3 requests an evening)
-- [ ] Leave-now countdown: the leave notification turns ongoing and counts down to boarding
-- [ ] "Last trip home 23:10 — leave in 30 min": opt-in, once per evening, no background
+- [x] Leave-now countdown: the leave notification turns ongoing and counts down to boarding
+- [x] "Last trip home 23:10 — leave in 30 min": opt-in, once per evening, no background
       location, `LastRideFinder` under `BudgetedTransitApi(3)`
 
 ### C6 — Look & welcome (`claude/p9-look-welcome`, 0 requests; owner, 2026-10-05)
