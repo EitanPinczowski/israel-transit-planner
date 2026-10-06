@@ -4,31 +4,32 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State
-- **Phase 8 is done and merged** (#15, #18–#26, #29); v0.7.0 notes are in
-  `docs/releases/v0.7.0.md`.
-  - **0.7.0 waits for the tester's PR** (owner, 2026-10-05). Once it merges, the owner checks
-    the build on the Pixel, then releases `0.7.0` (`release-apk` skill).
-- **Phase 9 is approved:** #27 research, #28 plan, #30 decisions. **C6** (look & welcome) was
-  added by the owner on 2026-10-05 after the phone test; it is in `phase9.md` and ROADMAP.
-- **Merged today:** #33 (C6 plan, docs), #34 (C2 night refresh + Home).
-- **Running:** the tester, `session_01Tg9rSCEYux8YXXCk6DUEYH`, on PR #32. Its last blocker is
-  API 35 j12 (ride alert); the planner's fix plan was sent 2026-10-05. Owner decisions on #32:
-  - Android 8 Back is a known issue (J4 on API 26 is recorded as a finding);
-  - merge #32 when it's green.
-
-## Next actions, at most 2 agents at a time
-1. When #32 is green: merge it (owner-approved), then the owner checks 0.7.0 on the Pixel and
-   releases it.
-2. Archive the tester session after #32 merges.
-3. **C1, earlier/later + platforms:** only after the tester's PR merges, because both edit
-   `TripPanel`.
-4. Then **C3 + C4**, then **C5 + C6**.
-   - Each PR gets a tester review and a designer review (both Sonnet) before the owner merges.
-   - The boss merges only when the owner says so.
-5. **Close-out:** `docs/releases/v0.8.0.md` from `docs/releases/next/*`.
+## State (2026-10-06)
+- **Released:** v0.7.0 (2026-10-05).
+- **Merged since:**
+  - #38: one-line mode tabs;
+  - #39: place search shows the town;
+  - #40: C1;
+  - #41: C3;
+  - #42: one-tap in-app update (works from 0.8.0 on);
+  - #43: UI-test idle fix.
+- **Running:** C4 (#44, the Quick Settings tile). The owner has approved merging it once it is green.
+- **Next:**
+  1. When #44 merges: start C5 and C6 in parallel. Each gets a Sonnet tester+designer review, then the owner merges.
+  2. Phase 9 close-out: `docs/releases/v0.8.0.md` from `docs/releases/next/*`, the Android 8 Back ROADMAP item, then release 0.8.0.
 
 ## Owner standing orders
+- **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
+  to wake the boss after a reset.
+  - **Before starting any agent or review,** read `rate_limit_info` (`get_session` with no id).
+  - **If the 5-hour limit reads `allowed_warning` or `rejected`:** don't start. Schedule one
+    `send_later` for `resetsAt` + 5 min that starts the task then.
+  - **If an agent stalls on "session limit · resets …":** schedule its resume the same way,
+    unprompted.
+  - **While the 7-day limit reads `allowed_warning`:** at most one Opus implementer plus one
+    Sonnet review at a time.
+  - **Rough costs:** an implementer package is $4–23; a Sonnet review is about $1; a fix round
+    is $2–5.
 - When an agent asks a question, the boss answers it if the answer is clear from the briefs,
   the skills and the owner's recorded decisions; otherwise it passes the question to the owner
   (2026-10-05).
