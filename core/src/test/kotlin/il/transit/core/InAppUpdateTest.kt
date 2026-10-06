@@ -63,7 +63,7 @@ class InAppUpdateTest {
     @Test fun `a check lands on latest, available or couldn't check`() {
         assertEquals(UpdateState.UpToDate("0.7.0"), UpdateFlow.afterCheck("0.7.0", CheckResult.UpToDate))
         assertEquals(UpdateState.Available(release), UpdateFlow.afterCheck("0.7.0", CheckResult.Newer(release)))
-        assertEquals(UpdateState.CheckFailed, UpdateFlow.afterCheck("0.7.0", CheckResult.Failed))
+        assertEquals(UpdateState.CheckFailed(), UpdateFlow.afterCheck("0.7.0", CheckResult.Failed))
     }
 
     @Test fun `tap, download with progress, verify, ready`() {
@@ -146,6 +146,13 @@ class InAppUpdateTest {
         assertFalse(UpdateFlow.canCheck(UpdateState.Checking))
         assertTrue(UpdateFlow.canCheck(UpdateState.Available(release)))
         assertTrue(UpdateFlow.canCheck(UpdateState.Failed(release, UpdateFailure.NETWORK)))
-        assertTrue(UpdateFlow.canCheck(UpdateState.CheckFailed))
+        assertTrue(UpdateFlow.canCheck(UpdateState.CheckFailed()))
+    }
+
+    @Test fun `a second check within the minute says it checked a moment ago`() {
+        assertEquals(UpdateState.UpToDate("0.7.0", tooSoon = true), UpdateFlow.tooSoon(UpdateState.UpToDate("0.7.0")))
+        assertEquals(UpdateState.CheckFailed(tooSoon = true), UpdateFlow.tooSoon(UpdateState.CheckFailed()))
+        val available = UpdateState.Available(release)
+        assertSame(available, UpdateFlow.tooSoon(available)) // the Update button is what it offers
     }
 }

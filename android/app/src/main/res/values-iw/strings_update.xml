@@ -6,7 +6,7 @@
     <string name="update_downloading">מורידים את גרסה ⁨%1$s⁩… ⁨%2$d%%⁩</string>
     <string name="update_downloading_unknown">מורידים את גרסה ⁨%s⁩…</string>
     <string name="update_needs_permission">צריך לאשר לאפליקציה להתקין עדכונים, ואז לחזור לכאן.</string>
-    <string name="update_allow">מתן הרשאה</string>
+    <string name="update_allow">לאפשר התקנה</string>
     <string name="update_install_ready">גרסה ⁨%s⁩ הורדה</string>
     <string name="update_install">התקנה</string>
     <string name="update_failed_network">ההורדה נעצרה (אין חיבור).</string>
@@ -21,5 +21,6 @@
     <string name="update_check">בדיקת עדכונים</string>
     <string name="update_checking">בודקים…</string>
     <string name="update_latest">יש לך את הגרסה האחרונה (⁨%s⁩)</string>
+    <string name="update_checked_recently">נבדק לפני רגע. %s</string>
     <string name="update_check_failed">לא ניתן לבדוק (אין חיבור)</string>
 </resources>

@@ -79,7 +79,9 @@ internal fun UpdateSettingsRow(state: UpdateState, vm: MainActions, version: Str
                 UpdateState.Idle -> null
                 UpdateState.Checking -> stringResource(R.string.update_checking)
                 is UpdateState.UpToDate -> stringResource(R.string.update_latest, state.current)
-                UpdateState.CheckFailed -> stringResource(R.string.update_check_failed)
+                    .let { if (state.tooSoon) stringResource(R.string.update_checked_recently, it) else it }
+                is UpdateState.CheckFailed -> stringResource(R.string.update_check_failed)
+                    .let { if (state.tooSoon) stringResource(R.string.update_checked_recently, it) else it }
                 is UpdateState.WithRelease -> updateLine(state)
             }
             line?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
@@ -87,7 +89,7 @@ internal fun UpdateSettingsRow(state: UpdateState, vm: MainActions, version: Str
         when (state) {
             is UpdateState.Failed -> TextButton(onClick = vm::startUpdate) { Text(stringResource(R.string.update_retry)) }
             is UpdateState.WithRelease -> UpdateAction(state, vm)
-            UpdateState.Idle, is UpdateState.UpToDate, UpdateState.CheckFailed ->
+            UpdateState.Idle, is UpdateState.UpToDate, is UpdateState.CheckFailed ->
                 TextButton(onClick = vm::checkForUpdates) { Text(stringResource(R.string.update_check)) }
             UpdateState.Checking -> Unit
         }

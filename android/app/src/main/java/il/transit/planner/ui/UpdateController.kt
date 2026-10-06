@@ -34,7 +34,10 @@ internal class UpdateController(
     fun checkNow() {
         if (!UpdateFlow.canCheck(current().updateState)) return
         val now = clock.instant()
-        if (!UpdateCheck.canCheckNow(lastManual, now)) return
+        if (!UpdateCheck.canCheckNow(lastManual, now)) {
+            edit { it.copy(updateState = UpdateFlow.tooSoon(it.updateState)) }
+            return
+        }
         lastManual = now
         edit { it.copy(updateState = UpdateState.Checking) }
         scope.launch {

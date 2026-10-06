@@ -24,8 +24,9 @@ enum class UpdateFailure {
 sealed interface UpdateState {
     data object Idle : UpdateState
     data object Checking : UpdateState
-    data class UpToDate(val current: String) : UpdateState
-    data object CheckFailed : UpdateState
+    /** [tooSoon]: the user asked again within [UpdateCheck.MANUAL_INTERVAL] ("Checked a moment ago"). */
+    data class UpToDate(val current: String, val tooSoon: Boolean = false) : UpdateState
+    data class CheckFailed(val tooSoon: Boolean = false) : UpdateState
 
     /** The states that carry a newer release (the banner shows for these). */
     sealed interface WithRelease : UpdateState { val release: LatestRelease }
@@ -52,7 +53,7 @@ object UpdateFlow {
 
     fun afterCheck(current: String, result: CheckResult): UpdateState = when (result) {
         CheckResult.UpToDate -> UpdateState.UpToDate(current)
-        CheckResult.Failed -> UpdateState.CheckFailed
+        CheckResult.Failed -> UpdateState.CheckFailed()
         is CheckResult.Newer -> UpdateState.Available(result.release)
     }
 
@@ -106,6 +107,13 @@ object UpdateFlow {
     fun canCheck(state: UpdateState): Boolean =
         state !is UpdateState.Checking && state !is UpdateState.Downloading &&
             state !is UpdateState.Ready && state !is UpdateState.NeedsPermission
+
+    /** A "check now" inside the one-minute window: no request, the row says it checked a moment ago. */
+    fun tooSoon(state: UpdateState): UpdateState = when (state) {
+        is UpdateState.UpToDate -> state.copy(tooSoon = true)
+        is UpdateState.CheckFailed -> state.copy(tooSoon = true)
+        else -> state
+    }
 
     /** Bytes so far of [total] (≤ 0 when unknown). Only whole-percent changes produce a new state. */
     fun progress(state: UpdateState, read: Long, total: Long): UpdateState {

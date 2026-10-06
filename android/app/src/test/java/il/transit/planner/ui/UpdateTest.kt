@@ -56,13 +56,14 @@ class UpdateTest(private val v: Variant) {
         UpdateBanner(release, UpdateState.Failed(release, UpdateFailure.DIFFERENT_BUILD), NoActions)
     }
 
-    /** Settings → Check for updates: before, checking, latest, available, couldn't check, downloaded. */
+    /** Settings → Check for updates: before, checking, latest, available, couldn't check, asked again too soon, downloaded. */
     @Test fun settingsRow() = shot("update_settings", null, null) {
         UpdateSettingsRow(UpdateState.Idle, NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.Checking, NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.UpToDate("0.7.0"), NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.Available(release), NoActions, version = "0.7.0")
-        UpdateSettingsRow(UpdateState.CheckFailed, NoActions, version = "0.7.0")
+        UpdateSettingsRow(UpdateState.CheckFailed(), NoActions, version = "0.7.0")
+        UpdateSettingsRow(UpdateState.UpToDate("0.7.0", tooSoon = true), NoActions, version = "0.7.0")
         UpdateSettingsRow(UpdateState.Ready(release, "/c/u.apk"), NoActions, version = "0.7.0")
     }
 

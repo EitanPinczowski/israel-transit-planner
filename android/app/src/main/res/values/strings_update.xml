@@ -21,5 +21,6 @@
     <string name="update_check">Check for updates</string>
     <string name="update_checking">Checking…</string>
     <string name="update_latest">You have the latest version (%s)</string>
+    <string name="update_checked_recently">Checked a moment ago. %s</string>
     <string name="update_check_failed">Couldn\'t check (no connection)</string>
 </resources>
