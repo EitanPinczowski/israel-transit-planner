@@ -59,6 +59,9 @@ class NightRefreshShotsTest(private val v: Variant) {
                     from = PlaceRef.Point("בית", LatLon(31.262, 34.801)),
                     to = PlaceRef.Point("ת. רכבת תל אביב - סבידור", LatLon(32.08, 34.79)),
                     timeMode = TimeMode.NOW,
+                    // The day labels compare against this; left null they read the wall
+                    // clock, and every option gets a weekday once CI's date moves past the
+                    // fixture's.
                     time = planned,
                     results = TripResult(bgu, null),
                     resultsAt = planned,
