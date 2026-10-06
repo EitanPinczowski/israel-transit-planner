@@ -184,7 +184,10 @@ class ScreensTest {
         val scrollable = hasScrollAction() and hasAnyAncestor(isDialog())
         awaitNode(scrollable)
         val list = compose.onAllNodes(scrollable).onFirst()
-        repeat(4) { list.performTouchInput { swipeUp() } }
+        repeat(4) {
+            list.performTouchInput { swipeUp() }
+            compose.waitForIdle()
+        }
     }
 
     @Test fun s16_history() = screen("16-history") {
