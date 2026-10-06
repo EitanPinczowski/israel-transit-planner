@@ -50,4 +50,22 @@ object CacheLookup {
         }
         return toHome.firstOrNull()?.let { (e, ends) -> TripHome(e, ends.from, null) }
     }
+
+    /** Where a tap on the tile plans from (C4); the app turns it into the Trip tab's state. */
+    sealed interface Start {
+        /** No Home set: open Settings, no request. */
+        data object NoHome : Start
+
+        /** From my location (a fix arrived), or with no fix and no cache: "no location" then. */
+        data object Here : Start
+
+        /** No fix (permission denied, slow GPS): from the cached trip home's origin. */
+        data class FromCache(val at: LatLon) : Start
+    }
+
+    fun start(homeSet: Boolean, fix: LatLon?, cached: TripHome?): Start = when {
+        !homeSet -> Start.NoHome
+        fix == null && cached != null -> Start.FromCache(cached.from)
+        else -> Start.Here
+    }
 }

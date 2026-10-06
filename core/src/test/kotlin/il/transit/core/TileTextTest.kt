@@ -40,7 +40,7 @@ class TileTextTest {
         val t = text(il("2026-10-03T23:30")) as TileText.Next
         val first = result.itineraries.first()
         assertEquals(il.transit.core.present.hhmm(first.start), t.leave)
-        assertEquals("${t.leave}–${t.arrive}", t.times)
+        assertEquals("\u2068${t.leave}–${t.arrive}\u2069", t.times) // isolated: same order in a Hebrew label
         assertEquals(true, t.arrive.startsWith("0")) // arrives after midnight
     }
 

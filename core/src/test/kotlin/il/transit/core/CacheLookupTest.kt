@@ -77,4 +77,17 @@ class CacheLookupTest {
         val lastRide = entry(PlanCache.key("LAST-2026-10-03", bs, home))
         assertNull(CacheLookup.tripHome(listOf(elsewhere, lastRide), home, il("2026-10-03T23:30")))
     }
+
+    @Test fun `where a tap plans from - fix, cached origin, nothing, no Home`() {
+        val now = il("2026-10-03T23:30")
+        val hit = CacheLookup.tripHome(listOf(entry(homeKey)), home, now)
+        val fix = LatLon(31.25, 34.79)
+        assertEquals(CacheLookup.Start.NoHome, CacheLookup.start(false, fix, hit)) // tile added before Home: Settings
+        assertEquals(CacheLookup.Start.Here, CacheLookup.start(true, fix, hit)) // a fix wins over the cache
+        assertEquals(CacheLookup.Start.FromCache(bs), CacheLookup.start(true, null, hit)) // permission denied
+        assertEquals(CacheLookup.Start.Here, CacheLookup.start(true, null, null)) // nothing: the "no location" error
+        // Every option gone still knows where the trip home starts.
+        val gone = CacheLookup.tripHome(listOf(entry(homeKey)), home, il("2026-10-04T15:00"))
+        assertEquals(CacheLookup.Start.FromCache(bs), CacheLookup.start(true, null, gone))
+    }
 }

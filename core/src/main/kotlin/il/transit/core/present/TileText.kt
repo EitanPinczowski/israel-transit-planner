@@ -16,7 +16,8 @@ sealed interface TileText {
 
     /** The next cached option home, leave and arrive, Israel time. */
     data class Next(val leave: String, val arrive: String) : TileText {
-        val times: String get() = "$leave–$arrive"
+        /** Isolated (FSI…PDI), so it reads leave-then-arrive inside Hebrew or English text alike. */
+        val times: String get() = "\u2068$leave–$arrive\u2069"
     }
 
     companion object {

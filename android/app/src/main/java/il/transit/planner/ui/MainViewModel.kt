@@ -971,50 +971,58 @@ class MainViewModel(
         plan()
     }
 
-    /** Set by [openTripHome]: the user asked for home, so [applyRoutine] stays out of it. */
+    /** True while [openTripHome] runs: the user asked for home, so [applyRoutine] stays out of it. */
     private var tripHomeAsked = false
 
     /**
      * "Next trip home" (Quick Settings tile, Phase 9 C4; C5's alert reuses it): the Trip tab
      * from here to Home, NOW, first option selected. One `plan` (no last-ride hint). No fix
-     * within a few seconds (permission denied, cold start) → from the cached trip's origin;
-     * offline → that cached trip, under the usual banner. No Home → Settings.
+     * within [FIX_WAIT_MS] (permission denied, cold start) → from the cached trip's origin;
+     * offline → that cached trip, under the usual banner. No Home → Settings. The decision is
+     * core's `CacheLookup.start` (tested); this only applies it.
      */
     fun openTripHome() = viewModelScope.launch {
         tripHomeAsked = true // a routine opening at the same cold start must not plan too
-        val settings = store.settings.first()
-        val places = store.places.first()
-        val home = il.transit.core.user.Home.of(settings, places)
-        if (home == null) {
-            _state.update { it.copy(showSettings = true) }
-            return@launch
-        }
-        val fix = kotlinx.coroutines.withTimeoutOrNull(FIX_WAIT_MS) {
-            while (locationProvider() == null) delay(250)
-            locationProvider()
-        }
-        val cached = planCache?.entries()?.let { il.transit.core.plan.CacheLookup.tripHome(it, home.latLon, clock.instant()) }
-        val from = if (fix == null && cached != null) {
-            val near = places.firstOrNull { il.transit.core.geo.Geo.distanceM(it.latLon, cached.from) <= il.transit.core.plan.CacheLookup.HOME_RADIUS_M }
-            PlaceRef.Point(near?.name, cached.from)
-        } else {
-            PlaceRef.MyLocation
-        }
-        _state.update {
-            it.copy(
-                mode = AppMode.TRIP, from = from, to = PlaceRef.Point(home.name, home.latLon),
-                timeMode = TimeMode.NOW, time = null, chainStops = emptyList(), editing = null,
-                showSettings = false, showHistory = false, stopSheet = null,
-            )
-        }
-        plan(lastRideHint = false)
-        planJob?.join()
-        // Offline from a spot a little off the cached origin: the key missed, the trip home did not.
-        val next = cached?.takeIf { c -> c.next != null }
-        if (_state.value.error == UiError.NETWORK && next != null) {
-            _state.update {
-                it.copy(error = null, results = next.entry.value, offlineSince = next.entry.savedAt, offlineNight = next.entry.isLastNight(clock.instant()), resultsAt = next.entry.savedAt, selected = 0)
+        try {
+            val places = store.places.first()
+            val home = il.transit.core.user.Home.of(store.settings.first(), places)
+            if (home == null) {
+                _state.update { it.copy(showSettings = true) }
+                return@launch
             }
+            // Home shows at once, with the spinner, while the first fix comes in.
+            _state.update {
+                it.copy(
+                    mode = AppMode.TRIP, to = PlaceRef.Point(home.name, home.latLon), timeMode = TimeMode.NOW, time = null,
+                    chainStops = emptyList(), editing = null, showSettings = false, showHistory = false, stopSheet = null,
+                    results = null, error = null, loading = true,
+                )
+            }
+            val fix = kotlinx.coroutines.withTimeoutOrNull(FIX_WAIT_MS) {
+                while (locationProvider() == null) delay(250)
+                locationProvider()
+            }
+            val cached = planCache?.entries()?.let { il.transit.core.plan.CacheLookup.tripHome(it, home.latLon, clock.instant()) }
+            val from = when (val start = il.transit.core.plan.CacheLookup.start(true, fix, cached)) {
+                is il.transit.core.plan.CacheLookup.Start.FromCache -> {
+                    val near = places.firstOrNull { il.transit.core.geo.Geo.distanceM(it.latLon, start.at) <= il.transit.core.plan.CacheLookup.HOME_RADIUS_M }
+                    PlaceRef.Point(near?.name, start.at)
+                }
+                else -> PlaceRef.MyLocation // with no fix this ends in the usual "no location" error, not a spinner
+            }
+            _state.update { it.copy(from = from, loading = false) }
+            plan(lastRideHint = false)
+            planJob?.join()
+            // Offline from a spot a little off the cached origin: the key missed, the trip home did not.
+            val next = cached?.takeIf { c -> c.next != null }
+            if (_state.value.error == UiError.NETWORK && next != null) {
+                _state.update {
+                    it.copy(error = null, results = next.entry.value, offlineSince = next.entry.savedAt, offlineNight = next.entry.isLastNight(clock.instant()), resultsAt = next.entry.savedAt, selected = 0)
+                }
+            }
+        } finally {
+            // Home is now the destination, so a routine would not replace it anyway; later launches get routines back.
+            tripHomeAsked = false
         }
     }
 
@@ -1070,8 +1078,8 @@ class MainViewModel(
         private const val SEARCH_DEBOUNCE_MS = 350L
         private const val REFRESH_MS = 120_000L
 
-        /** How long [openTripHome] waits for a first location fix before using the cached origin. */
-        private const val FIX_WAIT_MS = 3_000L
+        /** How long [openTripHome] waits for a first fix (a cold start loads the map first) before using the cached origin. */
+        private const val FIX_WAIT_MS = 5_000L
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {

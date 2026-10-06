@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,7 +30,8 @@ internal fun QuickTileSection(sdk: Int = Build.VERSION.SDK_INT) {
         Text(stringResource(R.string.tile_title), style = MaterialTheme.typography.labelLarge)
         Text(stringResource(R.string.tile_help), style = MaterialTheme.typography.bodySmall)
         if (sdk >= Build.VERSION_CODES.TIRAMISU) {
-            TextButton(onClick = { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) requestAdd(context) }) {
+            // No side padding: the label lines up with the text above; the 48 dp target stays.
+            TextButton(onClick = { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) requestAdd(context) }, contentPadding = PaddingValues(vertical = 8.dp)) {
                 Text(stringResource(R.string.tile_add))
             }
         } else {

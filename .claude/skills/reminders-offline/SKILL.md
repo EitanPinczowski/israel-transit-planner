@@ -109,7 +109,7 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   option ahead → "Home · 22:40–23:35"; none → "tap to plan"; no Home → "Set Home". It never
   refreshes itself (no worker, no alarm). A tap opens `MainActivity` with
   `NextTripTile.EXTRA_TRIP_HOME` (`tripHomeIntent`, which C5 reuses) → `MainViewModel.openTripHome()`:
-  NOW from my location (waits ≤ 3 s for a fix, else the cached entry's origin), **1 `plan`**,
+  NOW from my location (waits ≤ 5 s for a fix, else the cached entry's origin; `CacheLookup.start`), **1 `plan`**,
   no last-ride hint; offline → the cached entry under the usual banner; no Home → Settings.
   Settings → "Add to Quick Settings" (`requestAddTileService`, API 33+; a hint below).
 - **Background refresh**: Trip tab re-plans every 2 min while the app is in front
