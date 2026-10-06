@@ -4,19 +4,21 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-06)
+## State (2026-10-06, 22:50 Israel time)
 - **Released:** v0.7.0 (2026-10-05).
-- **Merged since:**
-  - #38: one-line mode tabs;
-  - #39: place search shows the town;
-  - #40: C1;
-  - #41: C3;
-  - #42: one-tap in-app update (works from 0.8.0 on);
-  - #43: UI-test idle fix.
-- **Running:** C4 (#44, the Quick Settings tile). The owner has approved merging it once it is green.
+- **Merged since:** #38 mode tabs, #39 place search town, #40 C1, #41 C3, #42 one-tap in-app
+  update (works from 0.8.0 on), #43 UI-test idle fix, #44 C4 tile, #45 handoff order, #46 C5
+  alerts, #47 C6 look & welcome. All Phase 9 packages are merged; no agent is running.
+- **Close-out:** `docs/releases/v0.8.0.md` is assembled (fragments removed).
 - **Next:**
-  1. When #44 merges: start C5 and C6 in parallel. Each gets a Sonnet tester+designer review, then the owner merges.
-  2. Phase 9 close-out: `docs/releases/v0.8.0.md` from `docs/releases/next/*`, the Android 8 Back ROADMAP item, then release 0.8.0.
+  1. Owner checks each Phase 9 feature on the Pixel (night refresh needs one night on Wi-Fi
+     and charging).
+  2. Android 8 Back closing an open search: still open, listed as a known issue in the
+     v0.8.0 notes. Fixing it is an implementer job, only if the owner wants it before 0.8.0.
+  3. Ask the owner, then trigger `release.yml` on `main` with version `0.8.0`. 0.8.0 is
+     installed once the usual way; later updates are one tap in the app.
+- **Optional follow-up (owner to decide):** a holiday-eve notice for the last-trip alert (the
+  19:00 check finds the last trip already gone on a weekday holiday eve; today it stays silent).
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
