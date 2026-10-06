@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One-tap in-app update: the banner (MainScreen.UpdateBanner) and Settings → Check for updates. -->
+<resources>
+    <string name="update_ready">Version %s is ready</string>
+    <string name="update_action">Update</string>
+    <string name="update_downloading">Downloading version %1$s… %2$d%%</string>
+    <string name="update_downloading_unknown">Downloading version %s…</string>
+    <string name="update_needs_permission">Allow this app to install updates, then come back.</string>
+    <string name="update_allow">Allow</string>
+    <string name="update_install_ready">Version %s is downloaded</string>
+    <string name="update_install">Install</string>
+    <string name="update_failed_network">Download stopped (no connection).</string>
+    <string name="update_failed_space">Not enough free space on the phone.</string>
+    <string name="update_failed_checksum">The download didn\'t match the release. Nothing was installed.</string>
+    <string name="update_failed_url">That download link isn\'t from GitHub.</string>
+    <string name="update_failed_different_build">App not installed: this copy is a different build. Uninstall it once, then install the update.</string>
+    <string name="update_failed_install">Android didn\'t install the update.</string>
+    <string name="update_retry">Try again</string>
+    <string name="update_browser">Browser</string>
+    <string name="update_version">Version %s</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_latest">You have the latest version (%s)</string>
+    <string name="update_check_failed">Couldn\'t check (no connection)</string>
+</resources>

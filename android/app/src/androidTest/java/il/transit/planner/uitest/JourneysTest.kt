@@ -33,6 +33,7 @@ import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.update.LatestRelease
+import il.transit.core.update.UpdateState
 import il.transit.planner.R
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.MEITAR
@@ -332,6 +333,9 @@ class JourneysTest {
             compose.onNode(hasText("9.9.9", substring = true)).assertExists()
             compose.onNode(hasContentDescription(d.str(R.string.close)) and hasAnyAncestor(hasTestTag(UiTags.TOP))).performClick()
             compose.waitUntil(5_000) { d.vm.state.value.update == null }
+            // Settings → Check for updates asks again (the fake checker) and brings the banner back.
+            d.onMain { it.checkForUpdates() }
+            compose.waitUntil(5_000) { d.vm.state.value.updateState is UpdateState.Available && d.vm.state.value.update != null }
         }
     }
 

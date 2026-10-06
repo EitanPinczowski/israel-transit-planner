@@ -141,8 +141,6 @@
     <string name="stat_saved">דק׳ שנחסכו עם רכב + תח״צ</string>
     <string name="stat_top_destination">היעד הנפוץ ביותר: \u2068%s\u2069</string>
 
-    <string name="update_available">גרסה חדשה זמינה: \u2068v%s\u2069</string>
-    <string name="update_download">הורדה</string>
     <string name="fare_profile">תעריף</string>
     <string name="fare_regular">רגיל</string>
     <string name="fare_half" formatted="false">הנחה של 50%</string>

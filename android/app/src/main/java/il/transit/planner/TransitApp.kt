@@ -8,6 +8,7 @@ import il.transit.core.api.Itinerary
 import il.transit.core.plan.NightRefresh
 import il.transit.core.remind.Reminder
 import il.transit.core.user.Home
+import il.transit.planner.data.ApkInstaller
 import il.transit.planner.data.CrashLogStore
 import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
@@ -66,7 +67,7 @@ open class TransitApp : Application() {
     val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 
     val history: HistoryStore by lazy { HistoryStore(File(filesDir, "history.json")) }
-    open val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME) }
+    open val updates: UpdateChecker by lazy { UpdateChecker(store, BuildConfig.VERSION_NAME, ApkInstaller(this)) }
 
     /** The MapLibre style: OpenFreeMap, light or dark. */
     open fun mapStyle(night: Boolean): String = if (night) MainActivity.MAP_STYLE_DARK else MainActivity.MAP_STYLE
