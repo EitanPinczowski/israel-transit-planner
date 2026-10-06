@@ -150,6 +150,8 @@ data class UiState(
     val showHistory: Boolean = false,
     /** A newer release to offer, until dismissed. */
     val update: LatestRelease? = null,
+    /** Where the in-app update stands (banner and Settings → "Check for updates"). */
+    val updateState: il.transit.core.update.UpdateState = il.transit.core.update.UpdateState.Idle,
     /** Trip tab: the evening's last trip for the shown route (looked up on evenings, Fridays
      *  and Saturdays, or when asked), and for the way back when asked. */
     val lastRide: LastRide? = null,
@@ -236,6 +238,8 @@ class MainViewModel(
     private var stopsJob: Job? = null
     private var loadedStops: BBox? = null
 
+    private val updater = updates?.let { UpdateController(it, viewModelScope, clock, { f -> _state.update(f) }, { _state.value }) }
+
     /** A routine the user dismissed today ("name|day"), so it does not come straight back. */
     private var dismissedRoutine: String? = null
 
@@ -251,7 +255,7 @@ class MainViewModel(
         rides?.let { r -> viewModelScope.launch { r.active.collect { a -> _state.update { it.copy(riding = a) } } } }
         rides?.let { r -> viewModelScope.launch { r.progress.collect { p -> _state.update { it.copy(rideProgress = p) } } } }
         viewModelScope.launch { store.favorites.collect { f -> _state.update { it.copy(favorites = f) } } }
-        updates?.let { u -> viewModelScope.launch { u.check()?.let { latest -> _state.update { it.copy(update = latest) } } } }
+        updater?.daily()
         historyStore?.let { h ->
             viewModelScope.launch {
                 h.load()
@@ -735,7 +739,12 @@ class MainViewModel(
         }
     }
 
-    fun dismissUpdate() = _state.update { it.copy(update = null) }
+    fun dismissUpdate() { updater?.dismiss() ?: _state.update { it.copy(update = null) } }
+    fun checkForUpdates() { updater?.checkNow() }
+    fun startUpdate() { updater?.start() }
+    fun updatePermissionReturned() { updater?.permissionReturned() }
+    fun updateScreenShown() { updater?.shown() }
+    fun updateInstallFinished(resultCode: Int, installCode: Int?) { updater?.installFinished(resultCode, installCode) }
 
     fun clearHistory() = viewModelScope.launch { historyStore?.clear() }
 

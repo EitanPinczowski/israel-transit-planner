@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One-tap in-app update: the banner (MainScreen.UpdateBanner) and Settings → Check for updates. -->
+<resources>
+    <string name="update_ready">גרסה ⁨%s⁩ מוכנה</string>
+    <string name="update_action">עדכון</string>
+    <string name="update_downloading">מורידים את גרסה ⁨%1$s⁩… ⁨%2$d%%⁩</string>
+    <string name="update_downloading_unknown">מורידים את גרסה ⁨%s⁩…</string>
+    <string name="update_needs_permission">צריך לאשר לאפליקציה להתקין עדכונים, ואז לחזור לכאן.</string>
+    <string name="update_allow">לאפשר התקנה</string>
+    <string name="update_install_ready">גרסה ⁨%s⁩ הורדה</string>
+    <string name="update_install">התקנה</string>
+    <string name="update_failed_network">ההורדה נעצרה (אין חיבור).</string>
+    <string name="update_failed_space">אין מספיק מקום פנוי בטלפון.</string>
+    <string name="update_failed_checksum">הקובץ שהורד לא תואם לגרסה. לא הותקן כלום.</string>
+    <string name="update_failed_url">קישור ההורדה אינו מ־GitHub.</string>
+    <string name="update_failed_different_build">האפליקציה לא הותקנה: העותק הזה הוא בנייה אחרת. יש להסיר אותו פעם אחת ואז להתקין את העדכון.</string>
+    <string name="update_failed_install">העדכון לא הותקן.</string>
+    <string name="update_retry">ניסיון נוסף</string>
+    <string name="update_browser">בדפדפן</string>
+    <string name="update_version">גרסה ⁨%s⁩</string>
+    <string name="update_check">בדיקת עדכונים</string>
+    <string name="update_checking">בודקים…</string>
+    <string name="update_latest">יש לך את הגרסה האחרונה (⁨%s⁩)</string>
+    <string name="update_checked_recently">נבדק לפני רגע. %s</string>
+    <string name="update_check_failed">לא ניתן לבדוק (אין חיבור)</string>
+</resources>
