@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ספירה לאחור ליציאה (שלב 9 C5): "קו 5 · עלייה ברגר/אורן · 6 דק׳ הליכה". -->
+    <string name="countdown_line">קו ⁨%s⁩</string>
+    <string name="countdown_train">רכבת ⁨%s⁩</string>
+    <string name="countdown_board">עלייה ב־⁨%s⁩</string>
+    <plurals name="countdown_walk">
+        <item quantity="one">⁨%d⁩ דקת הליכה</item>
+        <item quantity="two">⁨%d⁩ דקות הליכה</item>
+        <item quantity="other">⁨%d⁩ דק׳ הליכה</item>
+    </plurals>
+    <string name="countdown_start">התחלת נסיעה</string>
+    <string name="countdown_dismiss">סגירה</string>
+
+    <!-- התראת "נסיעה אחרונה הביתה". -->
+    <string name="channel_last_trip">נסיעה אחרונה הביתה</string>
+    <string name="last_trip_title">נסיעה אחרונה הביתה</string>
+    <plurals name="last_trip_leave_in">
+        <item quantity="one">נסיעה אחרונה הביתה ב־⁨%1$s⁩ מ־⁨%2$s⁩: צאו בעוד ⁨%3$d⁩ דקה</item>
+        <item quantity="two">נסיעה אחרונה הביתה ב־⁨%1$s⁩ מ־⁨%2$s⁩: צאו בעוד ⁨%3$d⁩ דקות</item>
+        <item quantity="other">נסיעה אחרונה הביתה ב־⁨%1$s⁩ מ־⁨%2$s⁩: צאו בעוד ⁨%3$d⁩ דק׳</item>
+    </plurals>
+    <string name="last_trip_leave_now">הנסיעה האחרונה הביתה יוצאת ב־⁨%1$s⁩ מ־⁨%2$s⁩: צאו עכשיו</string>
+    <string name="last_trip_next">(הבאה: ⁨%1$s⁩ ⁨%2$s⁩)</string>
+    <string name="last_trip_section">התראת ערב</string>
+    <string name="last_trip_toggle">התראה על הנסיעה האחרונה הביתה</string>
+    <string name="last_trip_help">בערב שבו אתם רחוק מהבית: התראה 30 דקות לפני שצריך לצאת לנסיעה האחרונה הביתה. נבדק פעם בערב (19:00 א׳–ה׳, 12:00 בשישי, 20:00 במוצ״ש) לפי הנסיעות של היום והמקום האחרון שבו האפליקציה הייתה פתוחה. בלי מיקום ברקע. עד 3 חיפושים בערב.</string>
+    <string name="last_trip_no_home">כדי שההתראה תעבוד, הגדירו את אחד המקומות השמורים כבית (למטה).</string>
+    <string name="last_trip_rationale_title">לאפשר התראות?</string>
+    <string name="last_trip_rationale">ההתראה מגיעה כהודעה, ולכן אנדרואיד יבקש לאשר התראות לאפליקציה. שום דבר אחר לא מתבקש.</string>
+    <string name="last_trip_rationale_ok">המשך</string>
+    <string name="last_trip_denied">ההתראות חסומות לאפליקציה, ולכן ההתראה נשארת כבויה. אפשרו אותן בהגדרות הטלפון ואז הפעילו אותה כאן.</string>
+</resources>

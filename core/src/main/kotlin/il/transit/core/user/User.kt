@@ -112,6 +112,8 @@ data class UserSettings(
     val homeOffered: Boolean = false,
     /** Plan tomorrow's usual trips each night on Wi-Fi + charging (owner, 2026-10-05: on). */
     val nightRefresh: Boolean = true,
+    /** "Last trip home" evening alert (Phase 9 C5; owner, 2026-10-05: opt-in, off). */
+    val lastTripAlert: Boolean = false,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

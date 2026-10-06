@@ -35,6 +35,14 @@ data class Reminder(
     val boardingDelayMin: Int? = null,
     /** The leave time the user was last told (set, or notified of); alerts measure from it. */
     val alertedLeaveAtEpoch: Long? = null,
+    // Since Phase 9 C5; null on reminders stored before it.
+    /** The chosen option itself, so "Start trip" on the countdown can start the ride. */
+    val itinerary: Itinerary? = null,
+    /** The names the user planned with, for the history record ("" = my location). */
+    val fromName: String? = null,
+    val toName: String? = null,
+    /** The leave alarm fired and the countdown is showing; the reminder stays until it ends. */
+    val counting: Boolean = false,
 ) {
     val from: LatLon get() = LatLon(fromLat, fromLon)
     val to: LatLon get() = LatLon(toLat, toLon)
@@ -56,7 +64,14 @@ data class Reminder(
         const val ALERT_MIN = 3L
 
         /** Null for an itinerary with no transit leg (walking only: nothing to remind about). */
-        fun from(itinerary: Itinerary, from: LatLon, to: LatLon, settings: UserSettings): Reminder? {
+        fun from(
+            itinerary: Itinerary,
+            from: LatLon,
+            to: LatLon,
+            settings: UserSettings,
+            fromName: String? = null,
+            toName: String? = null,
+        ): Reminder? {
             val board = itinerary.firstTransitLeg ?: return null
             return Reminder(
                 fromLat = from.lat,
@@ -71,6 +86,9 @@ data class Reminder(
                 leaveAtEpoch = itinerary.start.epochSecond,
                 boardingDelayMin = legDelayMin(board),
                 alertedLeaveAtEpoch = itinerary.start.epochSecond,
+                itinerary = itinerary,
+                fromName = fromName,
+                toName = toName,
             )
         }
 
@@ -104,7 +122,11 @@ object ReminderLogic {
         val match = itineraries.firstOrNull { it.boardsSameVehicle(r) } ?: return ReminderUpdate.Gone
         val board = match.firstTransitLeg!!
         if (board.cancelled) return ReminderUpdate.Gone
-        val updated = r.copy(leaveAtEpoch = match.start.epochSecond, boardingDelayMin = legDelayMin(board))
+        val updated = r.copy(
+            leaveAtEpoch = match.start.epochSecond,
+            boardingDelayMin = legDelayMin(board),
+            itinerary = if (r.itinerary != null) match else null, // "Start trip" rides the fresh times
+        )
         return ReminderUpdate.Updated(updated, Duration.ofSeconds(updated.leaveAtEpoch - r.leaveAtEpoch).toMinutes())
     }
 

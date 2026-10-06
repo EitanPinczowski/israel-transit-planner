@@ -69,5 +69,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <!-- "Last trip home" (C5): the evening check and its alert; no background location. -->
+        <receiver android:name=".remind.LastTripReceiver" android:exported="false" />
     </application>
 </manifest>

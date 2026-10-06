@@ -256,6 +256,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
         }
         item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
         item { NightRefreshSection(s, state.savedPlaces, ::set) }
+        item { LastTripSetting(s, state.savedPlaces, ::set) }
         item { QuickTileSection() }
         item { OfflineSection(actions) }
         item { CrashLogSection(actions.crashLog) }

@@ -21,6 +21,7 @@ import il.transit.planner.work.NightRefreshWorker
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.Clock
@@ -39,6 +40,8 @@ open class TransitApp : Application() {
         super.onCreate()
         crashLog.install()
         keepNightRefreshScheduled()
+        // "Last trip home" (C5): the evening check is armed while the setting is on.
+        appScope.launch { store.settings.map { it.lastTripAlert }.distinctUntilChanged().collect { il.transit.planner.remind.LastTripReceiver.sync(this@TransitApp, it) } }
     }
 
     private val appScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Default)

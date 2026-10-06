@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Leave-now countdown (Phase 9 C5): "Line 5 · board at Rager/Oren · walk 6 min". -->
+    <string name="countdown_line">Line ⁨%s⁩</string>
+    <string name="countdown_train">Train ⁨%s⁩</string>
+    <string name="countdown_board">board at ⁨%s⁩</string>
+    <plurals name="countdown_walk">
+        <item quantity="one">walk ⁨%d⁩ min</item>
+        <item quantity="other">walk ⁨%d⁩ min</item>
+    </plurals>
+    <string name="countdown_start">Start trip</string>
+    <string name="countdown_dismiss">Dismiss</string>
+
+    <!-- "Last trip home" evening alert. -->
+    <string name="channel_last_trip">Last trip home</string>
+    <string name="last_trip_title">Last trip home</string>
+    <plurals name="last_trip_leave_in">
+        <item quantity="one">Last trip home ⁨%1$s⁩ from ⁨%2$s⁩: leave in ⁨%3$d⁩ min</item>
+        <item quantity="other">Last trip home ⁨%1$s⁩ from ⁨%2$s⁩: leave in ⁨%3$d⁩ min</item>
+    </plurals>
+    <string name="last_trip_leave_now">Last trip home leaves at ⁨%1$s⁩ from ⁨%2$s⁩: leave now</string>
+    <string name="last_trip_next">(next: ⁨%1$s⁩ ⁨%2$s⁩)</string>
+    <string name="last_trip_section">Evening alert</string>
+    <string name="last_trip_toggle">Last trip home alert</string>
+    <string name="last_trip_help">On an evening away from Home, a notification 30 minutes before you need to leave for the last trip home. Checked once an evening (19:00 Sun–Thu, 12:00 Friday, 20:00 Saturday) from today\'s trips and where the app last saw you open. No location in the background. At most 3 searches an evening.</string>
+    <string name="last_trip_no_home">Set one of your saved places as Home (below) for the alert to work.</string>
+    <string name="last_trip_rationale_title">Allow notifications?</string>
+    <string name="last_trip_rationale">The alert arrives as a notification, so Android will ask you to allow notifications for this app. Nothing else is asked for.</string>
+    <string name="last_trip_rationale_ok">Continue</string>
+    <string name="last_trip_denied">Notifications are blocked for this app, so the alert stays off. Allow them in the phone\'s settings, then turn it on here.</string>
+</resources>

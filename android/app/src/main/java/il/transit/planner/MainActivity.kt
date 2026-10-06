@@ -43,6 +43,8 @@ import kotlinx.coroutines.launch
 import il.transit.planner.ui.ViewModelActions
 import il.transit.planner.ui.Shortcuts
 import il.transit.planner.tile.NextTripTile
+import il.transit.planner.remind.LastTripReceiver
+import il.transit.planner.remind.Notifications
 import il.transit.planner.ui.TripDetailsViewModel
 import il.transit.planner.ui.screens.TripDetailsSheet
 import il.transit.core.present.vehicleGeoJson
@@ -93,6 +95,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
+        if (intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
     }
 
     /** What to do once the notification-permission prompt is answered. */
@@ -123,6 +126,8 @@ class MainActivity : ComponentActivity() {
         if (fresh && (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE))) pendingShortcut = intent
         // The Quick Settings tile (C4), and C5's alert: the trip home, planned once the store is read.
         if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
+        // "Start trip" on the leave-now countdown (C5).
+        if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
@@ -234,6 +239,15 @@ class MainActivity : ComponentActivity() {
         withNotifications { vm.startRide() }
     }
 
+    /** The same checks as [startRide], for the reminder's own option. */
+    private fun startReminderRide() {
+        if (!hasLocationPermission()) {
+            askLocation.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+            return
+        }
+        withNotifications { vm.startReminderRide() }
+    }
+
     private fun withNotifications(then: () -> Unit) {
         val needsAsk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
@@ -331,7 +345,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() { super.onStart(); mapView.onStart() }
     override fun onResume() { super.onResume(); mapView.onResume(); vm.onVisible(true); tripVm.onVisible(true) }
-    override fun onPause() { vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
+    override fun onPause() { if (vm.state.value.settings.lastTripAlert) LastTripReceiver.saveSeen(this, vm.locationProvider()); vm.onVisible(false); tripVm.onVisible(false); mapView.onPause(); super.onPause() }
     override fun onStop() { mapView.onStop(); super.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
     override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }

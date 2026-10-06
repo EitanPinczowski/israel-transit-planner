@@ -31,6 +31,23 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - `POST_NOTIFICATIONS` is asked the first time a reminder is set (API 33+). A refusal still
   arms the alarm; only the banner is blocked.
 - **Trip tab only.** Car-feature legs have different "leave" semantics (the driver leaves).
+- **Leave-now countdown** (Phase 9 C5, `core/remind/Countdown.kt`, 0 requests): the leave
+  alarm posts the ongoing notification on the same id (`ID_LEAVE`), counting down to boarding
+  (scheduled + known delay; `setUsesChronometer` + `setChronometerCountDown`, `setWhen`):
+  "Line 5 · board at Rager/Oren · walk 6 min" (walk = WALK legs before the first vehicle;
+  "Train 406" for rail). Actions "Start trip" (`Notifications.EXTRA_START_RIDE` →
+  `MainActivity` → `MainViewModel.startReminderRide()`: the reminder's stored itinerary, same
+  permission checks and history record as the in-app button) and "Dismiss". The reminder
+  stays stored with `counting = true` until the countdown ends, so Cancel in the app takes it
+  down (`ReminderScheduler.cancel`). It ends 2 min after boarding (`setTimeoutAfter`, plus the
+  `ACTION_END` alarm that drops the reminder), when a ride starts (`RideService`), on Dismiss or
+  Cancel. Re-checks all run before leaving, so the countdown shows the delay known at the
+  leave alarm (0 requests); only a re-check that fires late re-posts it (`setOnlyAlertOnce`)
+  and re-arms `ACTION_END`. Setting a new reminder cancels the old one's countdown and alarms
+  first (`remindSelected` → `ReminderScheduler.cancel`). A leave alarm that
+  fires past the end (Doze) posts nothing; a reboot before the end brings the countdown back.
+  `Reminder` stores the itinerary and the planned names since C5 (null on older reminders:
+  no "Start trip", no walk).
 
 # "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)
 
@@ -112,6 +129,33 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   NOW from my location (waits ≤ 5 s for a fix, else the cached entry's origin; `CacheLookup.start`), **1 `plan`**,
   no last-ride hint; offline → the cached entry under the usual banner; no Home → Settings.
   Settings → "Add to Quick Settings" (`requestAddTileService`, API 33+; a hint below).
+- **"Last trip home" alert** (Phase 9 C5; core `plan/LastTripHome.kt`, `remind/LastTripReceiver.kt`):
+  opt-in (`UserSettings.lastTripAlert`, default off, owner 2026-10-05), own channel "Last trip
+  home" (default importance). Turning it on asks `POST_NOTIFICATIONS` (API 33+) after a
+  rationale; refused or blocked → stays off and says why (`ui/screens/LastTripSettings.kt`).
+  - **When:** one inexact alarm (`setAndAllowWhileIdle`) per evening: 19:00 Sun–Thu, 12:00 Fri,
+    20:00 Sat (`LastTripHome.checkTime`). `TransitApp` arms it on start and on every toggle;
+    `BootReceiver` re-arms it. A check missed while the phone was off runs at once, inside the
+    same service day (`nextCheck`), but never 02:00–03:59 (`quiet`: the last trip has gone).
+    Each alarm re-arms the next day's and hands the check to `LastTripWorker` (one-time
+    WorkManager work, network `CONNECTED`): a broadcast must finish in seconds, three `plan`
+    calls may not.
+  - **Where am I** (no background location): the latest of today's latest started trip's
+    destination (at its arrival; history `toCell`) and the last fix the app saw in front (saved
+    in `MainActivity.onPause`), if today and < 3 h old. None, or within 1 km of Home → 0 requests.
+  - **Check:** `LastTripChecker` → `LastRideFinder(origin → Home, service day)` under a
+    `BudgetedTransitApi` holding what is left of the day's 3. The day record (`LastTripDay`:
+    requests spent, done) is written *before* the first request as if all 3 were spent (a killed
+    process cannot exceed the cap), then with what was really spent. An answer finishes the day;
+    no signal leaves it open and the worker retries 15 min later (linear backoff) while budget
+    is left: offline all evening = 3 tries, 3 requests. `runsAllNight` → nothing. Else one exact alarm at
+    leave − 30 min (inexact if exact alarms are refused); the alert is stored (`LastTripStore`,
+    survives a reboot). The foreground fix is saved only while the setting is on, and cleared
+    when it is turned off. It posts "Last trip home 23:10 from X: leave in 30 min", plus "(next:
+    Saturday 19:30)" on `longGap` (Shabbat, a holiday eve: the timetable knows). Checked after the
+    warning time → "leaves at 23:10: leave now"; past the leave time → nothing. At most one per
+    service day (`notified_day`). A tap opens C4's `NextTripTile.tripHomeIntent` (one `plan`).
+  - **Worst case per day: 3 `plan`** (+1 per 429/503 retry), only with the setting on.
 - **Background refresh**: Trip tab re-plans every 2 min while the app is in front
   (`MainViewModel.onVisible`), quietly — failures are ignored, the selection is kept.
   Car tabs refresh only on ↻ (up to 10 requests each).
