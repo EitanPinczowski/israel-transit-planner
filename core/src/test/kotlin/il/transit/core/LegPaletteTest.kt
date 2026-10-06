@@ -41,13 +41,16 @@ class LegPaletteTest {
     }
 
     @Test fun `only the legs that clash change`() {
-        // Two buses share the default blue; the train keeps its green; the palette skips
-        // its blue and green entries, which would look like the kept train and the car.
+        // The two buses share the default blue; the train keeps its green.
         val it = itinerary(l("BUS", a, b, 0), l("RAIL", b, c, 20), l("BUS", c, d, 40), transfers = 2)
-        val colors = LegPalette.colors(it.legs)
-        assertEquals(defaultColor(LegKind.TRAIN), colors[1])
-        assertEquals(listOf("#0072B2" != colors[0], colors[0] != colors[2]), listOf(true, true))
-        assertTrue(colors[0] !in listOf("#009E73")) // too close to the train's green
+        assertEquals(listOf("#0072B2", defaultColor(LegKind.TRAIN), "#D55E00"), LegPalette.colors(it.legs))
+    }
+
+    @Test fun `palette entries close to a kept colour are skipped`() {
+        // The default-blue bus is kept, so the palette's own blue would look like it; the two
+        // clashing trains take the next entries instead.
+        val it = itinerary(l("BUS", a, b, 0), l("RAIL", b, c, 20), l("RAIL", c, d, 40), transfers = 2)
+        assertEquals(listOf(defaultColor(LegKind.BUS), "#D55E00", "#009E73"), LegPalette.colors(it.legs))
     }
 
     @Test fun `three buses and a train all differ`() {
@@ -73,7 +76,7 @@ class LegPaletteTest {
 
     @Test fun `stable across calls`() {
         val it = itinerary(l("BUS", a, b, 0), l("BUS", b, c, 20), l("BUS", c, d, 40))
-        assertEquals(LegPalette.colors(it.legs), LegPalette.colors(it.copy()))
+        assertEquals(LegPalette.colors(it.legs), LegPalette.colors(it.copy().legs))
         assertEquals(LegPalette.colors(it.legs), summarize(it).chips.map { ch -> ch.color })
     }
 
