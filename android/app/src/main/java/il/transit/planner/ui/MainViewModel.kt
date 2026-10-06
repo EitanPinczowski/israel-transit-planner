@@ -42,6 +42,8 @@ import il.transit.core.plan.reselect
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
 import il.transit.core.present.needsFullNameHint
+import il.transit.core.present.geocodeDetail
+import il.transit.core.present.rankByTypedTown
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
 import il.transit.core.remind.Reminder
@@ -285,7 +287,7 @@ class MainViewModel(
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MS)
             val found = try {
-                api.geocode(q, language, locationProvider(), 8)
+                rankByTypedTown(api.geocode(q, language, locationProvider(), 8))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -949,8 +951,7 @@ class MainViewModel(
             .map { Suggestion(it.name, null, it.latLon, saved = true, isStop = false) }
 
     private fun toSuggestion(m: GeocodeMatch): Suggestion {
-        val street = m.street?.let { s -> listOfNotNull(s, m.houseNumber).joinToString(" ") }
-        return Suggestion(m.name, street?.takeIf { it != m.name }, LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP")
+        return Suggestion(m.name, geocodeDetail(m), LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP")
     }
 
     companion object {

@@ -330,7 +330,7 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
                 }
             }
             items(state.suggestions) { s ->
-                val detail = s.detail ?: if (s.isStop) stringResource(R.string.stop) else null
+                val detail = listOfNotNull(if (s.isStop) stringResource(R.string.stop) else null, s.detail).joinToString(" · ").ifEmpty { null }
                 SuggestionRow(s.name, detail, if (s.saved) Icons.Default.Star else Icons.Default.Place) { vm.pick(s) }
             }
         }
