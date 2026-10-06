@@ -109,9 +109,12 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * state change; a lookup before that fails, and Compose's "not found" message then prints the
      * tree from the test thread while the UI thread is still laying it out, which Android 15
      * reports as "multithreaded access to SnapshotStateObserver" instead of the missing node.
+     * The node can exist while its dialog is still being laid out, and a scroll or swipe sent
+     * then races the same observer, so it also waits for the UI to go idle.
      */
     fun awaitNode(m: SemanticsMatcher, timeoutMs: Long = 5_000) {
         compose.waitUntil(timeoutMs) { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() }
+        compose.waitForIdle()
     }
 
     /**
@@ -148,6 +151,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     fun tapInResults(text: String) {
         val inSheet = hasAnyAncestor(hasTestTag(UiTags.BOTTOM) or hasTestTag(UiTags.TOP))
         val target = hasText(text) and hasClickAction() and inSheet
+        compose.waitForIdle()
         val lists = compose.onAllNodes(hasScrollToNodeAction() and inSheet).fetchSemanticsNodes().size
         for (i in 0 until lists) {
             if (runCatching { compose.onAllNodes(hasScrollToNodeAction() and inSheet)[i].performScrollToNode(target) }.isSuccess) break
