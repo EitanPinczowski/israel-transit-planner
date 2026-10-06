@@ -23,7 +23,7 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 
 | call | endpoint | notes |
 |---|---|---|
-| `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. |
+| `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. Answers carry `previousPageCursor` / `nextPageCursor` (`EARLIER|1791867600`, `LATER|…`); the same query plus `pageCursor=<one>` returns the adjacent window (Earlier / Later, `TripPlanner.page`). |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
@@ -108,6 +108,21 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   `distance` is not the hop's length. One **Rome → Naples** hop (bad stop at 10.1,40.1)
   crossed the box — select by `tripId`, never trust the box alone.
 - **`CAR_PARKING` (pre-transit) is unusable** — see `dead-ends` and `special-features`.
+
+## Earlier / Later and stop platforms (Phase 9 C1)
+- **Paging (recorded 2026-10-05, `plan_pages_first/later/earlier`):** a page request repeats
+  the first search's query, `time` included (`TripResult.searchEpoch`), plus `pageCursor`, so
+  the guard caches each page like any plan: 1 request per tap, a repeated cursor 0 (pinned in
+  `TripPagesTest`). No automatic paging. Pages don't overlap in practice, but `TripPages.merge`
+  dedupes by trip ids + first boarding's timetable time, re-runs the absurd-trip filter over
+  the merged list (a Friday Later page that waits out Shabbat adds nothing) and keeps ≤ 20.
+- **Stop `description`** (MOT `stop_desc`) is Hebrew key/value text:
+  `רחוב: תחנה מרכזית קומה 6 עיר: תל אביב יפו רציף: 626 קומה: 6` — street, city, **platform
+  (`רציף`)**, **floor (`קומה`)**, most values blank (70 of 391 distinct descriptions have
+  something in them). `stopCode` is the number on the sign. Parsed defensively by
+  `present/StopPlatform.kt`. Train stations: no description, and `track` is empty (`dead-ends`),
+  so nothing is shown for rail. A parent station and its platforms may carry different
+  `description`s under the same `stopCode` (Be'er Sheva central: 2 vs 10).
 
 ## How the app uses `trip` and `map/trips` (trip sheet, Phase 8 B1)
 All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest`.

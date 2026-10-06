@@ -77,6 +77,9 @@ data class PlanRequest(
     /** Street-only request (e.g. just the car route): MOTIS skips the transit search when
      *  `transitModes` is empty, which is much cheaper for the server. */
     val directOnly: Boolean = false,
+    /** A [PlanResponse.previousPageCursor] / [PlanResponse.nextPageCursor]: the adjacent window
+     *  of the same search. Part of the query, so the guard caches each page like any plan. */
+    val pageCursor: String? = null,
 ) {
     /** Query parameters for `GET /api/v6/plan`. Stable ordering, so it doubles as a cache key. */
     fun toQuery(): List<Pair<String, String>> = buildList {
@@ -104,6 +107,7 @@ data class PlanRequest(
         if (preferences.wheelchair) add("pedestrianProfile" to "WHEELCHAIR")
         add("language" to language)
         if (withFares) add("withFares" to "true")
+        pageCursor?.let { add("pageCursor" to it) }
     }
 }
 

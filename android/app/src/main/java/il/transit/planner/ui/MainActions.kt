@@ -57,6 +57,8 @@ interface MainActions {
     fun setStay(index: Int, minutes: Int)
     fun checkCar()
     fun wayBack(stayMin: Int)
+    fun earlier()
+    fun later()
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */
@@ -102,6 +104,8 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun setStay(index: Int, minutes: Int) { vm.setStay(index, minutes) }
     override fun checkCar() { vm.checkCar() }
     override fun wayBack(stayMin: Int) { vm.wayBack(stayMin) }
+    override fun earlier() { vm.earlier() }
+    override fun later() { vm.later() }
 }
 
 /** Does nothing: for previews and screenshot tests. */
@@ -147,4 +151,6 @@ object NoActions : MainActions {
     override fun setStay(index: Int, minutes: Int) = Unit
     override fun checkCar() = Unit
     override fun wayBack(stayMin: Int) = Unit
+    override fun earlier() = Unit
+    override fun later() = Unit
 }

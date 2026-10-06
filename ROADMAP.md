@@ -175,10 +175,10 @@ Wave 2 (C3, C4) → Wave 3 (C5, C6); each PR gets a tester + designer review bef
 merges. Tick only your own package's lines.
 
 ### C1 — Earlier / Later + platforms (`claude/p9-trip-pages`, 1 request per tap)
-- [ ] "Earlier" / "Later" under the options (`plan` `pageCursor`), merged, deduped, sorted;
+- [x] "Earlier" / "Later" under the options (`plan` `pageCursor`), merged, deduped, sorted;
       a repeated cursor costs 0 (guard cache), pinned by a test
-- [ ] "If I miss this: next at 08:35 (+30 min)" on the selected option, from loaded options only
-- [ ] "Platform 12 · floor 6 · stop 47899" from the stop `description` / `stopCode` (buses;
+- [x] "If I miss this: next at 08:35 (+30 min)" on the selected option, from loaded options only
+- [x] "Platform 12 · floor 6 · stop 47899" from the stop `description` / `stopCode` (buses;
       trains have no `track`)
 
 ### C2 — Night refresh + Home (`claude/p9-night-refresh`, ≤ 6 requests a night)

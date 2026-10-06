@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 9 C1: מוקדם / מאוחר, "אם אפספס", רציף ומספר תחנה. -->
+<resources>
+    <string name="page_earlier">מוקדם יותר</string>
+    <string name="page_later">מאוחר יותר</string>
+    <string name="page_failed">אין חיבור. הרשימה למעלה נשארת כמו שהיא.</string>
+    <string name="miss_next">אם אפספס: הבא ב־⁨%1$s⁩ (‎+⁨%2$d⁩ דק׳)</string>
+    <string name="miss_show_later">אם אפספס: הצג מאוחר יותר</string>
+    <string name="stop_platform">רציף ⁨%s⁩</string>
+    <string name="stop_floor">קומה ⁨%s⁩</string>
+    <string name="stop_code">תחנה ⁨%s⁩</string>
+</resources>

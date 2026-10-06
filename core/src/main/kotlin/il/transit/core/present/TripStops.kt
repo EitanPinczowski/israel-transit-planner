@@ -47,6 +47,8 @@ data class TripStopRow(
     val alerts: List<AlertText>,
     /** When the vehicle is (expected) here. */
     val time: Instant?,
+    /** Platform, floor and stop code, on the boarding and alighting rows only (Phase 9 C1). */
+    val platform: StopPlatform = StopPlatform(),
 )
 
 /** What the UI shows of an [Alert]: duplicates by text are folded. */
@@ -93,6 +95,7 @@ fun tripDetails(leg: Leg, trip: Itinerary?, now: Instant): TripDetails {
     val times = stops.mapIndexed { i, p -> stopTime(p, last = i == lastIdx) }
     val realTime = tripLeg.realTime || stops.any { it.isLive() }
     val next = times.indices.firstOrNull { i -> !stops[i].cancelled && times[i].live?.let { !it.isBefore(now) } == true }
+    val rail = legKind(tripLeg.mode) == LegKind.TRAIN
     val rows = stops.mapIndexed { i, p ->
         val t = times[i]
         val role = when {
@@ -117,6 +120,12 @@ fun tripDetails(leg: Leg, trip: Itinerary?, now: Instant): TripDetails {
             isNext = i == next,
             alerts = alertTexts(p.alerts, t.live ?: now),
             time = t.live,
+            platform = when (role) {
+                // The trip answer's stop, else the plan leg's own (same stop, maybe more fields).
+                StopRole.BOARD -> stopPlatform(p, rail).ifEmpty { stopPlatform(leg.from, rail) }
+                StopRole.ALIGHT -> stopPlatform(p, rail).ifEmpty { stopPlatform(leg.to, rail) }
+                else -> StopPlatform()
+            },
         )
     }
     return TripDetails(

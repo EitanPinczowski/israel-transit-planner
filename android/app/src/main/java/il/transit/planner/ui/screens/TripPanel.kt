@@ -139,6 +139,8 @@ import il.transit.core.present.betterStartRow
 import il.transit.core.present.dropOffRow
 import il.transit.core.present.fareLabel
 import il.transit.core.present.hhmm
+import il.transit.core.present.stopPlatform
+import il.transit.core.present.legKind
 import il.transit.core.present.lastRideNote
 import il.transit.core.present.onColor
 import il.transit.core.present.pickUpRow
@@ -435,8 +437,10 @@ internal fun ResultsPanel(
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
+                            extra = { if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
                     }
+                    if (state.canPage()) item { PageButtons(state, vm) }
                     // Both answer for the direct A → B trip, which is not what an errand chain is.
                     if (state.options.isNotEmpty() && state.chain == null) item { LastRideSection(state, vm) }
                     if (state.mode == AppMode.TRIP && state.selectedItinerary?.firstTransitLeg != null && state.chain == null) item { WayBackRow(vm) }
@@ -520,6 +524,8 @@ internal fun ItineraryCard(
     fareProfile: FareProfile,
     searchedAt: Instant?,
     onLeg: ((Int) -> Unit)? = null,
+    /** Drawn on the selected card only, under its summary ("If I miss this…"). */
+    extra: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
@@ -553,7 +559,13 @@ internal fun ItineraryCard(
             }
             stringResource(R.string.board_line, line, b.time, b.stop) + live
         }
-        Text(listOfNotNull(board, "$transfers · $walk").joinToString("\n"), style = MaterialTheme.typography.bodySmall)
+        board?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+        // Where to stand, right under the boarding line: "Platform 12 · stop 47899" (buses; trains have none).
+        itin.firstTransitLeg?.let { first ->
+            PlatformLine(remember(first) { stopPlatform(first.from, legKind(first.mode) == LegKind.TRAIN) })
+        }
+        Text("$transfers · $walk", style = MaterialTheme.typography.bodySmall)
+        if (selected) extra?.invoke()
         if (selected) {
             WalkDirections(itin)
             OptionActions(onSend = null)

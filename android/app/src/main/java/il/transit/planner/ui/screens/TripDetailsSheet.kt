@@ -156,6 +156,7 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
                 stringResource(R.string.trip_skipped).takeIf { r.cancelled },
             )
             if (tags.isNotEmpty()) Text(tags.joinToString(" · "), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            if (mine) PlatformLine(r.platform)
             r.alerts.forEach { a -> Text("⚠ ${a.header}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.tertiary) }
         }
         // Live time: only with real-time data, which MOT lines never have (2026-10).

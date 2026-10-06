@@ -34,6 +34,11 @@ data class Place(
      *  see [Leg.cancelled]. */
     val cancelled: Boolean = false,
     val alerts: List<Alert> = emptyList(),
+    /** Free text from the MOT feed, e.g. "רחוב: … עיר: … רציף: 12 קומה: 6" (platform, floor):
+     *  parsed by `stopPlatform()`. */
+    val description: String? = null,
+    /** The stop's public code, the number on the sign ("47899"). */
+    val stopCode: String? = null,
 ) {
     val latLon: LatLon get() = LatLon(lat, lon)
 }
@@ -108,6 +113,10 @@ data class Itinerary(
 data class PlanResponse(
     val itineraries: List<Itinerary> = emptyList(),
     val direct: List<Itinerary> = emptyList(),
+    /** Pass back as [PlanRequest.pageCursor] for the window before ("EARLIER|…") or after
+     *  ("LATER|…") this one. */
+    val previousPageCursor: String? = null,
+    val nextPageCursor: String? = null,
 )
 
 /** One entry of a one-to-many answer. `duration` is absent when no path was found. */
