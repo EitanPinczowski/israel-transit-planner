@@ -3,8 +3,6 @@
 package il.transit.planner.ui
 
 import android.app.TimePickerDialog
-import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
@@ -52,7 +50,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -75,7 +72,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -105,7 +101,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -273,7 +268,7 @@ fun MainScreen(
         val search: @Composable () -> Unit = {
             // On a short screen with results the banner waits until they close: the map needs
             // the room (R7), and the update is not going anywhere.
-            if (!compactSearch) state.update?.let { UpdateBanner(it, vm) }
+            if (!compactSearch) state.update?.let { UpdateBanner(it, state.updateState, vm) }
             if (state.editing != null) {
                 // The tapped row turns into the text field, in place; the suggestions follow the card.
                 CompositionLocalProvider(
@@ -361,6 +356,7 @@ fun MainScreen(
         }
     }
 
+    UpdateLaunchers(state.updateState, vm) // Android's install prompt / permission screen, banner or not
     if (state.showSettings) SettingsDialog(state, vm, actions)
     if (state.showHistory) HistoryDialog(state, vm)
     if (state.showFavorites) FavoritesDialog(state, vm)
@@ -407,20 +403,6 @@ internal fun StatusBarScrim() {
             .windowInsetsPadding(WindowInsets.statusBars)
             .height(12.dp),
     )
-}
-
-@Composable
-internal fun UpdateBanner(latest: il.transit.core.update.LatestRelease, vm: MainActions) {
-    val context = LocalContext.current
-    Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.update_available, latest.version), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-            TextButton(onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(latest.apkUrl ?: latest.pageUrl)))
-            }) { Text(stringResource(R.string.update_download)) }
-            IconButton(onClick = vm::dismissUpdate) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
-        }
-    }
 }
 
 /** The search card folded to one line, so results get the room on short phones. Tap to unfold. */

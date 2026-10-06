@@ -2,6 +2,7 @@ package il.transit.planner
 
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.TransitApi
+import il.transit.core.update.CheckResult
 import il.transit.core.update.LatestRelease
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
@@ -35,6 +36,8 @@ class UiTestApp : TransitApp() {
     override val updates: UpdateChecker by lazy {
         object : UpdateChecker(store, BuildConfig.VERSION_NAME) {
             override suspend fun check(now: Instant): LatestRelease? = latestRelease
+            override suspend fun checkNow(now: Instant): CheckResult =
+                latestRelease?.let(CheckResult::Newer) ?: CheckResult.UpToDate
         }
     }
 

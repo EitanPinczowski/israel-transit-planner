@@ -259,6 +259,7 @@ internal fun SettingsContent(state: UiState, vm: MainActions, actions: ScreenAct
         item { QuickTileSection() }
         item { OfflineSection(actions) }
         item { CrashLogSection(actions.crashLog) }
+        item { UpdateSettingsRow(state.updateState, vm) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
             item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
             item { HomeSuggestion(s, state.savedPlaces, ::set) }

@@ -140,8 +140,6 @@
     <string name="stat_saved">min saved by car + transit</string>
     <string name="stat_top_destination">Most frequent destination: \u2068%s\u2069</string>
 
-    <string name="update_available">Update available: v%s</string>
-    <string name="update_download">Download</string>
     <string name="fare_profile">Fare</string>
     <string name="fare_regular">Regular</string>
     <string name="fare_half" formatted="false">50% discount</string>

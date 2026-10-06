@@ -31,6 +31,22 @@ fragments in the same commit.
   key) blocked v0.1.0 on the owner's Pixel with a bare **"App not installed"**, Android's
   message for a signature mismatch. The APK was fine; uninstalling the old copy fixed it.
 
+## In-app update (U1)
+- Once a day (and on Settings → "Check for updates", at most once a minute) the app reads
+  `releases/latest`. A newer `versionName` shows the banner "Version x is ready · Update".
+- **Update** downloads the `.apk` asset with OkHttp into `cacheDir/updates/` (no storage
+  permission), then opens Android's prompt via `ACTION_INSTALL_PACKAGE` + a `FileProvider`
+  URI (`${applicationId}.updates`). First time: Android's "Install unknown apps" screen for
+  our package (`REQUEST_INSTALL_PACKAGES`); coming back continues.
+- **Digest check:** GitHub puts `"digest": "sha256:…"` on every release asset. The app hashes
+  the file while downloading and refuses to install on a mismatch, or if there is no digest.
+  Downloads (redirects included) must be https on `github.com`, `objects.githubusercontent.com`
+  or `release-assets.githubusercontent.com`. Logic and states: core `update/` (tested).
+- **Signature mismatch** (a debug/uitest copy, or another key): Android answers
+  `INSTALL_FAILED_UPDATE_INCOMPATIBLE`; the banner says "App not installed: this copy is a
+  different build. Uninstall it once". Never "fix" this by changing the key.
+- Failures (cut download, no space, checksum) show one line with Try again + Browser.
+
 ## The signing key — the one thing that must never be lost
 - Lives in 4 **repository secrets**: `RELEASE_KEYSTORE_B64` (base64 of the .jks),
   `RELEASE_KEYSTORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`.
@@ -54,7 +70,8 @@ keytool -genkeypair -v -keystore transit-release.jks -alias transit -keyalg RSA 
 - `ci.yml` builds `assembleRelease` unsigned on every push, so release-only breaks show up
   before tagging.
 - After a release: the Releases page has the APK; a phone on the previous version shows the
-  "Update available" banner within a day (or on next launch after 24 h) and installs over it.
+  "Version x is ready · Update" banner within a day (or on next launch after 24 h), and
+  Update installs over it in-app.
 - Minify/R8 is OFF on purpose (MapLibre + kotlinx-serialization keep rules). Turning it on
   needs a phone test of every screen first.
 - Fares are a copied table (`core/.../fare/Fares.kt`, `CHECKED` date). Prices are reported
