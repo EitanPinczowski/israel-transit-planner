@@ -42,6 +42,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import il.transit.planner.ui.ViewModelActions
 import il.transit.planner.ui.Shortcuts
+import il.transit.planner.tile.NextTripTile
 import il.transit.planner.ui.TripDetailsViewModel
 import il.transit.planner.ui.screens.TripDetailsSheet
 import il.transit.core.present.vehicleGeoJson
@@ -91,6 +92,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
+        if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
     }
 
     /** What to do once the notification-permission prompt is answered. */
@@ -119,6 +121,8 @@ class MainActivity : ComponentActivity() {
         // intent comes back, and acting on it again would undo whatever the user did since.
         val fresh = savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0
         if (fresh && (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE))) pendingShortcut = intent
+        // The Quick Settings tile (C4), and C5's alert: the trip home, planned once the store is read.
+        if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation

@@ -72,6 +72,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Clock
@@ -434,7 +435,7 @@ class MainViewModel(
     // --- planning -----------------------------------------------------------------------
 
     /** [quiet]: a background refresh — keep the current results on screen and ignore failures. */
-    fun plan(quiet: Boolean = false) {
+    fun plan(quiet: Boolean = false, lastRideHint: Boolean = true) {
         val s = _state.value
         if (!s.readyToPlan) return
         val from = resolve(s.from)
@@ -496,7 +497,7 @@ class MainViewModel(
                         }
                         if (!empty) planCache?.put(cacheKey, r)
                         r.itineraries.firstOrNull()?.let { first ->
-                            if (!quiet && LastRideFinder.worthAsking(first.start)) loadLastRide(from, to, first.start, back = false, asked = false)
+                            if (!quiet && lastRideHint && LastRideFinder.worthAsking(first.start)) loadLastRide(from, to, first.start, back = false, asked = false)
                         }
                     }
                     AppMode.BETTER_START -> {
@@ -907,7 +908,7 @@ class MainViewModel(
      */
     private fun applyRoutine() {
         val s = _state.value
-        if (s.mode != AppMode.TRIP || s.editing != null || s.loading) return
+        if (s.mode != AppMode.TRIP || s.editing != null || s.loading || tripHomeAsked) return
         val routineSet = s.activeRoutine != null
         if (s.to != null && !routineSet) return
         val p = Routines.active(s.savedPlaces, clock.instant()) ?: return
@@ -961,6 +962,53 @@ class MainViewModel(
         plan()
     }
 
+    /** Set by [openTripHome]: the user asked for home, so [applyRoutine] stays out of it. */
+    private var tripHomeAsked = false
+
+    /**
+     * "Next trip home" (Quick Settings tile, Phase 9 C4; C5's alert reuses it): the Trip tab
+     * from here to Home, NOW, first option selected. One `plan` (no last-ride hint). No fix
+     * within a few seconds (permission denied, cold start) → from the cached trip's origin;
+     * offline → that cached trip, under the usual banner. No Home → Settings.
+     */
+    fun openTripHome() = viewModelScope.launch {
+        tripHomeAsked = true // a routine opening at the same cold start must not plan too
+        val settings = store.settings.first()
+        val places = store.places.first()
+        val home = il.transit.core.user.Home.of(settings, places)
+        if (home == null) {
+            _state.update { it.copy(showSettings = true) }
+            return@launch
+        }
+        val fix = kotlinx.coroutines.withTimeoutOrNull(FIX_WAIT_MS) {
+            while (locationProvider() == null) delay(250)
+            locationProvider()
+        }
+        val cached = planCache?.entries()?.let { il.transit.core.plan.CacheLookup.tripHome(it, home.latLon, clock.instant()) }
+        val from = if (fix == null && cached != null) {
+            val near = places.firstOrNull { il.transit.core.geo.Geo.distanceM(it.latLon, cached.from) <= il.transit.core.plan.CacheLookup.HOME_RADIUS_M }
+            PlaceRef.Point(near?.name, cached.from)
+        } else {
+            PlaceRef.MyLocation
+        }
+        _state.update {
+            it.copy(
+                mode = AppMode.TRIP, from = from, to = PlaceRef.Point(home.name, home.latLon),
+                timeMode = TimeMode.NOW, time = null, chainStops = emptyList(), editing = null,
+                showSettings = false, showHistory = false, stopSheet = null,
+            )
+        }
+        plan(lastRideHint = false)
+        planJob?.join()
+        // Offline from a spot a little off the cached origin: the key missed, the trip home did not.
+        val next = cached?.takeIf { c -> c.next != null }
+        if (_state.value.error == UiError.NETWORK && next != null) {
+            _state.update {
+                it.copy(error = null, results = next.entry.value, offlineSince = next.entry.savedAt, offlineNight = next.entry.isLastNight(clock.instant()), resultsAt = next.entry.savedAt, selected = 0)
+            }
+        }
+    }
+
     /** Saves the current from/to as a one-tap trip. "My location" stays "my location". */
     fun saveTrip(name: String) = viewModelScope.launch {
         val s = _state.value
@@ -1012,6 +1060,9 @@ class MainViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_MS = 350L
         private const val REFRESH_MS = 120_000L
+
+        /** How long [openTripHome] waits for a first location fix before using the cached origin. */
+        private const val FIX_WAIT_MS = 3_000L
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
