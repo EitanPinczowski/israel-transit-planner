@@ -1,6 +1,7 @@
 package il.transit.planner.data
 
 import android.content.Context
+import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -24,8 +25,10 @@ private val Context.userData by preferencesDataStore(name = "user")
  * are small (tens of items), so JSON in DataStore is simpler than a database and the codec
  * lives in core (UserJson), where it is tested.
  */
-class UserStore(private val context: Context) {
-    private val data: Flow<Preferences> = context.userData.data.catch { e ->
+class UserStore(private val prefs: DataStore<Preferences>) {
+    constructor(context: Context) : this(context.userData)
+
+    private val data: Flow<Preferences> = prefs.data.catch { e ->
         if (e is IOException) emit(emptyPreferences()) else throw e
     }
 
@@ -38,30 +41,30 @@ class UserStore(private val context: Context) {
     val reminder: Flow<Reminder?> = data.map { UserJson.decodeReminder(it[REMINDER]) }
 
     suspend fun setSettings(s: UserSettings) {
-        context.userData.edit { it[SETTINGS] = UserJson.encodeSettings(s) }
+        prefs.edit { it[SETTINGS] = UserJson.encodeSettings(s) }
     }
 
     suspend fun setPlaces(p: List<SavedPlace>) {
-        context.userData.edit { it[PLACES] = UserJson.encodePlaces(p) }
+        prefs.edit { it[PLACES] = UserJson.encodePlaces(p) }
     }
 
     /** When the app last asked GitHub for a newer release (epoch seconds). */
     val lastUpdateCheck: Flow<Long?> = data.map { it[LAST_UPDATE_CHECK] }
 
     suspend fun setLastUpdateCheck(epochSec: Long) {
-        context.userData.edit { it[LAST_UPDATE_CHECK] = epochSec }
+        prefs.edit { it[LAST_UPDATE_CHECK] = epochSec }
     }
 
     suspend fun setReminder(r: Reminder?) {
-        context.userData.edit { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
+        prefs.edit { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
     }
 
     suspend fun setTrips(t: List<SavedTrip>) {
-        context.userData.edit { it[TRIPS] = UserJson.encodeTrips(t) }
+        prefs.edit { it[TRIPS] = UserJson.encodeTrips(t) }
     }
 
     suspend fun setFavorites(f: List<il.transit.core.user.FavoriteLine>) {
-        context.userData.edit { it[FAVORITES] = UserJson.encodeFavorites(f) }
+        prefs.edit { it[FAVORITES] = UserJson.encodeFavorites(f) }
     }
 
     private companion object {

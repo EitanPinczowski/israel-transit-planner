@@ -103,6 +103,15 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
     change of settings, places, trips or history, and cancels the work otherwise.
   - Check on a phone: `adb shell cmd jobscheduler` / `adb shell dumpsys jobscheduler | grep -A5 night`;
     Doze can push the run later in the window; a run after 06:00 does nothing.
+- **Quick Settings tile "Home"** (C4; `tile/NextTripTile.kt`, core `plan/CacheLookup.kt`,
+  `present/TileText.kt`): drawn in `onStartListening` from the Trip cache only, **0 requests**:
+  the newest `TRIP-*` entry whose key's destination is within 110 m of Home and still has an
+  option ahead → "Home · 22:40–23:35"; none → "tap to plan"; no Home → "Set Home". It never
+  refreshes itself (no worker, no alarm). A tap opens `MainActivity` with
+  `NextTripTile.EXTRA_TRIP_HOME` (`tripHomeIntent`, which C5 reuses) → `MainViewModel.openTripHome()`:
+  NOW from my location (waits ≤ 5 s for a fix, else the cached entry's origin; `CacheLookup.start`), **1 `plan`**,
+  no last-ride hint; offline → the cached entry under the usual banner; no Home → Settings.
+  Settings → "Add to Quick Settings" (`requestAddTileService`, API 33+; a hint below).
 - **Background refresh**: Trip tab re-plans every 2 min while the app is in front
   (`MainViewModel.onVisible`), quietly — failures are ignored, the selection is kept.
   Car tabs refresh only on ↻ (up to 10 requests each).

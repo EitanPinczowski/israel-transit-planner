@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Quick Settings tile (Phase 9 C4) -->
+    <string name="tile_home">Home</string>
+    <string name="tile_set_home">Set Home</string>
+    <string name="tile_tap_to_plan">tap to plan</string>
+    <!-- Below Android 10 a tile has no subtitle: "Home · 22:40–23:35" -->
+    <string name="tile_label_with">%1$s · %2$s</string>
+    <string name="tile_title">Quick Settings tile</string>
+    <string name="tile_add">Add \"Home\" to Quick Settings</string>
+    <string name="tile_help">A tile in the panel you pull down from the top: the next trip home from saved results, no data used. Tap it to plan home from where you are.</string>
+    <string name="tile_add_hint">Pull down the panel twice, tap the pencil (Edit), and drag \"Home\" into your tiles.</string>
+</resources>

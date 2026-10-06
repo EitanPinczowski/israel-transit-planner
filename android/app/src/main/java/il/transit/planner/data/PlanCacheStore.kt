@@ -49,6 +49,14 @@ class PlanCacheStore(private val file: File, private val clock: Clock = Clock.sy
         }
     }
 
+    /** Every saved entry as stored, newest first: the Quick Settings tile looks for one home (C4). */
+    suspend fun entries(): List<PlanCache.Entry<TripResult>> = withContext(Dispatchers.IO) {
+        synchronized(this@PlanCacheStore) {
+            loadOnce()
+            cache.all
+        }
+    }
+
     /** Forgets every saved search (UI tests start each case from an empty cache). */
     suspend fun clear() = withContext(Dispatchers.IO) {
         synchronized(this@PlanCacheStore) {

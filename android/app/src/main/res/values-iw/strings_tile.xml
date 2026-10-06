@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Quick Settings tile (Phase 9 C4) -->
+    <string name="tile_home">הביתה</string>
+    <string name="tile_set_home">הגדרת בית</string>
+    <string name="tile_tap_to_plan">הקישו לתכנון</string>
+    <!-- Below Android 10 a tile has no subtitle: "הביתה · 22:40–23:35" -->
+    <string name="tile_label_with">%1$s · %2$s</string>
+    <string name="tile_title">אריח בהגדרות המהירות</string>
+    <string name="tile_add">הוספת \"הביתה\" להגדרות המהירות</string>
+    <string name="tile_help">אריח בלוח שנפתח מלמעלה: הנסיעה הבאה הביתה מתוצאות שמורות, בלי שימוש בנתונים. הקשה עליו מתכננת הביתה מהמקום שבו אתם.</string>
+    <string name="tile_add_hint">גררו את הלוח למטה פעמיים, הקישו על העיפרון (עריכה) וגררו את \"הביתה\" לאריחים.</string>
+</resources>

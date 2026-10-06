@@ -193,7 +193,7 @@ merges. Tick only your own package's lines.
 - [x] Monthly pass advisor from history + `fare/` ("would have saved ₪74 in September")
 
 ### C4 — Quick Settings tile (`claude/p9-tile`, 0 to draw, ≤ 1 request per tap)
-- [ ] "Home · 22:40 → 23:35" from the Trip cache; tap opens the planned trip home
+- [x] "Home · 22:40–23:35" from the Trip cache; tap opens the planned trip home
       (`EXTRA_TRIP_HOME`, one `plan`); "Add to Quick Settings" in Settings
 
 ### C5 — Alerts (`claude/p9-alerts`, 0 + ≤ 3 requests an evening)
