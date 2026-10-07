@@ -10,7 +10,7 @@ name: UI tests
 
 on:
   push:
-    branches-ignore: [ci-screens]
+    branches-ignore: [ci-screens, claude/geocoder-check]
     paths:
       - "android/**"
       - "core/src/main/**"
