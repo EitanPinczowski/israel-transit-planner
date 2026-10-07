@@ -20,9 +20,9 @@ Rothschild Blvd 10, Tel Aviv	en	תל אביב-יפו	רוטשילד|Rothschild	1
 דרך מנחם בגין 132 תל אביב	he	תל אביב-יפו	בגין	132	
 תחנה מרכזית חדשה תל אביב	he	תל אביב-יפו			
 תחנת רכבת תל אביב סבידור	he	תל אביב-יפו			
-בית חולים איכילוב	he	תל אביב-יפו			mapped as the Sourasky Medical Center; searched by that name (Aliases). Run 4 showed Tel HaShomer before the alias
-איכילוב	he	תל אביב-יפו			mapped as the Sourasky Medical Center; searched by that name (Aliases)
-Ichilov hospital	en	תל אביב-יפו			mapped as the Sourasky Medical Center; searched by that name (Aliases)
+בית חולים איכילוב	he	תל אביב-יפו	איכילוב|Ichilov		
+איכילוב	he	תל אביב-יפו	איכילוב|Ichilov		
+Ichilov hospital	en	תל אביב-יפו	איכילוב|Ichilov		English: Transitous and the phone may not know "Ichilov" in English; must then show as not found, never another place
 אוניברסיטת תל אביב	he	תל אביב-יפו			
 דיזנגוף סנטר	he	תל אביב-יפו			
 # Jerusalem

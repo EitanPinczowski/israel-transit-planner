@@ -1,16 +1,17 @@
 package il.transit.core.search
 
 /**
- * Well-known places whose everyday name is not their name on the map: "איכילוב" is mapped as the
- * Tel Aviv Sourasky Medical Center, and searching the everyday name made Photon guess another
- * hospital (address corpus, 2026-10-07). A text that names one is searched as the map name, with
- * its town, so the typed-town rule keeps every other place out. 0 requests; bundled.
+ * Well-known places people type without their town or by another name ("בית חולים תל השומר" is
+ * Sheba, in Ramat Gan): searched by the name the geocoders know, with its town, so the typed-town
+ * rule keeps every other town's place out (address corpus, 2026-10-07: Photon offered Tel
+ * HaShomer for Ichilov). 0 requests; bundled.
  */
 object Aliases {
     private class Alias(val names: List<String>, val he: String, val en: String)
 
     private val ALL = listOf(
-        Alias(listOf("איכילוב", "ichilov", "בית חולים איכילוב", "סוראסקי", "sourasky"), "המרכז הרפואי סוראסקי תל אביב", "Tel Aviv Sourasky Medical Center, Tel Aviv"),
+        // Transitous knows it as "בי״ח איכילוב" (2026-10-07); searching "סוראסקי" found the university library.
+        Alias(listOf("איכילוב", "ichilov", "בית חולים איכילוב", "ichilov hospital", "סוראסקי", "sourasky"), "בית חולים איכילוב תל אביב", "Ichilov Hospital, Tel Aviv"),
         Alias(listOf("שיבא", "sheba", "בית חולים תל השומר", "tel hashomer hospital"), "המרכז הרפואי שיבא רמת גן", "Sheba Medical Center, Ramat Gan"),
         Alias(listOf("בילינסון", "beilinson", "בית חולים בילינסון"), "בית החולים בילינסון פתח תקווה", "Beilinson Hospital, Petah Tikva"),
         Alias(listOf("השרון בית חולים", "בית חולים השרון"), "בית החולים השרון פתח תקווה", "Hasharon Hospital, Petah Tikva"),
