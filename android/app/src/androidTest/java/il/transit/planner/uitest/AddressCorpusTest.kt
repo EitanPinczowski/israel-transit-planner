@@ -55,11 +55,12 @@ class AddressCorpusTest {
         val unexpected = mutableListOf<String>()
         rows.forEachIndexed { i, r ->
             val t0 = System.nanoTime()
-            val (answer, error): Pair<SearchAnswer?, String?> = try {
+            val result: Pair<SearchAnswer?, String?> = try {
                 search.search(r.query, r.language, null) to null
             } catch (e: Exception) {
                 null to "${e.javaClass.simpleName}: ${e.message}"
             }
+            val (answer, error) = result
             val ms = (System.nanoTime() - t0) / 1_000_000
             val first = answer?.all?.firstOrNull()
             val problems = check(r, first, error)
