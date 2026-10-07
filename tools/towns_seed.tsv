@@ -1,0 +1,103 @@
+# Israeli towns for core/search/TownsData.kt (tools/gen_towns.py). Columns: Hebrew names | English names | radius km (how far from the centre still counts as the town).
+# The first Hebrew name is the one Photon is asked (osm_tag=place); the others are spellings people type.
+ירושלים	Jerusalem	9
+תל אביב-יפו|תל אביב|תל-אביב|תל אביב יפו	Tel Aviv|Tel Aviv-Yafo|Tel Aviv-Jaffa	6.5
+חיפה	Haifa	8
+באר שבע|באר-שבע	Beersheba|Be'er Sheva|Beer Sheva	7
+ראשון לציון	Rishon LeZion|Rishon Lezion	5
+פתח תקווה|פתח תקוה	Petah Tikva|Petah Tiqva	5
+אשדוד	Ashdod	6
+נתניה	Netanya	6
+חולון	Holon	3.5
+בני ברק	Bnei Brak	2.5
+רמת גן	Ramat Gan	3.5
+בת ים	Bat Yam	2.5
+רחובות	Rehovot	4
+אשקלון	Ashkelon	5.5
+הרצליה	Herzliya	4.5
+כפר סבא	Kfar Saba	4
+חדרה	Hadera	6
+מודיעין-מכבים-רעות|מודיעין|מודיעין מכבים רעות	Modi'in|Modiin|Modi'in-Maccabim-Re'ut	5.5
+רעננה	Ra'anana|Raanana	3
+לוד	Lod	3.5
+רמלה	Ramla	3
+נצרת	Nazareth	4
+אילת	Eilat	6
+בית שמש	Beit Shemesh	5
+עפולה	Afula	4
+קריית גת|קרית גת	Kiryat Gat	3.5
+קריית שמונה|קרית שמונה	Kiryat Shmona	3
+טבריה	Tiberias	4
+צפת	Safed|Tzfat	3
+נהריה	Nahariya	3.5
+עכו	Acre|Akko	3
+כרמיאל	Karmiel	4
+דימונה	Dimona	3
+אופקים	Ofakim	2.5
+נתיבות	Netivot	2.5
+שדרות	Sderot	2.5
+ערד	Arad	3
+מצפה רמון	Mitzpe Ramon	2.5
+יבנה	Yavne	3
+גבעתיים	Givatayim	2
+הוד השרון	Hod HaSharon	3.5
+רמת השרון	Ramat HaSharon	3
+ראש העין	Rosh HaAyin	3.5
+נס ציונה	Ness Ziona|Nes Ziona	3
+אור יהודה	Or Yehuda	2
+יהוד-מונוסון|יהוד	Yehud	2
+קריית אונו|קרית אונו	Kiryat Ono	2
+גבעת שמואל	Giv'at Shmuel|Givat Shmuel	1.5
+אלעד	Elad	2
+ביתר עילית	Beitar Illit	2.5
+מודיעין עילית	Modi'in Illit	2.5
+מעלה אדומים	Ma'ale Adumim	3
+אריאל	Ariel	2.5
+אפרת	Efrat	2.5
+קריית ארבע|קרית ארבע	Kiryat Arba	2
+אום אל-פחם|אום אל פחם	Umm al-Fahm	3.5
+רהט	Rahat	3.5
+טייבה|טייבה (במשולש)	Tayibe	3
+טירה	Tira	2.5
+סחנין|סח'נין	Sakhnin	3
+שפרעם	Shefa-'Amr|Shefa-Amr	3
+קריית אתא|קרית אתא	Kiryat Ata	3.5
+קריית ביאליק|קרית ביאליק	Kiryat Bialik	2.5
+קריית מוצקין|קרית מוצקין	Kiryat Motzkin	2
+קריית ים|קרית ים	Kiryat Yam	2
+טירת כרמל|טירת הכרמל	Tirat Carmel	2.5
+זכרון יעקב	Zikhron Ya'akov|Zichron Yaakov	3
+פרדס חנה-כרכור|פרדס חנה	Pardes Hanna-Karkur|Pardes Hanna	3.5
+אור עקיבא	Or Akiva	2
+קיסריה	Caesarea	4
+יקנעם|יקנעם עילית	Yokneam Illit|Yokneam	3
+מגדל העמק	Migdal HaEmek	2.5
+נוף הגליל	Nof HaGalil	3.5
+בית שאן	Beit She'an	2.5
+קצרין	Katzrin	2.5
+מעלות-תרשיחא|מעלות	Ma'alot-Tarshiha	3
+שלומי	Shlomi	1.5
+יבנאל	Yavne'el	1.5
+גן יבנה	Gan Yavne	2
+קריית מלאכי|קרית מלאכי	Kiryat Malakhi	2.5
+באר יעקב	Be'er Ya'akov	2
+גדרה	Gedera	2.5
+מזכרת בתיה	Mazkeret Batya	1.5
+שוהם	Shoham	2
+כפר יונה	Kfar Yona	2
+אבן יהודה	Even Yehuda	2
+כוכב יאיר|כוכב יאיר צור יגאל	Kokhav Ya'ir	2
+קדימה|קדימה-צורן	Kadima-Zoran|Kadima	2
+תל מונד	Tel Mond	1.5
+עין גדי	Ein Gedi	3
+ירוחם	Yeruham	2
+מטולה	Metula	1.5
+ראש פינה	Rosh Pinna	1.5
+דגניה א'|דגניה א	Degania Alef	1
+עין חרוד|עין חרוד (מאוחד)	Ein Harod	1.5
+נהלל	Nahalal	1.5
+כפר ויתקין	Kfar Vitkin	1.5
+שדה בוקר	Sde Boker	2
+גבעת ברנר	Givat Brenner	1.5
+יטבתה	Yotvata	1.5
+עמנואל	Immanuel	1.5

@@ -1,0 +1,46 @@
+# The address corpus (owner, 2026-10-07: "no address left undefined or wrong"): ~60 real
+# queries through the app's search chain against the LIVE services (Transitous, the phone's
+# Geocoder, Photon), on a google_apis emulator. On demand only, to keep their traffic light:
+# Actions → "Address corpus" → Run, or push a branch named corpus-run/<anything>.
+# The table lands in the job log and the run summary. See .claude/skills/transitous-api.
+name: Address corpus
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["corpus-run/**"]
+
+jobs:
+  corpus:
+    name: address corpus (API 34, google_apis)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew -p android :app:assembleUitest :app:assembleUitestAndroidTest
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            adb install -r android/app/build/outputs/apk/uitest/app-uitest.apk
+            adb install -r android/app/build/outputs/apk/androidTest/uitest/app-uitest-androidTest.apk
+            sleep 20
+            adb shell am instrument -w -r -e class il.transit.planner.uitest.AddressCorpusTest il.transit.planner.uitest.test/androidx.test.runner.AndroidJUnitRunner | tee instrument.txt
+            adb pull /sdcard/Android/data/il.transit.planner.uitest/files/address_corpus.md address_corpus.md || true
+            echo "===== address corpus =====" && cat address_corpus.md || true
+      - if: always()
+        run: |
+          [ -f address_corpus.md ] && cat address_corpus.md >> "$GITHUB_STEP_SUMMARY"
+          grep -q "INSTRUMENTATION_STATUS_CODE: -2\|INSTRUMENTATION_FAILED\|Process crashed" instrument.txt && exit 1 || exit 0

@@ -46,7 +46,12 @@ import il.transit.core.present.StopPlatform
 import il.transit.core.present.stopPlatform
 import il.transit.core.present.needsFullNameHint
 import il.transit.core.present.geocodeDetail
-import il.transit.core.present.rankByTypedTown
+import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.LocalFirst
+import il.transit.core.search.LocalHit
+import il.transit.core.search.PlaceSearch
+import il.transit.core.search.SearchAnswer
+import il.transit.core.search.TypingSearch
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
 import il.transit.core.remind.Reminder
@@ -94,7 +99,19 @@ enum class AppMode { TRIP, BETTER_START, DROP_OFF, PICK_UP, PARK_RIDE }
 
 enum class UiError { NO_LOCATION, NETWORK, NO_RESULTS }
 
-data class Suggestion(val name: String, val detail: String?, val at: LatLon, val saved: Boolean, val isStop: Boolean)
+/** A row under the search box. [home]/[recent]: from the phone (no request); [backup]: from Photon. */
+data class Suggestion(
+    val name: String,
+    val detail: String?,
+    val at: LatLon,
+    val saved: Boolean,
+    val isStop: Boolean,
+    val home: Boolean = false,
+    val recent: Boolean = false,
+    val backup: Boolean = false,
+    /** Not what was typed, only near it: listed under "Closest matches", never as the answer. */
+    val closest: Boolean = false,
+)
 
 data class StopSheet(
     val stopId: String,
@@ -179,6 +196,8 @@ data class UiState(
     val carLoading: Boolean = false,
     /** Earlier / Later under the Trip options. */
     val pages: TripPagesUi = TripPagesUi(),
+    /** Map pin sheet, the save-place dialog, recent picks (search fix). */
+    val places: PlacesUi = PlacesUi(),
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -224,6 +243,8 @@ class MainViewModel(
     private val stopsCache: StopsStore? = null,
     private val departureCache: il.transit.planner.data.DepartureCacheStore? = null,
     private val clock: Clock = Clock.systemUTC(),
+    /** Asked only after a Transitous miss ([PlaceSearch]); null = Transitous alone. */
+    private val backup: BackupGeocoder? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -238,7 +259,8 @@ class MainViewModel(
     var locationProvider: () -> LatLon? = { null }
 
     private val planner = TripPlanner(api)
-    private var searchJob: Job? = null
+    private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup)) { q, answer, _ -> showAnswer(q, answer) }
+    private val picker = PlacePicker(api, backup, store, { language }, viewModelScope, { f -> _state.update(f) }, { _state.value })
     private var planJob: Job? = null
     private var stopsJob: Job? = null
     private var loadedStops: BBox? = null
@@ -257,6 +279,7 @@ class MainViewModel(
             }
         }
         viewModelScope.launch { store.reminder.collect { r -> _state.update { it.copy(reminder = r) } } }
+        viewModelScope.launch { store.recents.collect { r -> _state.update { it.copy(places = it.places.copy(recents = r)) } } }
         rides?.let { r -> viewModelScope.launch { r.active.collect { a -> _state.update { it.copy(riding = a) } } } }
         rides?.let { r -> viewModelScope.launch { r.progress.collect { p -> _state.update { it.copy(rideProgress = p) } } } }
         viewModelScope.launch { store.favorites.collect { f -> _state.update { it.copy(favorites = f) } } }
@@ -296,35 +319,39 @@ class MainViewModel(
     // --- search -----------------------------------------------------------------------
 
     fun startEditing(field: Field) {
-        _state.update { it.copy(editing = field, query = "", suggestions = savedSuggestions(""), searchHint = false) }
+        _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false, notFound = false)) }
     }
 
-    fun cancelEditing() = _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false) }
+    fun cancelEditing() {
+        typing.cancel()
+        _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
+    }
 
+    /** Saved places and recent picks at once; Transitous (then, on a miss, Photon) once typing pauses. */
     fun onQuery(text: String) {
-        _state.update { it.copy(query = text, suggestions = savedSuggestions(text), searchHint = false) }
-        searchJob?.cancel()
-        val q = text.trim()
-        if (q.length < 2) return
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_MS)
-            val found = try {
-                rankByTypedTown(api.geocode(q, language, locationProvider(), 8))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                emptyList()
-            }
-            _state.update { st ->
-                st.copy(
-                    suggestions = savedSuggestions(q) + found.map(::toSuggestion),
-                    searchHint = needsFullNameHint(q, found.map { it.name }),
-                )
-            }
+        _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
+        typing.onText(text, language, locationProvider)
+    }
+
+    private fun showAnswer(q: String, answer: SearchAnswer) {
+        _state.update { st ->
+            if (st.editing == null || st.query.trim() != q) return@update st
+            val local = localHits(q)
+            st.copy(
+                // Exact answers first (Transitous's, or the backup's after a miss), then the closest, labelled.
+                suggestions = local.map { toSuggestion(it) } +
+                    LocalFirst.serverAfter(local, answer.exact).map { m -> toSuggestion(m).copy(backup = m in answer.backup) } +
+                    LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true) },
+                searchHint = needsFullNameHint(q, answer.all.map { it.name }),
+                places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }, notFound = answer.notFound),
+            )
         }
     }
 
-    fun pick(s: Suggestion) = setField(PlaceRef.Point(s.name, s.at))
+    fun pick(s: Suggestion) {
+        if (!s.saved) picker.remember(SavedPlace(s.name, s.at.lat, s.at.lon))
+        setField(PlaceRef.Point(s.name, s.at))
+    }
 
     fun pickMyLocation() = setField(PlaceRef.MyLocation)
 
@@ -358,22 +385,33 @@ class MainViewModel(
         if (_state.value.readyToPlan) plan()
     }
 
-    /** Long-press on the map: that point becomes the destination, named once reverse geocoding answers. */
-    fun setDestinationFromMap(at: LatLon) {
-        _state.update { it.copy(to = PlaceRef.Point(null, at), editing = null, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), stopSheet = null) }
-        plan()
-        viewModelScope.launch {
-            val name = try {
-                api.reverseGeocode(at, language, 1).firstOrNull()?.name
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                null
-            }
-            if (name != null) {
-                _state.update { st -> if ((st.to as? PlaceRef.Point)?.at == at) st.copy(to = PlaceRef.Point(name, at)) else st }
-            }
-        }
+    // --- map pin and saving places (search fix S1, S2) -----------------------------------
+
+    /** Long-press on the map: a sheet for that point (From here / To here / Save), named by one reverse geocode. */
+    fun onMapLongPress(at: LatLon) = picker.longPress(at)
+
+    fun closePin() = picker.closePin()
+
+    /** "From here" / "To here": the pin fills that field of whichever tab is open. */
+    fun pinTo(field: Field) {
+        val pin = _state.value.places.pin ?: return
+        _state.update { it.copy(editing = field, places = it.places.copy(pin = null)) }
+        setField(PlaceRef.Point(pin.name, pin.at))
+        // Still naming: the pin's own request names the field when it answers.
+        if (pin.name == null && !pin.naming) nameLater(pin.at)
+    }
+
+    fun saveFromPin() = picker.saveFromPin()
+
+    fun saveHere() = picker.saveHere(locationProvider())
+
+    fun cancelDraft() = picker.cancelDraft()
+
+    fun saveDraft(name: String, asHome: Boolean) {
+        val at = _state.value.places.draft?.at ?: return
+        picker.cancelDraft()
+        savePlace(name, at)
+        if (asHome) updateSettings(_state.value.settings.copy(homePlace = name, homeOffered = true))
     }
 
     /**
@@ -386,7 +424,7 @@ class MainViewModel(
         _state.update {
             val timed = it.copy(mode = AppMode.TRIP, timeMode = time, time = arriveBy, chainStops = emptyList(), chain = null, results = null, error = null)
             if (at == null) {
-                timed.copy(editing = Field.TO, query = place, suggestions = savedSuggestions(place), searchHint = false)
+                timed.copy(editing = Field.TO, query = place, suggestions = localSuggestions(place), searchHint = false)
             } else {
                 timed.copy(to = PlaceRef.Point(place, at), editing = null, routinePlace = null, stopSheet = null)
             }
@@ -1079,17 +1117,24 @@ class MainViewModel(
 
     // --- helpers -----------------------------------------------------------------------------
 
-    private fun savedSuggestions(text: String): List<Suggestion> =
-        _state.value.savedPlaces
-            .filter { text.isBlank() || it.name.contains(text.trim(), ignoreCase = true) }
-            .map { Suggestion(it.name, null, it.latLon, saved = true, isStop = false) }
+    private fun localHits(text: String): List<LocalHit> = _state.value.let { s ->
+        LocalFirst.suggest(text, s.savedPlaces, s.settings.homePlace, s.places.recents)
+    }
+
+    /** Home, saved places, recent picks that match [text]: shown before any request answers. */
+    private fun localSuggestions(text: String): List<Suggestion> = localHits(text).map { toSuggestion(it) }
+
+    private fun toSuggestion(h: LocalHit) = Suggestion(
+        h.place.name, null, h.place.latLon,
+        saved = h.kind != LocalHit.Kind.RECENT, isStop = false,
+        home = h.kind == LocalHit.Kind.HOME, recent = h.kind == LocalHit.Kind.RECENT,
+    )
 
     private fun toSuggestion(m: GeocodeMatch): Suggestion {
         return Suggestion(m.name, geocodeDetail(m), LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP")
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_MS = 350L
         private const val REFRESH_MS = 120_000L
 
         /** How long [openTripHome] waits for a first fix (a cold start loads the map first) before using the cached origin. */
@@ -1097,7 +1142,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder)
             }
         }
     }

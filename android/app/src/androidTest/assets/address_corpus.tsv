@@ -1,0 +1,75 @@
+# Address corpus for AddressCorpusTest (on demand: .github/workflows/address-corpus.yml).
+# Columns (tab-separated): query | language (he/en) | expected town (a name in Towns) | expected street, alternatives with | (empty = landmark/town) | expected house number (empty = none) | known gap (empty = must be found exactly; else why it may show as not found — a WRONG answer fails either way)
+# The owner's home, every way it gets typed
+טבנקין 15 רעננה	he	רעננה	טבנקין	15	
+טבנקין 15, רעננה	he	רעננה	טבנקין	15	
+רח' טבנקין 15 רעננה	he	רעננה	טבנקין	15	
+רחוב טבנקין 15 רעננה	he	רעננה	טבנקין	15	
+Tabenkin 15, Ra'anana	en	רעננה	טבנקין|Tabenkin	15	
+טבנקן 15 רעננה	he	רעננה	טבנקין	15	
+רעננה, טבנקין 15	he	רעננה	טבנקין	15	
+אחוזה 100 רעננה	he	רעננה	אחוזה	100	
+# Tel Aviv
+דיזנגוף 50 תל אביב	he	תל אביב-יפו	דיזנגוף	50	
+דיזינגוף 50 תל אביב	he	תל אביב-יפו	דיזנגוף	50	
+רוטשילד 1 תל אביב	he	תל אביב-יפו	רוטשילד	1	
+שד' רוטשילד 10 ת"א	he	תל אביב-יפו	רוטשילד	10	
+Rothschild Blvd 10, Tel Aviv	en	תל אביב-יפו	רוטשילד|Rothschild	10	
+אבן גבירול 30 ת"א	he	תל אביב-יפו	אבן גבירול	30	
+בן-יהודה 10 תל אביב	he	תל אביב-יפו	בן יהודה	10	
+דרך מנחם בגין 132 תל אביב	he	תל אביב-יפו	בגין	132	
+תחנה מרכזית חדשה תל אביב	he	תל אביב-יפו			
+תחנת רכבת תל אביב סבידור	he	תל אביב-יפו			
+בית חולים איכילוב	he	תל אביב-יפו	איכילוב|Ichilov		
+איכילוב	he	תל אביב-יפו	איכילוב|Ichilov		
+Ichilov hospital	en	תל אביב-יפו	איכילוב|Ichilov		English: Transitous and the phone may not know "Ichilov" in English; must then show as not found, never another place
+אוניברסיטת תל אביב	he	תל אביב-יפו			
+דיזנגוף סנטר	he	תל אביב-יפו			
+# Jerusalem
+יפו 97 ירושלים	he	ירושלים	יפו	97	
+קרן היסוד 20 ירושלים	he	ירושלים	קרן היסוד	20	
+הרב קוק 10 ירושלים	he	ירושלים	קוק	10	
+דרך חברון 50 ירושלים	he	ירושלים	חברון	50	
+King George 20, Jerusalem	en	ירושלים	המלך ג'ורג'|King George	20	
+התחנה המרכזית ירושלים	he	ירושלים			
+הכותל המערבי	he	ירושלים			
+קניון מלחה	he	ירושלים			
+# Haifa
+הרצל 12 חיפה	he	חיפה	הרצל	12	
+Herzl St 12, Haifa	en	חיפה	הרצל|Herzl	12	
+שדרות הנשיא 100 חיפה	he	חיפה	הנשיא	100	no source has this house in Haifa (run 4, 2026-10-07): shown as not found, שדרות המגינים 100 only under Closest matches
+הטכניון חיפה	he	חיפה			
+בית חולים רמב"ם חיפה	he	חיפה			
+# Be'er Sheva
+שד' רגר 1 ב"ש	he	באר שבע	רגר		
+שדרות רגר באר שבע	he	באר שבע	רגר		
+אוניברסיטת בן גוריון	he	באר שבע			
+קניון הנגב באר שבע	he	באר שבע			
+תחנה מרכזית באר שבע	he	באר שבע			
+# Gush Dan and the Sharon
+ז'בוטינסקי 100 פתח תקווה	he	פתח תקווה	בוטינסקי	100	
+ז׳בוטינסקי 100 פ"ת	he	פתח תקווה	בוטינסקי	100	
+זבוטינסקי 100 פתח תקווה	he	פתח תקווה	בוטינסקי	100	
+Jabotinsky 100, Petah Tikva	en	פתח תקווה	בוטינסקי|Jabotinsky|Zhabotinsky	100	
+ביאליק 12א רמת גן	he	רמת גן	ביאליק	12	
+ויצמן 50 כ"ס	he	כפר סבא	ויצמן	50	
+ויצמן 100 כפר סבא	he	כפר סבא	ויצמן	100	
+הרצל 20 נתניה	he	נתניה	הרצל	20	
+סוקולוב 30 הרצליה	he	הרצליה	סוקולוב	30	
+# South and north
+קניון עזריאלי מודיעין	he	מודיעין-מכבים-רעות			
+תחנת רכבת מודיעין מרכז	he	מודיעין-מכבים-רעות			
+שדרות התמרים אילת	he	אילת	התמרים		
+פאולוס השישי נצרת	he	נצרת	פאולוס		
+הרצל אשדוד	he	אשדוד	הרצל		
+# Towns, kibbutzim, moshavim, settlements (town only)
+אום אל-פחם	he	אום אל-פחם			
+רהט	he	רהט			
+עין גדי	he	עין גדי			
+יטבתה	he	יטבתה			
+נהלל	he	נהלל			
+כפר ויתקין	he	כפר ויתקין			
+אפרת	he	אפרת			
+אריאל	he	אריאל			
+מצפה רמון	he	מצפה רמון			
+Eilat	en	אילת			

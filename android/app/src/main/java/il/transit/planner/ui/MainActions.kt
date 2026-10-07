@@ -64,6 +64,14 @@ interface MainActions {
     fun wayBack(stayMin: Int)
     fun earlier()
     fun later()
+
+    // Search fix (S1, S2): no-ops by default, so previews and test fakes need nothing.
+    fun pinTo(field: Field) = Unit
+    fun closePin() = Unit
+    fun saveFromPin() = Unit
+    fun saveHere() = Unit
+    fun cancelDraft() = Unit
+    fun saveDraft(name: String, asHome: Boolean) = Unit
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */
@@ -116,6 +124,12 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun wayBack(stayMin: Int) { vm.wayBack(stayMin) }
     override fun earlier() { vm.earlier() }
     override fun later() { vm.later() }
+    override fun pinTo(field: Field) { vm.pinTo(field) }
+    override fun closePin() { vm.closePin() }
+    override fun saveFromPin() { vm.saveFromPin() }
+    override fun saveHere() { vm.saveHere() }
+    override fun cancelDraft() { vm.cancelDraft() }
+    override fun saveDraft(name: String, asHome: Boolean) { vm.saveDraft(name, asHome) }
 }
 
 /** Does nothing: for previews and screenshot tests. */

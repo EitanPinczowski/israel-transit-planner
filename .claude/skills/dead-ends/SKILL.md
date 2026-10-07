@@ -7,7 +7,7 @@ description: Approaches that were considered and rejected, with the reason. Load
 
 | idea | why not |
 |---|---|
-| Google Maps SDK / Directions / Places | needs a billing account (card). Free-only rule. |
+| Google Maps SDK / Directions / Places | needs a billing account (card). Free-only rule. **Not the same thing:** Android's built-in `android.location.Geocoder` (an OS API, no key, no billing, Google answers it on Play-services phones) is the approved backup geocoder (owner, 2026-10-07). Keep it. |
 | Moovit API | no free public API. |
 | OSM's own tile servers (tile.openstreetmap.org) | tile usage policy forbids app traffic. OpenFreeMap allows it. |
 | Oracle Cloud "Always Free" VM + OpenTripPlanner | sign-up needs a card; owner said no card. |
@@ -28,3 +28,4 @@ description: Approaches that were considered and rejected, with the reason. Load
 | Bike / scooter rentals (Tel-O-Fun etc.) via Transitous | `GET /api/v1/rentals` around Tel Aviv, 3 km (2026-10-06): 0 providers, 0 stations. No Israeli feed. |
 | `refresh-itinerary` | Refreshes with real-time data, and MOT lines have none on Transitous. |
 | AppCompat (`AppCompatDelegate.setApplicationLocales`) for the app language | C6, 2026-10-06: below Android 13 it only re-applies to `AppCompatActivity`, so it would mean moving `MainActivity` off `ComponentActivity` and the theme onto `Theme.AppCompat`, plus a new dependency. On 13+ it is the framework `LocaleManager` call `ui/AppLocale` makes directly; below, `AppLocale` wraps the base context as the back-port does. |
+| Nominatim public (`nominatim.openstreetmap.org`) for autocomplete | Forbidden by its usage policy (no search-as-you-type, ≤ 1 req/s). The backup geocoder is Photon instead (search fix, 2026-10-07). |

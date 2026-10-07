@@ -26,7 +26,8 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 | `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. Answers carry `previousPageCursor` / `nextPageCursor` (`EARLIER|1791867600`, `LATER|…`); the same query plus `pageCursor=<one>` returns the adjacent window (Earlier / Later, `TripPlanner.page`). |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
-| `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
+| `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. Through `search/PlaceSearch` (Photon after a miss, below). |
+| `reverseGeocode` | `GET /api/v1/reverse-geocode` | `place`, `numResults=1`: names a long-pressed pin or a "save my current location" fix (`PinName`); 1 request each, cached a day; none → "Pin · lat, lon". |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
 | `trip` | `GET /api/v6/trip` | `tripId` (from a leg or a departure; contains `:` — let OkHttp encode it). Answers an `Itinerary`: one transit leg, first stop → last, every stop in `intermediateStops`. |
 | `mapTrips` | `GET /api/v6/map/trips` | `min`/`max` bbox (SW/NE, like `map/stops`), `zoom`, `startTime`/`endTime`. A list of stop-to-stop hops (`TripSegment`); **polyline precision 5**, not 6. |
@@ -55,6 +56,10 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
   (`needsFullNameHint` in `present/Format.kt`).
+- **Geocode, missing streets (2026-10-07, `geocode_tabenkin_raanana`):** "טבנקין 15 רעננה" (the
+  owner's home) near Ra'anana returns 8 other Ra'anana places and no טבנקין, with or without the
+  number: the street is not in the index. Fixed by the map pin, "save my current location" and
+  the Photon backup (below), not by re-ranking.
 - **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
   first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
   Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
@@ -153,6 +158,69 @@ is a policy decision, not a code tweak — say so in the PR.
 |---|---|---|---|
 | Night refresh (`NightRefreshWorker`, Phase 9 C2) | `plan` only | 6 (`NightRefresh.MAX_TRIPS`, `BudgetedTransitApi`) + 1 per 429/503 retry | Wi-Fi, charging, battery not low; 22:00–06:00; once per service day; never retried |
 | Last trip home (`LastTripReceiver`, Phase 9 C5) | `plan` only (`LastRideFinder`) | 3 (`LastRideFinder.BUDGET`, `BudgetedTransitApi`) + 1 per 429/503 retry; 0 with the setting off (default), no Home, no origin, or within 1 km of Home | one inexact alarm an evening (19:00 Sun–Thu, 12:00 Fri, 20:00 Sat) → WorkManager, network connected; not 02:00–03:59; a check with no signal retried every 15 min while the day's 3 last (spent requests stored before each try) |
+
+## Backup geocoders: the phone's Geocoder, then Photon (search fix, owner approved 2026-10-07)
+Asked only after a Transitous miss: no answer's name/street contains every typed word that is
+not a number, a town the answers lie in, or "רחוב/street" (`PlaceSearch.needsBackup`), text ≥ 3
+characters. Chain (`core/search/Photon.kt` `FallbackGeocoder`, wired in `TransitApp.backupGeocoder`):
+**saved/recent → Transitous → Android Geocoder → Photon** (Photon only when `!Geocoder.isPresent()`
+or the Geocoder errs, times out or finds nothing). Answers go below Transitous's; duplicates
+(same name ≤ 150 m) dropped. Each answer shows its town.
+**Typed town** (`search/Towns.kt`): the bundled table (`TownsData`, ~100 towns, Hebrew + English
+names, OSM centre, radius; `python tools/gen_towns.py` from `tools/towns_seed.tsv`, 1 Photon
+request per town) finds the town the text ends with ("טבנקין 15 רעננה", "…, Tel Aviv", "ב"ש"), or
+starts with before a comma; not after a street word ("שדרות ירושלים") nor before only a number
+("ירושלים 5"). It biases every request and **every source's answers outside it are dropped**
+(`Towns.holds`: by the answer's own town name when the table knows it, else by radius), so a
+typed town is never silently replaced; nothing left = "Not found… long-press the map".
+**Never a wrong place as the answer** (owner, 2026-10-07): `PlaceSearch.exact` — every
+distinctive typed word (not the town, "street" or kind-of-place words like בית חולים/תחנה) in the
+answer's name/street, one letter off allowed, and the typed house number. Only exact answers are
+offered as answers; the rest are listed under "Closest matches", with "Not found exactly — pick it
+on the map" on top. `Aliases` rewrites ~20 everyday names to their map name + town (איכילוב →
+סוראסקי תל אביב, תל השומר hospital → שיבא, נתב"ג…).
+`QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops רחוב/רח'. **Budget:** one chain call per search, a
+search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
+pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache, ≤ 2 at
+once, one retry on 429/503). A backup failure never fails the search.
+
+**Android's built-in Geocoder** (`android/.../data/AndroidGeocoder.kt`). An OS API: keyless, no
+account, no billing. On Play-services phones Google's address data answers it. **It is NOT the
+Google Maps SDK / Places** (`dead-ends`): don't remove it under the "no Google Maps" rule.
+`Locale("iw")` or English; API 33+ listener form, `runInterruptible(IO)` below; **3 s timeout**
+(`TIMEOUT_MS`). Also names pins and "save my current location" first ("טבנקין 15, רעננה"), then
+Transitous `reverse-geocode`, then coordinates offline. Privacy: only the typed text or the
+point leaves the phone (release notes say so). Not unit-testable (Android class): the chain is
+tested with a fake in core; UI tests have no backup (`UiTestApp.backupGeocoder = null`).
+- **Step 0 check (2026-10-07, scratch run 37567840566, google_apis emulators API 34 + 35):**
+  `isPresent()` true. "טבנקין 15 רעננה", "טבנקין 15, רעננה" and "Tabenkin 15, Ra'anana" → 1 answer
+  each, every locale: "טבנקין 15, רעננה, ישראל" (en "Tabenkin St 15, Ra'anana, Israel"), locality
+  רעננה, **32.1881065, 34.860527**. Reverse there: טבנקין 15, השלום 51, טבנקין 12. Timing: cold
+  first call 2.5 s, then forward 130–750 ms (typically 200–450), reverse 1–530 ms.
+
+**Photon** (`PhotonClient`): `GET https://photon.komoot.io/api?q=…&lang=…&lat=…&lon=…&bbox=34.2,29.45,35.95,33.35&limit=5`,
+GeoJSON (`features[].properties.{name,street,housenumber,city,type,osm_value}`, `geometry.coordinates`
+= **[lon, lat]**) → `GeocodeMatch` (`parsePhoton`).
+- **Policy:** free, keyless, no card; fair use, search-as-you-type tolerated (komoot's public
+  instance). Our User-Agent; "Search © OpenStreetMap / Photon" under its answers (ODbL). Not in
+  the map chip: on the largest font the longer chip wrapped and failed R7. Nominatim's public
+  server forbids autocomplete → `dead-ends`.
+- **Language:** the public instance knows default/en/de/fr; Hebrew sends `lang=default` (OSM's
+  local name = Hebrew in Israel), English `en`.
+- **Recorded 2026-10-07:** OSM has no טבנקין in Ra'anana; Photon's top answer for "טבנקין 15
+  רעננה" is טבנקין יצחק 15 in **Tel Aviv**, then Kiryat Arba (the bbox includes the West Bank)
+  → dropped by the typed-town rule (`photon_tabenkin_raanana`). "רגר" → שדרות יצחק רגר, Be'er
+  Sheva (`photon_rager`).
+- **Fixtures:** `python tools/record_fixture.py --photon <name> "/api?q=…"` (`photon_*`).
+- **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
+
+**Address corpus** (owner, 2026-10-07: "no address left undefined or wrong"):
+`androidTest/assets/address_corpus.tsv` (~60 queries: cities and villages, abbreviations, geresh
+forms, English, typos, landmarks; expected town/street/house; a known-gap column) runs through
+the real chain against the LIVE services in `AddressCorpusTest`, on demand only
+(`.github/workflows/address-corpus.yml`: Run, or push `corpus-run/<name>`), ~1 query/s. The
+table (source, ms, first answer, pass/fail) is in the run summary. A miss not listed as a known
+gap fails it.
 
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`

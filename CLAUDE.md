@@ -22,6 +22,13 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
     departures. Israel MOT GTFS is loaded there; real-time only for busofash (Tel Aviv
     night buses), so MOT times are scheduled.
   - **OpenFreeMap** (`tiles.openfreemap.org`) — map tiles for MapLibre.
+  - **Android's built-in Geocoder** (`android.location.Geocoder`; owner approved 2026-10-07) —
+    keyless, part of the OS; on Play-services phones Google answers it. NOT the Maps SDK/Places
+    (no key, no billing). Only on a Transitous street miss and for pin names; 3 s timeout.
+  - **Photon** (`photon.komoot.io`, OSM search; owner approved 2026-10-07) — only when the phone
+    has no Geocoder or it can't answer: ≤ 1 request per typing pause, `GuardedGeocoder` (day
+    cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited under its answers.
+    Never Nominatim's public server (its policy forbids autocomplete). See `transitous-api`.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),
   a visible link to `https://transitous.org/sources/`, and traffic stays light.
@@ -46,10 +53,11 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   ride/       RideTracker: "get off at the next stop" from GPS fixes (tested)
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
+  search/     PlaceSearch (Transitous → Photon on a miss), TypingSearch, LocalFirst + Recents (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py · pull_goldens.py · ui_*
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_towns.py · gen_icons.py · pull_goldens.py · ui_*
 ```
 
 ### The four special features (all return a Pareto front: driver cost × arrival × transfers)
