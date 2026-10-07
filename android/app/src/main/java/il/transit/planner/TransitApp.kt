@@ -4,6 +4,9 @@ import android.app.Application
 import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitApi
+import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.GuardedGeocoder
+import il.transit.core.search.PhotonClient
 import il.transit.core.api.Itinerary
 import il.transit.core.plan.NightRefresh
 import il.transit.core.remind.Reminder
@@ -61,6 +64,9 @@ open class TransitApp : Application() {
     /** "Now" for searches and labels. */
     open val clock: Clock = Clock.systemUTC()
     open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
+
+    /** Photon, asked only when Transitous has no street match (search fix S3); same guard rules. */
+    open val backupGeocoder: BackupGeocoder? by lazy { GuardedGeocoder(PhotonClient()) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
     val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {

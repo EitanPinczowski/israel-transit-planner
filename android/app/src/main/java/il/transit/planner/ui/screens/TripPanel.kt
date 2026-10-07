@@ -53,6 +53,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
@@ -260,7 +261,7 @@ internal fun OverflowMenu(vm: MainActions) {
 @Composable
 internal fun placeLabel(ref: PlaceRef): String = when (ref) {
     PlaceRef.MyLocation -> stringResource(R.string.my_location)
-    is PlaceRef.Point -> ref.name ?: stringResource(R.string.dropped_pin)
+    is PlaceRef.Point -> ref.name ?: pinFallback(ref.at)
 }
 
 @Composable
@@ -319,7 +320,24 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
             }
             items(state.suggestions) { s ->
                 val detail = listOfNotNull(if (s.isStop) stringResource(R.string.stop) else null, s.detail).joinToString(" · ").ifEmpty { null }
-                SuggestionRow(s.name, detail, if (s.saved) Icons.Default.Star else Icons.Default.Place) { vm.pick(s) }
+                val icon = when {
+                    s.home -> Icons.Default.Home
+                    s.recent -> Icons.Default.Refresh
+                    s.saved -> Icons.Default.Star
+                    else -> Icons.Default.Place
+                }
+                SuggestionRow(s.name, detail, icon) { vm.pick(s) }
+            }
+            // Photon's answers are OpenStreetMap data: credited where they show.
+            if (state.places.backupShown) {
+                item {
+                    Text(
+                        stringResource(R.string.search_backup_credit),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
             }
         }
     }

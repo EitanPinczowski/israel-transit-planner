@@ -26,7 +26,8 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 | `plan` | `GET /api/v6/plan` | `fromPlace`/`toPlace` = `lat,lon` or a stop id. `preTransitModes`/`postTransitModes` e.g. `CAR_DROPOFF`, capped by `maxPreTransitTime`/`maxPostTransitTime` (s). `directModes=CAR` gives the car route in `direct[]`. Answers carry `previousPageCursor` / `nextPageCursor` (`EARLIER|1791867600`, `LATER|…`); the same query plus `pageCursor=<one>` returns the adjacent window (Earlier / Later, `TripPlanner.page`). |
 | `oneToMany` | `GET /api/v1/one-to-many` | `one`/`many` use **`lat;lon`** (semicolon!), many comma-joined. `arriveBy=true` = many→one. `{}` entry = no path. `max` capped by server config. |
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
-| `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. |
+| `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. Through `search/PlaceSearch` (Photon after a miss, below). |
+| `reverseGeocode` | `GET /api/v1/reverse-geocode` | `place`, `numResults=1`: names a long-pressed pin or a "save my current location" fix (`PinName`); 1 request each, cached a day; none → "Pin · lat, lon". |
 | `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
 | `trip` | `GET /api/v6/trip` | `tripId` (from a leg or a departure; contains `:` — let OkHttp encode it). Answers an `Itinerary`: one transit leg, first stop → last, every stop in `intermediateStops`. |
 | `mapTrips` | `GET /api/v6/map/trips` | `min`/`max` bbox (SW/NE, like `map/stops`), `zoom`, `startTime`/`endTime`. A list of stop-to-stop hops (`TripSegment`); **polyline precision 5**, not 6. |
@@ -55,6 +56,10 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
   (`needsFullNameHint` in `present/Format.kt`).
+- **Geocode, missing streets (2026-10-07, `geocode_tabenkin_raanana`):** "טבנקין 15 רעננה" (the
+  owner's home) near Ra'anana returns 8 other Ra'anana places and no טבנקין, with or without the
+  number: the street is not in the index. Fixed by the map pin, "save my current location" and
+  the Photon backup (below), not by re-ranking.
 - **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
   first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
   Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
@@ -153,6 +158,28 @@ is a policy decision, not a code tweak — say so in the PR.
 |---|---|---|---|
 | Night refresh (`NightRefreshWorker`, Phase 9 C2) | `plan` only | 6 (`NightRefresh.MAX_TRIPS`, `BudgetedTransitApi`) + 1 per 429/503 retry | Wi-Fi, charging, battery not low; 22:00–06:00; once per service day; never retried |
 | Last trip home (`LastTripReceiver`, Phase 9 C5) | `plan` only (`LastRideFinder`) | 3 (`LastRideFinder.BUDGET`, `BudgetedTransitApi`) + 1 per 429/503 retry; 0 with the setting off (default), no Home, no origin, or within 1 km of Home | one inexact alarm an evening (19:00 Sun–Thu, 12:00 Fri, 20:00 Sat) → WorkManager, network connected; not 02:00–03:59; a check with no signal retried every 15 min while the day's 3 last (spent requests stored before each try) |
+
+## Backup geocoder: Photon (search fix, owner approved 2026-10-07)
+The one outside service besides Transitous and OpenFreeMap. `core/search/Photon.kt`:
+- `GET https://photon.komoot.io/api?q=…&lang=…&lat=…&lon=…&bbox=34.2,29.45,35.95,33.35&limit=5`,
+  answers GeoJSON (`features[].properties.{name,street,housenumber,city,type,osm_value}`,
+  `geometry.coordinates` = **[lon, lat]**), mapped to `GeocodeMatch` (`parsePhoton`).
+- **Policy:** free, keyless, no card; fair use, search-as-you-type tolerated (komoot's public
+  instance). Our User-Agent (`MotisClient.USER_AGENT`); credit "Search: Photon" in the chip and
+  "Search © OpenStreetMap / Photon" under its answers (ODbL). Nominatim's public server forbids
+  autocomplete → `dead-ends`.
+- **When:** only after a Transitous miss: no answer's name/street contains every typed word that
+  is not a number, a town the answers lie in, or "רחוב/street" (`PlaceSearch.needsBackup`), and
+  the text is ≥ 3 characters. Answers go below Transitous's, duplicates (same name ≤ 150 m) dropped.
+- **Budget:** ≤ 1 Photon request per search, a search only after typing pauses 350 ms
+  (`TypingSearch`): pinned in `PlaceSearchTest`. `GuardedGeocoder`: day cache (bias rounded to
+  0.1°), ≤ 2 at once, one retry on 429/503. A Photon failure never fails the search.
+- **Language:** Photon's public instance knows default/en/de/fr; Hebrew sends `lang=default`
+  (OSM's local name = Hebrew in Israel), English `en`.
+- **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
+- **Fixtures `photon_handwritten_*` are hand-written** from Photon's documented format: the cloud
+  environment blocks photon.komoot.io (2026-10-07). Re-record them when the host is allowed.
+- UI tests never call it (`UiTestApp.backupGeocoder = null`).
 
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`

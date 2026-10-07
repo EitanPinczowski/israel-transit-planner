@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Transit Planner</string>
-    <string name="attribution">Routing: Transitous · Map © OpenStreetMap, OpenFreeMap</string>
+    <string name="attribution">Routing: Transitous · Search: Photon · Map © OpenStreetMap, OpenFreeMap</string>
 
     <string name="from">From</string>
     <string name="to">To</string>

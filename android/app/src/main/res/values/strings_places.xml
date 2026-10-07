@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Long-press on the map (S1): a small sheet for the point. -->
+    <string name="pin_name">Pin · %1$s</string>
+    <string name="pin_naming">Finding the address…</string>
+    <string name="pin_from">From here</string>
+    <string name="pin_to">To here</string>
+    <string name="pin_save">Save as place…</string>
+    <!-- Saved places (S2). -->
+    <string name="save_here">Save my current location</string>
+    <string name="save_here_help">Where you are now, e.g. as Home</string>
+    <string name="save_here_no_fix">Your location isn\'t known yet. Turn on location and try again, or long-press the map.</string>
+    <!-- Under search answers that came from the backup geocoder (S3). -->
+    <string name="search_backup_credit">Search © OpenStreetMap / Photon</string>
+</resources>

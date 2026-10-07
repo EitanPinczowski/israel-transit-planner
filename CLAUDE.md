@@ -22,6 +22,10 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
     departures. Israel MOT GTFS is loaded there; real-time only for busofash (Tel Aviv
     night buses), so MOT times are scheduled.
   - **OpenFreeMap** (`tiles.openfreemap.org`) — map tiles for MapLibre.
+  - **Photon** (`photon.komoot.io`, OSM search; owner approved 2026-10-07) — backup geocoder,
+    asked only after a Transitous miss: ≤ 1 request per typing pause, through `GuardedGeocoder`
+    (day cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited in the chip.
+    Never Nominatim's public server (its policy forbids autocomplete). See `transitous-api`.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),
   a visible link to `https://transitous.org/sources/`, and traffic stays light.
@@ -46,6 +50,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   ride/       RideTracker: "get off at the next stop" from GPS fixes (tested)
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
+  search/     PlaceSearch (Transitous → Photon on a miss), TypingSearch, LocalFirst + Recents (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store

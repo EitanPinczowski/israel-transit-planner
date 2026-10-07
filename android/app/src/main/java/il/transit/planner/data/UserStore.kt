@@ -35,6 +35,9 @@ class UserStore(private val prefs: DataStore<Preferences>) {
     val settings: Flow<UserSettings> = data.map { UserJson.decodeSettings(it[SETTINGS]) }
     val places: Flow<List<SavedPlace>> = data.map { UserJson.decodePlaces(it[PLACES]) }
     val trips: Flow<List<SavedTrip>> = data.map { UserJson.decodeTrips(it[TRIPS]) }
+
+    /** Places picked from search lately, newest first (core `Recents`, at most 10). */
+    val recents: Flow<List<SavedPlace>> = data.map { UserJson.decodePlaces(it[RECENTS]) }
     val favorites: Flow<List<il.transit.core.user.FavoriteLine>> = data.map { UserJson.decodeFavorites(it[FAVORITES]) }
 
     /** The one active "time to leave" reminder, if any. */
@@ -46,6 +49,10 @@ class UserStore(private val prefs: DataStore<Preferences>) {
 
     suspend fun setPlaces(p: List<SavedPlace>) {
         prefs.edit { it[PLACES] = UserJson.encodePlaces(p) }
+    }
+
+    suspend fun setRecents(p: List<SavedPlace>) {
+        prefs.edit { it[RECENTS] = UserJson.encodePlaces(p) }
     }
 
     /** When the app last asked GitHub for a newer release (epoch seconds). */
@@ -71,6 +78,7 @@ class UserStore(private val prefs: DataStore<Preferences>) {
         val SETTINGS = stringPreferencesKey("settings")
         val PLACES = stringPreferencesKey("places")
         val TRIPS = stringPreferencesKey("trips")
+        val RECENTS = stringPreferencesKey("recent_places")
         val FAVORITES = stringPreferencesKey("favorite_lines")
         val REMINDER = stringPreferencesKey("reminder")
         val LAST_UPDATE_CHECK = longPreferencesKey("last_update_check")
