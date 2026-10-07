@@ -23,12 +23,40 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A second geocoder, asked only when Transitous has no street match ([PlaceSearch]). Behind
- * an interface so the service is swappable; [PhotonClient] is the one in use (owner approved
- * one outside service for search, 2026-10-07). Answers come back in Transitous's shape, so the
- * rest of the app (detail line, town, suggestions) treats them alike.
+ * an interface so the service is swappable. In the app: the phone's own Geocoder first
+ * (`AndroidGeocoder`), then [PhotonClient] ([FallbackGeocoder]); owner approved both,
+ * 2026-10-07. Answers come back in Transitous's shape, so the rest of the app (detail line,
+ * town, suggestions) treats them alike.
  */
 interface BackupGeocoder {
     suspend fun search(text: String, language: String, near: LatLon?, max: Int = PlaceSearch.BACKUP_MAX): List<GeocodeMatch>
+
+    /** A name for the point ("טבנקין 15, רעננה"), or null when this geocoder has none / doesn't reverse. */
+    suspend fun reverseName(at: LatLon, language: String): String? = null
+}
+
+/**
+ * [first] (the phone's Geocoder; null when the phone has none), then [second] (Photon) only
+ * when [first] errs, times out or finds nothing. So one search asks each at most once.
+ * Reverse names: [first] only, then [second]; a failure is null, never an exception.
+ */
+class FallbackGeocoder(private val first: BackupGeocoder?, private val second: BackupGeocoder) : BackupGeocoder {
+    override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
+        val found = first?.let { orNull { it.search(text, language, near, max) } }
+        return if (!found.isNullOrEmpty()) found else second.search(text, language, near, max)
+    }
+
+    override suspend fun reverseName(at: LatLon, language: String): String? =
+        first?.let { orNull { it.reverseName(at, language) } } ?: orNull { second.reverseName(at, language) }
+
+    private suspend fun <T> orNull(call: suspend () -> T): T? = try {
+        call()
+    } catch (e: kotlinx.coroutines.CancellationException) {
+        // A timeout inside [first] is its own TimeoutCancellationException: a miss, not ours to rethrow.
+        if (e is kotlinx.coroutines.TimeoutCancellationException) null else throw e
+    } catch (e: Exception) {
+        null
+    }
 }
 
 /**
@@ -170,6 +198,17 @@ class GuardedGeocoder(
             }
         }
         cache[key] = now.plus(ttl) to value
+        return value
+    }
+
+    private val names = ConcurrentHashMap<String, Pair<Instant, String?>>()
+
+    override suspend fun reverseName(at: LatLon, language: String): String? {
+        val key = "$at:$language"
+        val now = clock.instant()
+        names[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value }
+        val value = permits.withPermit { inner.reverseName(at, language) }
+        if (value != null) names[key] = now.plus(ttl) to value // a miss may be offline: ask again next time
         return value
     }
 }

@@ -7,7 +7,7 @@ description: Approaches that were considered and rejected, with the reason. Load
 
 | idea | why not |
 |---|---|
-| Google Maps SDK / Directions / Places | needs a billing account (card). Free-only rule. |
+| Google Maps SDK / Directions / Places | needs a billing account (card). Free-only rule. **Not the same thing:** Android's built-in `android.location.Geocoder` (an OS API, no key, no billing, Google answers it on Play-services phones) is the approved backup geocoder (owner, 2026-10-07). Keep it. |
 | Moovit API | no free public API. |
 | OSM's own tile servers (tile.openstreetmap.org) | tile usage policy forbids app traffic. OpenFreeMap allows it. |
 | Oracle Cloud "Always Free" VM + OpenTripPlanner | sign-up needs a card; owner said no card. |

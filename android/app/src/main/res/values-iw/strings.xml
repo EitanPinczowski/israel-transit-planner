@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">מתכנן נסיעות</string>
-    <string name="attribution">ניתוב: Transitous · חיפוש: Photon · מפה © OpenStreetMap, OpenFreeMap</string>
+    <string name="attribution">ניתוב: Transitous · מפה © OpenStreetMap, OpenFreeMap</string>
 
     <string name="from">מ־</string>
     <string name="to">אל</string>

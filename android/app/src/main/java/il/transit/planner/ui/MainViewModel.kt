@@ -242,7 +242,7 @@ class MainViewModel(
     private val departureCache: il.transit.planner.data.DepartureCacheStore? = null,
     private val clock: Clock = Clock.systemUTC(),
     /** Asked only after a Transitous miss ([PlaceSearch]); null = Transitous alone. */
-    backup: BackupGeocoder? = null,
+    private val backup: BackupGeocoder? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -258,7 +258,7 @@ class MainViewModel(
 
     private val planner = TripPlanner(api)
     private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup)) { q, answer, _ -> showAnswer(q, answer) }
-    private val picker = PlacePicker(api, store, { language }, viewModelScope, { f -> _state.update(f) }, { _state.value })
+    private val picker = PlacePicker(api, backup, store, { language }, viewModelScope, { f -> _state.update(f) }, { _state.value })
     private var planJob: Job? = null
     private var stopsJob: Job? = null
     private var loadedStops: BBox? = null
@@ -340,7 +340,7 @@ class MainViewModel(
                     LocalFirst.serverAfter(local, answer.primary).map { toSuggestion(it) } +
                     LocalFirst.serverAfter(local, answer.backup).map { toSuggestion(it).copy(backup = true) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
-                places = st.places.copy(backupShown = answer.backup.isNotEmpty()),
+                places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }),
             )
         }
     }

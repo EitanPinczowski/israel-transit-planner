@@ -159,31 +159,47 @@ is a policy decision, not a code tweak — say so in the PR.
 | Night refresh (`NightRefreshWorker`, Phase 9 C2) | `plan` only | 6 (`NightRefresh.MAX_TRIPS`, `BudgetedTransitApi`) + 1 per 429/503 retry | Wi-Fi, charging, battery not low; 22:00–06:00; once per service day; never retried |
 | Last trip home (`LastTripReceiver`, Phase 9 C5) | `plan` only (`LastRideFinder`) | 3 (`LastRideFinder.BUDGET`, `BudgetedTransitApi`) + 1 per 429/503 retry; 0 with the setting off (default), no Home, no origin, or within 1 km of Home | one inexact alarm an evening (19:00 Sun–Thu, 12:00 Fri, 20:00 Sat) → WorkManager, network connected; not 02:00–03:59; a check with no signal retried every 15 min while the day's 3 last (spent requests stored before each try) |
 
-## Backup geocoder: Photon (search fix, owner approved 2026-10-07)
-The one outside service besides Transitous and OpenFreeMap. `core/search/Photon.kt`:
-- `GET https://photon.komoot.io/api?q=…&lang=…&lat=…&lon=…&bbox=34.2,29.45,35.95,33.35&limit=5`,
-  answers GeoJSON (`features[].properties.{name,street,housenumber,city,type,osm_value}`,
-  `geometry.coordinates` = **[lon, lat]**), mapped to `GeocodeMatch` (`parsePhoton`).
+## Backup geocoders: the phone's Geocoder, then Photon (search fix, owner approved 2026-10-07)
+Asked only after a Transitous miss: no answer's name/street contains every typed word that is
+not a number, a town the answers lie in, or "רחוב/street" (`PlaceSearch.needsBackup`), text ≥ 3
+characters. Chain (`core/search/Photon.kt` `FallbackGeocoder`, wired in `TransitApp.backupGeocoder`):
+**saved/recent → Transitous → Android Geocoder → Photon** (Photon only when `!Geocoder.isPresent()`
+or the Geocoder errs, times out or finds nothing). Answers go below Transitous's; duplicates
+(same name ≤ 150 m) dropped; when the text names a town (`typedTowns`, whole words), answers in
+another town are dropped, else each shows its town. **Budget:** one chain call per search, a
+search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
+pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache, ≤ 2 at
+once, one retry on 429/503). A backup failure never fails the search.
+
+**Android's built-in Geocoder** (`android/.../data/AndroidGeocoder.kt`). An OS API: keyless, no
+account, no billing. On Play-services phones Google's address data answers it. **It is NOT the
+Google Maps SDK / Places** (`dead-ends`): don't remove it under the "no Google Maps" rule.
+`Locale("iw")` or English; API 33+ listener form, `runInterruptible(IO)` below; **3 s timeout**
+(`TIMEOUT_MS`). Also names pins and "save my current location" first ("טבנקין 15, רעננה"), then
+Transitous `reverse-geocode`, then coordinates offline. Privacy: only the typed text or the
+point leaves the phone (release notes say so). Not unit-testable (Android class): the chain is
+tested with a fake in core; UI tests have no backup (`UiTestApp.backupGeocoder = null`).
+- **Step 0 check (2026-10-07, scratch run 37567840566, google_apis emulators API 34 + 35):**
+  `isPresent()` true. "טבנקין 15 רעננה", "טבנקין 15, רעננה" and "Tabenkin 15, Ra'anana" → 1 answer
+  each, every locale: "טבנקין 15, רעננה, ישראל" (en "Tabenkin St 15, Ra'anana, Israel"), locality
+  רעננה, **32.1881065, 34.860527**. Reverse there: טבנקין 15, השלום 51, טבנקין 12. Timing: cold
+  first call 2.5 s, then forward 130–750 ms (typically 200–450), reverse 1–530 ms.
+
+**Photon** (`PhotonClient`): `GET https://photon.komoot.io/api?q=…&lang=…&lat=…&lon=…&bbox=34.2,29.45,35.95,33.35&limit=5`,
+GeoJSON (`features[].properties.{name,street,housenumber,city,type,osm_value}`, `geometry.coordinates`
+= **[lon, lat]**) → `GeocodeMatch` (`parsePhoton`).
 - **Policy:** free, keyless, no card; fair use, search-as-you-type tolerated (komoot's public
-  instance). Our User-Agent (`MotisClient.USER_AGENT`); credit "Search: Photon" in the chip and
-  "Search © OpenStreetMap / Photon" under its answers (ODbL). Nominatim's public server forbids
-  autocomplete → `dead-ends`.
-- **When:** only after a Transitous miss: no answer's name/street contains every typed word that
-  is not a number, a town the answers lie in, or "רחוב/street" (`PlaceSearch.needsBackup`), and
-  the text is ≥ 3 characters. Answers go below Transitous's, duplicates (same name ≤ 150 m) dropped.
-- **Budget:** ≤ 1 Photon request per search, a search only after typing pauses 350 ms
-  (`TypingSearch`): pinned in `PlaceSearchTest`. `GuardedGeocoder`: day cache (bias rounded to
-  0.1°), ≤ 2 at once, one retry on 429/503. A Photon failure never fails the search.
-- **Language:** Photon's public instance knows default/en/de/fr; Hebrew sends `lang=default`
-  (OSM's local name = Hebrew in Israel), English `en`.
-- **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
-- **Typed town:** when the text names a town one of the answers lies in (whole words,
-  `PlaceSearch.typedTowns`), Photon answers in another town are dropped; otherwise each shows its
-  town. Recorded 2026-10-07 (`photon_tabenkin_raanana`): OSM has no טבנקין in Ra'anana either;
-  Photon's top answer for "טבנקין 15 רעננה" is טבנקין יצחק 15 in **Tel Aviv**, then Kiryat Arba
-  (the Israel bbox includes the West Bank). "רגר" → שדרות יצחק רגר, Be'er Sheva (`photon_rager`).
+  instance). Our User-Agent; "Search © OpenStreetMap / Photon" under its answers (ODbL). Not in
+  the map chip: on the largest font the longer chip wrapped and failed R7. Nominatim's public
+  server forbids autocomplete → `dead-ends`.
+- **Language:** the public instance knows default/en/de/fr; Hebrew sends `lang=default` (OSM's
+  local name = Hebrew in Israel), English `en`.
+- **Recorded 2026-10-07:** OSM has no טבנקין in Ra'anana; Photon's top answer for "טבנקין 15
+  רעננה" is טבנקין יצחק 15 in **Tel Aviv**, then Kiryat Arba (the bbox includes the West Bank)
+  → dropped by the typed-town rule (`photon_tabenkin_raanana`). "רגר" → שדרות יצחק רגר, Be'er
+  Sheva (`photon_rager`).
 - **Fixtures:** `python tools/record_fixture.py --photon <name> "/api?q=…"` (`photon_*`).
-- UI tests never call it (`UiTestApp.backupGeocoder = null`).
+- **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
 
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`

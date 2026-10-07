@@ -22,9 +22,12 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
     departures. Israel MOT GTFS is loaded there; real-time only for busofash (Tel Aviv
     night buses), so MOT times are scheduled.
   - **OpenFreeMap** (`tiles.openfreemap.org`) — map tiles for MapLibre.
-  - **Photon** (`photon.komoot.io`, OSM search; owner approved 2026-10-07) — backup geocoder,
-    asked only after a Transitous miss: ≤ 1 request per typing pause, through `GuardedGeocoder`
-    (day cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited in the chip.
+  - **Android's built-in Geocoder** (`android.location.Geocoder`; owner approved 2026-10-07) —
+    keyless, part of the OS; on Play-services phones Google answers it. NOT the Maps SDK/Places
+    (no key, no billing). Only on a Transitous street miss and for pin names; 3 s timeout.
+  - **Photon** (`photon.komoot.io`, OSM search; owner approved 2026-10-07) — only when the phone
+    has no Geocoder or it can't answer: ≤ 1 request per typing pause, `GuardedGeocoder` (day
+    cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited under its answers.
     Never Nominatim's public server (its policy forbids autocomplete). See `transitous-api`.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),

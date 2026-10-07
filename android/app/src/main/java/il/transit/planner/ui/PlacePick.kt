@@ -2,6 +2,7 @@ package il.transit.planner.ui
 
 import il.transit.core.api.TransitApi
 import il.transit.core.geo.LatLon
+import il.transit.core.search.BackupGeocoder
 import il.transit.core.search.PinName
 import il.transit.core.search.Recents
 import il.transit.core.user.SavedPlace
@@ -24,17 +25,20 @@ data class PlacesUi(
     val pin: MapPin? = null,
     val draft: PlaceDraft? = null,
     val recents: List<SavedPlace> = emptyList(),
-    /** Some suggestions shown came from the backup geocoder: its credit shows under them. */
+    /** Some suggestions shown came from Photon (OSM data): its credit shows under them. */
     val backupShown: Boolean = false,
 )
 
 /**
- * Long-press sheet, "save my current location" and recent picks. One reverse geocode per
- * pin or per "save here" tap, cached a day by the guard; offline the name falls back to the
- * coordinates (the screen shows "Pin · 32.1801, 34.8712").
+ * Long-press sheet, "save my current location" and recent picks. One name lookup per pin or
+ * per "save here" tap: the phone's Geocoder ("טבנקין 15, רעננה"), else Transitous's reverse
+ * geocode, each cached a day; offline the name falls back to the coordinates (the screen
+ * shows "Pin · 32.1801, 34.8712").
  */
 internal class PlacePicker(
     private val api: TransitApi,
+    /** The phone's Geocoder (then Photon): names a point first; Transitous when it can't. */
+    private val backup: BackupGeocoder?,
     private val store: UserStore,
     private val language: () -> String,
     private val scope: CoroutineScope,
@@ -94,7 +98,7 @@ internal class PlacePicker(
         }
     }
 
-    private suspend fun nameOf(at: LatLon): String? = try {
+    private suspend fun nameOf(at: LatLon): String? = backup?.reverseName(at, language()) ?: try {
         PinName.of(api.reverseGeocode(at, language(), 1))
     } catch (e: CancellationException) {
         throw e

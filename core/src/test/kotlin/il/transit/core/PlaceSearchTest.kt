@@ -7,6 +7,7 @@ import il.transit.core.api.TransitHttpException
 import il.transit.core.geo.LatLon
 import il.transit.core.present.geocodeTown
 import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.FallbackGeocoder
 import il.transit.core.search.GuardedGeocoder
 import il.transit.core.search.PhotonClient
 import il.transit.core.search.PlaceSearch
@@ -16,6 +17,7 @@ import il.transit.core.search.parsePhoton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -273,6 +275,71 @@ class PlaceSearchTest {
         val guard = GuardedGeocoder(inner, clock)
         (1..6).map { i -> async { guard.search("q$i", "he", null) } }.awaitAll()
         assertEquals(2, peak)
+    }
+
+    // --- the phone's Geocoder first, Photon only when it can't answer --------------------
+
+    /** Stands in for the app's AndroidGeocoder (an Android class, not testable here). */
+    private class FakeDevice(val answer: suspend (String) -> List<GeocodeMatch>, val name: String? = null) : BackupGeocoder {
+        var calls = 0
+        var reverses = 0
+        override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
+            calls++
+            return answer(text)
+        }
+        override suspend fun reverseName(at: LatLon, language: String): String? { reverses++; return name }
+    }
+
+    // What the phone's Geocoder answered on the google_apis emulators (API 34/35, 2026-10-07,
+    // scratch run 37567840566): the owner's home, which neither Transitous nor OSM has.
+    private val deviceHome = GeocodeMatch(
+        "ADDRESS", "טבנקין 15", "android:32.1881065,34.860527", 32.1881065, 34.860527,
+        street = "טבנקין", houseNumber = "15",
+        areas = listOf(il.transit.core.api.GeocodeArea("ישראל", 2.0), il.transit.core.api.GeocodeArea("רעננה", 8.0, default = true)),
+    )
+
+    @Test fun `the phone's answer is used and Photon is never asked`() = runTest {
+        val device = FakeDevice({ listOf(deviceHome) })
+        val photon = FakeBackup { fail("Photon asked although the phone answered"); emptyList() }
+        val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_tabenkin_raanana") } }
+        val answer = PlaceSearch(api, FallbackGeocoder(device, photon)).search("טבנקין 15 רעננה", "he", raanana)
+        assertEquals(1, device.calls)
+        assertEquals(listOf("טבנקין 15"), answer.backup.map { it.name })
+        assertEquals("רעננה", geocodeTown(answer.backup.single())) // kept: the typed town
+    }
+
+    @Test fun `Photon only when the phone finds nothing, fails, times out, or has no Geocoder`() = runTest {
+        val cases = listOf<BackupGeocoder?>(
+            FakeDevice({ emptyList() }),
+            FakeDevice({ throw IllegalStateException("grpc failed") }),
+            FakeDevice({ kotlinx.coroutines.withTimeout(3_000) { delay(10_000); emptyList() } }),
+            null, // Geocoder.isPresent() == false
+        )
+        for (device in cases) {
+            val photon = FakeBackup { photon("photon_rager") }
+            val found = FallbackGeocoder(device, photon).search("רגר", "he", null)
+            assertEquals(listOf("רגר"), photon.calls)
+            assertEquals("שדרות יצחק רגר", found.first().name)
+        }
+    }
+
+    @Test fun `a search the user abandons is not a miss`() = runTest {
+        val photon = FakeBackup()
+        val job = launch { FallbackGeocoder(FakeDevice({ delay(10_000); emptyList() }), photon).search("רגר", "he", null) }
+        advanceTimeBy(100)
+        job.cancel()
+        advanceUntilIdle()
+        assertTrue(photon.calls.isEmpty())
+    }
+
+    @Test fun `pin names - the phone first, null when nobody names it, cached only when found`() = runTest {
+        val device = FakeDevice({ emptyList() }, name = "טבנקין 15, רעננה")
+        val guard = GuardedGeocoder(FallbackGeocoder(device, FakeBackup()), clock)
+        assertEquals("טבנקין 15, רעננה", guard.reverseName(raanana, "he"))
+        assertEquals("טבנקין 15, רעננה", guard.reverseName(raanana, "he"))
+        assertEquals(1, device.reverses)
+        val none = GuardedGeocoder(FallbackGeocoder(null, FakeBackup()), clock)
+        assertEquals(null, none.reverseName(raanana, "he")) // Photon doesn't reverse: Transitous names it then
     }
 
     // --- the client ---------------------------------------------------------------------

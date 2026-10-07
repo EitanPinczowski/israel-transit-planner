@@ -4,7 +4,10 @@ import android.app.Application
 import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitApi
+import android.location.Geocoder
 import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.FallbackGeocoder
+import il.transit.planner.data.AndroidGeocoder
 import il.transit.core.search.GuardedGeocoder
 import il.transit.core.search.PhotonClient
 import il.transit.core.api.Itinerary
@@ -65,8 +68,15 @@ open class TransitApp : Application() {
     open val clock: Clock = Clock.systemUTC()
     open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
 
-    /** Photon, asked only when Transitous has no street match (search fix S3); same guard rules. */
-    open val backupGeocoder: BackupGeocoder? by lazy { GuardedGeocoder(PhotonClient()) }
+    /**
+     * Asked only when Transitous has no street match (search fix S3): the phone's own Geocoder
+     * when it has one, Photon when it hasn't or can't answer; each under its own guard. The
+     * phone's Geocoder also names long-pressed pins and saved locations first.
+     */
+    open val backupGeocoder: BackupGeocoder? by lazy {
+        val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this)) else null
+        FallbackGeocoder(device, GuardedGeocoder(PhotonClient()))
+    }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
     val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {
