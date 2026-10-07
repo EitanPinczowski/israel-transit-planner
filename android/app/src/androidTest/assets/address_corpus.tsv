@@ -20,7 +20,7 @@ Rothschild Blvd 10, Tel Aviv	en	תל אביב-יפו	רוטשילד|Rothschild	1
 דרך מנחם בגין 132 תל אביב	he	תל אביב-יפו	בגין	132	
 תחנה מרכזית חדשה תל אביב	he	תל אביב-יפו			
 תחנת רכבת תל אביב סבידור	he	תל אביב-יפו			
-בית חולים איכילוב	he	תל אביב-יפו			
+בית חולים איכילוב	he	תל אביב-יפו			its name on maps is the Sourasky Medical Center; the phone's Geocoder had nothing, Photon guesses Tel HaShomer (run 4, 2026-10-07). Type 'סוראסקי' or pick it on the map
 אוניברסיטת תל אביב	he	תל אביב-יפו			
 דיזנגוף סנטר	he	תל אביב-יפו			
 # Jerusalem
@@ -35,7 +35,7 @@ King George 20, Jerusalem	en	ירושלים	המלך ג'ורג'|King George	20
 # Haifa
 הרצל 12 חיפה	he	חיפה	הרצל	12	
 Herzl St 12, Haifa	en	חיפה	הרצל|Herzl	12	
-שדרות הנשיא 100 חיפה	he	חיפה	הנשיא	100	
+שדרות הנשיא 100 חיפה	he	חיפה	הנשיא	100	no source answers this house in Haifa (run 4, 2026-10-07): Transitous's closest is שדרות המגינים 100, shown as a suggestion, not picked
 הטכניון חיפה	he	חיפה			
 בית חולים רמב"ם חיפה	he	חיפה			
 # Be'er Sheva
