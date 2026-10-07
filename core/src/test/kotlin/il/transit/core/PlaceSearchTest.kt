@@ -67,11 +67,12 @@ class PlaceSearchTest {
         assertTrue(PlaceSearch.needsBackup("רחוב טבנקין רעננה", found))
     }
 
-    @Test fun `a street Transitous knows is a hit, the typed town and the number don't count`() {
+    @Test fun `a street Transitous knows is a hit, the typed town and street word don't count`() {
         // Recorded 2026-10-05: "הרצל חיפה".
         assertFalse(PlaceSearch.needsBackup("הרצל חיפה", transitous("geocode_herzl_haifa")))
-        // Number + town words + "street" are not what is looked for.
-        assertFalse(PlaceSearch.needsBackup("רחוב הרצל 12 חיפה", transitous("geocode_herzl_haifa")))
+        assertFalse(PlaceSearch.needsBackup("רחוב הרצל חיפה", transitous("geocode_herzl_haifa")))
+        // ...but a house number none of them has is a miss: they are all bus stops on Herzl.
+        assertTrue(PlaceSearch.needsBackup("רחוב הרצל 12 חיפה", transitous("geocode_herzl_haifa")))
     }
 
     @Test fun `a short loose match is a miss, too short is never sent`() {
@@ -103,13 +104,14 @@ class PlaceSearchTest {
         assertTrue(answer.backup.isEmpty())
     }
 
-    @Test fun `with no town typed, the backup's answers go below Transitous's, each with its town`() = runTest {
+    @Test fun `after a miss the backup's answers come first, each with its town`() = runTest {
         val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_rager") } }
         val backup = FakeBackup { photon("photon_rager") }
         val answer = PlaceSearch(api, backup).search("רגר", "he", LatLon(31.25, 34.79))
         assertEquals(1, backup.calls.size)
         assertEquals(transitous("geocode_rager"), answer.primary)
-        assertEquals(answer.primary + answer.backup, answer.all)
+        assertTrue(answer.missed)
+        assertEquals(answer.backup + answer.primary, answer.all) // Transitous's "רגר" guesses (Hagar…) go below
         // Photon knows Rager Blvd, which Transitous's top answers miss (2026-10-03).
         assertEquals(listOf("שדרות יצחק רגר", "שדרות יצחק רגר"), answer.backup.map { it.name })
         assertEquals(listOf("ADDRESS", "ADDRESS"), answer.backup.map { it.type })
@@ -179,6 +181,36 @@ class PlaceSearchTest {
 
     @Test fun `the bias sent to the backup is rounded so the day cache hits`() {
         assertEquals(LatLon(32.2, 34.9), PlaceSearch.roundBias(LatLon(32.1801, 34.8712)))
+    }
+
+    // --- house numbers (address corpus, 2026-10-07) --------------------------------------
+
+    @Test fun `the house number typed, 12א is 12, a road number is the last number word`() {
+        assertEquals("15", PlaceSearch.houseNumberOf("טבנקין 15 רעננה"))
+        assertEquals("12", PlaceSearch.houseNumberOf("ביאליק 12א רמת גן"))
+        assertEquals("10", PlaceSearch.houseNumberOf("Rothschild Blvd 10, Tel Aviv"))
+        assertEquals(null, PlaceSearch.houseNumberOf("שדרות רגר באר שבע"))
+    }
+
+    @Test fun `a house number no Transitous answer has is a miss, the exact one moves up`() = runTest {
+        fun at(name: String, number: String?) = GeocodeMatch("ADDRESS", name, name, 32.07, 34.78, street = "רוטשילד", houseNumber = number)
+        // Live, 2026-10-07: "רוטשילד 1 תל אביב" answered רוטשילד 114 first.
+        assertTrue(PlaceSearch.needsBackup("רוטשילד 1", listOf(at("רוטשילד 114", "114"), at("רוטשילד 10", "10"))))
+        assertFalse(PlaceSearch.needsBackup("רוטשילד 10", listOf(at("רוטשילד 114", "114"), at("רוטשילד 10", "10"))))
+        assertTrue(PlaceSearch.hasHouse(GeocodeMatch("ADDRESS", "טבנקין 15", "x", 0.0, 0.0), "15"))
+        assertFalse(PlaceSearch.hasHouse(GeocodeMatch("STOP", "ויצמן / גלר", "x", 0.0, 0.0), "50"))
+        val api = FakeTransitApi().apply { onGeocode = { listOf(at("רוטשילד 114", "114"), at("רוטשילד 10", "10")) } }
+        val answer = PlaceSearch(api, FakeBackup { fail("no miss: Transitous has no. 10"); emptyList() }).search("רוטשילד 10", "he", null)
+        assertEquals("רוטשילד 10", answer.all.first().name)
+        assertFalse(answer.missed)
+    }
+
+    @Test fun `the owner's home - the phone's answer is first, before Transitous's other Ra'anana places`() = runTest {
+        val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_tabenkin_raanana") } }
+        val device = FakeDevice({ listOf(deviceHome) })
+        val answer = PlaceSearch(api, FallbackGeocoder(device, FakeBackup())).search("טבנקין 15 רעננה", "he", null)
+        assertEquals("טבנקין 15", answer.all.first().name)
+        assertEquals(transitous("geocode_tabenkin_raanana").size + 1, answer.all.size)
     }
 
     // --- debounce: one pause, at most one request of each ------------------------------

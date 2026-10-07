@@ -336,9 +336,9 @@ class MainViewModel(
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
             st.copy(
+                // answer.all: Transitous first, or the backup first when Transitous missed.
                 suggestions = local.map { toSuggestion(it) } +
-                    LocalFirst.serverAfter(local, answer.primary).map { toSuggestion(it) } +
-                    LocalFirst.serverAfter(local, answer.backup).map { toSuggestion(it).copy(backup = true) },
+                    LocalFirst.serverAfter(local, answer.all).map { m -> toSuggestion(m).copy(backup = m in answer.backup) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
                 places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }, notFound = answer.notFound),
             )

@@ -13,16 +13,19 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * What a search found: Transitous's answers, then the backup geocoder's (empty unless
- * Transitous missed). [town]: the town the text named, when it did; every answer lies in it.
- * Nothing at all ([notFound]): the screen says so and offers the map.
+ * What a search found: Transitous's answers and the backup geocoder's (empty unless
+ * Transitous [missed]). [all] is the order shown: after a miss the backup's answers come first —
+ * it was asked because none of Transitous's names what was typed (the address corpus, 2026-10-07:
+ * "טבנקין 15 רעננה" showed "סירקין" first). [town]: the town the text named; every answer lies in
+ * it. Nothing at all ([notFound]): the screen says so and offers the map.
  */
 data class SearchAnswer(
     val primary: List<GeocodeMatch>,
     val backup: List<GeocodeMatch> = emptyList(),
     val town: Town? = null,
+    val missed: Boolean = false,
 ) {
-    val all: List<GeocodeMatch> get() = primary + backup
+    val all: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
     val notFound: Boolean get() = primary.isEmpty() && backup.isEmpty()
 }
 
@@ -30,8 +33,9 @@ data class SearchAnswer(
  * Place search: Transitous first; the [backup] geocoder only when Transitous has nothing that
  * matches the street (or place) typed — "טבנקין 15 רעננה" is not in Transitous's index at all
  * (2026-10-07), it answers with other places in Ra'anana. At most one backup request per
- * search ([BACKUP_PER_SEARCH], pinned by `PlaceSearchTest`); its answers go below
- * Transitous's, minus any Transitous already gave. When the text names a town ([Towns.typedIn]),
+ * search ([BACKUP_PER_SEARCH], pinned by `PlaceSearchTest`); its answers, minus any Transitous
+ * already gave, go first ([SearchAnswer.all]). A typed house number that no Transitous answer
+ * carries ("רוטשילד 1" → רוטשילד 114) is a miss too; an answer with the exact number moves up. When the text names a town ([Towns.typedIn]),
  * that town biases every request and **no answer from another town is kept**, from any source:
  * OSM has no טבנקין in Ra'anana either, and Photon's best guess is a טבנקין 15 in Tel Aviv, which
  * must never stand in for it silently. Abbreviations are spelled out first ([QueryText]). A
@@ -44,7 +48,9 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         // A typed town says where better than the phone's position does.
         val bias = town?.centre ?: near
         fun inTown(m: GeocodeMatch) = town == null || Towns.holds(town, m)
+        val house = houseNumberOf(q)
         val primary = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)
+            .sortedByDescending { house != null && hasHouse(it, house) }
         if (backup == null || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town)
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
@@ -59,7 +65,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
-        return SearchAnswer(primary, kept, town)
+        return SearchAnswer(primary, kept.sortedByDescending { house != null && hasHouse(it, house) }, town, missed = true)
     }
 
     companion object {
@@ -88,6 +94,9 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
                 typed?.names.orEmpty().map(::normalize)
             val words = query.split(Regex("[\\s,]+")).map(::normalize)
                 .filter { w -> w.length >= 2 && !w.all(Char::isDigit) && w !in FILLER && towns.none { it.split(' ').contains(w) || it == w } }
+            // A house number none of them has: the street may be right, the place is not.
+            val house = houseNumberOf(query)
+            if (house != null && answers.none { hasHouse(it, house) }) return true
             if (words.isEmpty()) return typed != null && answers.isEmpty()
             return answers.none { a ->
                 val hay = normalize(listOfNotNull(a.name, a.street).joinToString(" "))
@@ -110,6 +119,15 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         /** An answer's town (admin level 8, else the deepest level ≥ 7), normalized; null if none. */
         fun townOf(m: GeocodeMatch): String? =
             (m.areas.lastOrNull { it.adminLevel == 8.0 } ?: m.areas.lastOrNull { it.adminLevel >= 7.0 })?.name?.let(::normalize)
+
+        /** The house number typed ("15", "12א" → "12"): a number word of 1–4 digits, the last one. */
+        fun houseNumberOf(query: String): String? =
+            query.split(Regex("[\\s,]+")).lastOrNull { Regex("\\d{1,4}[א-ת]?").matches(it) }?.takeWhile(Char::isDigit)
+
+        /** [m] is that house: its house number, or a number word in its name ("טבנקין 15"). */
+        fun hasHouse(m: GeocodeMatch, house: String): Boolean =
+            m.houseNumber?.takeWhile(Char::isDigit) == house ||
+                m.name.split(Regex("[\\s,/]+")).any { it.takeWhile(Char::isDigit) == house && it.firstOrNull()?.isDigit() == true }
 
         fun sameAnswer(a: GeocodeMatch, b: GeocodeMatch): Boolean =
             normalize(a.name) == normalize(b.name) && Geo.distanceM(LatLon(a.lat, a.lon), LatLon(b.lat, b.lon)) <= SAME_PLACE_M
