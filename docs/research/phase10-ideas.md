@@ -208,3 +208,34 @@ Build **1, 2 and 6** first (all S, 0 to 1 request, they touch the Trip tab and t
 so one package). Then **3** (the holiday heads-up), because it is the only idea that fixes
 a daily Israeli pain point with no network. Take **4 and 5** together next if the owner
 wants the app to be useful before a trip is planned.
+
+## Owner's picks (2026-10-07)
+
+Picked from this list: **2** open places from other apps, **3** holiday heads-up, **6** tight-transfer
+warning, **7** day timetable, **8** Live Updates notification, **9** voice search.
+
+Picked from the boss's extra list:
+- **11** search by stop number (the 5-digit code on the pole), 0–1 requests.
+- **12** fare profile (senior / student / youth / soldier) for prices and the pass advice, 0 requests.
+- **13** travel report: a month of History as a shareable file for expense claims, 0 requests.
+- **18** offline timetables for saved stops, saved by the night refresh (≤ 3 a night), after 7.
+- **19** rain-aware walking from **Open-Meteo** (free, no key, no card). Adds an outside service.
+- **20** recent and saved places first in search, 0 requests.
+- **25** "the timetable doesn't reach this date" + nearest day with service, 0 requests (with 3).
+
+**Search fix (owner report: "טבנקין 15 רעננה", his home, is not found).** A live check on
+2026-10-07 shows Transitous' geocoder doesn't know טבנקין in Ra'anana at all, with or without
+the house number. Re-ranking can't fix that. Picked:
+- **S1** pick a place on the map (long-press → From / To / save), name from `reverse-geocode`.
+- **S2** "save where I am" (e.g. as Home).
+- **S3** a second, free, keyless geocoder (Photon or Nominatim; the planner picks and checks its
+  usage policy) asked only when Transitous has no street match. **Owner approved adding this
+  outside service** (2026-10-07). Photon and Nominatim are blocked by this environment's
+  network policy at the moment, so fixtures need the hosts allowed (or recording on the owner's PC).
+
+**Owner decision on outside services (2026-10-07):** S3's geocoder and 19's Open-Meteo may be
+added. Both must be free, keyless and card-free, send the app's User-Agent, keep traffic light,
+and be named in `CLAUDE.md`'s hard rules and in `transitous-api` (or a new section) by the
+package that adds them.
+
+Not picked this round: 1, 4, 5, 10, 14, 15, 16, 17, 21–24.
