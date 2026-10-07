@@ -327,7 +327,16 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
                     )
                 }
             }
-            items(state.suggestions) { s ->
+            val firstClosest = state.suggestions.indexOfFirst { it.closest }
+            itemsIndexed(state.suggestions) { i, s ->
+                if (i == firstClosest) {
+                    Text(
+                        stringResource(R.string.search_closest),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                    )
+                }
                 val detail = listOfNotNull(if (s.isStop) stringResource(R.string.stop) else null, s.detail).joinToString(" · ").ifEmpty { null }
                 val icon = when {
                     s.home -> Icons.Default.Home

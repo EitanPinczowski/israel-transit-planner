@@ -79,7 +79,12 @@ class PlacePickShotsTest(private val v: Variant) {
 
     /** No geocoder knows the text: said plainly, with the way out (the map). */
     @Test fun suggestionsNotFound() = paparazzi.snapshot("suggestions_not_found") {
-        val state = UiState(editing = Field.TO, query = "טבנקין 99 עין גדי", places = PlacesUi(notFound = true))
+        val state = UiState(
+            editing = Field.TO,
+            query = "שדרות הנשיא 100 חיפה",
+            suggestions = listOf(Suggestion("שדרות המגינים 100", "חיפה", LatLon(32.81, 34.99), saved = false, isStop = false, closest = true)),
+            places = PlacesUi(notFound = true),
+        )
         Frame {
             Box(Modifier.fillMaxSize().background(mapStandIn()).padding(12.dp)) { SuggestionList(state, NoActions, Modifier) }
         }

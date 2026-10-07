@@ -24,9 +24,21 @@ data class SearchAnswer(
     val backup: List<GeocodeMatch> = emptyList(),
     val town: Town? = null,
     val missed: Boolean = false,
+    /** The text as searched (abbreviations and aliases spelled out). */
+    val query: String = "",
 ) {
-    val all: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
-    val notFound: Boolean get() = primary.isEmpty() && backup.isEmpty()
+    private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
+
+    /** Answers that are what was typed ([PlaceSearch.exact]); only these may be shown as the answer. */
+    val exact: List<GeocodeMatch> get() = ordered.filter { PlaceSearch.exact(query, it, town) }
+
+    /** The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest matches". */
+    val closest: List<GeocodeMatch> get() = ordered.filterNot { PlaceSearch.exact(query, it, town) }
+
+    val all: List<GeocodeMatch> get() = exact + closest
+
+    /** No exact answer: the screen says so, offers the map, and labels any closest matches. */
+    val notFound: Boolean get() = exact.isEmpty()
 }
 
 /**
@@ -43,7 +55,7 @@ data class SearchAnswer(
  */
 class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeocoder?) {
     suspend fun search(text: String, language: String, near: LatLon?, max: Int = 8): SearchAnswer {
-        val q = QueryText.expand(text)
+        val q = Aliases.rewrite(QueryText.expand(text))
         val town = Towns.typedIn(q).firstOrNull()
         // A typed town says where better than the phone's position does.
         val bias = town?.centre ?: near
@@ -51,7 +63,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         val house = houseNumberOf(q)
         val primary = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)
             .sortedByDescending { house != null && hasHouse(it, house) }
-        if (backup == null || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town)
+        if (backup == null || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q)
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
             backup.search(q, language, bias?.let(::roundBias), BACKUP_MAX)
@@ -65,7 +77,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
-        return SearchAnswer(primary, kept.sortedByDescending { house != null && hasHouse(it, house) }, town, missed = true)
+        return SearchAnswer(primary, kept.sortedByDescending { house != null && hasHouse(it, house) }, town, missed = true, query = q)
     }
 
     companion object {
@@ -83,24 +95,56 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         private val FILLER = setOf("רחוב", "רח", "שדרות", "שד", "שדרת", "דרך", "st", "street", "rd", "road", "ave", "avenue", "blvd")
 
         /**
-         * True when none of Transitous's [answers] names what was typed: some word of [query]
-         * that is not a number, not part of the [typed] town or a town one of the answers lies
-         * in, and not "street" is missing from every answer's name and street. A typed town
+         * True when none of Transitous's [answers] is [exact] for what was typed. A typed town
          * with no answer in it is a miss, too.
          */
         fun needsBackup(query: String, answers: List<GeocodeMatch>, typed: Town? = null): Boolean {
             if (query.trim().length < MIN_BACKUP_CHARS) return false
-            val towns = answers.flatMap { a -> a.areas.filter { it.adminLevel >= 7.0 }.map { normalize(it.name) } }.toSet() +
-                typed?.names.orEmpty().map(::normalize)
-            val words = query.split(Regex("[\\s,]+")).map(::normalize)
-                .filter { w -> w.length >= 2 && !w.all(Char::isDigit) && w !in FILLER && towns.none { it.split(' ').contains(w) || it == w } }
-            // A house number none of them has: the street may be right, the place is not.
+            if (typed != null && answers.isEmpty()) return true
+            return answers.none { exact(query, it, typed) }
+        }
+
+        /** Place words that say what kind of place, not which one: "בית חולים איכילוב" is איכילוב. */
+        private val GENERIC = setOf(
+            "בית", "חולים", "מרכז", "רפואי", "תחנה", "תחנת", "מרכזית", "חדשה", "רכבת", "קניון", "אוניברסיטת",
+            "אוניברסיטה", "רחוב", "hospital", "medical", "center", "centre", "station", "central", "mall", "university",
+        )
+
+        /**
+         * The words of [query] that pick out the place: not numbers, not the town ([typed] or one
+         * [m] lies in), not "street" and not kind-of-place words.
+         */
+        private fun distinctive(query: String, m: GeocodeMatch, typed: Town?): List<String> {
+            val towns = m.areas.filter { it.adminLevel >= 7.0 }.map { normalize(it.name) } + typed?.names.orEmpty().map(::normalize)
+            return query.split(Regex("[\\s,]+")).map(::normalize).filter { w ->
+                w.length >= 2 && w.first().isLetter() && w !in FILLER && w.removePrefix("ה") !in GENERIC && w !in GENERIC &&
+                    towns.none { it.split(' ').contains(w) || it == w }
+            }
+        }
+
+        /**
+         * [m] is what was typed, not just near it (address corpus, owner 2026-10-07: never a wrong
+         * place first): every distinctive word is in its name or street (one letter off allowed,
+         * "טבנקן" = טבנקין), and a typed house number is its number. Otherwise it is only a
+         * closest match, shown as such.
+         */
+        fun exact(query: String, m: GeocodeMatch, typed: Town? = null): Boolean {
             val house = houseNumberOf(query)
-            if (house != null && answers.none { hasHouse(it, house) }) return true
-            if (words.isEmpty()) return typed != null && answers.isEmpty()
-            return answers.none { a ->
-                val hay = normalize(listOfNotNull(a.name, a.street).joinToString(" "))
-                words.all { hay.contains(it) }
+            if (house != null && !hasHouse(m, house)) return false
+            val hay = normalize(listOfNotNull(m.name, m.street).joinToString(" "))
+            val tokens = hay.split(Regex("[\\s,/.]+")).filter { it.isNotEmpty() }
+            return distinctive(query, m, typed).all { w -> hay.contains(w) || (w.length >= 4 && tokens.any { oneOff(w, it) }) }
+        }
+
+        /** Same word but for one letter added, dropped or changed. */
+        private fun oneOff(a: String, b: String): Boolean {
+            if (kotlin.math.abs(a.length - b.length) > 1 || a == b) return a == b
+            var i = 0
+            while (i < minOf(a.length, b.length) && a[i] == b[i]) i++
+            return when {
+                a.length == b.length -> a.substring(i + 1) == b.substring(i + 1)
+                a.length > b.length -> a.substring(i + 1) == b.substring(i)
+                else -> a.substring(i) == b.substring(i + 1)
             }
         }
 

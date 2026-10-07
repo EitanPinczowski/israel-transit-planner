@@ -173,6 +173,12 @@ starts with before a comma; not after a street word ("שדרות ירושלים"
 ("ירושלים 5"). It biases every request and **every source's answers outside it are dropped**
 (`Towns.holds`: by the answer's own town name when the table knows it, else by radius), so a
 typed town is never silently replaced; nothing left = "Not found… long-press the map".
+**Never a wrong place as the answer** (owner, 2026-10-07): `PlaceSearch.exact` — every
+distinctive typed word (not the town, "street" or kind-of-place words like בית חולים/תחנה) in the
+answer's name/street, one letter off allowed, and the typed house number. Only exact answers are
+offered as answers; the rest are listed under "Closest matches", with "Not found exactly — pick it
+on the map" on top. `Aliases` rewrites ~20 everyday names to their map name + town (איכילוב →
+סוראסקי תל אביב, תל השומר hospital → שיבא, נתב"ג…).
 `QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops רחוב/רח'. **Budget:** one chain call per search, a
 search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
 pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache, ≤ 2 at

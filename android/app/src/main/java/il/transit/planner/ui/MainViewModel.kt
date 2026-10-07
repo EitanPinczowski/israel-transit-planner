@@ -109,6 +109,8 @@ data class Suggestion(
     val home: Boolean = false,
     val recent: Boolean = false,
     val backup: Boolean = false,
+    /** Not what was typed, only near it: listed under "Closest matches", never as the answer. */
+    val closest: Boolean = false,
 )
 
 data class StopSheet(
@@ -336,9 +338,10 @@ class MainViewModel(
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
             st.copy(
-                // answer.all: Transitous first, or the backup first when Transitous missed.
+                // Exact answers first (Transitous's, or the backup's after a miss), then the closest, labelled.
                 suggestions = local.map { toSuggestion(it) } +
-                    LocalFirst.serverAfter(local, answer.all).map { m -> toSuggestion(m).copy(backup = m in answer.backup) },
+                    LocalFirst.serverAfter(local, answer.exact).map { m -> toSuggestion(m).copy(backup = m in answer.backup) } +
+                    LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
                 places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }, notFound = answer.notFound),
             )

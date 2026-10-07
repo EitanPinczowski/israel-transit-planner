@@ -12,5 +12,6 @@
     <string name="save_here_no_fix">המיקום שלך עדיין לא ידוע. יש להפעיל מיקום ולנסות שוב, או ללחוץ לחיצה ארוכה על המפה.</string>
     <!-- Under search answers that came from the backup geocoder (S3). -->
     <string name="search_backup_credit">חיפוש © OpenStreetMap / Photon</string>
-    <string name="search_not_found">לא נמצא. כדאי לבדוק את האיות, או לסגור את החיפוש וללחוץ לחיצה ארוכה על המפה כדי לבחור את המקום.</string>
+    <string name="search_not_found">לא נמצאה התאמה מדויקת. כדאי לבדוק את האיות, או לסגור את החיפוש וללחוץ לחיצה ארוכה על המפה כדי לבחור את המקום.</string>
+    <string name="search_closest">התאמות קרובות, לא מה שהוקלד</string>
 </resources>

@@ -29,9 +29,10 @@ import java.io.File
  * places are left out. Run on demand only (`.github/workflows/address-corpus.yml`), one query a
  * second: about 60–120 requests a run.
  *
- * Per query: an answer (or a clear not-found), the first answer in the expected town (by the
- * town it names, else inside the town's radius from the bundled table), the street and house
- * number when given. Logs which source answered and how long it took; writes the table to
+ * Per query: the first EXACT answer (`SearchAnswer.exact`; anything else is only shown under
+ * "Closest matches") is in the expected town (by the town it names, else inside the town's
+ * radius), on the street and at the house number when given. A wrong exact answer always fails;
+ * no exact answer passes only for a row whose known-gap column says why (it shows as not found). Logs which source answered and how long it took; writes the table to
  * `files/address_corpus.md`. Fails on a miss that is not listed as a known gap.
  */
 @RunWith(AndroidJUnit4::class)
@@ -62,8 +63,9 @@ class AddressCorpusTest {
             }
             val (answer, error) = outcome
             val ms = (System.nanoTime() - t0) / 1_000_000
-            val first = answer?.all?.firstOrNull()
-            val problems = check(r, first, error)
+            // Only an exact answer is ever shown as the answer; the rest are labelled "closest".
+            val first = answer?.exact?.firstOrNull()
+            val problems = if (error == null && first == null && answer != null && r.gap.isNotEmpty()) emptyList() else check(r, first, error)
             val ok = problems.isEmpty()
             if (ok) passed++ else if (r.gap.isEmpty()) unexpected += "${r.query}: ${problems.joinToString("; ")}"
             val result = if (ok) "✅" else "❌ " + problems.joinToString("; ") + (if (r.gap.isNotEmpty()) " (known gap: ${r.gap})" else "")
@@ -81,7 +83,7 @@ class AddressCorpusTest {
 
     private fun check(r: Row, first: GeocodeMatch?, error: String?): List<String> {
         if (error != null) return listOf("error $error")
-        if (first == null) return listOf("nothing found")
+        if (first == null) return listOf("no exact answer (shown as not found)")
         val problems = mutableListOf<String>()
         val town = Towns.named(r.town) ?: return listOf("corpus: unknown town ${r.town}")
         if (!Towns.holds(town, first)) problems += "town ${geocodeTown(first) ?: "?"} (${"%.4f".format(first.lat)}, ${"%.4f".format(first.lon)}), want ${r.town}"
