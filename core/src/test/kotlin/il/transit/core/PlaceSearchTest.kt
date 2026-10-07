@@ -41,7 +41,7 @@ class PlaceSearchTest {
     private fun transitous(name: String): List<GeocodeMatch> =
         MotisJson.decodeFromString(ListSerializer(GeocodeMatch.serializer()), text(name))
 
-    /** Photon fixtures are hand-written from Photon's documented GeoJSON: this environment can't reach photon.komoot.io. */
+    /** Recorded from photon.komoot.io, 2026-10-07. */
     private fun photon(name: String) = parsePhoton(text(name))
 
     private class FakeBackup(var answer: (String) -> List<GeocodeMatch> = { emptyList() }) : BackupGeocoder {
@@ -86,19 +86,50 @@ class PlaceSearchTest {
 
     // --- the search ---------------------------------------------------------------------
 
-    @Test fun `a miss asks the backup once and puts its answers below Transitous's`() = runTest {
+    @Test fun `a miss asks the backup once, and a typed town drops its answers elsewhere`() = runTest {
+        // Photon, recorded the same day: OSM has no טבנקין in Ra'anana either. Its best guess
+        // is טבנקין 15 in Tel Aviv, then Kiryat Arba: none may stand in for Ra'anana.
+        assertEquals("טבנקין יצחק 15", photon("photon_tabenkin_raanana").first().name)
+        assertEquals("תל אביב–יפו", geocodeTown(photon("photon_tabenkin_raanana").first()))
         val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_tabenkin_raanana") } }
-        val backup = FakeBackup { photon("photon_handwritten_tabenkin_raanana") }
+        val backup = FakeBackup { photon("photon_tabenkin_raanana") }
         val answer = PlaceSearch(api, backup).search("טבנקין 15 רעננה", "he", raanana)
 
         assertEquals(listOf("geocode"), api.calls)
         assertEquals(PlaceSearch.BACKUP_PER_SEARCH, backup.calls.size)
         assertEquals(transitous("geocode_tabenkin_raanana").size, answer.primary.size)
+        assertTrue(answer.backup.isEmpty())
+    }
+
+    @Test fun `with no town typed, the backup's answers go below Transitous's, each with its town`() = runTest {
+        val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_rager") } }
+        val backup = FakeBackup { photon("photon_rager") }
+        val answer = PlaceSearch(api, backup).search("רגר", "he", LatLon(31.25, 34.79))
+        assertEquals(1, backup.calls.size)
+        assertEquals(transitous("geocode_rager"), answer.primary)
         assertEquals(answer.primary + answer.backup, answer.all)
-        val home = answer.backup.first()
-        assertEquals("טבנקין 15", home.name)
-        assertEquals("ADDRESS", home.type)
-        assertEquals("רעננה", geocodeTown(home))
+        // Photon knows Rager Blvd, which Transitous's top answers miss (2026-10-03).
+        assertEquals(listOf("שדרות יצחק רגר", "שדרות יצחק רגר"), answer.backup.map { it.name })
+        assertEquals(listOf("ADDRESS", "ADDRESS"), answer.backup.map { it.type })
+        assertEquals(listOf("באר-שבע", "באר שבע"), answer.backup.map { geocodeTown(it) })
+    }
+
+    @Test fun `a house number Photon lacks is fine, the town shows - and only the typed town stays`() = runTest {
+        val api = FakeTransitApi().apply { onGeocode = { emptyList() } }
+        val answer = PlaceSearch(api, FakeBackup { photon("photon_tabenkin_raanana") }).search("טבנקין 15", "he", raanana)
+        assertEquals("טבנקין יצחק 15", answer.backup.first().name)
+        assertEquals("תל אביב–יפו", geocodeTown(answer.backup.first()))
+        val inTelAviv = PlaceSearch(api, FakeBackup { photon("photon_tabenkin_raanana") }).search("טבנקין 15 תל אביב–יפו", "he", raanana)
+        assertEquals(listOf("טבנקין יצחק 15"), inTelAviv.backup.map { it.name })
+    }
+
+    @Test fun `typed towns are whole words, dashes and hyphens aside`() {
+        val ts = photon("photon_tabenkin_raanana")
+        assertEquals(setOf("תל אביב יפו"), PlaceSearch.typedTowns("טבנקין תל-אביב-יפו", ts))
+        assertEquals(setOf("קרית ארבע"), PlaceSearch.typedTowns("טבנקין, קרית ארבע", ts))
+        assertTrue(PlaceSearch.typedTowns("טבנקין 15", ts).isEmpty())
+        assertTrue(PlaceSearch.typedTowns("טבנקין 15 רעננה", ts).isEmpty()) // Photon alone doesn't know Ra'anana here
+        assertEquals(setOf("רעננה"), PlaceSearch.typedTowns("טבנקין 15 רעננה", transitous("geocode_tabenkin_raanana")))
     }
 
     @Test fun `a hit never asks the backup`() = runTest {
@@ -152,7 +183,7 @@ class PlaceSearchTest {
 
     @Test fun `typing the whole address costs one Transitous and one Photon request`() = runTest {
         val api = FakeTransitApi().apply { onGeocode = { transitous("geocode_tabenkin_raanana") } }
-        val backup = FakeBackup { photon("photon_handwritten_tabenkin_raanana") }
+        val backup = FakeBackup { photon("photon_tabenkin_raanana") }
         val answers = mutableListOf<Pair<String, SearchAnswer>>()
         val typing = TypingSearch(this, PlaceSearch(api, backup)) { q, a, _ -> answers += q to a }
         val full = "טבנקין 15 רעננה"
@@ -164,7 +195,7 @@ class PlaceSearchTest {
         assertEquals(listOf("geocode"), api.calls)
         assertEquals(listOf(full), backup.calls)
         assertEquals(1, answers.size)
-        assertEquals("טבנקין 15", answers.single().second.backup.first().name)
+        assertTrue(answers.single().second.backup.isEmpty()) // Tel Aviv's טבנקין 15 is not Ra'anana
     }
 
     @Test fun `each pause is one search, and a cleared box cancels the waiting one`() = runTest {
@@ -201,7 +232,7 @@ class PlaceSearchTest {
             override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
                 n++
                 if (n == 1) throw TransitHttpException(429, "slow down", retryAfterSec = 1)
-                return photon("photon_handwritten_tabenkin_raanana")
+                return photon("photon_tabenkin_raanana")
             }
         }
         val guard = GuardedGeocoder(inner, clock)
@@ -250,8 +281,8 @@ class PlaceSearchTest {
     @Test fun `photon is asked with our User-Agent, Israel's box and the app's language`() = runBlocking {
         val server = MockWebServer().apply { start() }
         try {
-            server.enqueue(MockResponse().setBody(text("photon_handwritten_tabenkin_raanana")))
-            server.enqueue(MockResponse().setBody(text("photon_handwritten_rager_en")))
+            server.enqueue(MockResponse().setBody(text("photon_tabenkin_raanana")))
+            server.enqueue(MockResponse().setBody(text("photon_rager_en")))
             server.enqueue(MockResponse().setResponseCode(500).setBody("boom"))
             val client = PhotonClient(server.url("/").toString())
 
@@ -266,18 +297,20 @@ class PlaceSearchTest {
             assertEquals("32.1801", u1.queryParameter("lat"))
             assertEquals("34.8712", u1.queryParameter("lon"))
             assertEquals("5", u1.queryParameter("limit"))
-            assertEquals(listOf("טבנקין 15", "טבנקין", "רעננה"), he.map { it.name })
-            assertEquals(listOf("ADDRESS", "ADDRESS", "PLACE"), he.map { it.type })
-            assertEquals(32.1893, he.first().lat, 1e-9)
-            assertEquals(34.8668, he.first().lon, 1e-9)
+            assertEquals(listOf("טבנקין יצחק 15", "יצחק טבנקין", "הרצי״ה קוק/יצחק טבנקין", "فريديس 15"), he.map { it.name })
+            assertEquals(listOf("ADDRESS", "ADDRESS", "PLACE", "PLACE"), he.map { it.type })
+            assertEquals(listOf("טבנקין יצחק", "15"), listOf(he.first().street, he.first().houseNumber))
+            assertEquals(32.116302, he.first().lat, 1e-9) // GeoJSON is [lon, lat]
+            assertEquals(34.827613, he.first().lon, 1e-9)
 
             val en = client.search("Rager", "en", null, 5)
             val u2 = server.takeRequest().requestUrl!!
             assertEquals("en", u2.queryParameter("lang"))
             assertEquals(PhotonClient.ISRAEL_CENTRE.lat.toString(), u2.queryParameter("lat"))
-            // A named place at a house number is a place, not an address.
-            assertEquals(listOf("ADDRESS" to "Rager Boulevard", "PLACE" to "Soroka Medical Center"), en.map { it.type to it.name })
-            assertEquals("hospital", en[1].category)
+            // Named bus stops are places; the avenue is an address.
+            assertEquals(listOf("PLACE", "PLACE", "ADDRESS", "ADDRESS"), en.map { it.type })
+            assertEquals("Yitzhack Rager Avenue", en[2].name)
+            assertEquals("bus_stop", en[0].category)
 
             try {
                 client.search("x", "he", null, 5)
@@ -291,6 +324,6 @@ class PlaceSearchTest {
     }
 
     @Test fun `an empty answer is no answer`() {
-        assertTrue(photon("photon_handwritten_empty").isEmpty())
+        assertTrue(photon("photon_empty").isEmpty())
     }
 }

@@ -22,8 +22,10 @@ data class SearchAnswer(val primary: List<GeocodeMatch>, val backup: List<Geocod
  * matches the street (or place) typed — "טבנקין 15 רעננה" is not in Transitous's index at all
  * (2026-10-07), it answers with other places in Ra'anana. At most one backup request per
  * search ([BACKUP_PER_SEARCH], pinned by `PlaceSearchTest`); its answers go below
- * Transitous's, minus any Transitous already gave. A backup failure is never the search's
- * failure: the Transitous answers still show.
+ * Transitous's, minus any Transitous already gave, and — when the text names a town — minus
+ * those in another town: OSM has no טבנקין in Ra'anana either, and Photon's best guess is a
+ * טבנקין 15 in Tel Aviv, which must never stand in for it silently. A backup failure is never
+ * the search's failure: the Transitous answers still show.
  */
 class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeocoder?) {
     suspend fun search(text: String, language: String, near: LatLon?, max: Int = 8): SearchAnswer {
@@ -38,7 +40,9 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         } catch (e: Exception) {
             emptyList()
         }
-        return SearchAnswer(primary, extra.filterNot { b -> primary.any { sameAnswer(it, b) } })
+        val towns = typedTowns(q, primary + extra)
+        val kept = extra.filter { b -> primary.none { sameAnswer(it, b) } && (towns.isEmpty() || townOf(b) in towns) }
+        return SearchAnswer(primary, kept)
     }
 
     companion object {
@@ -72,15 +76,31 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
             }
         }
 
+        /**
+         * The towns [query] names, normalized: any town (admin level ≥ 7) of [answers] whose
+         * name appears in the text as whole words ("טבנקין 15 רעננה" → רעננה). Transitous does
+         * not mark a typed town `matched` for such a text (2026-10-07), hence the words.
+         */
+        fun typedTowns(query: String, answers: List<GeocodeMatch>): Set<String> {
+            val text = " " + normalize(query).replace(Regex("[\\s,]+"), " ") + " "
+            return answers.flatMap { a -> a.areas.filter { it.adminLevel >= 7.0 }.map { normalize(it.name) } }
+                .filter { it.isNotEmpty() && text.contains(" $it ") }
+                .toSet()
+        }
+
+        /** An answer's town (admin level 8, else the deepest level ≥ 7), normalized; null if none. */
+        fun townOf(m: GeocodeMatch): String? =
+            (m.areas.lastOrNull { it.adminLevel == 8.0 } ?: m.areas.lastOrNull { it.adminLevel >= 7.0 })?.name?.let(::normalize)
+
         fun sameAnswer(a: GeocodeMatch, b: GeocodeMatch): Boolean =
             normalize(a.name) == normalize(b.name) && Geo.distanceM(LatLon(a.lat, a.lon), LatLon(b.lat, b.lon)) <= SAME_PLACE_M
 
         /** 0.1° (~10 km): plenty for a bias. */
         fun roundBias(p: LatLon) = LatLon((p.lat * 10).roundToInt() / 10.0, (p.lon * 10).roundToInt() / 10.0)
 
-        /** Lower case, no quote marks, no hyphens: "צה״ל" = "צהל", "תל-אביב" = "תל אביב". */
+        /** Lower case, no quote marks, no hyphens or dashes: "צה״ל" = "צהל", "באר-שבע" = "באר שבע". */
         fun normalize(s: String): String =
-            s.lowercase().filterNot { it in "\"'״׳`" }.replace('-', ' ').replace('־', ' ').trim()
+            s.lowercase().filterNot { it in "\"'״׳`" }.replace(Regex("[-־–]+"), " ").replace(Regex("\\s+"), " ").trim()
     }
 }
 

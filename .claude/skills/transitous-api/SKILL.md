@@ -177,8 +177,12 @@ The one outside service besides Transitous and OpenFreeMap. `core/search/Photon.
 - **Language:** Photon's public instance knows default/en/de/fr; Hebrew sends `lang=default`
   (OSM's local name = Hebrew in Israel), English `en`.
 - **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
-- **Fixtures `photon_handwritten_*` are hand-written** from Photon's documented format: the cloud
-  environment blocks photon.komoot.io (2026-10-07). Re-record them when the host is allowed.
+- **Typed town:** when the text names a town one of the answers lies in (whole words,
+  `PlaceSearch.typedTowns`), Photon answers in another town are dropped; otherwise each shows its
+  town. Recorded 2026-10-07 (`photon_tabenkin_raanana`): OSM has no טבנקין in Ra'anana either;
+  Photon's top answer for "טבנקין 15 רעננה" is טבנקין יצחק 15 in **Tel Aviv**, then Kiryat Arba
+  (the Israel bbox includes the West Bank). "רגר" → שדרות יצחק רגר, Be'er Sheva (`photon_rager`).
+- **Fixtures:** `python tools/record_fixture.py --photon <name> "/api?q=…"` (`photon_*`).
 - UI tests never call it (`UiTestApp.backupGeocoder = null`).
 
 ## Fixtures
