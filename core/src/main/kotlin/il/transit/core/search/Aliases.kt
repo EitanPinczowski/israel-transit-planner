@@ -10,10 +10,11 @@ object Aliases {
     private class Alias(val names: List<String>, val he: String, val en: String)
 
     private val ALL = listOf(
-        // Transitous knows it as "בי״ח איכילוב" (2026-10-07); searching "סוראסקי" found the university library.
-        Alias(listOf("איכילוב", "ichilov", "בית חולים איכילוב", "ichilov hospital", "סוראסקי", "sourasky"), "בית חולים איכילוב תל אביב", "Ichilov Hospital, Tel Aviv"),
+        // Transitous knows it as "בי״ח איכילוב" (live, 2026-10-07): "איכילוב תל אביב" finds it; with "בית חולים"
+        // in front it finds other hospitals, and "סוראסקי" finds the university library.
+        Alias(listOf("איכילוב", "ichilov", "בית חולים איכילוב", "ichilov hospital", "סוראסקי", "sourasky"), "איכילוב תל אביב", "Ichilov Hospital, Tel Aviv"),
         Alias(listOf("שיבא", "sheba", "בית חולים תל השומר", "tel hashomer hospital"), "המרכז הרפואי שיבא רמת גן", "Sheba Medical Center, Ramat Gan"),
-        Alias(listOf("בילינסון", "beilinson", "בית חולים בילינסון"), "בית החולים בילינסון פתח תקווה", "Beilinson Hospital, Petah Tikva"),
+        Alias(listOf("בילינסון", "beilinson", "בית חולים בילינסון"), "בילינסון פתח תקווה", "Beilinson Hospital, Petah Tikva"),
         Alias(listOf("השרון בית חולים", "בית חולים השרון"), "בית החולים השרון פתח תקווה", "Hasharon Hospital, Petah Tikva"),
         Alias(listOf("שניידר", "schneider", "בית חולים שניידר"), "שניידר פתח תקווה", "Schneider Children's Medical Center, Petah Tikva"),
         Alias(listOf("סורוקה", "soroka", "בית חולים סורוקה"), "המרכז הרפואי סורוקה באר שבע", "Soroka Medical Center, Beersheba"),

@@ -51,8 +51,8 @@ class ExactMatchTest {
     }
 
     @Test fun `everyday names are searched as the map name, with the town`() {
-        assertEquals("בית חולים איכילוב תל אביב", Aliases.rewrite("בית חולים איכילוב"))
-        assertEquals("בית חולים איכילוב תל אביב", Aliases.rewrite("איכילוב"))
+        assertEquals("איכילוב תל אביב", Aliases.rewrite("בית חולים איכילוב"))
+        assertEquals("איכילוב תל אביב", Aliases.rewrite("איכילוב"))
         assertEquals("Ichilov Hospital, Tel Aviv", Aliases.rewrite("Ichilov hospital"))
         // The name is what makes it exact: the Sourasky *library* (live, 2026-10-07) is not Ichilov.
         val library = GeocodeMatch("PLACE", "הספרייה המרכזית ע\"ש סוראסקי", "l", 32.113, 34.804, areas = listOf(GeocodeArea("תל אביב-יפו", 8.0)))
