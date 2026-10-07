@@ -1,0 +1,437 @@
+[
+ {
+  "type": "PLACE",
+  "category": "jewellery_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "תכשיטי לב רעננה",
+  "id": "node/[8201680034]",
+  "lat": 32.1802731,
+  "lon": 34.8770189,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -26.5
+ },
+ {
+  "type": "PLACE",
+  "category": "oneway",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "כביש חיפה רעננה",
+  "id": "way/[315001064]",
+  "lat": 32.1805959,
+  "lon": 34.8887828,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -26.5
+ },
+ {
+  "type": "PLACE",
+  "category": "oneway",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "כביש חיפה רעננה",
+  "id": "way/[315001065]",
+  "lat": 32.1777945,
+  "lon": 34.8881718,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -26.5
+ },
+ {
+  "type": "PLACE",
+  "category": "town_hall_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "בית עיריית רעננה",
+  "id": "way/[881915662]",
+  "lat": 32.179883,
+  "lon": 34.8764181,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -26.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "סירקין",
+  "id": "",
+  "lat": 32.1765503,
+  "lon": 34.8667139,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -25.768280029296875
+ },
+ {
+  "type": "PLACE",
+  "category": "bank_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "בנק דיסקונט - סניף רעננה",
+  "id": "node/[12793456419]",
+  "lat": 32.1811452,
+  "lon": 34.8734629,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -24.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "סקיי ג'אמפ רעננה",
+  "id": "way/[898071588]",
+  "lat": 32.1955392,
+  "lon": 34.8777988,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -23.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    2.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "קאנטרי קלאב רעננה",
+  "id": "way/[262974116]",
+  "lat": 32.1939009,
+  "lon": 34.8784818,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רעננה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -22.5
+ }
+]

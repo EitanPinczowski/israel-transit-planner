@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [34.7935, 31.2560] },
+      "properties": {
+        "osm_type": "W", "osm_id": 1000000004, "osm_key": "highway", "osm_value": "primary",
+        "type": "street", "name": "Rager Boulevard",
+        "city": "Beersheba", "state": "Southern District", "country": "Israel", "countrycode": "IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [34.7990, 31.2580] },
+      "properties": {
+        "osm_type": "N", "osm_id": 1000000005, "osm_key": "amenity", "osm_value": "hospital",
+        "type": "house", "name": "Soroka Medical Center", "street": "Rager Boulevard", "housenumber": "151",
+        "city": "Beersheba", "state": "Southern District", "country": "Israel", "countrycode": "IL"
+      }
+    }
+  ]
+}
