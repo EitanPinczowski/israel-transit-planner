@@ -308,6 +308,15 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
             }
+            if (state.places.notFound) {
+                item {
+                    Text(
+                        stringResource(R.string.search_not_found),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                    )
+                }
+            }
             if (state.searchHint) {
                 item {
                     Text(

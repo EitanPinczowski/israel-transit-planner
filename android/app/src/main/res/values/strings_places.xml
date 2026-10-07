@@ -12,4 +12,5 @@
     <string name="save_here_no_fix">Your location isn\'t known yet. Turn on location and try again, or long-press the map.</string>
     <!-- Under search answers that came from the backup geocoder (S3). -->
     <string name="search_backup_credit">Search © OpenStreetMap / Photon</string>
+    <string name="search_not_found">Not found. Check the spelling, or close the search and long-press the map to pick the place.</string>
 </resources>

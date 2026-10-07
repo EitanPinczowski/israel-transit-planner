@@ -165,8 +165,15 @@ not a number, a town the answers lie in, or "רחוב/street" (`PlaceSearch.need
 characters. Chain (`core/search/Photon.kt` `FallbackGeocoder`, wired in `TransitApp.backupGeocoder`):
 **saved/recent → Transitous → Android Geocoder → Photon** (Photon only when `!Geocoder.isPresent()`
 or the Geocoder errs, times out or finds nothing). Answers go below Transitous's; duplicates
-(same name ≤ 150 m) dropped; when the text names a town (`typedTowns`, whole words), answers in
-another town are dropped, else each shows its town. **Budget:** one chain call per search, a
+(same name ≤ 150 m) dropped. Each answer shows its town.
+**Typed town** (`search/Towns.kt`): the bundled table (`TownsData`, ~100 towns, Hebrew + English
+names, OSM centre, radius; `python tools/gen_towns.py` from `tools/towns_seed.tsv`, 1 Photon
+request per town) finds the town the text ends with ("טבנקין 15 רעננה", "…, Tel Aviv", "ב"ש"), or
+starts with before a comma; not after a street word ("שדרות ירושלים") nor before only a number
+("ירושלים 5"). It biases every request and **every source's answers outside it are dropped**
+(`Towns.holds`: by the answer's own town name when the table knows it, else by radius), so a
+typed town is never silently replaced; nothing left = "Not found… long-press the map".
+`QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops רחוב/רח'. **Budget:** one chain call per search, a
 search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
 pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache, ≤ 2 at
 once, one retry on 429/503). A backup failure never fails the search.
@@ -200,6 +207,14 @@ GeoJSON (`features[].properties.{name,street,housenumber,city,type,osm_value}`, 
   Sheva (`photon_rager`).
 - **Fixtures:** `python tools/record_fixture.py --photon <name> "/api?q=…"` (`photon_*`).
 - **Swappable:** `BackupGeocoder` interface; another Photon (or self-hosted) is a base-URL change.
+
+**Address corpus** (owner, 2026-10-07: "no address left undefined or wrong"):
+`androidTest/assets/address_corpus.tsv` (~60 queries: cities and villages, abbreviations, geresh
+forms, English, typos, landmarks; expected town/street/house; a known-gap column) runs through
+the real chain against the LIVE services in `AddressCorpusTest`, on demand only
+(`.github/workflows/address-corpus.yml`: Run, or push `corpus-run/<name>`), ~1 query/s. The
+table (source, ms, first answer, pass/fail) is in the run summary. A miss not listed as a known
+gap fails it.
 
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`

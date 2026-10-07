@@ -317,17 +317,17 @@ class MainViewModel(
     // --- search -----------------------------------------------------------------------
 
     fun startEditing(field: Field) {
-        _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false)) }
+        _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false, notFound = false)) }
     }
 
     fun cancelEditing() {
         typing.cancel()
-        _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false)) }
+        _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
     }
 
     /** Saved places and recent picks at once; Transitous (then, on a miss, Photon) once typing pauses. */
     fun onQuery(text: String) {
-        _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false)) }
+        _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
         typing.onText(text, language, locationProvider)
     }
 
@@ -340,7 +340,7 @@ class MainViewModel(
                     LocalFirst.serverAfter(local, answer.primary).map { toSuggestion(it) } +
                     LocalFirst.serverAfter(local, answer.backup).map { toSuggestion(it).copy(backup = true) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
-                places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }),
+                places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }, notFound = answer.notFound),
             )
         }
     }

@@ -27,6 +27,8 @@ data class PlacesUi(
     val recents: List<SavedPlace> = emptyList(),
     /** Some suggestions shown came from Photon (OSM data): its credit shows under them. */
     val backupShown: Boolean = false,
+    /** The search finished and no geocoder knows the text: say so and offer the map, never a blank list. */
+    val notFound: Boolean = false,
 )
 
 /**

@@ -57,7 +57,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store
-tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_icons.py · pull_goldens.py · ui_*
+tools/    check_docs.py · check_strings.py · plan_summary.py · record_fixture.py · gen_rail_stations.py · gen_towns.py · gen_icons.py · pull_goldens.py · ui_*
 ```
 
 ### The four special features (all return a Pareto front: driver cost × arrival × transfers)
