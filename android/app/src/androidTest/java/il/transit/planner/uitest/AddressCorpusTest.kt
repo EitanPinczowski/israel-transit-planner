@@ -68,7 +68,8 @@ class AddressCorpusTest {
             val first = answer?.exact?.firstOrNull()
             val problems = if (error == null && first == null && answer != null && r.gap.isNotEmpty()) emptyList() else check(r, first, error)
             val ok = problems.isEmpty()
-            if (ok) passed++ else if (r.gap.isEmpty()) unexpected += "${r.query}: ${problems.joinToString("; ")}"
+            // A known gap excuses only "not found"; a wrong answer fails any row.
+            if (ok) passed++ else if (r.gap.isEmpty() || first != null) unexpected += "${r.query}: ${problems.joinToString("; ")}"
             val result = if (ok) "✅" else "❌ " + problems.joinToString("; ") + (if (r.gap.isNotEmpty()) " (known gap: ${r.gap})" else "")
             val line = "| ${i + 1} | ${r.query} | ${first?.let(::source) ?: "—"} | $ms | ${first?.name ?: "—"} | ${first?.let { geocodeTown(it) ?: it.name } ?: "—"} | $result |"
             out.append(line).append('\n')
