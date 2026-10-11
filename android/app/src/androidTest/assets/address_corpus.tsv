@@ -38,7 +38,7 @@ King George 20, Jerusalem	en	ירושלים	המלך ג'ורג'|King George	20
 הרצל 12 חיפה	he	חיפה	הרצל	12		
 Herzl St 12, Haifa	en	חיפה	הרצל|Herzl	12		
 שדרות הנשיא 100 חיפה	he	חיפה	הנשיא	100	no source has this house in Haifa (run 4, 2026-10-07): shown as not found, שדרות המגינים 100 only under Closest matches	
-הטכניון חיפה	he	חיפה				^הטכניון|^טכניון|^technion
+הטכניון חיפה	he	חיפה			Transitous has only the obelisk, a pool and stops on Technion Road (2026-10-11): may show as not found, never the obelisk	^הטכניון|^טכניון|^technion
 בית חולים רמב"ם חיפה	he	חיפה				רמב
 # Be'er Sheva
 שד' רגר 1 ב"ש	he	באר שבע	רגר			
@@ -79,12 +79,12 @@ Eilat	en	אילת
 תחנה מרכזית חיפה	he	חיפה			Haifa's central stations are named מרכזית המפרץ / חוף הכרמל; may show as not found	מרכזית
 יפו 97	he	ירושלים	יפו	97	no town typed: may show as not found, never Dizengoff 97	
 ברזילי ירושלים	he	ירושלים	ברזילי			
-בילינסון תל אביב	he	תל אביב-יפו	בילינסון		the street may be unknown: never the hospital in Petah Tikva	
+בילינסון תל אביב	he	תל אביב-יפו	בילינסון|ביילינסון		the street may be unknown: never the hospital in Petah Tikva	
 טבנקין 15 ברעננה	he	רעננה	טבנקין	15		
 ביאליק 5 בתל אביב	he	תל אביב-יפו	ביאליק	5		
 ביאליק 12ב רמת גן	he	רמת גן	ביאליק	12ב	a lettered house may be in no source: shown as not found, never 12 or 12א	
 רוטשילד 12-14 תל אביב	he	תל אביב-יפו	רוטשילד			
-הרצל 5/3 חיפה	he	חיפה	הרצל	5		
+הרצל 5/3 חיפה	he	חיפה	הרצל	5	no source has Herzl 5 in Haifa (Transitous: 50, 52…; corpus run 38152990984): shown as not found	
 Dizengoff Center	en	תל אביב-יפו			English name may be unknown to the sources	dizengoff|דיזנגוף
 Ben Yehuda 10, Tel Aviv	en	תל אביב-יפו	בן יהודה|Ben Yehuda	10		
 יהודה 5 תל אביב	he	תל אביב-יפו	יהודה	5	no plain יהודה street may exist: never בן יהודה or יהודה הלוי	

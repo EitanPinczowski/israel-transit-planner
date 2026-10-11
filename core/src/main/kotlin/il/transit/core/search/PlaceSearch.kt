@@ -166,7 +166,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
 
         /** Place words that say what kind of place, not which one: "בית חולים איכילוב" is איכילוב. */
         private val GENERIC = setOf(
-            "בית", "חולים", "מרכז", "רפואי", "רפואית", "קריה", "תחנה", "תחנת", "מרכזית", "חדשה", "רכבת", "קניון", "אוניברסיטת",
+            "בית", "חולים", "מרכז", "רפואי", "רפואית", "קריה", "קריית", "קרית", "קמפוס", "campus", "תחנה", "תחנת", "מרכזית", "חדשה", "רכבת", "קניון", "אוניברסיטת",
             "אוניברסיטה", "רחוב", "hospital", "medical", "center", "centre", "station", "central", "mall", "university", "new",
         )
 
@@ -224,7 +224,8 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
             val kinds = words.filter(::isGeneric)
             val names = words.filterNot(::isGeneric)
             val hay = tokens(listOfNotNull(m.name, m.street).joinToString(" "))
-            val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet()
+            // Town words aren't the place's name, unless typed as its name ("מודיעין" in "ת. רכבת מודיעין מרכז").
+            val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet() - words.toSet()
             if (names.isEmpty()) {
                 if (kinds.isEmpty()) return house == null && typed != null && Towns.named(m.name.substringBefore(',')) == typed
                 val needed = kinds.filter { it !in WEAK && it.removePrefix("ה") !in WEAK }

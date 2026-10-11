@@ -86,6 +86,9 @@ class ExactMatchTest {
         assertFalse(PlaceSearch.exact("הטכניון חיפה", place("אובליסק הטכניון", "חיפה"), Towns.named("חיפה")))
         assertTrue(PlaceSearch.exact("הטכניון חיפה", place("הטכניון - מכון טכנולוגי לישראל", "חיפה"), Towns.named("חיפה")))
         assertFalse(PlaceSearch.exact("מצפה רמון", place("פונדק רמון", "מצפה רמון"), Towns.named("מצפה רמון")))
+        // Live, corpus run 38152990984: a station named by its town is still named by it.
+        assertTrue(PlaceSearch.exact("תחנת רכבת מודיעין מרכז", place("ת. רכבת מודיעין מרכז", "מודיעין-מכבים-רעות", type = "STOP")))
+        assertTrue(PlaceSearch.exact("הטכניון חיפה", place("קריית הטכניון", "חיפה"), Towns.named("חיפה")))
         assertTrue(PlaceSearch.exact("מצפה רמון", place("מצפה רמון", category = "place_8"), Towns.named("מצפה רמון")))
         // The town alone, a kind word alone, a number alone: never just any place in the town.
         val raanana = Towns.named("רעננה")
