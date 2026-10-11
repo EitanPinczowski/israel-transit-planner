@@ -239,3 +239,14 @@ and be named in `CLAUDE.md`'s hard rules and in `transitous-api` (or a new secti
 package that adds them.
 
 Not picked this round: 1, 4, 5, 10, 14, 15, 16, 17, 21–24.
+
+## Owner's additions (2026-10-07 and 2026-10-11)
+
+- **26 Ride details** on every option: stops count, the get-off stop (with stop number), time on board. 0 extra requests.
+- **27 Prefer big stops for a change of line** (central station / terminal / rail) when two lines share stops; at most ~2 extra requests, only for the opened option; must never make trips noticeably longer.
+- From the outside review (`Transit_Planner_Recommendations_2.md`, owner accepted the boss's picks on 2026-10-11):
+  - search: cancel stale in-flight searches while typing; more acronyms (ר"ג, ק"ש, פ"ת, את"א…); a neighbourhood → city table; explicit match levels (exact house / street / town);
+  - testing: a fast JVM address corpus (200+ rows from recorded fixtures, every push); network-fault tests (429/503/slow); routing invariants (arrival ≥ departure, detour ≥ 0);
+  - app: keep the search and chosen trip across process death; collapse long stop lists ("12 stops, tap to expand"); map ↔ list highlighting; bigger thumb-zone actions and haptics on pin drop.
+  - Rejected from that review (rules or no free data): live SIRI radar, NFC Rav-Kav, local GTFS with delta sync, rail-delay predictor, platform/carriage exits, parking-lot fill and soldier-rush alerts, certificate pinning, per-ABI APK split.
+- **Process:** the owner files a GitHub issue from the phone; the boss turns it into a task.
