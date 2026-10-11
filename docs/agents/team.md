@@ -94,12 +94,23 @@ RTL and English, on every phone size. It works from the CI `screenshots` artifac
 
 It doesn't change feature behaviour. It loads `i18n-rtl` for the design system.
 
-### Gemini reviewer (always on, external)
-**Job:** Gemini Code Assist for GitHub reviews each PR when it opens (`/gemini review` asks again).
-It comments only, at medium severity or worse, guided by `.gemini/styleguide.md`. It is a second
-opinion from a different model, not a gate: the implementer verifies and answers its comments
-(`parallel-work`), and the boss reads them before asking the owner to merge. The owner installs and
-removes the app; nobody gives it write access.
+### Gemini reviewer (always on, external, free)
+**Job:** Gemini Code Assist for GitHub (consumer version: free, no Google Cloud billing) reviews
+each PR when it opens. `/gemini review` asks again after a fix; `@gemini-code-assist <question>`
+in a PR comment asks it anything about that PR. It comments only, at medium severity or worse,
+guided by `.gemini/styleguide.md`.
+
+**Gemini first, Claude review only where Gemini can't look (owner, 2026-10-11, to save tokens):**
+- Every PR: Gemini's review **is** the code review. The implementer verifies and answers each
+  comment (`parallel-work`), then comments `/gemini review` once after its fix push.
+- A Sonnet review runs only when the PR changes screens (Gemini can't see the `screenshots`
+  artifact) or when the boss judges the change risky (routing, search, alarms, money). Then it is
+  a **designer-only / targeted** pass, not the full tester+designer review.
+- The boss reads Gemini's comments and the replies before asking the owner to merge.
+- Research: the owner may run Gemini (e.g. Deep Research) and drop the document in; the boss
+  filters it against `CLAUDE.md` and `dead-ends` instead of starting a researcher session.
+
+The owner installs and removes the app; nobody gives it write access.
 
 ### Implementers (per package)
 These are the A/B agents of Phase 8. Each one gets a brief from the planner's

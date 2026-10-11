@@ -4,21 +4,17 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-06, 22:50 Israel time)
-- **Released:** v0.7.0 (2026-10-05).
-- **Merged since:** #38 mode tabs, #39 place search town, #40 C1, #41 C3, #42 one-tap in-app
-  update (works from 0.8.0 on), #43 UI-test idle fix, #44 C4 tile, #45 handoff order, #46 C5
-  alerts, #47 C6 look & welcome. All Phase 9 packages are merged; no agent is running.
-- **Close-out:** `docs/releases/v0.8.0.md` is assembled (fragments removed).
-- **Next:**
-  1. Owner checks each Phase 9 feature on the Pixel (night refresh needs one night on Wi-Fi
-     and charging).
-  2. Android 8 Back closing an open search: still open, listed as a known issue in the
-     v0.8.0 notes. Fixing it is an implementer job, only if the owner wants it before 0.8.0.
-  3. Ask the owner, then trigger `release.yml` on `main` with version `0.8.0`. 0.8.0 is
-     installed once the usual way; later updates are one tap in the app.
-- **Optional follow-up (owner to decide):** a holiday-eve notice for the last-trip alert (the
-  19:00 check finds the last trip already gone on a weekday holiday eve; today it stays silent).
+## State (2026-10-11, 21:20 Israel time)
+- **Released:** v0.8.0 (2026-10-06) and **v0.8.5** (2026-10-11: search fix, PR #51).
+- **Merged since 0.8.0:** #49 Android 8 Back, #50 Phase 10 research + owner picks, #51 search fix,
+  #52 notes 0.8.5 + Phase 10 additions, #53 Gemini Code Assist config.
+- **Gemini Code Assist** is installed by the owner and reviews every PR (see `team.md`).
+- **Next:** the Phase 10 planner (Opus), from `docs/research/phase10-ideas.md` ("Owner's picks"
+  + "Owner's additions"). Its plan PR needs the owner's approval before any code.
+- **Open follow-ups:** a holiday-eve last-trip notice (owner to decide); the full CBS town list
+  (data.gov.il was blocked by the environment); one unexplained app crash on the P3-he-light
+  emulator profile during #51 (passed on re-run); scratch branches `claude/geocoder-check`,
+  `corpus-run/search-fix`, `claude/a8-back-diag` for the owner to delete.
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
@@ -35,6 +31,10 @@ decisions already recorded.
 - When an agent asks a question, the boss answers it if the answer is clear from the briefs,
   the skills and the owner's recorded decisions; otherwise it passes the question to the owner
   (2026-10-05).
+
+- **Token pool (owner, 2026-10-11):** Gemini does the default PR review and research input for
+  free; Claude agents implement. Prefer a fresh boss session over a very long one (a long context
+  is re-read every turn).
 
 ## Gotchas learned
 - **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
