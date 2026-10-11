@@ -7,10 +7,12 @@ decisions already recorded.
 ## State (2026-10-11, 21:20 Israel time)
 - **Released:** v0.8.0 (2026-10-06) and **v0.8.5** (2026-10-11: search fix, PR #51).
 - **Merged since 0.8.0:** #49 Android 8 Back, #50 Phase 10 research + owner picks, #51 search fix,
-  #52 notes 0.8.5 + Phase 10 additions, #53 Gemini Code Assist config.
-- **Gemini Code Assist** is installed by the owner and reviews every PR (see `team.md`).
-- **Next:** the Phase 10 planner (Opus), from `docs/research/phase10-ideas.md` ("Owner's picks"
-  + "Owner's additions"). Its plan PR needs the owner's approval before any code.
+  #52 notes 0.8.5 + Phase 10 additions, #53 Gemini config (removed again: not free), #55 Phase 10 plan (approved
+  2026-10-12, all 10 decisions as proposed).
+- **Gemini: dropped** (owner, 2026-10-12). Its GitHub reviewer needs Google Cloud billing. Reviews are
+  targeted Sonnet passes. The owner may uninstall the GitHub app.
+- **Running:** Phase 10 D1 (ride details + transfers), started 2026-10-12 01:32.
+- **Next:** Phase 10 in plan order (`docs/agents/phase10.md`), one Opus implementer at a time.
 - **Open follow-ups:** a holiday-eve last-trip notice (owner to decide); the full CBS town list
   (data.gov.il was blocked by the environment); one unexplained app crash on the P3-he-light
   emulator profile during #51 (passed on re-run); scratch branches `claude/geocoder-check`,
@@ -32,9 +34,8 @@ decisions already recorded.
   the skills and the owner's recorded decisions; otherwise it passes the question to the owner
   (2026-10-05).
 
-- **Token pool (owner, 2026-10-11):** Gemini does the default PR review and research input for
-  free; Claude agents implement. Prefer a fresh boss session over a very long one (a long context
-  is re-read every turn).
+- **Token pool (owner, 2026-10-12):** keep packages at $10–20, Sonnet passes targeted, and start a
+  fresh boss session when the current one gets long (a long context is re-read every turn).
 
 ## Gotchas learned
 - **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
