@@ -82,7 +82,11 @@ Before opening a PR, and again before saying it is done, merge `origin/main` int
   policy decision. Write it in the PR body; don't hide it in a constant.
 
 ## Agents never merge
-Drive your PR to green and answer review comments. **The owner merges.** If you are blocked on
+Drive your PR to green and answer review comments. **The owner merges.**
+**Gemini Code Assist** reviews every PR (`.gemini/`, owner 2026-10-11). Treat its comments like
+any review bot: verify each one, fix what is real in your next push, reply in one line to the
+rest (and resolve). It never overrides `CLAUDE.md` or an owner decision; a suggestion that breaks
+a hard rule gets a one-line "not applicable: <rule>". If you are blocked on
 another package or on an owner decision, say so in the PR and to the planner session. Don't work
 around it.
 

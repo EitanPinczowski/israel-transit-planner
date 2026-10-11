@@ -94,6 +94,13 @@ RTL and English, on every phone size. It works from the CI `screenshots` artifac
 
 It doesn't change feature behaviour. It loads `i18n-rtl` for the design system.
 
+### Gemini reviewer (always on, external)
+**Job:** Gemini Code Assist for GitHub reviews each PR when it opens (`/gemini review` asks again).
+It comments only, at medium severity or worse, guided by `.gemini/styleguide.md`. It is a second
+opinion from a different model, not a gate: the implementer verifies and answers its comments
+(`parallel-work`), and the boss reads them before asking the owner to merge. The owner installs and
+removes the app; nobody gives it write access.
+
 ### Implementers (per package)
 These are the A/B agents of Phase 8. Each one gets a brief from the planner's
 `docs/agents/phase<N>.md` and follows `parallel-work`.
