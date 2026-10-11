@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D1: ride details, tight transfers, folded stop lists. Hebrew in values-iw/. -->
+<resources>
+    <!-- One transit leg on the selected card: line · stops · minutes · get-off. -->
+    <string name="ride_leg">%1$s · %2$s · %3$s · %4$s</string>
+    <string name="ride_line">Line %1$s</string>
+    <plurals name="ride_stops">
+        <item quantity="one">%d stop</item>
+        <item quantity="other">%d stops</item>
+    </plurals>
+    <string name="ride_min">%d min</string>
+    <string name="ride_get_off">get off at ⁨%1$s⁩</string>
+    <string name="ride_get_off_code">get off at ⁨%1$s⁩ (stop %2$s)</string>
+    <plurals name="ride_more">
+        <item quantity="one">+%d more ride</item>
+        <item quantity="other">+%d more rides</item>
+    </plurals>
+    <!-- Unselected card: the whole option in one line. -->
+    <string name="ride_total">%1$s · %2$s · %3$s</string>
+    <string name="ride_min_on_board">%d min on board</string>
+    <string name="ride_off_at">off at ⁨%1$s⁩</string>
+
+    <!-- Amber chip on a tight change of vehicle. -->
+    <string name="transfer_change_in">Change at ⁨%1$s⁩ in %2$d min</string>
+    <string name="transfer_walk_spare">Walk %1$d min, %2$d min to spare</string>
+    <string name="transfer_tight">Tight: may miss the change</string>
+
+    <!-- Settings. -->
+    <string name="transfer_buffer">Keep transfers at least</string>
+    <string name="transfer_buffer_off">Off</string>
+
+    <!-- Trip sheet: a long ride folded. -->
+    <plurals name="stops_folded">
+        <item quantity="one">%d stop, tap to expand</item>
+        <item quantity="other">%d stops, tap to expand</item>
+    </plurals>
+    <plurals name="stops_fold_again">
+        <item quantity="one">Hide %d stop</item>
+        <item quantity="other">Hide %d stops</item>
+    </plurals>
+</resources>

@@ -13,7 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -35,15 +37,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import il.transit.core.present.AlertText
+import il.transit.core.present.StopListItem
 import il.transit.core.present.StopRole
 import il.transit.core.present.TripDetails
 import il.transit.core.present.TripStopRow
+import il.transit.core.present.collapse
 import il.transit.core.present.onColor
 import il.transit.planner.R
 import il.transit.planner.ui.TripSheet
@@ -79,14 +84,25 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: M
                 Note(stringResource(if (v.realTime) R.string.trip_live_position else R.string.trip_scheduled_position))
             }
             val list = rememberLazyListState()
+            // A long ride is folded (Phase 10 D1); each opened fold is remembered by its first row.
+            var opened by rememberSaveable(d.tripId) { mutableStateOf(listOf<Int>()) }
+            val listItems = remember(d.rows, opened) { collapse(d.rows, expanded = opened.toSet()) }
             // Open on where it matters: the boarding stop, or the next stop once on board.
             LaunchedEffect(d.rows.size) {
                 val board = d.rows.indexOfFirst { it.role == StopRole.BOARD }
                 val target = listOfNotNull(board.takeIf { it >= 0 }, d.nextIndex).maxOrNull() ?: 0
-                list.scrollToItem((target - 1).coerceAtLeast(0))
+                val at = listItems.indexOfFirst { it is StopListItem.Stop && it.index == target }.coerceAtLeast(0)
+                list.scrollToItem((at - 1).coerceAtLeast(0))
             }
             LazyColumn(Modifier.weight(1f, fill = false), state = list) {
-                itemsIndexed(d.rows) { _, r -> StopRowView(r, parseColor(d.color)) }
+                items(listItems) { item ->
+                    when (item) {
+                        is StopListItem.Stop -> StopRowView(d.rows[item.index], parseColor(d.color))
+                        is StopListItem.Folded -> FoldRow(item, parseColor(d.color)) {
+                            opened = if (item.open) opened - item.from else opened + item.from
+                        }
+                    }
+                }
             }
         }
     }
@@ -169,5 +185,27 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
                 if (late) Text(stringResource(R.string.late_paren, delay!!), style = MaterialTheme.typography.labelSmall, color = color)
             }
         }
+    }
+}
+
+/** "12 stops, tap to expand" in the line's place; once open, "Hide 12 stops" above them. */
+@Composable
+private fun FoldRow(f: StopListItem.Folded, lineColor: Color, onClick: () -> Unit) {
+    val n = f.count
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 6.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Spacer(Modifier.width(48.dp))
+        // Dots stand for the folded stops, in the line's colour, centred on the stop dots above.
+        Box(Modifier.width(14.dp), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(4.dp).background(lineColor, CircleShape))
+        }
+        Spacer(Modifier.width(6.dp))
+        Text(
+            pluralStringResource(if (f.open) R.plurals.stops_fold_again else R.plurals.stops_folded, n, n),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }

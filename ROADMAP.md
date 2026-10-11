@@ -221,9 +221,9 @@ Wave 5 (D9, D10) → Wave 6 (D11) → **v0.9.0**. Gemini reviews every PR; a tar
 only where the plan says. Tick only your own package's lines.
 
 ### D1 — Ride details + transfers (`claude/p10-ride-details`, 0 requests)
-- [ ] Ride details on every option: stops on board, time on board, get-off stop + stop number
-- [ ] Long stop lists collapsed in the trip sheet ("12 stops, tap to expand")
-- [ ] Tight-transfer warning chip ("Change at Savidor in 3 min") + "Keep transfers at least" setting
+- [x] Ride details on every option: stops on board, time on board, get-off stop + stop number
+- [x] Long stop lists collapsed in the trip sheet ("12 stops, tap to expand")
+- [x] Tight-transfer warning chip ("Change at Savidor in 3 min") + "Keep transfers at least" setting
 
 ### D2 — Search hardening (`claude/p10-search-hardening`, 0 new requests)
 - [ ] Stale searches cancelled end to end; an old answer never replaces a newer query's

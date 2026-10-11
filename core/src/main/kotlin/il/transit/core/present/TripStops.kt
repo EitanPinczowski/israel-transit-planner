@@ -343,3 +343,65 @@ fun vehicleGeoJson(mark: VehicleMark?, color: String): String {
     }
     return """{"type":"FeatureCollection","features":[$point]}"""
 }
+
+/** One row of the trip sheet's stop list: a stop, or a run of folded stops (Phase 10 D1). */
+sealed interface StopListItem {
+    /** [index] into [TripDetails.rows]. */
+    data class Stop(val index: Int) : StopListItem
+
+    /**
+     * Rows [from]..[to] (inclusive): folded into "12 stops, tap to expand", or, when [open],
+     * a "hide" row followed by those stops.
+     */
+    data class Folded(val from: Int, val to: Int, val open: Boolean = false) : StopListItem {
+        val count: Int get() = to - from + 1
+    }
+}
+
+/** A ride with more than this many stops between boarding and getting off is folded. */
+const val COLLAPSE_OVER = 6
+
+/** Rows that are never folded away: where the vehicle is or is heading, a skipped stop, an alert. */
+fun mustShow(r: TripStopRow): Boolean = r.isNext || r.cancelled || r.alerts.isNotEmpty()
+
+/**
+ * The stop list with the long middle of the ride folded: the boarding stop, the first stop
+ * after it, "N stops, tap to expand", the last stop before the get-off one, and the get-off
+ * stop. Rows where [keep] is true stay visible and split the fold; a fold of one stop is just
+ * shown. Stops before boarding and after getting off are left as they are. [expanded] holds
+ * the `from` of each fold the user opened.
+ */
+fun collapse(
+    rows: List<TripStopRow>,
+    keep: (Int) -> Boolean = { mustShow(rows[it]) },
+    expanded: Set<Int> = emptySet(),
+): List<StopListItem> {
+    val board = rows.indexOfFirst { it.role == StopRole.BOARD }
+    val alight = rows.indexOfFirst { it.role == StopRole.ALIGHT }
+    val all = rows.indices.map { StopListItem.Stop(it) }
+    if (board < 0 || alight <= board || alight - board - 1 <= COLLAPSE_OVER) return all
+    // Between the first and the last ridden stop, folded except the rows to keep.
+    val foldFrom = board + 2
+    val foldTo = alight - 2
+    val out = mutableListOf<StopListItem>()
+    var i = 0
+    while (i < rows.size) {
+        if (i < foldFrom || i > foldTo || keep(i)) {
+            out += StopListItem.Stop(i)
+            i++
+            continue
+        }
+        var end = i
+        while (end + 1 <= foldTo && !keep(end + 1)) end++
+        when {
+            end == i -> out += StopListItem.Stop(i)
+            i in expanded -> {
+                out += StopListItem.Folded(i, end, open = true)
+                (i..end).forEach { out += StopListItem.Stop(it) }
+            }
+            else -> out += StopListItem.Folded(i, end)
+        }
+        i = end + 1
+    }
+    return out
+}

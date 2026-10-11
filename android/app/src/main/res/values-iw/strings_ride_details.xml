@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D1: פרטי נסיעה, החלפות צפופות, רשימות תחנות מקופלות. English in values/. -->
+<resources>
+    <string name="ride_leg">%1$s · %2$s · %3$s · %4$s</string>
+    <string name="ride_line">קו ⁨%1$s⁩</string>
+    <plurals name="ride_stops">
+        <item quantity="one">תחנה אחת</item>
+        <item quantity="two">⁨%d⁩ תחנות</item>
+        <item quantity="other">⁨%d⁩ תחנות</item>
+    </plurals>
+    <string name="ride_min">⁨%d⁩ דק׳</string>
+    <string name="ride_get_off">ירידה ב־⁨%1$s⁩</string>
+    <string name="ride_get_off_code">ירידה ב־⁨%1$s⁩ (תחנה ⁨%2$s⁩)</string>
+    <plurals name="ride_more">
+        <item quantity="one">‎+⁨%d⁩ נסיעה נוספת</item>
+        <item quantity="two">‎+⁨%d⁩ נסיעות נוספות</item>
+        <item quantity="other">‎+⁨%d⁩ נסיעות נוספות</item>
+    </plurals>
+    <string name="ride_total">%1$s · %2$s · %3$s</string>
+    <string name="ride_min_on_board">⁨%d⁩ דק׳ בנסיעה</string>
+    <string name="ride_off_at">ירידה ב־⁨%1$s⁩</string>
+
+    <string name="transfer_change_in">החלפה ב־⁨%1$s⁩ בעוד ⁨%2$d⁩ דק׳</string>
+    <string name="transfer_walk_spare">הליכה ⁨%1$d⁩ דק׳, ⁨%2$d⁩ דק׳ לרזרבה</string>
+    <string name="transfer_tight">צפוף: אפשר לפספס את ההחלפה</string>
+
+    <string name="transfer_buffer">זמן החלפה מינימלי</string>
+    <string name="transfer_buffer_off">כבוי</string>
+
+    <plurals name="stops_folded">
+        <item quantity="one">תחנה אחת, הקישו להרחבה</item>
+        <item quantity="two">⁨%d⁩ תחנות, הקישו להרחבה</item>
+        <item quantity="other">⁨%d⁩ תחנות, הקישו להרחבה</item>
+    </plurals>
+    <plurals name="stops_fold_again">
+        <item quantity="one">הסתרת תחנה אחת</item>
+        <item quantity="two">הסתרת ⁨%d⁩ תחנות</item>
+        <item quantity="other">הסתרת ⁨%d⁩ תחנות</item>
+    </plurals>
+</resources>

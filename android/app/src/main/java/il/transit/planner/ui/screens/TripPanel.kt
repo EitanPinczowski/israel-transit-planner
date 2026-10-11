@@ -483,6 +483,7 @@ internal fun ResultsPanel(
                         }
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
+                            transferBufferMin = state.settings.transferBufferMin,
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
                             extra = { UsualLine(state, itin); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
@@ -570,6 +571,8 @@ internal fun ItineraryCard(
     selected: Boolean,
     fareProfile: FareProfile,
     searchedAt: Instant?,
+    /** "Keep transfers at least" (minutes, null = Off): raises the tight-transfer threshold. */
+    transferBufferMin: Int? = null,
     onLeg: ((Int) -> Unit)? = null,
     /** Drawn on the selected card only, under its summary ("If I miss this…"). */
     extra: (@Composable () -> Unit)? = null,
@@ -612,6 +615,8 @@ internal fun ItineraryCard(
             PlatformLine(remember(first) { stopPlatform(first.from, legKind(first.mode) == LegKind.TRAIN) })
         }
         Text("$transfers · $walk", style = MaterialTheme.typography.bodySmall)
+        RideDetailsLines(itin, selected)
+        TransferChips(itin, transferBufferMin)
         if (selected) extra?.invoke()
         if (selected) {
             WalkDirections(itin)

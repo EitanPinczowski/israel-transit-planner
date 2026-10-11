@@ -198,6 +198,16 @@ internal fun SettingsContent(
             }
         }
         item {
+            Section(R.string.transfer_buffer) {
+                UserSettings.TRANSFER_BUFFER_CHOICES.forEach { m ->
+                    FilterChip(
+                        s.transferBufferMin == m, { set(s.copy(transferBufferMin = m)) },
+                        label = { Text(m?.let { stringResource(R.string.minutes_short, it) } ?: stringResource(R.string.transfer_buffer_off)) },
+                    )
+                }
+            }
+        }
+        item {
             Section(R.string.max_walk) {
                 UserSettings.WALK_CHOICES.forEach { m ->
                     FilterChip(s.maxWalkMin == m, { set(s.copy(maxWalkMin = m)) }, label = { Text(stringResource(R.string.minutes_short, m)) })
