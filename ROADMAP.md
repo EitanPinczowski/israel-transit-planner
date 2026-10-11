@@ -211,3 +211,63 @@ merges. Tick only your own package's lines.
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)
 - [x] Android 8: Back closes an open search (J4 on API 26, known issue from #32)
+
+## Phase 10 — daily trips, dates and ways in
+Owner's picks from `docs/research/phase10-ideas.md` ("Owner's picks" and "Owner's additions").
+One cloud session per package; briefs, shared-file table, request budgets and owner decisions
+in `docs/agents/phase10.md`. Usually one Opus implementer at a time, at most 2 per wave:
+Wave 1 (D1, D2) → Wave 2 (D3, D4) → **v0.8.6** → Wave 3 (D5, D6) → Wave 4 (D7, D8) →
+Wave 5 (D9, D10) → Wave 6 (D11) → **v0.9.0**. Gemini reviews every PR; a targeted Sonnet pass
+only where the plan says. Tick only your own package's lines.
+
+### D1 — Ride details + transfers (`claude/p10-ride-details`, 0 requests)
+- [ ] Ride details on every option: stops on board, time on board, get-off stop + stop number
+- [ ] Long stop lists collapsed in the trip sheet ("12 stops, tap to expand")
+- [ ] Tight-transfer warning chip ("Change at Savidor in 3 min") + "Keep transfers at least" setting
+
+### D2 — Search hardening (`claude/p10-search-hardening`, 0 new requests)
+- [ ] Stale searches cancelled end to end; an old answer never replaces a newer query's
+- [ ] Acronyms (ת"א, ר"ג, פ"ת, ק"ש, את"א…) and a neighbourhood → town table
+- [ ] Explicit match levels (house / street / town / place) in the answer and the suggestion rows
+- [ ] Fast JVM address corpus (≥ 200 rows from recorded fixtures) in `core test`
+
+### D3 — Holidays + dates (`claude/p10-holidays`, 0 requests, 1 per tap)
+- [ ] Bundled holiday table 2026–2031 (generated, dates pinned against a source); Trip-tab banner
+- [ ] 0 options: "no service that day" / "the timetable may not reach this date" + plan for the nearest day
+- [ ] Last trip home alert checks at the Friday time on a holiday eve
+
+### D4 — Test hardening (`claude/p10-test-hardening`, Sonnet, 0 requests)
+- [ ] Network-fault tests: 429/503 retry, slow, cancelled, malformed; budgets and cache stay right
+- [ ] Routing invariants over every fixture and special feature
+
+### D5 — Big-stop changes (`claude/p10-big-stops`, ≤ 2 requests per opened option)
+- [ ] Change at a big stop on the same two vehicles (same arrival, more slack); "Use this change"
+
+### D6 — Ways in (`claude/p10-ways-in`, 0–1 request per use)
+- [ ] Share an address, a `geo:` link or a Waze / Google Maps link into the planner
+- [ ] Voice search in the search field
+- [ ] Search by stop number
+
+### D7 — Stop timetables (`claude/p10-timetables`, 1–2 per open, ≤ 3 a night)
+- [ ] Day timetable for a line at a stop (today / tomorrow, by hour)
+- [ ] Offline timetables for starred stops, saved by the night refresh
+
+### D8 — Fares + report (`claude/p10-fares-report`, 0 requests)
+- [ ] Fare profiles: senior / student / youth / soldier, each number with its source
+- [ ] Monthly travel report as a shareable CSV + text
+
+### D9 — Rain-aware walking (`claude/p10-rain`, 1 Open-Meteo request per search, cached 1 h)
+- [ ] Open-Meteo added to CLAUDE.md's hard rules; "Rain likely around 08:10" note → least walking
+
+### D10 — Live Updates (`claude/p10-live-updates`, 0 requests)
+- [ ] `compileSdk` 36; ride and leave countdown as Live Updates on Android 16, today's notification below
+
+### D11 — App polish (`claude/p10-polish`, 0 requests)
+- [ ] Search and chosen trip kept across process death
+- [ ] Map ↔ list highlighting
+- [ ] Thumb-zone action row (≥ 48 dp) + haptics on pin drop
+
+### Close-out (boss)
+- [ ] `docs/releases/v0.8.6.md` after Wave 2 (if the owner releases it)
+- [ ] `docs/releases/v0.9.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [ ] Owner: every Phase 10 feature checked on the Pixel
