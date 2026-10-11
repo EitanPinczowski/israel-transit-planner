@@ -2,6 +2,7 @@ package il.transit.planner
 
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.TransitApi
+import il.transit.core.search.BackupGeocoder
 import il.transit.core.update.CheckResult
 import il.transit.core.update.LatestRelease
 import il.transit.core.user.SavedPlace
@@ -26,6 +27,9 @@ class UiTestApp : TransitApp() {
         ReplayTransitApi(clock) { name -> assets.open("fixtures/$name.json").bufferedReader().use { it.readText() } }
     }
     override val api: TransitApi get() = replay
+
+    /** No outside geocoder in UI tests: they never touch the network. */
+    override val backupGeocoder: BackupGeocoder? = null
 
     override fun mapStyle(night: Boolean): String =
         if (night) "asset://uitest/blank-dark.json" else "asset://uitest/blank.json"

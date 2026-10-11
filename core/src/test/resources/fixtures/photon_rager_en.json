@@ -1,0 +1,121 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "N",
+    "osm_id": 1803094213,
+    "osm_key": "highway",
+    "osm_value": "bus_stop",
+    "type": "house",
+    "name": "Rager High School/Naftali Herz Imber BLVD",
+    "street": "Naftaly Hertz Imber Avenue",
+    "locality": "Neot Avraham",
+    "district": "Neve Zeev",
+    "city": "Beersheba",
+    "county": "Beersheba Subdistrict",
+    "state": "South District",
+    "country": "Israel",
+    "postcode": "8426306",
+    "countrycode": "IL"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.768934,
+     31.237348
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "N",
+    "osm_id": 1803032751,
+    "osm_key": "highway",
+    "osm_value": "bus_stop",
+    "type": "house",
+    "name": "Rager High School/Hanasi Herzog",
+    "street": "HaNasi Herzog",
+    "locality": "Neot Ilan",
+    "district": "Neve Zeev",
+    "city": "Beersheba",
+    "county": "Beersheba Subdistrict",
+    "state": "South District",
+    "country": "Israel",
+    "postcode": "8426306",
+    "countrycode": "IL"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.769428,
+     31.235157
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "W",
+    "osm_id": 785904539,
+    "osm_key": "highway",
+    "osm_value": "primary",
+    "type": "street",
+    "name": "Yitzhack Rager Avenue",
+    "district": "D",
+    "city": "Be'er Sheva",
+    "county": "Beersheba Subdistrict",
+    "state": "South District",
+    "country": "Israel",
+    "postcode": "8452566",
+    "countrycode": "IL",
+    "extent": [
+     34.7981801,
+     31.2610377,
+     34.7982244,
+     31.2585465
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.7982013,
+     31.2597921
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "W",
+    "osm_id": 965944614,
+    "osm_key": "highway",
+    "osm_value": "primary",
+    "type": "street",
+    "name": "Yitzhack Rager Avenue",
+    "district": "City Center",
+    "city": "Beersheba",
+    "county": "Beersheba Subdistrict",
+    "state": "South District",
+    "country": "Israel",
+    "postcode": "8434009",
+    "countrycode": "IL",
+    "extent": [
+     34.7973302,
+     31.2471067,
+     34.7974742,
+     31.2468864
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.7974022,
+     31.2469966
+    ]
+   }
+  }
+ ]
+}

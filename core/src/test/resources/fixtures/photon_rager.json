@@ -1,0 +1,67 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "W",
+    "osm_id": 785904539,
+    "osm_key": "highway",
+    "osm_value": "primary",
+    "type": "street",
+    "name": "שדרות יצחק רגר",
+    "district": "שכונה ד",
+    "city": "באר-שבע",
+    "county": "נפת באר שבע",
+    "state": "מחוז הדרום",
+    "country": "ישראל",
+    "postcode": "8452566",
+    "countrycode": "IL",
+    "extent": [
+     34.7981801,
+     31.2610377,
+     34.7982244,
+     31.2585465
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.7982013,
+     31.2597921
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "W",
+    "osm_id": 965944614,
+    "osm_key": "highway",
+    "osm_value": "primary",
+    "type": "street",
+    "name": "שדרות יצחק רגר",
+    "district": "מרכז העיר",
+    "city": "באר שבע",
+    "county": "נפת באר שבע",
+    "state": "מחוז הדרום",
+    "country": "ישראל",
+    "postcode": "8434009",
+    "countrycode": "IL",
+    "extent": [
+     34.7973302,
+     31.2471067,
+     34.7974742,
+     31.2468864
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.7974022,
+     31.2469966
+    ]
+   }
+  }
+ ]
+}

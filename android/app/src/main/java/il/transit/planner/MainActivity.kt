@@ -305,7 +305,7 @@ class MainActivity : ComponentActivity() {
         placeMapChrome(mapPadding.value)
         loadMapStyle(m)
         m.addOnMapLongClickListener { p ->
-            vm.setDestinationFromMap(LatLon(p.latitude, p.longitude))
+            vm.onMapLongPress(LatLon(p.latitude, p.longitude))
             true
         }
         m.addOnMapClickListener { p ->

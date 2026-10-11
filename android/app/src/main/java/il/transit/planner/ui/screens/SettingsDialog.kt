@@ -268,8 +268,9 @@ internal fun SettingsContent(
         item { OfflineSection(actions) }
         item { CrashLogSection(actions.crashLog) }
         item { UpdateSettingsRow(state.updateState, vm) }
+        item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
+        item { SaveHereRow(vm) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
-            item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
             item { HomeSuggestion(s, state.savedPlaces, ::set) }
             items(state.savedTrips) { t -> SavedRow("↗ ${t.name}") { vm.deleteTrip(t) } }
             items(state.savedPlaces) { p ->

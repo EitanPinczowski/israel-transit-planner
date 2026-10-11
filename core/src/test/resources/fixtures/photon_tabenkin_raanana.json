@@ -1,0 +1,113 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "N",
+    "osm_id": 2078992329,
+    "osm_key": "place",
+    "osm_value": "house",
+    "type": "house",
+    "housenumber": "15",
+    "street": "טבנקין יצחק",
+    "district": "רביבים",
+    "city": "תל אביב–יפו",
+    "county": "נפת תל אביב",
+    "state": "מחוז תל אביב",
+    "country": "ישראל",
+    "postcode": "6971001",
+    "countrycode": "IL"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.827613,
+     32.116302
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "W",
+    "osm_id": 110331005,
+    "osm_key": "highway",
+    "osm_value": "residential",
+    "type": "street",
+    "name": "יצחק טבנקין",
+    "district": "רמת ממרא",
+    "city": "קרית ארבע",
+    "county": "שטח C",
+    "state": "יהודה ושומרון",
+    "country": "الأراضي الفلسطينية",
+    "postcode": "150",
+    "countrycode": "PS",
+    "extent": [
+     35.1192447,
+     31.5425808,
+     35.1210697,
+     31.5416847
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     35.1201442,
+     31.5417681
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "N",
+    "osm_id": 5210700640,
+    "osm_key": "highway",
+    "osm_value": "bus_stop",
+    "type": "house",
+    "name": "הרצי״ה קוק/יצחק טבנקין",
+    "street": "הרצי\"ה קוק",
+    "district": "רמת ממרא",
+    "city": "קרית ארבע",
+    "county": "שטח C",
+    "state": "יהודה ושומרון",
+    "country": "الأراضي الفلسطينية",
+    "postcode": "150",
+    "countrycode": "PS"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     35.119347,
+     31.542458
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "osm_type": "N",
+    "osm_id": 1803067881,
+    "osm_key": "highway",
+    "osm_value": "bus_stop",
+    "type": "house",
+    "name": "فريديس 15",
+    "street": "כביש חיפה-רעננה",
+    "city": "מועצה אזורית חוף הכרמל",
+    "county": "נפת חדרה",
+    "state": "מחוז חיפה",
+    "country": "ישראל",
+    "postcode": "3092859",
+    "countrycode": "IL"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.954077,
+     32.604419
+    ]
+   }
+  }
+ ]
+}

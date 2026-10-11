@@ -218,8 +218,9 @@ fun MainScreen(
     /** Back on the tour's first page: closed for now, shown again at the next launch. */
     var tourLater by rememberSaveable { mutableStateOf(false) }
 
+    val pin = state.places.pin
     val showPanel = state.editing == null &&
-        (tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
+        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
     // A new search always shows its answer (and folds the search again); closing the results
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
@@ -231,6 +232,7 @@ fun MainScreen(
     if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(enabled = state.editing != null || showPanel) {
         when {
             state.editing != null -> vm.cancelEditing()
+            pin != null -> vm.closePin()
             state.stopSheet != null -> vm.closeStop()
             searchOpen -> searchOpen = false
             else -> vm.clearResults()
@@ -238,7 +240,9 @@ fun MainScreen(
     }
 
     val panel: @Composable (Modifier, Shape) -> Unit = { modifier, shape ->
-        if (tripSheet != null) {
+        if (pin != null) {
+            MapPinPanel(pin, vm, modifier, shape)
+        } else if (tripSheet != null) {
             tripSheet(modifier, shape)
         } else if (state.stopSheet != null) {
             StopPanel(state.stopSheet, state.favorites, vm, collapsed, { collapsed = it }, modifier, shape)
@@ -369,6 +373,7 @@ fun MainScreen(
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }
     }
+    state.places.draft?.let { SavePlaceDialog(it, vm) }
     if (savingTrip) {
         NameDialog(R.string.save_trip, onDismiss = { savingTrip = false }) { name -> vm.saveTrip(name); savingTrip = false }
     }

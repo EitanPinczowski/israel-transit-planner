@@ -182,10 +182,11 @@ class ScreensTest {
     @Test fun s15_settings_bottom() = screen("15-settings-bottom") {
         onMain { it.showSettings(true) }
         val scrollable = hasScrollAction() and hasAnyAncestor(isDialog())
-        awaitNode(scrollable)
-        val list = compose.onAllNodes(scrollable).onFirst()
         repeat(4) {
-            list.performTouchInput { swipeUp() }
+            // Found again before each swipe: the list (longer since "Save my current location")
+            // may be re-laid out between swipes, and a node fetched before that is gone (seen on P1 and P8).
+            awaitNode(scrollable)
+            compose.onAllNodes(scrollable).onFirst().performTouchInput { swipeUp() }
             compose.waitForIdle()
         }
     }

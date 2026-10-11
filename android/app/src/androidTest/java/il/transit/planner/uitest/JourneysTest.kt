@@ -11,15 +11,16 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
@@ -227,11 +228,23 @@ class JourneysTest {
         d.tapMenuItem(R.string.settings)
         compose.waitForIdle()
         assertTrue("J10: Settings can't be tapped while results are open", d.vm.state.value.showSettings)
-        // The saved rows sit at the end of the settings list: scroll there first (a lazy list
-        // only composes what is on screen). Trips come before places, so the first Delete is the trip's.
-        d.awaitNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog()))
-        compose.onNode(hasScrollToNodeAction() and hasAnyAncestor(isDialog())).performScrollToNode(hasText("↗ עבודה"))
-        compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst().performClick()
+        // The saved rows sit at the end of the settings list: swipe there first (a lazy list
+        // only composes what is on screen). One swipe at a time, the list found again and the UI
+        // idle before each: the list is longer since "Save my current location", and a long
+        // performScrollToNode raced its layout ("multithreaded access to SnapshotStateObserver",
+        // API 33). Trips come before places, so the first Delete is the trip's.
+        val list = hasScrollAction() and hasAnyAncestor(isDialog())
+        val trip = hasText("↗ עבודה") and hasAnyAncestor(isDialog())
+        repeat(8) {
+            if (compose.onAllNodes(trip).fetchSemanticsNodes().isNotEmpty()) return@repeat
+            d.awaitNode(list)
+            compose.onAllNodes(list).onFirst().performTouchInput { swipeUp() }
+            compose.waitForIdle()
+        }
+        d.awaitNode(trip)
+        // Its click action, not a touch: the row may be only partly on screen after the last swipe.
+        compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst()
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.isEmpty() }
     }
 
