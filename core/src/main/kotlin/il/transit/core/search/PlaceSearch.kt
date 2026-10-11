@@ -130,7 +130,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         const val BACKUP_MAX = 5
 
         /** The backup stage in all (phone 3 s, then Photon): no longer than this (review F5, 2026-10-11). */
-        const val BACKUP_DEADLINE_MS = 4_500L
+        const val BACKUP_DEADLINE_MS = 4_000L
 
         /** Shorter than this, any answer is a guess and the "type the full name" hint covers it. */
         const val MIN_BACKUP_CHARS = 3

@@ -77,7 +77,7 @@ class FallbackGeocoder(private val first: BackupGeocoder?, private val second: B
  */
 class PhotonClient(
     baseUrl: String = PHOTON,
-    private val http: OkHttpClient = MotisClient.defaultHttp(),
+    private val http: OkHttpClient = fastHttp(),
     private val userAgent: String = MotisClient.USER_AGENT,
 ) : BackupGeocoder {
     private val base: HttpUrl = baseUrl.trimEnd('/').toHttpUrl()
@@ -124,6 +124,12 @@ class PhotonClient(
         /** minLon,minLat,maxLon,maxLat: Israel, the Golan and Eilat, a little sea. */
         const val ISRAEL_BBOX = "34.2,29.45,35.95,33.35"
         val ISRAEL_CENTRE = LatLon(31.8, 34.95)
+
+        /** Short timeouts: a search answer that takes longer is no use (the search's own deadline is 4 s). */
+        fun fastHttp(): OkHttpClient = MotisClient.defaultHttp().newBuilder()
+            .connectTimeout(3, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(4, java.util.concurrent.TimeUnit.SECONDS)
+            .build()
 
         fun photonLanguage(language: String): String = if (language == "en") "en" else "default"
     }

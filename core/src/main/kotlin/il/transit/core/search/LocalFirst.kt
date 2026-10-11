@@ -74,7 +74,7 @@ object PinName {
         reverse.firstOrNull()?.takeIf { near(at, it.lat, it.lon) }?.name?.takeIf { it.isNotBlank() }
 
     /** Close enough to name a pin by (review F13, 2026-10-11). */
-    const val NEAR_M = 100.0
+    const val NEAR_M = 75.0
 
     fun near(at: LatLon, lat: Double, lon: Double): Boolean = Geo.distanceM(at, LatLon(lat, lon)) <= NEAR_M
 

@@ -189,7 +189,8 @@ answers are offered as answers; the rest are under "Closest matches", with "Not 
 is a street). `QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops
 רחוב/רח', and reads "ברעננה"/"בתל אביב" after the street as the town. **Timing:** Transitous's
 answers show at once (`pending`) when the backup is asked; the whole backup stage (phone, then
-Photon) is capped at `BACKUP_DEADLINE_MS` = 4.5 s, and the Photon call is cancelled with it.
+Photon) is capped at `BACKUP_DEADLINE_MS` = 4 s, and the Photon call is cancelled with it (its own
+timeouts: connect 3 s, read 4 s).
 **Budget:** one chain call per search, a
 search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
 pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache — "nothing"
@@ -203,7 +204,7 @@ Google Maps SDK / Places** (`dead-ends`): don't remove it under the "no Google M
 `Locale("iw")` or English; API 33+ listener form, `runInterruptible(IO)` below; **3 s timeout**
 (`TIMEOUT_MS`). Also names pins and "save my current location" first ("טבנקין 15, רעננה"), then
 Transitous `reverse-geocode`, then coordinates offline — a name only when its point is within
-100 m (`PinName.NEAR_M`; a field or the sea is "Pin · lat, lon"). Privacy: the typed text or the
+75 m (`PinName.NEAR_M`; a field or the sea is "Pin · lat, lon"). Privacy: the typed text or the
 point goes to the phone's geocoder (Google on most phones); Photon also gets the approximate area
 (the bias, rounded to 0.1° ≈ 10 km) and the IP (release notes say so). Its answers carry no
 credit line (Google's licence asks none of an OS API); only Photon's do. Not unit-testable (Android class): the chain is
