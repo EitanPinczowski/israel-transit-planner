@@ -1,0 +1,15 @@
+# Gemini Code Assist for GitHub: an independent second reviewer on every PR (owner, 2026-10-11).
+# It comments only; it never pushes or merges. Agents verify each comment (parallel-work skill).
+have_fun: false
+code_review:
+  disable: false
+  comment_severity_threshold: MEDIUM
+  max_review_comments: 15
+  pull_request_opened:
+    help: false
+    summary: true
+    code_review: true
+ignore_patterns:
+  - "android/app/src/test/snapshots/**"
+  - "core/src/test/resources/fixtures/**"
+  - "**/*.png"
