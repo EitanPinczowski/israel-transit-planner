@@ -24,10 +24,11 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
   - **OpenFreeMap** (`tiles.openfreemap.org`) — map tiles for MapLibre.
   - **Android's built-in Geocoder** (`android.location.Geocoder`; owner approved 2026-10-07) —
     keyless, part of the OS; on Play-services phones Google answers it. NOT the Maps SDK/Places
-    (no key, no billing). Only on a Transitous street miss and for pin names; 3 s timeout.
+    (no key, no billing). Only on a Transitous street miss, for pin names and "save my location"; 3 s.
   - **Photon** (`photon.komoot.io`, OSM search; owner approved 2026-10-07) — only when the phone
     has no Geocoder or it can't answer: ≤ 1 request per typing pause, `GuardedGeocoder` (day
-    cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited under its answers.
+    cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited under its answers; it
+    gets the text and the approximate area (rounded ~10 km). Public fair use, no SLA: swappable.
     Never Nominatim's public server (its policy forbids autocomplete). See `transitous-api`.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),
@@ -53,7 +54,7 @@ core/     plain Kotlin/JVM — builds and tests WITHOUT the Android SDK
   ride/       RideTracker: "get off at the next stop" from GPS fixes (tested)
   history/    TripRecord + History.stats (tested)
   fare/       FareTable (Rav-Kav bands, agorot) + FareEstimator: "≈ ₪8" per itinerary (tested)
-  search/     PlaceSearch (Transitous → Photon on a miss), TypingSearch, LocalFirst + Recents (tested)
+  search/     PlaceSearch (Transitous → phone Geocoder → Photon on a miss), TypingSearch, LocalFirst + Recents (tested)
 android/  the app (Compose + MapLibre); includeBuild("../core"). Needs the SDK → CI builds it.
   ui/MainViewModel (state) · ui/MainScreen (scaffold) · ui/screens/* (Compose panels) · ui/Theme (palette) · ui/MapController (layers) · data/UserStore
   remind/ (alarms, receivers, notifications) · ride/RideService · ui/OfflineMap · data/*Store

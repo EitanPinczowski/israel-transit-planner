@@ -130,6 +130,7 @@ internal fun SavePlaceContent(draft: PlaceDraft, name: String, onName: (String) 
             value = name,
             onValueChange = onName,
             singleLine = true,
+            label = { Text(stringResource(R.string.save_place_name)) },
             placeholder = { Text(if (draft.naming) stringResource(R.string.pin_naming) else stringResource(R.string.name_hint)) },
             supportingText = { Text(PinName.coords(draft.at)) },
         )

@@ -8,6 +8,8 @@ import il.transit.core.api.GeocodeArea
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.geo.LatLon
 import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.PinName
+import il.transit.core.search.PlaceSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -30,24 +32,28 @@ import kotlin.coroutines.resumeWithException
  */
 class AndroidGeocoder(private val context: Context, private val timeoutMs: Long = TIMEOUT_MS) : BackupGeocoder {
 
+    /** Asked inside Israel's box, and anything outside it dropped (a foreign-region phone answers from abroad). */
     override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> =
-        withTimeout(timeoutMs) { byName(Geocoder(context, localeOf(language)), text, max) }.mapNotNull { toMatch(it) }
+        withTimeout(timeoutMs) { byName(Geocoder(context, localeOf(language)), text, max) }
+            .mapNotNull { toMatch(it) }.filter { PlaceSearch.inIsrael(LatLon(it.lat, it.lon)) }
 
+    /** The nearest address, only when it is within [PinName.NEAR_M] of the point. */
     override suspend fun reverseName(at: LatLon, language: String): String? =
-        withTimeout(timeoutMs) { byPoint(Geocoder(context, localeOf(language)), at) }.firstOrNull()?.let { nameOf(it) }
+        withTimeout(timeoutMs) { byPoint(Geocoder(context, localeOf(language)), at) }.firstOrNull()
+            ?.takeIf { it.hasLatitude() && it.hasLongitude() && PinName.near(at, it.latitude, it.longitude) }?.let { nameOf(it) }
 
     @Suppress("DEPRECATION")
     private suspend fun byName(g: Geocoder, text: String, max: Int): List<Address> =
         if (Build.VERSION.SDK_INT >= 33) {
             suspendCancellableCoroutine { c ->
-                g.getFromLocationName(text, max, object : Geocoder.GeocodeListener {
+                g.getFromLocationName(text, max, S, W, N, E, object : Geocoder.GeocodeListener {
                     override fun onGeocode(addresses: MutableList<Address>) { if (c.isActive) c.resume(addresses) }
                     override fun onError(errorMessage: String?) { if (c.isActive) c.resumeWithException(IllegalStateException(errorMessage)) }
                 })
             }
         } else {
             // Blocking below 33: off the main thread, and interrupted when the timeout hits.
-            runInterruptible(Dispatchers.IO) { g.getFromLocationName(text, max).orEmpty() }
+            runInterruptible(Dispatchers.IO) { g.getFromLocationName(text, max, S, W, N, E).orEmpty() }
         }
 
     @Suppress("DEPRECATION")
@@ -65,6 +71,12 @@ class AndroidGeocoder(private val context: Context, private val timeoutMs: Long 
 
     companion object {
         const val TIMEOUT_MS = 3_000L
+
+        /** Israel's box, as Photon gets it ([il.transit.core.search.PhotonClient.ISRAEL_BBOX]). */
+        private const val S = 29.45
+        private const val W = 34.2
+        private const val N = 33.35
+        private const val E = 35.95
 
         /** "iw" is the Hebrew every Android version resolves (both "he" and "iw" answered alike). */
         fun localeOf(language: String): Locale = if (language == "en") Locale.ENGLISH else Locale("iw")

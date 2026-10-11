@@ -42,7 +42,8 @@ object Aliases {
 
     /**
      * [text] searched as the map name when it is a known everyday name, alone or with "בית חולים"
-     * / a town after it ("בית חולים איכילוב", "Ichilov hospital"); otherwise unchanged.
+     * / its own town after it ("בית חולים איכילוב", "Ichilov hospital"); otherwise unchanged
+     * (another town typed: the street of that name there).
      */
     fun rewrite(text: String): String {
         val n = PlaceSearch.normalize(text).replace(',', ' ').replace(Regex("\\s+"), " ").trim()
@@ -53,13 +54,17 @@ object Aliases {
             for (start in 0..words.size - len) {
                 val a = byName[words.subList(start, start + len).joinToString(" ")] ?: continue
                 val rest = words.subList(0, start) + words.subList(start + len, words.size)
-                if (rest.all { it in FILLER || Towns.named(it) != null || rest.joinToString(" ").let(Towns::named) != null }) return pick(a, text)
+                // Only the alias's own town: "ברזילי ירושלים" and "בילינסון תל אביב" are streets (review F2).
+                val other = rest.filterNot { it in FILLER }
+                if (other.isEmpty() || Towns.named(other.joinToString(" "))?.let { it == townOf(a) } == true) return pick(a, text)
             }
         }
         return text
     }
 
     private val FILLER = setOf("בית", "חולים", "בית החולים", "hospital", "medical", "center", "המרכז", "הרפואי", "מרכז", "רפואי")
+
+    private fun townOf(a: Alias): Town? = Towns.typedIn(a.he).firstOrNull()
 
     private fun pick(a: Alias, text: String) = if (text.any { it in 'א'..'ת' }) a.he else a.en
 }

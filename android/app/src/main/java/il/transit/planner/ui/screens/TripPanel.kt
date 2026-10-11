@@ -308,13 +308,22 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
             }
-            if (state.places.notFound) {
+            if (state.places.offline) {
                 item {
                     Text(
-                        stringResource(R.string.search_not_found),
+                        stringResource(R.string.search_offline),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                     )
+                }
+            }
+            // Not found: one line, and the way out is a button (closes the search; long-press the map).
+            if (state.places.notFound) {
+                item {
+                    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.search_not_found), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                        TextButton(onClick = { vm.cancelEditing() }) { Text(stringResource(R.string.search_pick_on_map)) }
+                    }
                 }
             }
             if (state.searchHint) {
@@ -330,10 +339,12 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
             val firstClosest = state.suggestions.indexOfFirst { it.closest }
             itemsIndexed(state.suggestions) { i, s ->
                 if (i == firstClosest) {
+                    // Set apart, so the row below never reads as the answer (review D2).
+                    if (i > 0) HorizontalDivider(Modifier.padding(top = 4.dp))
                     Text(
                         stringResource(R.string.search_closest),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
                     )
                 }

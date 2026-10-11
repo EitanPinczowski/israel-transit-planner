@@ -31,7 +31,8 @@ import java.io.File
  *
  * Per query: the first EXACT answer (`SearchAnswer.exact`; anything else is only shown under
  * "Closest matches") is in the expected town (by the town it names, else inside the town's
- * radius), on the street and at the house number when given. A wrong exact answer always fails;
+ * radius), on the street and at the house number (and letter) when given, and named as expected
+ * for a landmark (it starts with or contains the expected name). A wrong exact answer always fails;
  * no exact answer passes only for a row whose known-gap column says why (it shows as not found). Logs which source answered and how long it took; writes the table to
  * `files/address_corpus.md`. Fails on a miss that is not listed as a known gap.
  */
@@ -40,7 +41,7 @@ class AddressCorpusTest {
     private val target = InstrumentationRegistry.getInstrumentation().targetContext
     private val corpus = InstrumentationRegistry.getInstrumentation().context.assets
 
-    private data class Row(val query: String, val language: String, val town: String, val streets: List<String>, val house: String, val gap: String)
+    private data class Row(val query: String, val language: String, val town: String, val streets: List<String>, val house: String, val gap: String, val names: List<String>)
 
     @Test fun corpus() = runBlocking {
         val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(target)) else null
@@ -48,8 +49,8 @@ class AddressCorpusTest {
         val rows = corpus.open("address_corpus.tsv").bufferedReader().readLines()
             .filter { it.isNotBlank() && !it.startsWith("#") }
             .map { line ->
-                val c = line.split('\t') + List(6) { "" }
-                Row(c[0], c[1], c[2], c[3].split('|').filter { it.isNotBlank() }, c[4], c[5])
+                val c = line.split('\t') + List(7) { "" }
+                Row(c[0], c[1], c[2], c[3].split('|').filter { it.isNotBlank() }, c[4], c[5], c[6].split('|').filter { it.isNotBlank() })
             }
         val out = StringBuilder("| # | query | source | ms | first answer | town | result |\n|---|---|---|---|---|---|---|\n")
         var passed = 0
@@ -92,8 +93,17 @@ class AddressCorpusTest {
             if (r.streets.none { hay.contains(PlaceSearch.normalize(it)) }) problems += "street, want ${r.streets.joinToString("/")}"
         }
         if (r.house.isNotEmpty()) {
-            val number = first.houseNumber ?: Regex("\\d+").findAll(first.name).lastOrNull()?.value
-            if (number?.takeWhile(Char::isDigit) != r.house.takeWhile(Char::isDigit)) problems += "house ${number ?: "none"}, want ${r.house}"
+            val number = first.houseNumber ?: Regex("\\d+[א-ת]?").findAll(first.name).lastOrNull()?.value
+            // The letter too: 12ב is not 12א (review F12).
+            if (number?.replace(" ", "") != r.house) problems += "house ${number ?: "none"}, want ${r.house}"
+        }
+        // Landmarks: the answer is the place, not something in or near it (review N1: a shelter, an obelisk).
+        if (r.names.isNotEmpty()) {
+            val name = PlaceSearch.normalize(first.name)
+            val ok = r.names.any { n ->
+                if (n.startsWith("^")) name.startsWith(PlaceSearch.normalize(n.drop(1))) else name.contains(PlaceSearch.normalize(n))
+            }
+            if (!ok) problems += "name ${first.name}, want ${r.names.joinToString("/")}"
         }
         return problems
     }

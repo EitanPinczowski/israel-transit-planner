@@ -29,6 +29,8 @@ data class PlacesUi(
     val backupShown: Boolean = false,
     /** The search finished and no geocoder knows the text: say so and offer the map, never a blank list. */
     val notFound: Boolean = false,
+    /** The search failed (offline, Transitous down): say that, not "not found". */
+    val offline: Boolean = false,
 )
 
 /**
@@ -101,7 +103,7 @@ internal class PlacePicker(
     }
 
     private suspend fun nameOf(at: LatLon): String? = backup?.reverseName(at, language()) ?: try {
-        PinName.of(api.reverseGeocode(at, language(), 1))
+        PinName.of(api.reverseGeocode(at, language(), 1), at)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {

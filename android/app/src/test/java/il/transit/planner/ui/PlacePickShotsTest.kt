@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 /**
- * Search fix (S1, S2, S3, pick 20), in both languages and both themes: the long-press sheet
+ * Search fix (S1, S2, S3, pick 20), in both languages and both themes, and Hebrew large text on a small phone: the long-press sheet
  * named and offline, the save dialog's body, "Save my current location", and suggestions with
  * Home and a recent pick first and Photon's answer (and its credit) last.
  */
@@ -90,6 +90,14 @@ class PlacePickShotsTest(private val v: Variant) {
         }
     }
 
+    /** The search failed (offline): said as such, not "not found" (review F4). */
+    @Test fun suggestionsOffline() = paparazzi.snapshot("suggestions_offline") {
+        val state = UiState(editing = Field.TO, query = "טבנקין 15 רעננה", places = PlacesUi(offline = true))
+        Frame {
+            Box(Modifier.fillMaxSize().background(mapStandIn()).padding(12.dp)) { SuggestionList(state, NoActions, Modifier) }
+        }
+    }
+
     /** As the bottom sheet of a phone, over a flat stand-in for the map. */
     @Composable
     private fun Bottom(content: @Composable (androidx.compose.ui.graphics.Shape) -> Unit) = Frame {
@@ -128,6 +136,8 @@ class PlacePickShotsTest(private val v: Variant) {
             Variant("en_dark", phone.copy(nightMode = NightMode.NIGHT), dark = true, rtl = false),
             Variant("he_light", hebrew, dark = false, rtl = true),
             Variant("he_dark", hebrew.copy(nightMode = NightMode.NIGHT), dark = true, rtl = true),
+            // Large text on a small phone (review, 2026-10-11): the not-found row and the sheet must still fit.
+            Variant("small_he_bigtext", DeviceConfig.NEXUS_5.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.5f), dark = false, rtl = true),
         )
     }
 }

@@ -47,10 +47,19 @@ def main() -> int:
     for line in SEED.read_text(encoding="utf-8").splitlines():
         if not line.strip() or line.startswith("#"):
             continue
-        he, en, radius = line.split("\t")
+        he, en, radius, *pinned = line.split("\t")
         names = he.split("|") + en.split("|")
-        at = centre(names[0])
-        time.sleep(1)
+        if pinned:  # Photon's match was another place of that name: the centre checked by hand
+            lat, lon = (float(x) for x in pinned[0].split(","))
+            rows.append(f"        Town(listOf({', '.join(kt(n) for n in names)}), {lat}, {lon}, {float(radius)}),")
+            continue
+        # The first name, else the next spelling (OSM may write it "סח'נין" or only in English).
+        at = None
+        for n in names:
+            at = centre(n)
+            time.sleep(1)
+            if at is not None:
+                break
         if at is None:
             missing.append(names[0])
             continue

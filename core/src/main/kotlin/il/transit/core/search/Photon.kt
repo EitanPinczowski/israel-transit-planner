@@ -5,21 +5,26 @@ import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitHttpException
 import il.transit.core.geo.LatLon
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * A second geocoder, asked only when Transitous has no street match ([PlaceSearch]). Behind
@@ -77,24 +82,41 @@ class PhotonClient(
 ) : BackupGeocoder {
     private val base: HttpUrl = baseUrl.trimEnd('/').toHttpUrl()
 
-    override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> =
-        withContext(Dispatchers.IO) {
-            val bias = near ?: ISRAEL_CENTRE
-            val url = base.newBuilder().addPathSegment("api")
-                .addQueryParameter("q", text)
-                .addQueryParameter("lang", photonLanguage(language))
-                .addQueryParameter("lat", bias.lat.toString())
-                .addQueryParameter("lon", bias.lon.toString())
-                .addQueryParameter("bbox", ISRAEL_BBOX)
-                .addQueryParameter("limit", max.toString())
-                .build()
-            val request = Request.Builder().url(url).header("User-Agent", userAgent).build()
-            http.newCall(request).execute().use { resp ->
-                val body = resp.body?.string().orEmpty()
-                if (!resp.isSuccessful) throw TransitHttpException(resp.code, body.take(300), resp.header("Retry-After")?.toIntOrNull())
-                parsePhoton(body).take(max)
+    override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
+        val bias = near ?: ISRAEL_CENTRE
+        val url = base.newBuilder().addPathSegment("api")
+            .addQueryParameter("q", text)
+            .addQueryParameter("lang", photonLanguage(language))
+            .addQueryParameter("lat", bias.lat.toString())
+            .addQueryParameter("lon", bias.lon.toString())
+            .addQueryParameter("bbox", ISRAEL_BBOX)
+            .addQueryParameter("limit", max.toString())
+            .build()
+        val request = Request.Builder().url(url).header("User-Agent", userAgent).build()
+        return parsePhoton(fetch(request)).take(max)
+    }
+
+    /** The body; cancelling the caller (the search's deadline, new typing) cancels the request. */
+    private suspend fun fetch(request: Request): String = suspendCancellableCoroutine { c ->
+        val call = http.newCall(request)
+        c.invokeOnCancellation { call.cancel() }
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                if (c.isActive) c.resumeWithException(e)
             }
-        }
+
+            override fun onResponse(call: Call, response: Response) {
+                val result = runCatching {
+                    response.use { r ->
+                        val body = r.body?.string().orEmpty()
+                        if (!r.isSuccessful) throw TransitHttpException(r.code, body.take(300), r.header("Retry-After")?.toIntOrNull())
+                        body
+                    }
+                }
+                if (c.isActive) result.fold({ c.resume(it) }, { c.resumeWithException(it) })
+            }
+        })
+    }
 
     companion object {
         const val PHOTON = "https://photon.komoot.io"
@@ -171,7 +193,8 @@ fun parsePhoton(body: String): List<GeocodeMatch> =
 
 /**
  * Keeps traffic to the backup geocoder light, like [il.transit.core.api.GuardedTransitApi]
- * does for Transitous: answers cached for a day, at most [maxConcurrent] requests at once,
+ * does for Transitous: answers cached for a day ("nothing" only for [emptyTtl]: the phone's
+ * Geocoder says nothing when it is offline), at most [maxConcurrent] requests at once,
  * one retry after a 429/503 (Retry-After, else [backoff]); a second refusal propagates.
  */
 class GuardedGeocoder(
@@ -180,6 +203,7 @@ class GuardedGeocoder(
     maxConcurrent: Int = 2,
     private val backoff: Duration = Duration.ofSeconds(2),
     private val ttl: Duration = Duration.ofDays(1),
+    private val emptyTtl: Duration = Duration.ofMinutes(2),
 ) : BackupGeocoder {
     private val permits = Semaphore(maxConcurrent)
     private val cache = ConcurrentHashMap<String, Pair<Instant, List<GeocodeMatch>>>()
@@ -197,7 +221,7 @@ class GuardedGeocoder(
                 inner.search(text, language, near, max)
             }
         }
-        cache[key] = now.plus(ttl) to value
+        cache[key] = now.plus(if (value.isEmpty()) emptyTtl else ttl) to value
         return value
     }
 

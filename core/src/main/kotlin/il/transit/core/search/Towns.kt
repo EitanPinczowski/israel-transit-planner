@@ -77,7 +77,8 @@ object Towns {
 /**
  * What the user typed, as the geocoders read it best: town abbreviations written with
  * gershayim spelled out (ת"א → תל אביב, ב"ש → באר שבע), "שד'" → שדרות, and "רחוב"/"רח'" dropped
- * (street names are indexed without it). Everything else is left as typed.
+ * (street names are indexed without it), and a town written with ב/ל/מ/ה in front read as the
+ * town ("טבנקין 15 ברעננה" → רעננה). Everything else is left as typed.
  */
 object QueryText {
     private val TOWN_ABBREVIATIONS = mapOf(
@@ -102,6 +103,25 @@ object QueryText {
                 else -> raw
             }
         }
-        return out.joinToString(" ").trim().trimStart(',').trim()
+        return unprefix(out.joinToString(" ").trim().trimStart(',').trim())
+    }
+
+    /** "ביאליק 5 בתל אביב" → "ביאליק 5 תל אביב": ב/ל/מ off a town name after the street (to a comma or the end, numbers aside). */
+    private fun unprefix(text: String): String {
+        val words = text.split(' ').toMutableList()
+        // Never the first word ("הנשר 5" is a street) nor "ל\"ג בעומר" (a street in every town).
+        for (i in 1 until words.size) {
+            val w = words[i]
+            if (w.length < 3 || w[0] !in "בלמ" || Towns.named(w.trimEnd(',')) != null) continue
+            if (PlaceSearch.normalize(words[i - 1]) == "לג") continue
+            val end = (i until words.size).firstOrNull { words[it].endsWith(",") } ?: words.lastIndex
+            val run = (listOf(w.drop(1)) + words.subList(i + 1, end + 1)).map { it.trimEnd(',') }
+                .dropLastWhile { it.firstOrNull()?.isDigit() == true }
+            if (run.isNotEmpty() && Towns.named(run.joinToString(" ")) != null) {
+                words[i] = w.drop(1)
+                break
+            }
+        }
+        return words.joinToString(" ")
     }
 }

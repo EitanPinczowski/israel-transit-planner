@@ -70,8 +70,11 @@ class LocalFirstTest {
     }
 
     @Test fun `a pin is named by the nearest answer, else by its coordinates`() {
-        assertEquals("טבנקין 15", PinName.of(listOf(GeocodeMatch("ADDRESS", "טבנקין 15", "a", 32.18, 34.87))))
-        assertNull(PinName.of(emptyList()))
+        val at = LatLon(32.1801, 34.8712)
+        assertEquals("טבנקין 15", PinName.of(listOf(GeocodeMatch("ADDRESS", "טבנקין 15", "a", 32.1805, 34.8714)), at))
+        assertNull(PinName.of(emptyList(), at))
+        // Review F13: the nearest address 300 m away is not this point (a field, the sea).
+        assertNull(PinName.of(listOf(GeocodeMatch("ADDRESS", "טבנקין 15", "a", 32.1828, 34.8712)), at))
         assertEquals("32.1801, 34.8712", PinName.coords(LatLon(32.18014, 34.87116)))
     }
 }

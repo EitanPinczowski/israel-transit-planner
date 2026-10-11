@@ -259,7 +259,7 @@ class MainViewModel(
     var locationProvider: () -> LatLon? = { null }
 
     private val planner = TripPlanner(api)
-    private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup)) { q, answer, _ -> showAnswer(q, answer) }
+    private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup)) { q, answer, failed -> showAnswer(q, answer, failed) }
     private val picker = PlacePicker(api, backup, store, { language }, viewModelScope, { f -> _state.update(f) }, { _state.value })
     private var planJob: Job? = null
     private var stopsJob: Job? = null
@@ -319,21 +319,22 @@ class MainViewModel(
     // --- search -----------------------------------------------------------------------
 
     fun startEditing(field: Field) {
-        _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false, notFound = false)) }
+        _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false, notFound = false, offline = false)) }
     }
 
     fun cancelEditing() {
         typing.cancel()
-        _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
+        _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
     }
 
     /** Saved places and recent picks at once; Transitous (then, on a miss, Photon) once typing pauses. */
     fun onQuery(text: String) {
-        _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false)) }
+        _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
         typing.onText(text, language, locationProvider)
     }
 
-    private fun showAnswer(q: String, answer: SearchAnswer) {
+    /** [failed]: no answer at all (offline, Transitous down): said as such, never "not found". */
+    private fun showAnswer(q: String, answer: SearchAnswer, failed: Boolean) {
         _state.update { st ->
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
@@ -343,7 +344,11 @@ class MainViewModel(
                     LocalFirst.serverAfter(local, answer.exact).map { m -> toSuggestion(m).copy(backup = m in answer.backup) } +
                     LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
-                places = st.places.copy(backupShown = answer.backup.any { it.id.startsWith("photon:") }, notFound = answer.notFound),
+                places = st.places.copy(
+                    backupShown = answer.backup.any { it.id.startsWith("photon:") },
+                    notFound = !failed && answer.notFound,
+                    offline = failed,
+                ),
             )
         }
     }

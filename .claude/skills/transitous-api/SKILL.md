@@ -166,31 +166,47 @@ characters. Chain (`core/search/Photon.kt` `FallbackGeocoder`, wired in `Transit
 **saved/recent → Transitous → Android Geocoder → Photon** (Photon only when `!Geocoder.isPresent()`
 or the Geocoder errs, times out or finds nothing). Answers go below Transitous's; duplicates
 (same name ≤ 150 m) dropped. Each answer shows its town.
-**Typed town** (`search/Towns.kt`): the bundled table (`TownsData`, ~100 towns, Hebrew + English
+**Typed town** (`search/Towns.kt`): the bundled table (`TownsData`, ~130 towns incl. Arab and Druze towns, Hebrew + English
 names, OSM centre, radius; `python tools/gen_towns.py` from `tools/towns_seed.tsv`, 1 Photon
-request per town) finds the town the text ends with ("טבנקין 15 רעננה", "…, Tel Aviv", "ב"ש"), or
+request per town, or a hand-checked centre in the seed) finds the town the text ends with ("טבנקין 15 רעננה", "…, Tel Aviv", "ב"ש"), or
 starts with before a comma; not after a street word ("שדרות ירושלים") nor before only a number
 ("ירושלים 5"). It biases every request and **every source's answers outside it are dropped**
 (`Towns.holds`: by the answer's own town name when the table knows it, else by radius), so a
 typed town is never silently replaced; nothing left = "Not found… long-press the map".
-**Never a wrong place as the answer** (owner, 2026-10-07): `PlaceSearch.exact` — every
-distinctive typed word (not the town, "street" or kind-of-place words like בית חולים/תחנה) in the
-answer's name/street, one letter off allowed, and the typed house number. Only exact answers are
-offered as answers; the rest are listed under "Closest matches", with "Not found exactly — pick it
-on the map" on top. `Aliases` rewrites ~20 everyday names to their map name + town (איכילוב →
-סוראסקי תל אביב, תל השומר hospital → שיבא, נתב"ג…).
-`QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops רחוב/רח'. **Budget:** one chain call per search, a
+**Never a wrong place as the answer** (owner, 2026-10-07; tightened after review 2026-10-11):
+`PlaceSearch.exact` — the typed house (letter required: 12א ≠ 12/12ב; "12-14" = any in range;
+"12/3", "דירה 4" = 12); every word that names the place (not the typed town, numbers, street or
+kind words like בית חולים/תחנה) is a **whole word** of the answer's name/street (one letter off for
+4+ letters, a ה/ב/ל/מ prefix aside, a Latin word against its Hebrew consonants via `Translit`:
+"Rothschild" = רוטשילד); an address's street has no untyped word ("יהודה" ≠ בן יהודה), first
+names/titles aside (חיים ויצמן); a place/stop is **named by a typed word first** ("הטכניון" ≠
+"אובליסק הטכניון"); kind words only ("קניון רעננה") = a place of that kind named by it; the town
+only ("רעננה") = the town itself. Never true on an empty word list (that was F1). Only exact
+answers are offered as answers; the rest are under "Closest matches", with "Not found exactly"
++ a "Pick on the map" button on top; a failed search (offline) says so instead.
+`Aliases` rewrites ~20 everyday names to their map name + town (איכילוב → "איכילוב תל אביב",
+תל השומר hospital → שיבא, נתב"ג…) — only alone or with the alias's own town ("ברזילי ירושלים"
+is a street). `QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops
+רחוב/רח', and reads "ברעננה"/"בתל אביב" after the street as the town. **Timing:** Transitous's
+answers show at once (`pending`) when the backup is asked; the whole backup stage (phone, then
+Photon) is capped at `BACKUP_DEADLINE_MS` = 4.5 s, and the Photon call is cancelled with it.
+**Budget:** one chain call per search, a
 search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
-pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache, ≤ 2 at
-once, one retry on 429/503). A backup failure never fails the search.
+pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache — "nothing"
+only 2 min, since the phone's Geocoder answers nothing when offline —, ≤ 2 at once, one retry on
+429/503). A backup failure never fails the search. Every backup answer outside Israel's box is
+dropped (the phone's Geocoder is also asked inside the box).
 
 **Android's built-in Geocoder** (`android/.../data/AndroidGeocoder.kt`). An OS API: keyless, no
 account, no billing. On Play-services phones Google's address data answers it. **It is NOT the
 Google Maps SDK / Places** (`dead-ends`): don't remove it under the "no Google Maps" rule.
 `Locale("iw")` or English; API 33+ listener form, `runInterruptible(IO)` below; **3 s timeout**
 (`TIMEOUT_MS`). Also names pins and "save my current location" first ("טבנקין 15, רעננה"), then
-Transitous `reverse-geocode`, then coordinates offline. Privacy: only the typed text or the
-point leaves the phone (release notes say so). Not unit-testable (Android class): the chain is
+Transitous `reverse-geocode`, then coordinates offline — a name only when its point is within
+100 m (`PinName.NEAR_M`; a field or the sea is "Pin · lat, lon"). Privacy: the typed text or the
+point goes to the phone's geocoder (Google on most phones); Photon also gets the approximate area
+(the bias, rounded to 0.1° ≈ 10 km) and the IP (release notes say so). Its answers carry no
+credit line (Google's licence asks none of an OS API); only Photon's do. Not unit-testable (Android class): the chain is
 tested with a fake in core; UI tests have no backup (`UiTestApp.backupGeocoder = null`).
 - **Step 0 check (2026-10-07, scratch run 37567840566, google_apis emulators API 34 + 35):**
   `isPresent()` true. "טבנקין 15 רעננה", "טבנקין 15, רעננה" and "Tabenkin 15, Ra'anana" → 1 answer

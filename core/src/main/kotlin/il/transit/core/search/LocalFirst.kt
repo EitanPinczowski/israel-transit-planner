@@ -66,8 +66,17 @@ object Recents {
 
 /** Naming a point picked on the map (long-press) or a location fix. */
 object PinName {
-    /** The reverse geocoder's nearest answer, else null (offline, nothing near). */
-    fun of(reverse: List<GeocodeMatch>): String? = reverse.firstOrNull()?.name?.takeIf { it.isNotBlank() }
+    /**
+     * The reverse geocoder's nearest answer when it is within [NEAR_M] of [at], else null
+     * (offline, nothing near: a field or the sea is not "טבנקין 15").
+     */
+    fun of(reverse: List<GeocodeMatch>, at: LatLon): String? =
+        reverse.firstOrNull()?.takeIf { near(at, it.lat, it.lon) }?.name?.takeIf { it.isNotBlank() }
+
+    /** Close enough to name a pin by (review F13, 2026-10-11). */
+    const val NEAR_M = 100.0
+
+    fun near(at: LatLon, lat: Double, lon: Double): Boolean = Geo.distanceM(at, LatLon(lat, lon)) <= NEAR_M
 
     /** "32.1801, 34.8712": the fallback name's coordinates, the same in every language. */
     fun coords(at: LatLon): String = String.format(Locale.US, "%.4f, %.4f", at.lat, at.lon)
