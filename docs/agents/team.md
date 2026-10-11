@@ -94,12 +94,11 @@ RTL and English, on every phone size. It works from the CI `screenshots` artifac
 
 It doesn't change feature behaviour. It loads `i18n-rtl` for the design system.
 
-### Gemini reviewer (always on, external)
-**Job:** Gemini Code Assist for GitHub reviews each PR when it opens (`/gemini review` asks again).
-It comments only, at medium severity or worse, guided by `.gemini/styleguide.md`. It is a second
-opinion from a different model, not a gate: the implementer verifies and answers its comments
-(`parallel-work`), and the boss reads them before asking the owner to merge. The owner installs and
-removes the app; nobody gives it write access.
+### Reviews (owner, 2026-10-12: no Gemini)
+Gemini was tried and dropped: its GitHub reviewer needs Google Cloud billing (not free). Reviews
+are a **targeted Sonnet pass** (designer and/or logic) only where the phase plan says, started by
+the boss once the PR is green. The owner may still paste a Gemini answer into the chat by hand;
+it is input, never a gate.
 
 ### Implementers (per package)
 These are the A/B agents of Phase 8. Each one gets a brief from the planner's

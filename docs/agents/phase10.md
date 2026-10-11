@@ -11,17 +11,17 @@ grouped into eleven packages:
 
 | package | items | wave | requests | review | cost |
 |---|---|---|---|---|---|
-| D1 Ride details + transfers | 26 ride details; 6 tight-transfer warning + buffer; collapse long stop lists | 1 | 0 | Gemini + Sonnet designer | $12–18 |
-| D2 Search hardening | cancel stale searches; acronyms; neighbourhood → town; match levels; fast JVM address corpus | 1 | 0 new (≤ 60 geocodes to record) | Gemini + Sonnet logic | $15–20 |
-| D3 Holidays + dates | 3 holiday heads-up; 25 "the timetable doesn't reach this date" + nearest day with service; holiday eve in the last-trip alert | 2 | 0, 1 per tap | Gemini + Sonnet logic + designer | $15–20 |
-| D4 Test hardening | network-fault tests (429/503/slow/cancel); routing invariants | 2 | 0 | Gemini only | $5–8 (Sonnet) |
-| D5 Big-stop changes | 27 prefer a big stop for a change of line, same two vehicles | 3 | ≤ 2 per opened option | Gemini + Sonnet logic | $12–18 |
-| D6 Ways in | 2 open places shared from other apps; 9 voice search; 11 search by stop number | 3 | 0–1 per use | Gemini + Sonnet logic | $12–18 |
-| D7 Stop timetables | 7 day timetable for a line at a stop; 18 offline timetables for starred stops (night refresh) | 4 | 1–2 per open; ≤ 3 a night | Gemini + Sonnet designer | $15–20 |
-| D8 Fares + report | 12 fare profiles (senior / student / youth / soldier); 13 monthly travel report file | 4 | 0 | Gemini + Sonnet logic | $12–16 |
-| D9 Rain-aware walking | 19 rain from Open-Meteo on the walking parts (new outside service) | 5 | 1 Open-Meteo per search, cached 1 h | Gemini + Sonnet designer | $10–15 |
-| D10 Live Updates | 8 ride + leave countdown as an Android 16 Live Update | 5 | 0 | Gemini + Sonnet logic | $15–20 |
-| D11 App polish | keep state across process death; map ↔ list highlighting; thumb-zone actions + haptics | 6 | 0 | Gemini + Sonnet designer | $15–20 |
+| D1 Ride details + transfers | 26 ride details; 6 tight-transfer warning + buffer; collapse long stop lists | 1 | 0 | Sonnet designer | $12–18 |
+| D2 Search hardening | cancel stale searches; acronyms; neighbourhood → town; match levels; fast JVM address corpus | 1 | 0 new (≤ 60 geocodes to record) | Sonnet logic | $15–20 |
+| D3 Holidays + dates | 3 holiday heads-up; 25 "the timetable doesn't reach this date" + nearest day with service; holiday eve in the last-trip alert | 2 | 0, 1 per tap | Sonnet logic + designer | $15–20 |
+| D4 Test hardening | network-fault tests (429/503/slow/cancel); routing invariants | 2 | 0 | none (core tests) | $5–8 (Sonnet) |
+| D5 Big-stop changes | 27 prefer a big stop for a change of line, same two vehicles | 3 | ≤ 2 per opened option | Sonnet logic | $12–18 |
+| D6 Ways in | 2 open places shared from other apps; 9 voice search; 11 search by stop number | 3 | 0–1 per use | Sonnet logic | $12–18 |
+| D7 Stop timetables | 7 day timetable for a line at a stop; 18 offline timetables for starred stops (night refresh) | 4 | 1–2 per open; ≤ 3 a night | Sonnet designer | $15–20 |
+| D8 Fares + report | 12 fare profiles (senior / student / youth / soldier); 13 monthly travel report file | 4 | 0 | Sonnet logic | $12–16 |
+| D9 Rain-aware walking | 19 rain from Open-Meteo on the walking parts (new outside service) | 5 | 1 Open-Meteo per search, cached 1 h | Sonnet designer | $10–15 |
+| D10 Live Updates | 8 ride + leave countdown as an Android 16 Live Update | 5 | 0 | Sonnet logic | $15–20 |
+| D11 App polish | keep state across process death; map ↔ list highlighting; thumb-zone actions + haptics | 6 | 0 | Sonnet designer | $15–20 |
 
 Total about **$150–190** of implementer work, plus about $1 per Sonnet review.
 
@@ -98,16 +98,13 @@ like `GuardedGeocoder`). Each cap is a constant pinned by a test, and each row g
 
 ## Reviews (owner, 2026-10-11)
 
-- **Gemini Code Assist** reviews every PR when it opens (`.gemini/`). The implementer verifies
-  each comment, fixes what is real in its next push, and answers the rest in one line
-  ("not applicable: <rule>" when a suggestion breaks `CLAUDE.md` or an owner decision). After
-  that fix push, it posts `/gemini review` **once**.
+- **No Gemini** (owner, 2026-10-12: its GitHub reviewer is not free). Reviews are Sonnet only.
 - **A Sonnet review** runs only where the table above says, and only as a **targeted pass**:
   - *designer* (packages that change screens): from the CI `screenshots` artifact, light and
     dark, Hebrew and English, small and large phones; loads `i18n-rtl`;
   - *logic* (search, routing, alarms, fares, dates): the brief's "Reviewer checks" list and the
     `parallel-work` definition of done, nothing wider.
-  The boss starts it once the PR is green and Gemini's comments are answered. The implementer
+  The boss starts it once the PR is green. The implementer
   fixes what it finds on its own branch. Then the owner merges.
 
 **Models.** Implementers run on **Opus**, except D4 (Sonnet). Reviews run on Sonnet.
@@ -146,9 +143,8 @@ like `GuardedGeocoder`). Each cap is a constant pinned by a test, and each row g
 >   worst case per day in the PR body.
 > - **Transitous traffic:** live calls are for recording fixtures only (`tools/record_fixture.py`),
 >   within the number your brief gives.
-> - **Review:** Gemini Code Assist reviews your PR. Verify each comment, fix what is real, answer
->   the rest in one line and resolve it; post `/gemini review` once after that fix push. If your
->   package has a Sonnet pass, the boss starts it; fix what it finds.
+> - **Review:** if your package has a Sonnet pass, the boss starts it once your PR is green;
+>   fix what it finds in one round.
 > - **Blocked?** If you are blocked on another package or need an owner decision, write it in
 >   the PR body, tell the boss in one message, and stop. Don't work around it.
 > - **Messages:** one message to the boss when the PR is green and clean against `main`, or
