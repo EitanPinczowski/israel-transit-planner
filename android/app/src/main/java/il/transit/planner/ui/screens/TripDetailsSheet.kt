@@ -42,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import il.transit.core.present.AlertText
 import il.transit.core.present.StopListItem
@@ -149,7 +151,7 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
             .alpha(if (r.passed && !mine) 0.5f else 1f),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(r.scheduled, style = MaterialTheme.typography.titleSmall, textDecoration = strike, modifier = Modifier.width(48.dp))
+        Text(r.scheduled, style = MaterialTheme.typography.titleSmall, textDecoration = strike, softWrap = false, maxLines = 1, modifier = Modifier.width(timeColumnWidth()))
         // The line itself: a dot per stop, filled on the user's part of the ride.
         Box(
             Modifier.size(if (mine) 14.dp else 10.dp)
@@ -196,7 +198,7 @@ private fun FoldRow(f: StopListItem.Folded, lineColor: Color, onClick: () -> Uni
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 6.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Spacer(Modifier.width(48.dp))
+        Spacer(Modifier.width(timeColumnWidth()))
         // Dots stand for the folded stops, in the line's colour, centred on the stop dots above.
         Box(Modifier.width(14.dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size(4.dp).background(lineColor, CircleShape))
@@ -208,4 +210,13 @@ private fun FoldRow(f: StopListItem.Folded, lineColor: Color, onClick: () -> Uni
             color = MaterialTheme.colorScheme.primary,
         )
     }
+}
+
+/**
+ * The time column of the stop list: 48 dp, wider at large text so "23:54" never wraps
+ * (designer pass, Phase 10 D1). Stop rows and fold rows share it, so the line's dots align.
+ */
+@Composable
+private fun timeColumnWidth(): Dp = with(LocalDensity.current) {
+    maxOf(48.dp, (MaterialTheme.typography.titleSmall.fontSize * 3.2f).toDp())
 }

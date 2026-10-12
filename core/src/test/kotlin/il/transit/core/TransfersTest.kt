@@ -1,10 +1,13 @@
 package il.transit.core
 
 import il.transit.core.api.GuardedTransitApi
+import il.transit.core.api.MotisJson
 import il.transit.core.api.Place
 import il.transit.core.api.PlanRequest
 import il.transit.core.api.PlanResponse
 import il.transit.core.geo.LatLon
+import il.transit.core.present.TIGHT_MIN
+import il.transit.core.present.TIGHT_TRAIN_MIN
 import il.transit.core.present.TransferWarning
 import il.transit.core.present.tightTransfers
 import il.transit.core.present.transferWarning
@@ -32,77 +35,77 @@ class TransfersTest {
     private val savidor = stop("Savidor")
 
     @Test
-    fun `same stop change, 3 min`() {
-        val itin = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 23, 40), transfers = 1)
+    fun `same stop change, 1 min fires, 2 min does not`() {
+        val itin = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 21, 40), transfers = 1)
         val t = transfers(itin).single()
         assertEquals(0, t.fromLeg)
         assertEquals(1, t.toLeg)
         assertEquals("Savidor", t.stop)
-        assertEquals(3, t.slackMin)
+        assertEquals(1, t.slackMin)
         assertTrue(t.sameStop)
         assertEquals(0, t.walkMin)
         assertEquals(TransferWarning.CHANGE_IN, transferWarning(t, null))
+        val two = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 22, 40))
+        assertEquals(2, transfers(two).single().slackMin)
+        assertTrue(tightTransfers(two, null).isEmpty())
     }
 
     @Test
-    fun `a walk between, 4 min walk and 2 to spare`() {
+    fun `a walk between, 4 min walk and 1 to spare`() {
         val other = stop("Arlozorov")
-        val itin = itinerary(bus(stop("A"), savidor, 0, 20), walk(savidor, other, 20, 24), bus(other, stop("B"), 26, 40))
+        val itin = itinerary(bus(stop("A"), savidor, 0, 20), walk(savidor, other, 20, 24), bus(other, stop("B"), 25, 40))
         val t = transfers(itin).single()
         assertEquals(4, t.walkMin)
-        assertEquals(2, t.slackMin)
+        assertEquals(1, t.slackMin)
         assertFalse(t.sameStop)
         assertEquals("Arlozorov", t.stop)
         assertEquals(TransferWarning.WALK_SPARE, transferWarning(t, null))
     }
 
     @Test
-    fun `room enough gets no chip`() {
-        val itin = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 25, 40))
-        assertEquals(5, transfers(itin).single().slackMin)
-        assertTrue(tightTransfers(itin, null).isEmpty())
-    }
-
-    @Test
     fun `a delay that eats the slack uses the live time`() {
-        // Scheduled 20:00 arrival, live 24 → a 6-min change becomes 2.
+        // Scheduled 20:00 arrival, live 24 → a 5-min change becomes 1.
         val late = bus(stop("A"), savidor, 0, 24).copy(realTime = true, scheduledEndTime = at(20).toString(), scheduledStartTime = at(0).toString())
-        val itin = itinerary(late, bus(savidor, stop("B"), 26, 40))
+        val itin = itinerary(late, bus(savidor, stop("B"), 25, 40))
         val (t, w) = tightTransfers(itin, null).single()
-        assertEquals(2, t.slackMin)
+        assertEquals(1, t.slackMin)
         assertEquals(TransferWarning.CHANGE_IN, w)
     }
 
     @Test
-    fun `slack of zero or less is tight`() {
+    fun `zero slack is amber, below zero is tight`() {
+        val zero = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 20, 40))
+        val z = transfers(zero).single()
+        assertEquals(0L, z.slackSec)
+        assertEquals(TransferWarning.CHANGE_IN, transferWarning(z, null))
         val other = stop("Other")
         val missed = itinerary(bus(stop("A"), savidor, 0, 22), walk(savidor, other, 22, 25), bus(other, stop("B"), 24, 40))
-        val t = transfers(missed).single()
-        assertTrue(t.slackSec < 0)
-        assertEquals(TransferWarning.TIGHT, transferWarning(t, null))
-        val zero = itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 20, 40))
-        assertEquals(TransferWarning.TIGHT, transferWarning(transfers(zero).single(), null))
+        val m = transfers(missed).single()
+        assertEquals(-1, m.slackMin)
+        assertEquals(TransferWarning.TIGHT, transferWarning(m, null))
     }
 
     @Test
-    fun `a train change at 6 min warns, a bus change at 6 does not`() {
-        val tr = transfers(itinerary(bus(stop("A"), savidor, 0, 20), train(savidor, stop("Haifa"), 26, 90))).single()
-        assertTrue(tr.train)
-        assertEquals(8, warnBelowMin(tr, null))
-        assertEquals(TransferWarning.CHANGE_IN, transferWarning(tr, null))
-        val b = transfers(itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 26, 40))).single()
-        assertNull(transferWarning(b, null))
+    fun `a train change at 3 min warns, at 4 does not, a bus at 3 does not`() {
+        val tr3 = transfers(itinerary(bus(stop("A"), savidor, 0, 20), train(savidor, stop("Haifa"), 23, 90))).single()
+        assertTrue(tr3.train)
+        assertEquals(TIGHT_TRAIN_MIN, warnBelowMin(tr3, null))
+        assertEquals(TransferWarning.CHANGE_IN, transferWarning(tr3, null))
+        val tr4 = transfers(itinerary(bus(stop("A"), savidor, 0, 20), train(savidor, stop("Haifa"), 24, 90))).single()
+        assertNull(transferWarning(tr4, null))
+        val b3 = transfers(itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 23, 40))).single()
+        assertEquals(TIGHT_MIN, warnBelowMin(b3, null))
+        assertNull(transferWarning(b3, null))
     }
 
     @Test
     fun `a change past midnight`() {
-        // 23:55 arrival, 00:02 departure next day (Israel time): 7 min, by instant not by clock.
-        val night = Instant.parse("2026-09-23T20:55:00Z")
-        val itin = itinerary(bus(stop("A"), savidor, -30, 0, night), bus(savidor, stop("B"), 7, 30, night))
+        // 23:59 arrival, 00:00 departure next day (Israel time): 1 min, by instant not by clock.
+        val night = Instant.parse("2026-09-23T20:59:00Z")
+        val itin = itinerary(bus(stop("A"), savidor, -30, 0, night), bus(savidor, stop("B"), 1, 30, night))
         val t = transfers(itin).single()
-        assertEquals(7, t.slackMin)
-        assertNull(transferWarning(t, null))
-        assertEquals(TransferWarning.CHANGE_IN, transferWarning(t, 8))
+        assertEquals(1, t.slackMin)
+        assertEquals(TransferWarning.CHANGE_IN, transferWarning(t, null))
     }
 
     @Test
@@ -110,9 +113,17 @@ class TransfersTest {
         val t = transfers(itinerary(bus(stop("A"), savidor, 0, 20), bus(savidor, stop("B"), 29, 40))).single()
         assertNull(transferWarning(t, null))
         assertNull(transferWarning(t, 3))
-        assertEquals(5, warnBelowMin(t, 3))
+        assertEquals(TIGHT_MIN, warnBelowMin(t, 1))
+        assertEquals(5, warnBelowMin(t, 5))
         assertEquals(10, warnBelowMin(t, 10))
         assertEquals(TransferWarning.CHANGE_IN, transferWarning(t, 10))
+    }
+
+    @Test
+    fun `the results screenshot fixture shows a chip`() {
+        // ScreensTest's results use this recording; its first option changes bus with 0 min to spare.
+        val plan = MotisJson.decodeFromString(PlanResponse.serializer(), javaClass.getResource("/fixtures/plan_bgu_telaviv.json")!!.readText())
+        assertTrue(tightTransfers(plan.itineraries.first(), null).isNotEmpty())
     }
 
     @Test

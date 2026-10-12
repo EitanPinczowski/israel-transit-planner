@@ -32,7 +32,7 @@ enum class TransferWarning {
     CHANGE_IN,
     /** "Walk 4 min, 2 min to spare". */
     WALK_SPARE,
-    /** Under a minute of slack, or none: "Tight: may miss the change". */
+    /** Negative slack (in practice a live delay): "Tight: may miss the change". */
     TIGHT,
 }
 
@@ -62,9 +62,14 @@ fun transfers(itin: Itinerary): List<Transfer> {
     }
 }
 
-/** Owner decision 1 (2026-10-12): under 5 min, under 8 with a train on either side. */
-const val TIGHT_MIN = 5
-const val TIGHT_TRAIN_MIN = 8
+/**
+ * Owner decision (2026-10-12, replacing decision 1 of the Phase 10 plan): under 2 min, under 4
+ * with a train on either side. MOTIS's transfer walks already include its own minimum change
+ * time, so most planned changes leave 0–2 min; higher thresholds put a chip on nearly every
+ * option (52 of 61 recorded options with a change at 5/8 min).
+ */
+const val TIGHT_MIN = 2
+const val TIGHT_TRAIN_MIN = 4
 
 /** Warn below this many minutes of slack; never lower than the user's buffer. */
 fun warnBelowMin(t: Transfer, bufferMin: Int?): Int =
@@ -73,7 +78,7 @@ fun warnBelowMin(t: Transfer, bufferMin: Int?): Int =
 /** How to warn about [t], or null when it has room enough. */
 fun transferWarning(t: Transfer, bufferMin: Int?): TransferWarning? = when {
     t.slackSec >= warnBelowMin(t, bufferMin) * 60L -> null
-    t.slackMin <= 0 -> TransferWarning.TIGHT
+    t.slackSec < 0 -> TransferWarning.TIGHT
     t.sameStop -> TransferWarning.CHANGE_IN
     else -> TransferWarning.WALK_SPARE
 }

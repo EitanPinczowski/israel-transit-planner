@@ -593,6 +593,8 @@ internal fun ItineraryCard(
                 val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit
                 LegChipView(c, onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null)
             }
+        // A tight change first, so it is above the fold on a small phone (designer pass).
+        TransferChips(itin, transferBufferMin)
             FareText(s.fare)
         }
         if (selected && onLeg != null && itin.firstTransitLeg != null) {
@@ -616,7 +618,6 @@ internal fun ItineraryCard(
         }
         Text("$transfers · $walk", style = MaterialTheme.typography.bodySmall)
         RideDetailsLines(itin, selected)
-        TransferChips(itin, transferBufferMin)
         if (selected) extra?.invoke()
         if (selected) {
             WalkDirections(itin)
