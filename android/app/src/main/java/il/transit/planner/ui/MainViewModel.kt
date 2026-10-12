@@ -381,7 +381,16 @@ class MainViewModel(
     fun openShared(place: SharedPlace) {
         _state.update { it.copy(mode = AppMode.TRIP, chainStops = emptyList(), chain = null, stopSheet = null, error = null, selected = 0) }
         when (place) {
-            is SharedPlace.Point -> { _state.update { it.copy(editing = Field.TO) }; setField(PlaceRef.Point(place.label, place.at)) }
+            is SharedPlace.Point -> viewModelScope.launch {
+                // Shared into a closed app: the map has no fix yet, so wait for it as the Home tile does (review D6).
+                if (_state.value.from == PlaceRef.MyLocation && locationProvider() == null) {
+                    _state.update { it.copy(loading = true) }
+                    kotlinx.coroutines.withTimeoutOrNull(FIX_WAIT_MS) { while (locationProvider() == null) delay(250) }
+                    _state.update { it.copy(loading = false) }
+                }
+                _state.update { it.copy(editing = Field.TO) }
+                setField(PlaceRef.Point(place.label, place.at))
+            }
             is SharedPlace.Text -> { startEditing(Field.TO); onQuery(place.query) }
             else -> Unit
         }

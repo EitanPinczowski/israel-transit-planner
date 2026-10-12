@@ -170,13 +170,14 @@ class MainActivity : ComponentActivity() {
         if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         // "Start trip" on the leave-now countdown (C5).
         if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
-        // Shared from WhatsApp, Waze, Google Maps… while the app was closed (D6).
-        if (fresh) openShared(intent)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
                 ?.let { LatLon(it.latitude, it.longitude) }
         }
+        // Shared from WhatsApp, Waze, Google Maps… while the app was closed (D6): after the location
+        // provider, so a point waits for the first fix instead of ending in "no location".
+        if (fresh) openShared(intent)
 
         lifecycleScope.launch { app.crashLog.refresh() }
 
