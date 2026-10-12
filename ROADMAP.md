@@ -251,7 +251,7 @@ only where the plan says. Tick only your own package's lines.
 ### D12 — Spare minute, sort in every tab, no unreasonable chains (`claude/p10-spare-sort`, 0 requests)
 - [x] At least 1 minute to spare at every change, in every tab (buffer 1 · 3 · 5 · 8 · 10, no Off)
 - [x] Fastest / Fewest transfers / Least walking in all five tabs
-- [x] No unreasonable chains (2 fewer changes within 10 min; 5+ changes when ≤ 3 exists)
+- [x] No unreasonable chains (2 fewer changes within 10 min; 5+ changes when ≤ 3 is within 10 min)
 
 ### D7 — Stop timetables (`claude/p10-timetables`, 1–2 per open, ≤ 3 a night)
 - [ ] Day timetable for a line at a stop (today / tomorrow, by hour)

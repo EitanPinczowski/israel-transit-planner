@@ -33,8 +33,9 @@ object TripPages {
      * that much before X. The departure bound is the arrive-by reading; on depart-after lists it
      * also keeps a direct bus at 07:00 from wiping out every 2-change option that leaves at
      * 10:00 (someone who takes X could not have taken that Y).
-     * X with [TripPlanner.LONG_CHAIN_CHANGES]+ changes goes when any option has at most
-     * [TripPlanner.SHORT_CHAIN_CHANGES] ("at all": no window).
+     * X with [TripPlanner.LONG_CHAIN_CHANGES]+ changes goes when an option with at most
+     * [TripPlanner.SHORT_CHAIN_CHANGES] is within the same window (owner, 2026-10-12; with
+     * today's constants that Y also has 2+ fewer changes, so the first rule already covers it).
      * [mayReplace] (y, x) limits which Y can drop X in both rules; the car tabs pass "costs the
      * driver no more than X", so a chain that saves the driver time stays. Each Y is from
      * [options] as given, and Y has fewer changes than X, so the fewest-change option is never
@@ -54,7 +55,7 @@ object TripPages {
         val kept = options.filter { x ->
             val changes = transfers(x)
             val longChain = changes >= TripPlanner.LONG_CHAIN_CHANGES &&
-                options.any { y -> transfers(y) <= TripPlanner.SHORT_CHAIN_CHANGES && mayReplace(y, x) }
+                options.any { y -> transfers(y) <= TripPlanner.SHORT_CHAIN_CHANGES && alternative(y, x) && mayReplace(y, x) }
             val beaten = options.any { y -> transfers(y) <= changes - TripPlanner.CHAIN_FEWER_CHANGES && alternative(y, x) && mayReplace(y, x) }
             !longChain && !beaten
         }

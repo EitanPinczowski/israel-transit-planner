@@ -719,8 +719,11 @@ reselect calls, so the order applies in every tab; `TripPanel.kt`: the one line 
 > four of them with 0–1 min to spare, listed first under Fastest.
 > - In `TripPages.sane` (every tab's transit options go through it), drop option X when another
 >   option Y has **at least 2 fewer changes and arrives at most 10 min after X**. For arrive-by,
->   use Y leaving at most 10 min before X.
-> - Drop any option with **5 or more changes** when an option with 3 or fewer exists at all.
+>   use Y leaving at most 10 min before X. (As built: the window bounds both ends in both modes,
+>   Y leaving at most 10 min before X and arriving at most 10 min after it.)
+> - Drop any option with **5 or more changes** when an option with 3 or fewer is within 10 min
+>   (leaves at most 10 min before X and arrives at most 10 min after X; owner 2026-10-12).
+> - In the car tabs, Y also costs the driver no more than X (`driverCostSec`; review 2026-10-12).
 > - An option is never dropped when it is the only one left. Put the constants in
 >   `TripPlanner` and pin them with tests.
 > - Record the Golan → Tel Aviv case as a fixture: one `plan` call through `record_fixture.py`,

@@ -136,8 +136,8 @@ class TripPlanner(private val api: TransitApi) {
         const val CHAIN_FEWER_CHANGES = 2
         const val CHAIN_WINDOW_SEC = 10 * 60
 
-        /** An option with [LONG_CHAIN_CHANGES] or more changes goes whenever one with at most
-         *  [SHORT_CHAIN_CHANGES] exists at all. */
+        /** An option with [LONG_CHAIN_CHANGES] or more changes goes when one with at most
+         *  [SHORT_CHAIN_CHANGES] is within [CHAIN_WINDOW_SEC] (owner, 2026-10-12). */
         const val LONG_CHAIN_CHANGES = 5
         const val SHORT_CHAIN_CHANGES = 3
     }

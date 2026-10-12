@@ -83,11 +83,17 @@ class SortOptionsTest {
         assertEquals(listOf(direct, later), TripPages.sane(listOf(direct, later)))
     }
 
-    @Test fun `5 or more changes go whenever an option with 3 or fewer exists at all`() {
-        val five = itin(0, 60, 5)
-        val three = itin(0, 100, 3)
-        assertEquals(listOf(three), TripPages.sane(listOf(five, three)))
-        val four = itin(0, 100, 4)
+    @Test fun `5 or more changes go only next to a 3-or-fewer option within 10 min (owner 2026-10-12)`() {
+        val five = itin(20, 80, 5)
+        // Arrives 10 min after: dropped. 11 min after: kept.
+        assertEquals(listOf(itin(20, 90, 3)), TripPages.sane(listOf(five, itin(20, 90, 3))))
+        assertEquals(listOf(five, itin(20, 91, 3)), TripPages.sane(listOf(five, itin(20, 91, 3))))
+        // Leaves 10 min before: dropped. 11 min before: kept.
+        assertEquals(listOf(itin(10, 80, 3)), TripPages.sane(listOf(five, itin(10, 80, 3))))
+        assertEquals(listOf(five, itin(9, 80, 3)), TripPages.sane(listOf(five, itin(9, 80, 3))))
+        // No longer "at all": a 3-change option an hour later leaves the 5-change one alone.
+        assertEquals(listOf(five, itin(20, 140, 3)), TripPages.sane(listOf(five, itin(20, 140, 3))))
+        val four = itin(20, 80, 4)
         assertEquals(listOf(five, four), TripPages.sane(listOf(five, four)))
     }
 
@@ -209,7 +215,7 @@ class SortOptionsTest {
         assertEquals(listOf(y), arrangeFront(listOf(d(x, 2), d(y, 2)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
         // The 5+ rule too: a 5-change option with the shortest detour stays next to a pricier 1-change one.
         val long = itin(0, 50, 5)
-        val short = itin(0, 120, 1)
+        val short = itin(0, 58, 1)
         assertEquals(listOf(long, short), arrangeFront(listOf(d(long, 3), d(short, 20)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
         assertEquals(listOf(short), arrangeFront(listOf(d(long, 20), d(short, 3)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
     }

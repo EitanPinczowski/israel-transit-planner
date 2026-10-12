@@ -106,7 +106,7 @@ planner order in `TripResult` and sorts in `UiState.options` (walk-only included
 Chain rule (constants in `TripPlanner`): X goes when Y has ≥ 2 fewer changes, arrives ≤ 10′
 after X **and** leaves ≤ 10′ before X. The window bounds both ends in both time modes (without
 the departure bound an early direct bus would wipe out every later departure); 5+ changes go
-when an option with ≤ 3 exists at all. In the car tabs only a Y that costs the driver no more
+when an option with ≤ 3 is within the same 10′ window (owner 2026-10-12). In the car tabs only a Y that costs the driver no more
 (`driverCostSec` ≤ X's) may replace X, in both rules: a chain that saves the driver 20′ is a
 trade-off, not a mistake. The fewest-change option always stays. `TripPages.sane` runs over
 the merged list, so an Earlier/Later page can remove options already shown; the selection then
