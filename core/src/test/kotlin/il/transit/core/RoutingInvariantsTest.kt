@@ -221,7 +221,8 @@ class RoutingInvariantsTest {
     private fun checkOption(where: String, o: Option<*>, itin: Itinerary, departAt: Instant) {
         checkItinerary(where, itin)
         assertTrue("$where: arrives before it left", !o.arrival.isBefore(departAt))
-        assertEquals("$where: option arrival is the itinerary's", itin.end, o.arrival)
+        // Pick-up adds the drive home (traffic-adjusted) to the transit itinerary, so never earlier than its end.
+        assertTrue("$where: option arrives ${o.arrival}, before its itinerary ends ${itin.end}", !o.arrival.isBefore(itin.end))
     }
 
     @Test fun `better start - drive, leave time, front and budget`() = runTest {

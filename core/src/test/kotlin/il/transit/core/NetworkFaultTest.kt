@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
@@ -274,7 +275,7 @@ class NetworkFaultTest {
         assertEquals(listOf(60, null), client(partial).oneToMany(from.at, many, "CAR", 600, false))
     }
 
-    @Test fun `refusals carry the code and Retry-After; an HTTP-date Retry-After is ignored`() = runBlocking {
+    @Test fun `refusals carry the code and Retry-After, an HTTP-date Retry-After is ignored`() = runBlocking {
         val http = ScriptedHttp(
             Reply(429, "slow down", mapOf("Retry-After" to "7")),
             Reply(503, "x".repeat(1_000), mapOf("Retry-After" to "Wed, 21 Oct 2026 07:28:00 GMT")),
@@ -359,7 +360,7 @@ class NetworkFaultTest {
         assertEquals(2, inner.calls)
     }
 
-    @Test fun `geocoder - cancelled mid-call frees the slot, caches nothing; reverse names too`() = runTest {
+    @Test fun `geocoder - cancelled mid-call frees the slot, caches nothing, reverse names too`() = runTest {
         val inner = FaultyGeocoder(Fault.Hang, Fault.Hang)
         val guard = geoGuard(inner, maxConcurrent = 1)
         val search = launch { guard.search("x", "he", null) }

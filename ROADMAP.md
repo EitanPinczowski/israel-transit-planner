@@ -237,8 +237,8 @@ only where the plan says. Tick only your own package's lines.
 - [ ] Last trip home alert checks at the Friday time on a holiday eve
 
 ### D4 — Test hardening (`claude/p10-test-hardening`, Sonnet, 0 requests)
-- [ ] Network-fault tests: 429/503 retry, slow, cancelled, malformed; budgets and cache stay right
-- [ ] Routing invariants over every fixture and special feature
+- [x] Network-fault tests: 429/503 retry, slow, cancelled, malformed; budgets and cache stay right
+- [x] Routing invariants over every fixture and special feature
 
 ### D5 — Big-stop changes (`claude/p10-big-stops`, ≤ 2 requests per opened option)
 - [ ] Change at a big stop on the same two vehicles (same arrival, more slack); "Use this change"

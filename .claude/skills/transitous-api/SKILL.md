@@ -153,6 +153,22 @@ All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
 `BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
+### What the guards do when the network misbehaves (pinned by `NetworkFaultTest`, Phase 10 D4)
+| fault | `GuardedTransitApi` / `GuardedGeocoder` | against the budget |
+|---|---|---|
+| 429 / 503, then 200 | waits `Retry-After` (else 2 s), one retry inside the same slot, answer cached | counted once |
+| 429 / 503 twice | the second refusal propagates; never a third call; nothing cached | counted once |
+| `Retry-After` > 30 s (`MAX_RETRY_WAIT`) | no retry, the refusal propagates at once (no slot asleep for an hour) | counted once |
+| 400 / 404 / 500 / 502 | no retry | counted once |
+| slow past the caller's deadline, or cancelled (also while waiting out a 429) | `CancellationException`; slot freed, nothing cached | counted |
+| OkHttp timeout / `IOException` | propagates as is, not retried, not cached | counted |
+| malformed, empty, truncated or HTML body | `SerializationException` (an `IllegalArgumentException`); not cached; one-to-many with the wrong count is an `IllegalStateException` | counted |
+| 3 at once, limit 2 | the third waits for a slot (retries stay inside their slot) | each counted |
+
+Tests inject these at the `TransitApi` / `BackupGeocoder` level (`FaultyTransitApi`, `FaultyGeocoder`) or in an OkHttp
+interceptor (`ScriptedHttp`): no socket, not even localhost. `RoutingInvariantsTest` checks times, ride details, fares,
+traffic and Pareto fronts over every `plan_*` fixture and each feature's output; a new fixture is covered automatically.
+
 The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds
 `additionalTransferTime` (minutes) to every `plan`, so it is part of the cache key (`TransfersTest`).
 
