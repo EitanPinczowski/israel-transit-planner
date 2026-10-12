@@ -93,6 +93,22 @@ walk up to 11′ to a bus stop, and ride a bus first — none parks at a station
 stop past HaHagana) at 09:46. So B2 picks stations itself: bundled `RailStations`, drive times
 from `one-to-many` CAR (traffic-adjusted), then `plan` from the chosen stations' stop ids.
 
+## Sorting the front and dropping chains (Phase 10 D12)
+The chips (Fastest · Fewest transfers · Least walking, one `settings.tripSort`) show in every
+tab with 2+ options, errands excepted. `arrangeFront` (in `plan/TripPlanner.kt`) drops the
+unreasonable chains (`TripPages.reasonable`, on `Option.arrival`), then sorts the **payload
+list** itself; ties fall back to the front's order (arrival, driver cost, transfers), so
+sorting a sorted list matches sorting the planner's. Fastest = `Option.arrival` (pick-up:
+home, the drive included). The app stores the four results already arranged
+(`ui/SortUi.kt`), so cards, `UiState.options`, `selectedCarPath` and "send to driver" index
+one list; a re-sort (`resorted`) keeps the opened option opened. The Trip tab keeps its
+planner order in `TripResult` and sorts in `UiState.options` (walk-only included).
+Chain rule (constants in `TripPlanner`): X goes when Y has ≥ 2 fewer changes, arrives ≤ 10′
+after X **and** leaves ≤ 10′ before X (without the second bound an early direct bus would
+wipe out every later departure); 5+ changes go when an option with ≤ 3 exists. The
+fewest-change option always stays. Recorded case: `plan_golan_tabenkin_tlv` (5 changes at
+11:49 vs 2 at 11:50). Every plan sends `additionalTransferTime` ≥ 1 (`UserSettings`).
+
 ## Traffic (`TrafficProfile`)
 Free routers assume empty roads. ×1.3 Sun–Thu 07–09 and 16–18 Israel time, else ×1.0.
 Editable in app settings (phase 1). If a golden trip shows drives systematically off,

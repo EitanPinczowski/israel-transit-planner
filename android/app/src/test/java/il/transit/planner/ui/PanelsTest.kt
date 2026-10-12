@@ -116,6 +116,10 @@ class PanelsTest(private val v: Variant) {
             Option(DropOffOption(DropOffKind.TRANSIT_FROM_START, null, 0, 0, fromStart), 0, fromStart.end, fromStart.transfers),
         )
         panel("dropoff_choices", carState(AppMode.DROP_OFF).copy(dropOff = DropOffResult(4383, options, candidatesConsidered = 5)))
+        // D12: the sort chips on a Drop-off result, re-sorted with the second card opened.
+        val sorted = carState(AppMode.DROP_OFF).copy(dropOff = DropOffResult(4383, options, candidatesConsidered = 5), selected = 1)
+            .resorted(il.transit.core.plan.TripSort.LEAST_WALKING)
+        panel("dropoff_sorted", sorted)
     }
 
     @Test fun dropOffNone() = panel(

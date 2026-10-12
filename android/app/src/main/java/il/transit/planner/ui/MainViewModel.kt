@@ -214,10 +214,12 @@ data class UiState(
     /** The routine's place, while the destination is still the one the routine filled in. */
     val activeRoutine: String? get() = routinePlace?.takeIf { (to as? PlaceRef.Point)?.name == it }
 
-    /** The itineraries the results panel lists, for whichever tab is showing. */
+    /** The itineraries the results panel lists, for whichever tab is showing. The car + transit
+     *  results are stored already sorted ([arranged]), so this list, the cards, [selectedCarPath]
+     *  and "send to driver" all index the same order. */
     val options: List<Itinerary>
         get() = when (mode) {
-            AppMode.TRIP -> chain?.legs ?: results?.let { sortOptions(it.itineraries, settings.tripSort) + listOfNotNull(it.walkOnly) }.orEmpty()
+            AppMode.TRIP -> chain?.legs ?: results?.let { sortOptions(it, settings.tripSort, timeMode == TimeMode.ARRIVE_BY) }.orEmpty()
             AppMode.BETTER_START -> betterStart?.options?.map { it.payload.itinerary }.orEmpty()
             AppMode.DROP_OFF -> dropOff?.options?.map { it.payload.transit }.orEmpty()
             AppMode.PICK_UP -> pickUp?.options?.map { it.payload.itinerary }.orEmpty()
@@ -575,7 +577,7 @@ class MainViewModel(
                                 offlineSince = null,
                                 // A refresh keeps the bus the user picked, wherever it moved in the list.
                                 selected = if (quiet) {
-                                    reselect(it.selectedItinerary, sortOptions(r.itineraries, it.settings.tripSort) + listOfNotNull(r.walkOnly), it.selected)
+                                    reselect(it.selectedItinerary, sortOptions(r, it.settings.tripSort, it.timeMode == TimeMode.ARRIVE_BY), it.selected)
                                 } else {
                                     0
                                 },
@@ -601,7 +603,7 @@ class MainViewModel(
                             ),
                         )
                         val empty = r.options.isEmpty() && r.baseline == null
-                        _state.update { it.copy(loading = false, betterStart = r, error = if (empty) UiError.NO_RESULTS else null) }
+                        _state.update { it.copy(loading = false, betterStart = r, error = if (empty) UiError.NO_RESULTS else null).arranged() }
                     }
                     AppMode.DROP_OFF -> {
                         val budgeted = BudgetedTransitApi(api, DropOffPlanner.BUDGET)
@@ -616,7 +618,7 @@ class MainViewModel(
                                 language = language,
                             ),
                         )
-                        _state.update { it.copy(loading = false, dropOff = r, error = if (r.options.isEmpty()) UiError.NO_RESULTS else null) }
+                        _state.update { it.copy(loading = false, dropOff = r, error = if (r.options.isEmpty()) UiError.NO_RESULTS else null).arranged() }
                     }
                     AppMode.PICK_UP -> {
                         val budgeted = BudgetedTransitApi(api, PickUpPlanner.BUDGET)
@@ -631,12 +633,12 @@ class MainViewModel(
                             ),
                         )
                         val empty = r.options.isEmpty() && r.baseline == null
-                        _state.update { it.copy(loading = false, pickUp = r, error = if (empty) UiError.NO_RESULTS else null) }
+                        _state.update { it.copy(loading = false, pickUp = r, error = if (empty) UiError.NO_RESULTS else null).arranged() }
                     }
                     AppMode.PARK_RIDE -> {
                         val r = planParkRide(api, s, from, to, language)
                         val empty = r.options.isEmpty() && r.baseline == null
-                        _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null) }
+                        _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null).arranged() }
                     }
                 }
             } catch (e: CancellationException) {
@@ -689,7 +691,7 @@ class MainViewModel(
                     is TripPages.PageOutcome.Merged -> it.copy(
                         results = o.result,
                         // The option the user picked stays picked, wherever the new page put it.
-                        selected = reselect(it.selectedItinerary, sortOptions(o.result.itineraries, it.settings.tripSort) + listOfNotNull(o.result.walkOnly), it.selected),
+                        selected = reselect(it.selectedItinerary, sortOptions(o.result, it.settings.tripSort, it.timeMode == TimeMode.ARRIVE_BY), it.selected),
                         pages = TripPagesUi(),
                     )
                 }
@@ -1158,9 +1160,9 @@ class MainViewModel(
 
     fun updateSettings(s: UserSettings) = viewModelScope.launch { store.setSettings(s) }
 
-    /** Re-order the Trip tab's options; the first of the new order is selected. */
+    /** Re-order the options in every tab (D12); the opened option stays opened ([resorted]). */
     fun setTripSort(sort: TripSort) {
-        _state.update { it.copy(selected = 0, settings = it.settings.copy(tripSort = sort)) }
+        _state.update { it.resorted(sort) }
         updateSettings(_state.value.settings)
     }
 

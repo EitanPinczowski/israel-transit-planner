@@ -4,23 +4,54 @@ import il.transit.core.api.Endpoint
 import il.transit.core.api.Itinerary
 import il.transit.core.api.PlanRequest
 import il.transit.core.api.TransitApi
+import il.transit.core.features.Option
 import il.transit.core.user.UserSettings
 import java.time.Instant
 
 enum class TimeMode { NOW, DEPART_AT, ARRIVE_BY }
 
-/** How the Trip tab orders its options; a re-ordering of the same answers, never a new search. */
+/** How every tab orders its options (D12); a re-ordering of the same answers, never a new search. */
 @kotlinx.serialization.Serializable
 enum class TripSort { FASTEST, FEWEST_TRANSFERS, LEAST_WALKING }
 
 /**
- * [options] in [sort] order. FASTEST keeps the planner's order (earliest arrival, or latest
- * departure for arrive-by); the others break ties by that same order.
+ * [options] in [sort] order, whatever the tab's payload [T]:
+ * - FASTEST: earliest [arrival] (the car part included), or latest [departure] for [arriveBy];
+ * - FEWEST_TRANSFERS: fewest transit transfers;
+ * - LEAST_WALKING: least [walkSec] over the whole option.
+ * The sort is stable: ties keep [options]' order, which callers pass in the planner's order.
  */
-fun sortOptions(options: List<Itinerary>, sort: TripSort): List<Itinerary> = when (sort) {
-    TripSort.FASTEST -> options
-    TripSort.FEWEST_TRANSFERS -> options.sortedBy { it.transfers }
-    TripSort.LEAST_WALKING -> options.sortedBy { it.walkSec }
+fun <T> sortOptions(
+    options: List<T>,
+    sort: TripSort,
+    arriveBy: Boolean = false,
+    itinerary: (T) -> Itinerary,
+    arrival: (T) -> Instant = { itinerary(it).end },
+    departure: (T) -> Instant = { itinerary(it).start },
+): List<T> = when (sort) {
+    TripSort.FASTEST -> if (arriveBy) options.sortedByDescending(departure) else options.sortedBy(arrival)
+    TripSort.FEWEST_TRANSFERS -> options.sortedBy { itinerary(it).transfers }
+    TripSort.LEAST_WALKING -> options.sortedBy { itinerary(it).walkSec }
+}
+
+/** The Trip tab: [TripResult.itineraries] (planner order) and the walk-only option, sorted together. */
+fun sortOptions(result: TripResult, sort: TripSort, arriveBy: Boolean): List<Itinerary> =
+    sortOptions(result.itineraries + listOfNotNull(result.walkOnly), sort, arriveBy, { it })
+
+/** Plain itineraries, depart-after. */
+fun sortOptions(options: List<Itinerary>, sort: TripSort): List<Itinerary> = sortOptions(options, sort, false, { it })
+
+/**
+ * A car + transit tab's options (a Pareto front, baselines included) as the list shows them:
+ * the unreasonable chains dropped ([TripPages.reasonable], arrival = [Option.arrival], car part
+ * included), then sorted. Ties fall back to the front's own order (arrival, then driver
+ * cost, then transfers), whatever order [options] come in, so re-sorting a re-sorted list
+ * gives the same answer as sorting the planner's.
+ */
+fun <T> arrangeFront(options: List<Option<T>>, sort: TripSort, itinerary: (T) -> Itinerary): List<Option<T>> {
+    val planned = options.sortedWith(compareBy<Option<T>> { it.arrival }.thenBy { it.driverCostSec }.thenBy { it.transfers })
+    val kept = TripPages.reasonable(planned, { it.transfers }, { it.arrival }, { itinerary(it.payload).start })
+    return sortOptions(kept, sort, false, { itinerary(it.payload) }, { it.arrival })
 }
 
 /** Seconds spent walking, all legs. */
@@ -93,5 +124,19 @@ class TripPlanner(private val api: TransitApi) {
 
         /** An option is dropped when it takes more than twice the fastest and over an hour longer. */
         const val MAX_EXTRA_SEC = 60 * 60
+
+        /**
+         * No unreasonable chains (owner, D12, 2026-10-12; Golan → Tel Aviv came out as 7 buses,
+         * 6 changes, listed first): an option is dropped when another has at least
+         * [CHAIN_FEWER_CHANGES] fewer changes, arrives at most [CHAIN_WINDOW_SEC] later and
+         * leaves at most that much earlier ([TripPages.reasonable]).
+         */
+        const val CHAIN_FEWER_CHANGES = 2
+        const val CHAIN_WINDOW_SEC = 10 * 60
+
+        /** An option with [LONG_CHAIN_CHANGES] or more changes goes whenever one with at most
+         *  [SHORT_CHAIN_CHANGES] exists at all. */
+        const val LONG_CHAIN_CHANGES = 5
+        const val SHORT_CHAIN_CHANGES = 3
     }
 }

@@ -27,7 +27,6 @@
 
     <!-- Settings. -->
     <string name="transfer_buffer">Keep transfers at least</string>
-    <string name="transfer_buffer_off">Off</string>
 
     <!-- Trip sheet: a long ride folded. -->
     <plurals name="stops_folded">

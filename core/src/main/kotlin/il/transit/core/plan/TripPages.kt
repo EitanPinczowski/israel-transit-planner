@@ -17,11 +17,38 @@ object TripPages {
     /**
      * MOTIS also returns trips that wait out a night or Shabbat (Friday 16:19, arrive Saturday
      * 17:25: 25 h). Nobody wants those next to a 91-min option: drop anything over twice the
-     * fastest and over [TripPlanner.MAX_EXTRA_SEC] longer.
+     * fastest and over [TripPlanner.MAX_EXTRA_SEC] longer. Then the unreasonable chains go
+     * ([reasonable]).
      */
     fun sane(options: List<Itinerary>): List<Itinerary> {
         val fastest = options.minOfOrNull { it.duration } ?: 0
-        return options.filter { it.duration <= maxOf(2 * fastest, fastest + TripPlanner.MAX_EXTRA_SEC) }
+        val short = options.filter { it.duration <= maxOf(2 * fastest, fastest + TripPlanner.MAX_EXTRA_SEC) }
+        return reasonable(short, { it.transfers }, { it.end }, { it.start })
+    }
+
+    /**
+     * [options] without the unreasonable chains (D12): X goes when some Y has at least
+     * [TripPlanner.CHAIN_FEWER_CHANGES] fewer changes, arrives at most
+     * [TripPlanner.CHAIN_WINDOW_SEC] after X and leaves at most that much before X. The second
+     * bound is the arrive-by reading; it also keeps a direct bus at 07:00 from wiping out every
+     * 2-change option that leaves at 10:00 (someone who takes X could not have taken that Y).
+     * X with [TripPlanner.LONG_CHAIN_CHANGES]+ changes goes when any option has at most
+     * [TripPlanner.SHORT_CHAIN_CHANGES]. Each Y is from [options] as given. The fewest-change
+     * option is never dropped, so a non-empty list stays non-empty. Order kept.
+     */
+    fun <T> reasonable(options: List<T>, transfers: (T) -> Int, arrival: (T) -> Instant, departure: (T) -> Instant): List<T> {
+        if (options.size < 2) return options
+        val fewest = options.minOf(transfers)
+        val window = TripPlanner.CHAIN_WINDOW_SEC.toLong()
+        fun alternative(y: T, x: T): Boolean =
+            !arrival(y).isAfter(arrival(x).plusSeconds(window)) && !departure(y).isBefore(departure(x).minusSeconds(window))
+        val kept = options.filter { x ->
+            val changes = transfers(x)
+            val longChain = changes >= TripPlanner.LONG_CHAIN_CHANGES && fewest <= TripPlanner.SHORT_CHAIN_CHANGES
+            val beaten = options.any { y -> transfers(y) <= changes - TripPlanner.CHAIN_FEWER_CHANGES && alternative(y, x) }
+            !longChain && !beaten
+        }
+        return kept.ifEmpty { options }
     }
 
     /** The planner's order: earliest arrival first, or latest departure first for arrive-by. */

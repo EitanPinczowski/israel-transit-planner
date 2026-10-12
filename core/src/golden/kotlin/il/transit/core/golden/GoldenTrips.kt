@@ -56,6 +56,8 @@ import kotlin.system.exitProcess
 private object P {
     val bgu = LatLon(31.2622, 34.8013)
     val savidor = LatLon(32.0839, 34.7983)
+    val kelaAlon = LatLon(33.1308, 35.6825)
+    val tabenkinTlv = LatLon(32.1205, 34.803)
     val bsCenter = LatLon(31.2433, 34.7976)
     val jerusalemCbs = LatLon(31.7890, 35.2033)
     val bsRamot = LatLon(31.2747, 34.8123)
@@ -84,6 +86,10 @@ private class Counting(private val inner: TransitApi) : TransitApi {
     }
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
         this.n.incrementAndGet(); return inner.stopTimes(stopId, time, n, language)
+    }
+    override suspend fun trip(tripId: String, language: String): Itinerary { n.incrementAndGet(); return inner.trip(tripId, language) }
+    override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<il.transit.core.api.TripSegment> {
+        n.incrementAndGet(); return inner.mapTrips(box, start, end, zoom, language)
     }
 }
 
@@ -240,6 +246,9 @@ private suspend fun runAll(args: Array<String>): Int {
 
     trip(10, "Tel Aviv Carlebach → Petah Tikva", "light rail", P.carlebach, P.petahTikva, tue8) { its ->
         check(its.take(3).any { LegKind.LIGHT_RAIL in kinds(it) }) { "none of the first 3 options uses the light rail" }
+    }
+    trip(12, "Near Kela Alon (Golan) → Tabenkin 15, Tel Aviv", "no 5-change chain (D12)", P.kelaAlon, P.tabenkinTlv, at(weekday, 7)) { its ->
+        check(its.none { it.transfers >= 5 } || its.none { it.transfers <= 3 }) { "a 5+ change option next to one with ≤ 3" }
     }
 
     val failed = results.count { it.problems.isNotEmpty() }

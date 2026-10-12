@@ -25,7 +25,6 @@
     <string name="transfer_tight">צפוף: אפשר לפספס את ההחלפה</string>
 
     <string name="transfer_buffer">זמן החלפה מינימלי</string>
-    <string name="transfer_buffer_off">כבוי</string>
 
     <plurals name="stops_folded">
         <item quantity="one">תחנה אחת, הקישו להרחבה</item>
