@@ -166,7 +166,13 @@ data class StopTime(
 )
 
 @Serializable
-data class StopTimesResponse(val stopTimes: List<StopTime> = emptyList(), val place: Place? = null)
+data class StopTimesResponse(
+    val stopTimes: List<StopTime> = emptyList(),
+    val place: Place? = null,
+    /** `EARLIER|<epoch>` / `LATER|<epoch>`: the same query plus `pageCursor=<one>` answers the adjacent window. */
+    val previousPageCursor: String? = null,
+    val nextPageCursor: String? = null,
+)
 
 object StreetModes {
     const val WALK = "WALK"

@@ -81,6 +81,9 @@ interface MainActions {
 
     /** "Use this change" (true) / "Back to the original change" (Phase 10 D5). */
     fun useBigStop(use: Boolean) = Unit
+
+    /** A line's day timetable at the open stop (Phase 10 D7): open, today/tomorrow, More, back. */
+    fun timetable(action: TimetableAction) = Unit
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */
@@ -106,6 +109,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun plan() { vm.plan() }
     override fun select(index: Int) { vm.select(index) }
     override fun useBigStop(use: Boolean) { vm.useBigStop(use) }
+    override fun timetable(action: TimetableAction) { vm.timetable(action) }
     override fun clearResults() { vm.clearResults() }
     override fun cancelReminder() { vm.cancelReminder() }
     override fun stopRide() { vm.stopRide() }

@@ -254,8 +254,8 @@ only where the plan says. Tick only your own package's lines.
 - [x] No unreasonable chains (2 fewer changes within 10 min; 5+ changes when ≤ 3 is within 10 min)
 
 ### D7 — Stop timetables (`claude/p10-timetables`, 1–2 per open, ≤ 3 a night)
-- [ ] Day timetable for a line at a stop (today / tomorrow, by hour)
-- [ ] Offline timetables for starred stops, saved by the night refresh
+- [x] Day timetable for a line at a stop (today / tomorrow, by hour)
+- [x] Offline timetables for starred stops, saved by the night refresh
 
 ### D8 — Fares + report (`claude/p10-fares-report`, 0 requests)
 - [ ] Fare profiles: senior / student / youth / soldier, each number with its source

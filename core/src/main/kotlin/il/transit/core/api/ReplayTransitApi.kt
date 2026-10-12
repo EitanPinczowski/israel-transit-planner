@@ -88,7 +88,7 @@ class ReplayTransitApi(
         return MotisJson.decodeFromString(ListSerializer(GeocodeMatch.serializer()), load("reverse_geocode_bgu")).take(max)
     }
 
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
         hit()
         val raw = MotisJson.parseToJsonElement(load("stoptimes_beersheva_north"))
         val recorded = MotisJson.decodeFromJsonElement(StopTimesResponse.serializer(), raw)

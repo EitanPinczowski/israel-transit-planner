@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 10 D7: a line's day timetable at a stop, and the boards saved at night. -->
+    <string name="timetable_open">Day timetable of line %1$s</string>
+    <string name="timetable_back">Back to departures</string>
+    <string name="timetable_today">Today</string>
+    <string name="timetable_tomorrow">Tomorrow</string>
+    <string name="timetable_more">More</string>
+    <string name="timetable_none">No departures of this line that day.</string>
+    <string name="timetable_none_left">No more departures of this line saved for today.</string>
+    <string name="timetable_scheduled">Scheduled times from the timetable, no live delays.</string>
+    <string name="timetable_next">next</string>
+    <string name="timetable_saved_last_night">Offline · saved last night at ⁨%1$s⁩</string>
+    <string name="timetable_saved_at">Offline · saved ⁨%1$s⁩ at ⁨%2$s⁩</string>
+</resources>

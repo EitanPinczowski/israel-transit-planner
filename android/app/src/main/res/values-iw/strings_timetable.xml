@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 10 D7: a line's day timetable at a stop, and the boards saved at night. -->
+    <string name="timetable_open">לוח הזמנים היומי של קו %1$s</string>
+    <string name="timetable_back">חזרה ליציאות</string>
+    <string name="timetable_today">היום</string>
+    <string name="timetable_tomorrow">מחר</string>
+    <string name="timetable_more">עוד</string>
+    <string name="timetable_none">אין יציאות של הקו הזה ביום הזה.</string>
+    <string name="timetable_none_left">לא נשמרו עוד יציאות של הקו הזה להיום.</string>
+    <string name="timetable_scheduled">זמנים מלוח הזמנים המתוכנן, בלי איחורים בזמן אמת.</string>
+    <string name="timetable_next">הבא</string>
+    <string name="timetable_saved_last_night">אין חיבור · נשמר אתמול בלילה ב־⁨%1$s⁩</string>
+    <string name="timetable_saved_at">אין חיבור · נשמר ב־⁨%1$s⁩ בשעה ⁨%2$s⁩</string>
+</resources>

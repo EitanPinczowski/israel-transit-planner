@@ -69,6 +69,8 @@ fun encodePolyline(points: List<LatLon>, precision: Int = 6): EncodedPolyline {
 }
 
 /** A scriptable [TransitApi] that records every call. Unscripted calls fail loudly. */
+data class StopTimesCall(val stopId: String, val time: Instant?, val n: Int, val pageCursor: String?)
+
 class FakeTransitApi : TransitApi {
     val calls: MutableList<String> = Collections.synchronizedList(ArrayList())
     val planRequests: MutableList<PlanRequest> = Collections.synchronizedList(ArrayList())
@@ -110,9 +112,15 @@ class FakeTransitApi : TransitApi {
         return emptyList()
     }
 
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
+    /** Every `stopTimes` call: stop id, time, n and page cursor. */
+    val stopTimesRequests: MutableList<StopTimesCall> = Collections.synchronizedList(ArrayList())
+    var onStopTimes: (StopTimesCall) -> StopTimesResponse = { StopTimesResponse() }
+
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
         calls += "stopTimes"
-        return StopTimesResponse()
+        val call = StopTimesCall(stopId, time, n, pageCursor)
+        stopTimesRequests += call
+        return onStopTimes(call)
     }
 
     var onTrip: (String) -> Itinerary = { error("unscripted trip: $it") }

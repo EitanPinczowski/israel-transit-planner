@@ -33,7 +33,14 @@ interface TransitApi {
     /** Nearest addresses/places/stops to [at], best first. Used to name a long-pressed point. */
     suspend fun reverseGeocode(at: LatLon, language: String = "he", max: Int = 3): List<GeocodeMatch>
 
-    suspend fun stopTimes(stopId: String, time: Instant? = null, n: Int = 10, language: String = "he"): StopTimesResponse
+    /** Departures at [stopId] from [time]; [pageCursor] (a previous answer's `nextPageCursor`) asks for the next window. */
+    suspend fun stopTimes(
+        stopId: String,
+        time: Instant? = null,
+        n: Int = 10,
+        language: String = "he",
+        pageCursor: String? = null,
+    ): StopTimesResponse
 
     /** One vehicle's whole trip (`/api/v6/trip`): a single transit leg whose
      *  `intermediateStops` are every stop between its first and last, with live times when

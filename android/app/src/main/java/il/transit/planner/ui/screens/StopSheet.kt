@@ -216,6 +216,12 @@ internal fun StopPanel(
     shape: Shape,
 ) {
     Sheet(modifier, shape) {
+        // Phase 10 D7: a tapped line's day timetable takes the departures' place.
+        sheet.timetable?.let { t ->
+            SheetHeader(collapsed, onCollapse) { TimetableHeader(sheet, t, vm) }
+            if (!collapsed) TimetableBody(t, vm)
+            return@Sheet
+        }
         SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
@@ -227,6 +233,7 @@ internal fun StopPanel(
             }
         }
         if (!collapsed) {
+            sheet.saved?.let { SavedNote(it.at, it.lastNight) }
             when {
                 sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
@@ -234,8 +241,10 @@ internal fun StopPanel(
                 else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) {
                     items(sheet.rows) { r ->
                         val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
+                        val open = stringResource(R.string.timetable_open, r.line.ifBlank { kindName(r.kind) })
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(Modifier.weight(1f)) { DepartureView(r) }
+                            // A tap opens this line's day timetable at this stop.
+                            Box(Modifier.weight(1f).clickable(onClickLabel = open) { vm.timetable(TimetableAction.Open(r)) }) { DepartureView(r) }
                             // ☆ pins this line in this direction at this stop ("My lines").
                             TextButton(onClick = { vm.toggleFavorite(sheet, r) }) {
                                 Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary)

@@ -84,8 +84,8 @@ private class Counting(private val inner: TransitApi) : TransitApi {
     override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> {
         n.incrementAndGet(); return inner.reverseGeocode(at, language, max)
     }
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
-        this.n.incrementAndGet(); return inner.stopTimes(stopId, time, n, language)
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
+        this.n.incrementAndGet(); return inner.stopTimes(stopId, time, n, language, pageCursor)
     }
     override suspend fun trip(tripId: String, language: String): Itinerary { n.incrementAndGet(); return inner.trip(tripId, language) }
     override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<il.transit.core.api.TripSegment> {

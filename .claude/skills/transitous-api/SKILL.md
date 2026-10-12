@@ -28,7 +28,7 @@ we use are modelled in `core/api/Models.kt`, with `ignoreUnknownKeys`.
 | `stops` | `GET /api/v6/map/stops` | `min`/`max` bbox. Transitous ignores `modes` — filter client-side. Long drop-off drives use the bundled `RailStations` instead. |
 | `geocode` | `GET /api/v1/geocode` | `text`, `language=he`, `place` bias. Through `search/PlaceSearch` (Photon after a miss, below). |
 | `reverseGeocode` | `GET /api/v1/reverse-geocode` | `place`, `numResults=1`: names a long-pressed pin or a "save my current location" fix (`PinName`); 1 request each, cached a day; none → "Pin · lat, lon". |
-| `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. |
+| `stopTimes` | `GET /api/v6/stoptimes` | departures, `realTime` flag per entry. Answers carry `previousPageCursor` / `nextPageCursor`; the same query plus `pageCursor` gives the next window (day timetable, below). |
 | `trip` | `GET /api/v6/trip` | `tripId` (from a leg or a departure; contains `:` — let OkHttp encode it). Answers an `Itinerary`: one transit leg, first stop → last, every stop in `intermediateStops`. |
 | `mapTrips` | `GET /api/v6/map/trips` | `min`/`max` bbox (SW/NE, like `map/stops`), `zoom`, `startTime`/`endTime`. A list of stop-to-stop hops (`TripSegment`); **polyline precision 5**, not 6. |
 
@@ -184,6 +184,18 @@ found or not (`BigStopSession`; a failed check is not remembered). Pinned in `Bi
 (recorded 2026-10-12: ids from a plan of 2026-10-05, `…_051026`, answered 404 for the same service
 day; the current feed was `…_121026`), so a `trip` fixture needs a fresh `plan` first.
 
+**Day timetable (Phase 10 D7): 2 `stoptimes` per open, +1 per "More".** `present/DayTimetable.kt`
+`TimetableLoader`: from the service day's 04:00, `n = 60`, at most 2 pages under `BudgetedTransitApi(2)`,
+then "More" sends 1 with the last `nextPageCursor`. Every page repeats the first query (`time` included) +
+`pageCursor`, which is in the guard's cache key, so a re-open within 30 s costs 0. Paging stops when a page
+reaches past the day's end (04:00 next day), is empty, or has no cursor. The line + headsign filter and the
+Saturday-night dedupe (line + minute) run on the phone. Recorded 2026-10-12 (4 calls): Be'er Sheva central
+intercity (`48114`) Wed 14 Oct from 04:00 = 62 departures 04:45–06:45, page 2 continues at 06:50 with no
+overlap (`stoptimes_day_beersheva_central_p1/p2`): a busy hub needs More through the day (a parent station
+lists all its platforms). A quiet Omer stop (`26760`) fits a whole day in one page and spills into the next
+(`stoptimes_day_omer_quiet`); on Friday from 12:00 its last bus is 15:43, the next Saturday 20:15
+(`stoptimes_day_omer_friday`). Pinned in `DayTimetableTest`.
+
 **Timetable horizon** (`DayNotice.HORIZON_DAYS = 8`): measured 2026-10-12 with 3 live `plan`
 calls, Be'er Sheva → Tel Aviv 08:00 (`plan_horizon_20261111/20261210/20270110`): +30, +60 and
 +90 days answer no itinerary (`n_routes_visited: 0`), while +8 days answered (`plan_pages_*`,
@@ -193,6 +205,7 @@ recorded 2026-10-05 for 13 Oct). So the MOT timetable on Transitous reaches at l
 | background job | requests | worst case per day | constraints |
 |---|---|---|---|
 | Night refresh (`NightRefreshWorker`, Phase 9 C2) | `plan` only | 6 (`NightRefresh.MAX_TRIPS`, `BudgetedTransitApi`) + 1 per 429/503 retry | Wi-Fi, charging, battery not low; 22:00–06:00; once per service day; never retried |
+| Night boards (same `NightRefreshWorker`, Phase 10 D7) | `stoptimes` only, after the trips | 3 (`NightRefresh.MAX_STOPS`, its own `BudgetedTransitApi(3)`, one page of `n = 100` from tomorrow's 04:00 per stop of My lines) + 1 per 429/503 retry: night total ≤ 6 + 3 = 9 | same run, same constraints; also enqueued when My lines has a stop; once per service day |
 | Last trip home (`LastTripReceiver`, Phase 9 C5) | `plan` only (`LastRideFinder`) | 3 (`LastRideFinder.BUDGET`, `BudgetedTransitApi`) + 1 per 429/503 retry; 0 with the setting off (default), no Home, no origin, or within 1 km of Home | one inexact alarm an evening (19:00 Sun–Thu, 12:00 Fri, 20:00 Sat) → WorkManager, network connected; not 02:00–03:59; a check with no signal retried every 15 min while the day's 3 last (spent requests stored before each try) |
 
 ## Backup geocoders: the phone's Geocoder, then Photon (search fix, owner approved 2026-10-07)

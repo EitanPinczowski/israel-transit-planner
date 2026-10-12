@@ -91,7 +91,7 @@ class FaultyTransitApi(vararg faults: Fault) : TransitApi {
     override suspend fun reverseGeocode(at: LatLon, language: String, max: Int) =
         log.run { listOf(GeocodeMatch("ADDRESS", "here", "rev", at.lat, at.lon)) }
 
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String) =
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?) =
         log.run { StopTimesResponse() }
 
     override suspend fun trip(tripId: String, language: String): Itinerary =

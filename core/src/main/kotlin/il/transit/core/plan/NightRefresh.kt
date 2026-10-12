@@ -3,10 +3,13 @@ package il.transit.core.plan
 import il.transit.core.api.BudgetExceededException
 import il.transit.core.api.BudgetedTransitApi
 import il.transit.core.api.Endpoint
+import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.TransitApi
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
 import il.transit.core.history.TripRecord
+import il.transit.core.present.DayTimetable
+import il.transit.core.user.FavoriteLine
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserSettings
@@ -20,12 +23,22 @@ import java.time.LocalTime
  * next morning the Trip tab still has them ("Offline · planned last night at 02:14").
  *
  * The app runs it from a WorkManager job (Wi-Fi + charging + battery not low), at most
- * [MAX_TRIPS] `plan` requests a night under a [BudgetedTransitApi]; that is the worst case
- * per day. A trip that fails is skipped until the next night: nothing is retried.
+ * [MAX_TRIPS] `plan` requests a night under a [BudgetedTransitApi], then at most [MAX_STOPS]
+ * `stoptimes` for My lines' stops under another: 9 a night is the worst case per day. A trip or
+ * a board that fails is skipped until the next night: nothing is retried.
  */
 object NightRefresh {
     /** At most this many trips, so this many `plan` requests, per night. */
     const val MAX_TRIPS = 6
+
+    /**
+     * After the trips, tomorrow's board for at most this many stops of My lines (Phase 10 D7),
+     * one `stoptimes` page each under its own [BudgetedTransitApi]: worst case 6 + 3 = 9 a night.
+     */
+    const val MAX_STOPS = 3
+
+    /** Departures per saved board: one page, from the day's 04:00. */
+    const val STOP_N = 100
 
     /** The worker does nothing when it wakes outside 22:00–06:00 Israel time. */
     val WINDOW_START: LocalTime = LocalTime.of(22, 0)
@@ -125,6 +138,9 @@ object NightRefresh {
         return (0L until 7L).any { jobs(places, trips, home, history, first.plusDays(it)).isNotEmpty() }
     }
 
+    /** The stops whose board is saved each night: My lines' stops, in pinning order, at most [MAX_STOPS]. */
+    fun stops(favorites: List<FavoriteLine>): List<String> = favorites.map { it.stopId }.distinct().take(MAX_STOPS)
+
     /** Minutes after midnight of the latest history record of [t] (from "my location" or Home when [t] has no `from`). */
     private fun lastTimeOfDay(t: SavedTrip, home: SavedPlace?, history: List<TripRecord>): Int? {
         val froms = if (t.from != null) setOf(t.from.name) else setOfNotNull("", home?.name)
@@ -140,7 +156,8 @@ object NightRefresh {
  * run (outside the window, or already done).
  */
 class NightRefresher(private val api: TransitApi) {
-    data class Outcome(val day: LocalDate, val planned: Int, val requests: Int)
+    /** [requests] counts `plan` calls; [stopRequests] the boards' `stoptimes` calls. */
+    data class Outcome(val day: LocalDate, val planned: Int, val requests: Int, val boards: Int = 0, val stopRequests: Int = 0)
 
     suspend fun run(
         jobs: (LocalDate) -> List<NightRefresh.Job>,
@@ -148,6 +165,9 @@ class NightRefresher(private val api: TransitApi) {
         now: Instant,
         settings: UserSettings,
         language: String,
+        /** Stops whose board to save after the trips ([NightRefresh.stops]). */
+        stops: List<String> = emptyList(),
+        saveBoard: suspend (stopId: String, board: StopTimesResponse) -> Unit = { _, _ -> },
         save: suspend (key: String, result: TripResult) -> Unit,
     ): Outcome? {
         if (!NightRefresh.inWindow(now)) return null
@@ -173,6 +193,23 @@ class NightRefresher(private val api: TransitApi) {
             save(job.key, r)
             planned++
         }
-        return Outcome(day, planned, budgeted.used)
+        // Tomorrow's boards, under their own budget so the trips can never eat into it.
+        val boardApi = BudgetedTransitApi(api, NightRefresh.MAX_STOPS)
+        var boards = 0
+        for (stopId in stops.distinct()) {
+            val board = try {
+                boardApi.stopTimes(stopId, DayTimetable.dayStart(day), NightRefresh.STOP_N, language)
+            } catch (e: BudgetExceededException) {
+                break
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                continue // the board saved before stays
+            }
+            if (board.stopTimes.isEmpty()) continue
+            saveBoard(stopId, board)
+            boards++
+        }
+        return Outcome(day, planned, budgeted.used, boards, boardApi.used)
     }
 }
