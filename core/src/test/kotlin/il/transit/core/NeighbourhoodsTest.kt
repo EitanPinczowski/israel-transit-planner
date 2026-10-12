@@ -57,17 +57,37 @@ class NeighbourhoodsTest {
         assertEquals("תל אביב-יפו", il.transit.core.present.geocodeDetail(a.exact.single()))
     }
 
-    @Test fun `two towns - the nearer one asked first, both listed, nearer first`() = runBlocking {
-        val both = listOf(answer("רמות", "באר שבע"), answer("רמות", "ירושלים"))
-        val jerusalem = LatLon(31.78, 35.2)
-        val api = BiasApi { both }
-        val a = PlaceSearch(api, null).search("רמות", "he", near = jerusalem)
-        assertEquals(Towns.named("ירושלים")!!.centre, api.biases.single())
-        assertEquals(listOf("ירושלים", "באר שבע"), a.exact.map { it.areas.single().name })
-        val b = PlaceSearch(api, null).search("רמות", "he", near = LatLon(31.25, 34.8))
-        assertEquals(Towns.named("באר שבע")!!.centre, api.biases.last())
-        assertEquals(listOf("באר שבע", "ירושלים"), b.exact.map { it.areas.single().name })
-        assertEquals(1, Neighbourhoods.townsByDistance(Neighbourhoods.named("רמות")!!, null).indexOfFirst { it.name == "באר שבע" })
+    @Test fun `two towns - one row per town, nearest first, 0 requests until a row is tapped`() = runBlocking {
+        // Owner, 2026-10-12: "רמות" is in Jerusalem and in Be'er Sheva; ask which, from the table.
+        val api = BiasApi { listOf(answer("רמות", "ירושלים")) }
+        val search = PlaceSearch(api, null)
+        val a = search.search("רמות", "he", near = LatLon(31.25, 34.8)) // the user in Be'er Sheva
+        assertEquals(0, api.biases.size)
+        assertEquals(listOf("באר שבע", "ירושלים"), a.choices.map { it.town.name })
+        assertEquals(listOf("רמות, באר שבע", "רמות, ירושלים"), a.choices.map { it.query })
+        assertTrue(a.exact.isEmpty() && !a.notFound)
+        // Without a location: the table's order. In English, the English town names.
+        assertEquals(listOf("רמות, ירושלים", "רמות, באר שבע"), search.search("רמות", "he", near = null).choices.map { it.query })
+        assertEquals("Ramot, Jerusalem", search.search("Ramot", "en", near = null).choices.first().query)
+        assertEquals(0, api.biases.size)
+        // The tap: one geocode, near that town's centre, and the place is the answer.
+        val tapped = search.search(a.choices[1].query, "he", near = LatLon(31.25, 34.8))
+        assertEquals(listOf(Towns.named("ירושלים")!!.centre), api.biases)
+        assertEquals(MatchLevel.PLACE, tapped.level(tapped.exact.single()))
+    }
+
+    @Test fun `two towns while typing - N rows, no geocode, then one after the tap`() = kotlinx.coroutines.test.runTest {
+        val api = BiasApi { listOf(answer("נווה שאנן", "חיפה")) }
+        val shown = mutableListOf<il.transit.core.search.SearchAnswer>()
+        val typing = il.transit.core.search.TypingSearch(this, PlaceSearch(api, null)) { _, a, _ -> shown += a }
+        typing.onText("נווה שאנן", "he") { null }
+        testScheduler.advanceUntilIdle()
+        assertEquals(2, shown.single().choices.size)
+        assertEquals(0, api.biases.size)
+        typing.onText(shown.single().choices.first { it.town.name == "חיפה" }.query, "he") { null }
+        testScheduler.advanceUntilIdle()
+        assertEquals(listOf(Towns.named("חיפה")!!.centre), api.biases)
+        assertEquals("נווה שאנן", shown.last().exact.single().name)
     }
 
     @Test fun `a street in a neighbourhood - the neighbourhood words are where, not the street`() {

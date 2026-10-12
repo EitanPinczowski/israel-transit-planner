@@ -39,6 +39,22 @@ class AliasesTest {
         assertEquals("צה\"ל 5 תל אביב", QueryText.expand("צה\"ל 5 ת\"א"))
     }
 
+    @Test fun `with "in", "to", "from" or "and" in front - the town, without the letter`() {
+        // Review (Sonnet, 2026-10-12): "בת״א" is how "in Tel Aviv" is typed.
+        assertEquals("דיזנגוף 50 תל אביב", QueryText.expand("דיזנגוף 50 בת\"א"))
+        assertEquals("הרצל 5 באר שבע", QueryText.expand("הרצל 5 בב״ש"))
+        assertEquals("יפו 3 ירושלים", QueryText.expand("יפו 3 בי-ם"))
+        assertEquals("רוטשילד 50 ראשון לציון", QueryText.expand("רוטשילד 50 בראשל'צ"))
+        assertEquals("הרצל 5 תל אביב", QueryText.expand("הרצל 5 לת׳א"))
+        assertEquals("הרצל 5 פתח תקווה", QueryText.expand("הרצל 5 ופ\"ת"))
+        assertEquals(Towns.named("תל אביב"), Towns.typedIn(QueryText.expand("דיזנגוף 50 בת\"א")).firstOrNull())
+        // The letters as they are win: ב"ב is בני ברק, בי"ח a hospital, never "in ..." something.
+        assertEquals("הרצל 5 בני ברק", QueryText.expand("הרצל 5 ב\"ב"))
+        assertEquals("בית חולים איכילוב", QueryText.expand("בי\"ח איכילוב"))
+        // No false expansion: a prefixed word that is no acronym, an ambiguous one, or a bare word.
+        for (w in listOf("ל\"ג", "בק\"א", "בצה\"ל", "בתא", "בים", "מפת")) assertEquals(w, "הרצל 5 $w", QueryText.expand("הרצל 5 $w"))
+    }
+
     @Test fun `an acronym in English text is spelled out in English`() {
         assertEquals("Herzl 5, Tel Aviv", QueryText.expand("Herzl 5, ת\"א"))
         assertEquals("Dizengoff 50 Tel Aviv", QueryText.expand("Dizengoff 50 ת'א"))

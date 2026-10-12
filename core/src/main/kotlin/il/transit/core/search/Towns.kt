@@ -9,6 +9,10 @@ data class Town(val names: List<String>, val lat: Double, val lon: Double, val r
     val centre: LatLon get() = LatLon(lat, lon)
     val name: String get() = names.first()
 
+    /** Its name in [language]: the first Latin spelling for English, else the Hebrew one. */
+    fun displayName(language: String): String =
+        if (language == "en") names.firstOrNull { n -> n.any { it in 'a'..'z' || it in 'A'..'Z' } } ?: name else name
+
     fun contains(p: LatLon): Boolean = Geo.distanceM(centre, p) <= radiusKm * 1000
 }
 
@@ -109,7 +113,7 @@ object QueryText {
         val t = token.trimEnd(',', '.')
         if (t.isEmpty() || !t.all { it in 'א'..'ת' || it in MARKS || it == '-' }) return false
         val inner = t.dropLast(1).drop(1)
-        return t == "י-ם" || inner.any { it in MARKS } || Aliases.acronym(t, marked = false, english = false) != null
+        return t == "י-ם" || (t.length == 4 && t[0] in "בלמו" && t.drop(1) == "י-ם") || inner.any { it in MARKS } || Aliases.acronym(t, marked = false, english = false) != null
     }
 
     /** "ביאליק 5 בתל אביב" → "ביאליק 5 תל אביב": ב/ל/מ off a town name after the street (to a comma or the end, numbers aside). */

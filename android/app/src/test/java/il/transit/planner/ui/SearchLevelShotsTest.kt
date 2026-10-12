@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 /**
- * Phase 10 D2: "Closest matches" rows say what they are missing ("Street only: no number 12",
+ * Phase 10 D2: a neighbourhood in two towns lists both towns; "Closest matches" rows say what they are missing ("Street only: no number 12",
  * "Town only"), in both languages and themes, and Hebrew large text on a small phone. Built from
  * the corpus: "הרצל 12, באר שבע" finds הרצל 126 and the town, not the house.
  */
@@ -49,6 +49,21 @@ class SearchLevelShotsTest(private val v: Variant) {
                 Suggestion("הרצל/העצמאות", "באר שבע", LatLon(31.2401, 34.7889), saved = false, isStop = true, closest = true, match = MatchNote(MatchLevel.NONE)),
             ),
             places = PlacesUi(notFound = true),
+        )
+        Frame {
+            Box(Modifier.fillMaxSize().background(if (v.dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)).padding(12.dp)) { SuggestionList(state, NoActions, Modifier) }
+        }
+    }
+
+    /** Owner, 2026-10-12: a neighbourhood in two towns asks which first, one row per town, nearest first. */
+    @Test fun townChoices() = paparazzi.snapshot("suggestions_town_choices") {
+        val state = UiState(
+            editing = Field.TO,
+            query = "רמות",
+            suggestions = listOf(
+                Suggestion("רמות", if (v.rtl) "באר שבע" else "Beersheba", LatLon(31.2457, 34.7925), saved = false, isStop = false, refine = "רמות, באר שבע"),
+                Suggestion("רמות", if (v.rtl) "ירושלים" else "Jerusalem", LatLon(31.7885, 35.2188), saved = false, isStop = false, refine = "רמות, ירושלים"),
+            ),
         )
         Frame {
             Box(Modifier.fillMaxSize().background(if (v.dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)).padding(12.dp)) { SuggestionList(state, NoActions, Modifier) }

@@ -68,6 +68,9 @@ object Aliases {
      * Never spelled out: more than one town (ק"א: קריית אתא or קריית ארבע; ק"ב, ק"מ, ר"ה) or not
      * a place at all. Kept as typed; pinned in `AliasesTest`.
      */
+    /** One letter people write before a town: ב (in), ל (to), מ (from), ו (and). */
+    private const val PREFIXES = "בלמו"
+
     val AMBIGUOUS = setOf("קא", "קב", "קמ", "קי", "רה", "רח", "גג")
 
     /**
@@ -76,7 +79,10 @@ object Aliases {
      */
     fun acronym(letters: String, marked: Boolean, english: Boolean): String? {
         if (letters in AMBIGUOUS) return null
-        val a = ACRONYMS[letters] ?: return null
+        // "בת״א", "לב״ש", "ובי-ם": "in / to / and" + the acronym; the letters as they are first ("בב" is בני ברק).
+        val a = ACRONYMS[letters]
+            ?: letters.takeIf { it.length >= 3 && it[0] in PREFIXES }?.drop(1)?.takeIf { it !in AMBIGUOUS }?.let { ACRONYMS[it] }
+            ?: return null
         if (!marked && !a.bare) return null
         return if (english) a.en else a.he
     }

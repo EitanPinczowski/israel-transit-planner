@@ -710,6 +710,9 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
 8. **Live Updates (D10):** **`compileSdk` 36, `targetSdk` stays 35**; on Android < 16 **today's
    notification with the compat progress bar**, no new UI.
 9. **Recording for the corpus (D2):** **≤ 60 new Transitous geocodes, ≥ 1 s apart**, once.
+   **Neighbourhood in two towns (D2), decided (owner, 2026-10-12): B.** One suggestion row per
+   town from the bundled table ("רמות, ירושלים", "רמות, באר שבע"), nearest town first; 0
+   requests while typing, 1 geocode (that town's centre) when a row is tapped.
 10. **Releases:** **v0.8.6** after Wave 2 (D1–D4), then **v0.9.0** at the end of Phase 10.
     A v0.8.7 after Wave 4 is optional, if the owner wants the timetables sooner.
 

@@ -30,6 +30,8 @@ data class SearchAnswer(
     val query: String = "",
     /** Transitous's answers while the backup is still being asked: not yet "not found". */
     val pending: Boolean = false,
+    /** A neighbourhood in several towns, nothing asked yet: one row per town, nearest first ([TownChoice]). */
+    val choices: List<TownChoice> = emptyList(),
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
@@ -54,7 +56,7 @@ data class SearchAnswer(
     val all: List<GeocodeMatch> get() = exact + closest
 
     /** No exact answer (and nothing still being asked): the screen says so, offers the map, and labels any closest matches. */
-    val notFound: Boolean get() = !pending && exact.isEmpty()
+    val notFound: Boolean get() = !pending && exact.isEmpty() && choices.isEmpty()
 }
 
 /**
@@ -86,12 +88,14 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         val typed = APARTMENT.replace(text, " ").replace(Regex("\\s+"), " ").trim().trimEnd(',')
         val q = Aliases.rewrite(QueryText.expand(typed))
         val town = Towns.typedIn(q).firstOrNull()
-        // A neighbourhood and no town ("רמת אביב"): its town, the nearest first when it is in two ("רמות").
+        // A neighbourhood and no town ("רמת אביב"): its town.
         val area = if (town == null) Neighbourhoods.typedIn(typed).firstOrNull()?.let { Neighbourhoods.townsByDistance(it, near) }.orEmpty() else emptyList()
+        // In several towns ("רמות"): which one first, from the table, 0 requests (owner, 2026-10-12).
+        if (area.size > 1) return SearchAnswer(emptyList(), query = q, choices = area.map { TownChoice(it, "$typed, ${it.displayName(language)}") })
         // A typed town (or a neighbourhood's) says where better than the phone's position does.
         val bias = town?.centre ?: area.firstOrNull()?.centre ?: near
         fun inTown(m: GeocodeMatch) = town == null || Towns.holds(town, m)
-        // Answers in the neighbourhood's towns first, in that order; the rest after (it may be a street name too).
+        // Answers in the neighbourhood's town first; the rest after (it may be a street name too).
         fun areaRank(m: GeocodeMatch) = area.indexOfFirst { Towns.holds(it, m) }.let { if (it < 0) area.size else it }
         val house = houseOf(q)
         val primary = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)

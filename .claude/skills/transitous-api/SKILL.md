@@ -207,23 +207,25 @@ dropped (the phone's Geocoder is also asked inside the box).
   number is the latest (the phone's blocking Geocoder may still return), and `cancel()` takes a
   number too. Pinned in `TypingSearchTest` (5 keys in 300 ms → 1 geocode; a slow old answer is dropped).
 - **Acronyms** (`Aliases.acronym`): ת"א ר"ג פ"ת ב"ש ק"ש ק"ג ר"ל ראשל"צ נס"צ כ"ס הוד"ש ב"ב י-ם, את"א
-  (Tel Aviv University), בי"ח (hospital), with `"` `״` `'` `׳` between the letters; with no mark
+  (Tel Aviv University), בי"ח (hospital), with `"` `״` `'` `׳` between the letters, also after ב/ל/מ/ו
+  ("בת"א", "בי-ם"; the letters as they are first: ב"ב is בני ברק); with no mark
   only ראשלצ/נסצ/הודש/ביח (the others are words). `Aliases.AMBIGUOUS` (ק"א, ק"ב, ק"מ, ר"ה…) is never
   spelled out. In English text the English name ("Herzl 5, ת"א" → "…, Tel Aviv").
 - **Neighbourhoods** (`Neighbourhoods`, `NeighbourhoodsData` from `tools/gen_neighbourhoods.py` and
   the hand-checked `tools/neighbourhoods_seed.tsv`, ~160): a name and no town ("רמת אביב", not "גילה 5"
   nor "רחוב רמות") biases the one geocode to its town's `Towns` centre (no coordinates of our own);
-  answers in that town rank first, nothing is dropped (it may be a street name too). In two towns
-  ("רמות", "נווה שאנן"): the one nearer the user is asked, its answers first, the other's after when
-  Transitous returns them (one request: Transitous rarely does, 2026-10-12). A neighbourhood typed
-  with a street is "where", not part of the street name. The detail line names the town (`geocodeDetail`).
+  answers in that town rank first, nothing is dropped (it may be a street name too). **In two towns**
+  ("רמות", "נווה שאנן"; owner, 2026-10-12): no request while typing; one row per town from the table
+  ("רמות · באר שבע", nearest the user first, `SearchAnswer.choices`), and tapping one searches
+  "רמות, באר שבע" (1 geocode, that town's centre). Pinned in `NeighbourhoodsTest`. A neighbourhood
+  typed with a street is "where", not part of the street name. The detail line names the town (`geocodeDetail`).
 - **Match levels** (`MatchLevel`, `PlaceSearch.level`): HOUSE (the address as typed), STREET (the
   street, not the typed number), TOWN (only the town), PLACE (a place, stop, or the town typed
   alone), NONE. Only HOUSE/PLACE are `exact` (the old rule, unchanged); `closest` is ordered STREET,
   TOWN, NONE, and the row says "Street only: no number 15" / "Town only" (`SearchAnswer.note`).
   An answer named exactly as typed comes first among the exact ones ("רמות" before "רמות אשכול").
   Apartment words ("דירה 4", "קומה 2") are dropped before the request.
-- **JVM corpus** (`AddressCorpusJvmTest`, every `core test`): `fixtures/corpus/corpus.tsv` (259 rows:
+- **JVM corpus** (`AddressCorpusJvmTest`, every `core test`): `fixtures/corpus/corpus.tsv` (267 rows:
   the emulator corpus's queries, acronym/mark/comma/"ב"-town/apartment variants, neighbourhoods,
   English) through `PlaceSearch` with Transitous and Photon replayed from `fixtures/corpus/`. Replay
   key = the text sent, normalized, + language (variants share one recording); each was recorded with
