@@ -153,6 +153,8 @@ All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
 `BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
+The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds
+`additionalTransferTime` (minutes) to every `plan`, so it is part of the cache key (`TransfersTest`).
 
 | background job | requests | worst case per day | constraints |
 |---|---|---|---|

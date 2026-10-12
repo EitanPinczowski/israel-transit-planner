@@ -120,6 +120,9 @@ data class UserSettings(
     val theme: String = Appearance.SYSTEM,
     /** The welcome tour was finished or skipped; Settings sets it back to false to show it again. */
     val tourSeen: Boolean = false,
+    /** "Keep transfers at least" N extra minutes at every change (Phase 10 D1); null = Off,
+     *  MOTIS's own minimum. Sent as `additionalTransferTime`, so it is part of the cache key. */
+    val transferBufferMin: Int? = null,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,
@@ -127,6 +130,7 @@ data class UserSettings(
         pedestrianSpeedMps = walkSpeed.metersPerSecond,
         maxWalkSec = maxWalkMin * 60,
         wheelchair = accessible,
+        additionalTransferSec = transferBufferMin?.let { it * 60 },
     )
 
     fun traffic() = TrafficProfile(peakFactor = peakFactor)
@@ -135,6 +139,8 @@ data class UserSettings(
         val WALK_CHOICES = listOf(5, 10, 15, 20, 30)
         val TRANSFER_CHOICES = listOf(null, 0, 1, 2)
         val PEAK_RANGE = 1.0..1.8
+        /** Settings → "Keep transfers at least" (owner decision 1, 2026-10-12): Off · 3 · 5 · 8 · 10. */
+        val TRANSFER_BUFFER_CHOICES = listOf(null, 3, 5, 8, 10)
     }
 }
 

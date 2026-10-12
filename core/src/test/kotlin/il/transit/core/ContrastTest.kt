@@ -1,9 +1,11 @@
 package il.transit.core
 
 import il.transit.core.present.LegKind
+import il.transit.core.present.LegPalette
 import il.transit.core.present.defaultColor
 import il.transit.core.present.onColor
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ContrastTest {
@@ -30,5 +32,17 @@ class ContrastTest {
         assertEquals("#FFFFFF", onColor(""))
         assertEquals("#FFFFFF", onColor("#12"))
         assertEquals("#FFFFFF", onColor("#GGGGGG"))
+    }
+
+    /**
+     * Phase 10 D1: the amber tight-transfer chip is `tertiaryContainer` with
+     * `onTertiaryContainer` text (values copied from `ui/Theme.kt`). WCAG AA for normal text,
+     * 4.5:1, in both themes; the text says the risk, so colour is never the only signal.
+     */
+    @Test fun `the amber transfer chip reads in both themes`() {
+        val light = LegPalette.contrast("#271900", "#FFDEA6")
+        val dark = LegPalette.contrast("#FFDEA6", "#5E4200")
+        assertTrue("light $light", light >= 4.5)
+        assertTrue("dark $dark", dark >= 4.5)
     }
 }

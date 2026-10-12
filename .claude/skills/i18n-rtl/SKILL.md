@@ -56,6 +56,10 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
   frame. The Transitous `language` is `TransitApp.language`, read per request: the app's
   language, else the phone's. The map style and bar icons follow the theme, not only the
   phone. A screen never reads `isSystemInDarkTheme()` itself: `AppTheme(dark)` is set once.
+- **Warning chips** (tight transfer, Phase 10 D1): `tertiaryContainer` with `onTertiaryContainer`
+  text and a ⚠, `shapes.extraSmall`; the text says the risk ("Tight: may miss the change"), so
+  colour is never the only signal. Its contrast in both themes is pinned in `ContrastTest`; a
+  new warning colour gets a line there too.
 - Map layers (`MapController`) take `dark` and use their own `Palette`; a new layer needs
   both values. Rides get a casing (halo) so any line colour reads on any map.
 - Insets: edge-to-edge everywhere. Overlays pad with `WindowInsets.safeDrawing` (bars +

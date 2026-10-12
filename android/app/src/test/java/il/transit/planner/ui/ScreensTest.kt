@@ -167,6 +167,15 @@ class ScreensTest(private val v: Variant) {
     /** The same sheet with what only busofash could send: a delay, a skipped stop, alerts. */
     @Test fun tripSheetLive() = shot("trip_live", tripState(), tripSheet = sheetFor(liveTrip(), realTime = true))
 
+    /** Phase 10 D1: bus 469 with 19 stops between boarding and getting off, folded ("17 stops, tap to expand"). */
+    @Test fun tripSheetFolded() = shot("trip_folded", tripState(), tripSheet = foldedSheet())
+
+    private fun foldedSheet(): @Composable (Modifier, Shape) -> Unit {
+        val leg = longRide.legs[1]
+        val sheet = TripSheet(leg, tripDetails(leg, null, leg.start.minusSeconds(600)), legOnly = true)
+        return { m, shape -> TripDetailsSheet(sheet, onClose = {}, modifier = m, shape = shape) }
+    }
+
     private fun sheetFor(trip: Itinerary, realTime: Boolean): @Composable (Modifier, Shape) -> Unit {
         val t = trip.legs.single()
         val stops = listOf(t.from) + t.intermediateStops + listOf(t.to)
@@ -278,6 +287,11 @@ class ScreensTest(private val v: Variant) {
             Itinerary.serializer(),
             ScreensTest::class.java.getResource("/fixtures/trip_bus_470.json")!!.readText(),
         )
+        /** A recorded option whose second leg (bus 469) rides 19 stops. */
+        private val longRide: Itinerary = MotisJson.decodeFromString(
+            PlanResponse.serializer(),
+            ScreensTest::class.java.getResource("/fixtures/plan_now_bs_hahagana.json")!!.readText(),
+        ).itineraries[3]
         private val home = SavedPlace("Home", 31.25, 34.79)
 
         private val small = DeviceConfig.NEXUS_5 // 360 x 640 dp

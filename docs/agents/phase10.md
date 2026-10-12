@@ -686,6 +686,11 @@ Proposals in bold. The boss records the answers here, under a "Decided" line, be
 Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
 1. **Transfer warning and buffer (D1):** warn **under 5 min, or under 8 min when a train is on
    either side**; buffer setting **Off by default** (MOTIS's own minimum), choices 3/5/8/10.
+   **Decided (owner, 2026-10-12, after D1 measured the recorded plans):** the chip shows
+   **under 2 min, or under 4 min with a train on either side** (never below the buffer);
+   "Tight: may miss the change" only when the slack is **below 0** (a live delay). MOTIS's
+   transfer walks already include its minimum change time, so 5/8 min put a chip on 52 of 61
+   recorded options with a change. Buffer unchanged: Off by default, 3/5/8/10.
 2. **Holidays listed (D3):** **all days with no service (Rosh Hashana, Yom Kippur, Sukkot,
    Shmini Atzeret, Pesach 1 and 7, Shavuot) and their eves, plus Yom HaAtzmaut and Chol HaMoed
    as "reduced service, check the times"**. Muslim, Christian and Druze holidays are not covered.
