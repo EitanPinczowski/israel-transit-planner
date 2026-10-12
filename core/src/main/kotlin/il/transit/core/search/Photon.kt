@@ -3,6 +3,7 @@ package il.transit.core.search
 import il.transit.core.api.GeocodeArea
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisClient
+import il.transit.core.api.retryWait
 import il.transit.core.api.TransitHttpException
 import il.transit.core.geo.LatLon
 import kotlinx.coroutines.delay
@@ -222,8 +223,7 @@ class GuardedGeocoder(
             try {
                 inner.search(text, language, near, max)
             } catch (e: TransitHttpException) {
-                if (e.code != 429 && e.code != 503) throw e
-                delay(e.retryAfterSec?.let { it * 1000L } ?: backoff.toMillis())
+                delay((retryWait(e, backoff) ?: throw e).toMillis())
                 inner.search(text, language, near, max)
             }
         }
