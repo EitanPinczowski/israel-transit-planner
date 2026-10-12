@@ -1,0 +1,323 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "הר גילה",
+  "id": "il-Israel-MOT_7871",
+  "lat": 31.72299,
+  "lon": 35.16564,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -36.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.032958251329546e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "יער גילה",
+  "id": "il-Israel-MOT_51909",
+  "lat": 31.739326,
+  "lon": 35.181103,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -36.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "גילה",
+  "id": "node/[942638670]",
+  "lat": 31.7311395,
+  "lon": 35.1867748,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -36.0
+ },
+ {
+  "type": "PLACE",
+  "category": "supermarket_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "גילה",
+  "id": "node/[2858021269]",
+  "lat": 31.7379351,
+  "lon": 35.1774198,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -36.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "גילה - מערב",
+  "id": "il-Israel-MOT_51852",
+  "lat": 31.73394,
+  "lon": 35.18039,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -35.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "village",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "הר גילה",
+  "id": "node/[1365142452]",
+  "lat": 31.7217716,
+  "lon": 35.1715306,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -35.000999450683594
+ },
+ {
+  "type": "PLACE",
+  "category": "barrier_gate",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "שער הר גילה",
+  "id": "node/[6703434799]",
+  "lat": 31.722666,
+  "lon": 35.1649924,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.5
+ },
+ {
+  "type": "PLACE",
+  "category": "barrier_gate",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "שער הר גילה",
+  "id": "node/[6703434805]",
+  "lat": 31.7226513,
+  "lon": 35.1650681,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.5
+ }
+]

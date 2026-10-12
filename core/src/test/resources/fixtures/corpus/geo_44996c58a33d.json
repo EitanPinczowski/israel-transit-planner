@@ -1,0 +1,490 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף  /בזל",
+  "id": "il-busofash_37387064",
+  "lat": 32.091442,
+  "lon": 34.77601200000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף/ז'בוטינסקי",
+  "id": "il-Israel-MOT_13681",
+  "lat": 32.088825,
+  "lon": 34.77535600000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.176852235104889e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף   /נורדאו",
+  "id": "il-Israel-MOT_13688",
+  "lat": 32.09329,
+  "lon": 34.776573000000006,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.173241566400975e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף/גורדון",
+  "id": "il-Sababus_37387067",
+  "lat": 32.082363,
+  "lon": 34.773846,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף  /ארלוזורוב",
+  "id": "il-busofash_37387065",
+  "lat": 32.087669999999996,
+  "lon": 34.77507000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף/נורדאו",
+  "id": "il-busofash_37387103",
+  "lat": 32.09329,
+  "lon": 34.776573000000006,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "דיזינגוף/בן יהודה",
+  "id": "il-Israel-MOT_13306",
+  "lat": 32.09630200000001,
+  "lon": 34.775963000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.0543192881159484e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    16.0
+   ],
+   [
+    17.0,
+    2.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "נמל תל אביב/דיזינגוף",
+  "id": "il-Israel-MOT_13259",
+  "lat": 32.09687,
+  "lon": 34.775887,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.3058101103524677e-05
+ }
+]

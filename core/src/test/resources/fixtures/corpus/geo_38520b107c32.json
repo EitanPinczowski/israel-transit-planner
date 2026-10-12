@@ -1,0 +1,537 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 100",
+  "id": "",
+  "lat": 32.0929512,
+  "lon": 34.8566069,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "100",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -65.29719543457031
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 104",
+  "id": "",
+  "lat": 32.0927852,
+  "lon": 34.8559199,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "104",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -61.04719924926758
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 108",
+  "id": "",
+  "lat": 32.0930744,
+  "lon": 34.855534,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "108",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -61.04719924926758
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 102",
+  "id": "",
+  "lat": 32.093018,
+  "lon": 34.8561954,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "102",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -61.04719924926758
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 106",
+  "id": "",
+  "lat": 32.0926714,
+  "lon": 34.8557642,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "106",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -61.04719924926758
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "ז'בוטינסקי/ אורלוב",
+  "id": "il-Israel-MOT_16199",
+  "lat": 32.09056,
+  "lon": 34.876839999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רמת ורבר",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -59.39720153808594,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.9689233997487463e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "ז'בוטינסקי/המורים",
+  "id": "il-Israel-MOT_16204",
+  "lat": 32.090034,
+  "lon": 34.879414,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.39720153808594,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.003565845778212e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    3.0
+   ],
+   [
+    24.0,
+    6.0
+   ],
+   [
+    31.0,
+    10.0
+   ]
+  ],
+  "name": "ז'בוטינסקי/הסיבים",
+  "id": "il-Israel-MOT_16195",
+  "lat": 32.09253700000001,
+  "lon": 34.85664399999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -59.39720153808594,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.155825808993541e-05
+ }
+]

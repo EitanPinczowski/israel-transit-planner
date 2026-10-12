@@ -39,11 +39,17 @@ data class SearchAnswer(
     /** What [m]'s row says: its level, and the typed house a street-only answer lacks. */
     fun note(m: GeocodeMatch): MatchNote = level(m).let { l -> MatchNote(l, if (l == MatchLevel.STREET) PlaceSearch.houseOf(query)?.label else null) }
 
-    /** Answers that are what was typed ([MatchLevel.isAnswer]); only these may be shown as the answer. */
-    val exact: List<GeocodeMatch> get() = ordered.filter { level(it).isAnswer }
+    /**
+     * Answers that are what was typed ([MatchLevel.isAnswer]); only these may be shown as the answer.
+     * One named exactly as typed first: "רמות" before "רמות אשכול".
+     */
+    val exact: List<GeocodeMatch> get() = ordered.filter { level(it).isAnswer }.sortedByDescending { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }
 
-    /** The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest matches". */
-    val closest: List<GeocodeMatch> get() = ordered.filterNot { level(it).isAnswer }
+    /**
+     * The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest
+     * matches", the typed street first, then the town, then the others.
+     */
+    val closest: List<GeocodeMatch> get() = ordered.filterNot { level(it).isAnswer }.sortedBy { level(it).ordinal }
 
     val all: List<GeocodeMatch> get() = exact + closest
 

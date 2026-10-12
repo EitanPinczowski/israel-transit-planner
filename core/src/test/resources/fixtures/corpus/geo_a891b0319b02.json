@@ -1,0 +1,491 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    13.0,
+    5.0
+   ]
+  ],
+  "name": "Haifa",
+  "id": "node/[1656107649]",
+  "lat": 32.8191218,
+  "lon": 34.9983856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Downtown District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ir Tachtit (Lower City)",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -12.834999084472656
+ },
+ {
+  "type": "PLACE",
+  "category": "theatre_16",
+  "tokens": [
+   [
+    9.0,
+    3.0
+   ],
+   [
+    13.0,
+    5.0
+   ]
+  ],
+  "name": "Haifa Theatre",
+  "id": "way/[186964987]",
+  "lat": 32.8066033,
+  "lon": 34.9991128,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Hadar District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hadar HaKarmel",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -9.25
+ },
+ {
+  "type": "PLACE",
+  "category": "hostel_16",
+  "tokens": [
+   [
+    9.0,
+    3.0
+   ],
+   [
+    13.0,
+    5.0
+   ]
+  ],
+  "name": "HI Haifa",
+  "id": "node/[3824958373]",
+  "lat": 32.7941567,
+  "lon": 34.9694481,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "West Haifa District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -5.5
+ },
+ {
+  "type": "PLACE",
+  "category": "post_office_14",
+  "tokens": [
+   [
+    9.0,
+    3.0
+   ],
+   [
+    13.0,
+    5.0
+   ]
+  ],
+  "name": "UPS Haifa",
+  "id": "node/[13509389901]",
+  "lat": 32.7887274,
+  "lon": 35.0409766,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Haifa Bay District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -5.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    9.0,
+    3.0
+   ],
+   [
+    13.0,
+    5.0
+   ]
+  ],
+  "name": "Haifa Bay",
+  "id": "way/[28582043]",
+  "lat": 32.8364721,
+  "lon": 34.9828943,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "West Haifa District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -2.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    3.0
+   ]
+  ],
+  "name": "121 Herzl Street",
+  "id": "",
+  "lat": 40.6671498,
+  "lon": -73.9146212,
+  "street": "Herzl Street",
+  "houseNumber": "121",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kings County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Brooklyn",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 3.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    3.0
+   ]
+  ],
+  "name": "123 Herzl Street",
+  "id": "",
+  "lat": 40.6669762,
+  "lon": -73.9147273,
+  "street": "Herzl Street",
+  "houseNumber": "123",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kings County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Brooklyn",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 3.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    3.0
+   ]
+  ],
+  "name": "127 Herzl Street",
+  "id": "",
+  "lat": 40.6669228,
+  "lon": -73.9147137,
+  "street": "Herzl Street",
+  "houseNumber": "127",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kings County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Brooklyn",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 3.0
+ }
+]

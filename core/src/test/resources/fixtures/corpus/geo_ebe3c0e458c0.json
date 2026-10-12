@@ -1,0 +1,514 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 100",
+  "id": "",
+  "lat": 32.0857673,
+  "lon": 34.8324308,
+  "street": "רבי עקיבא",
+  "houseNumber": "100",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -63.54288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 103",
+  "id": "",
+  "lat": 32.0859567,
+  "lon": 34.833527,
+  "street": "רבי עקיבא",
+  "houseNumber": "103",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 101",
+  "id": "",
+  "lat": 32.0859902,
+  "lon": 34.8333845,
+  "street": "רבי עקיבא",
+  "houseNumber": "101",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 109",
+  "id": "",
+  "lat": 32.0859091,
+  "lon": 34.8343601,
+  "street": "רבי עקיבא",
+  "houseNumber": "109",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 107",
+  "id": "",
+  "lat": 32.0859295,
+  "lon": 34.8340532,
+  "street": "רבי עקיבא",
+  "houseNumber": "107",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 105",
+  "id": "",
+  "lat": 32.0859465,
+  "lon": 34.8339221,
+  "street": "רבי עקיבא",
+  "houseNumber": "105",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 102",
+  "id": "",
+  "lat": 32.085838,
+  "lon": 34.8326085,
+  "street": "רבי עקיבא",
+  "houseNumber": "102",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    6.0
+   ]
+  ],
+  "name": "רבי עקיבא 106",
+  "id": "",
+  "lat": 32.0858517,
+  "lon": 34.8330761,
+  "street": "רבי עקיבא",
+  "houseNumber": "106",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.29288101196289
+ }
+]

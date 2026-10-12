@@ -1,0 +1,261 @@
+# Address corpus on the JVM (AddressCorpusJvmTest, Phase 10 D2). Replayed recordings in this folder; see the class doc and the transitous-api skill.
+# Columns: query | language | level (HOUSE STREET TOWN PLACE NONE) | expected name (contains; alternatives with |) | lat,lon (within 150 m) | known gap (why it may show as not found; a wrong answer still fails)
+טבנקין 15 רעננה	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקין 15, רעננה	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+רח' טבנקין 15 רעננה	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+רחוב טבנקין 15 רעננה	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקין 15 ברעננה	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקין 15 רעננה דירה 4	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+  טבנקין  15   רעננה 	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקין 15 רעננה,	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקין 15 רעננה קומה 2	he	NONE			Transitous and OSM have no טבנקין in Ra'anana (2026-10-07); the phone's Geocoder finds it, which the JVM can't replay
+טבנקן 15 רעננה	he	NONE			the street is in no replayable source (see above)
+Tabenkin 15, Ra'anana	en	TOWN	Ra'anana	32.18602,34.86784	the street is in no replayable source (see above)
+Tabenkin 15 Raanana	en	TOWN	Ra'anana	32.18602,34.86784	the street is in no replayable source (see above)
+אחוזה 100 רעננה	he	STREET	אחוזה 106	32.18048,34.87626	
+אחוזה 100, רעננה	he	STREET	אחוזה 106	32.18048,34.87626	
+רחוב אחוזה 100 רעננה	he	STREET	אחוזה 106	32.18048,34.87626	
+אחוזה 100 ברעננה	he	STREET	אחוזה 106	32.18048,34.87626	
+דיזנגוף 50 תל אביב	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 ת"א	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 ת״א	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 ת'א	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 ת׳א	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50, תל אביב	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+רחוב דיזנגוף 50 תל אביב	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 בתל אביב	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 תל-אביב	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזנגוף 50 תל אביב דירה 3	he	HOUSE	דיזנגוף 50	32.07522,34.77570	
+דיזינגוף 50 תל אביב	he	NONE			the misspelled street matches only a stop in Transitous (2026-10-12); the house needs the phone's Geocoder
+דיזינגוף 50 ת"א	he	NONE			the misspelled street matches only a stop in Transitous (2026-10-12); the house needs the phone's Geocoder
+דיזינגוף 50 ת״א	he	NONE			the misspelled street matches only a stop in Transitous (2026-10-12); the house needs the phone's Geocoder
+דיזינגוף 50 ת'א	he	NONE			the misspelled street matches only a stop in Transitous (2026-10-12); the house needs the phone's Geocoder
+דיזינגוף 50 ת׳א	he	NONE			the misspelled street matches only a stop in Transitous (2026-10-12); the house needs the phone's Geocoder
+רוטשילד 1 תל אביב	he	STREET	רוטשילד 124	32.06988,34.77896	
+רוטשילד 1, ת"א	he	STREET	רוטשילד 124	32.06988,34.77896	
+רוטשילד 1, ת״א	he	STREET	רוטשילד 124	32.06988,34.77896	
+רוטשילד 1, ת'א	he	STREET	רוטשילד 124	32.06988,34.77896	
+רוטשילד 1, ת׳א	he	STREET	רוטשילד 124	32.06988,34.77896	
+שדרות רוטשילד 10 תל אביב	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד' רוטשילד 10 ת"א	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד' רוטשילד 10 ת״א	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד' רוטשילד 10 ת'א	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד' רוטשילד 10 ת׳א	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד׳ רוטשילד 10 תל אביב	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+שד רוטשילד 10 תל אביב	he	HOUSE	שדרות רוטשילד 10	32.06272,34.77019	
+Rothschild Blvd 10, Tel Aviv	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Rothschild Blvd 10, ת"א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Rothschild Blvd 10, ת״א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Rothschild Blvd 10, ת'א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Rothschild Blvd 10, ת׳א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+אבן גבירול 30 תל אביב	he	HOUSE	אבן גבירול 30	32.07518,34.78205	
+אבן גבירול 30 ת"א	he	HOUSE	אבן גבירול 30	32.07518,34.78205	
+אבן גבירול 30 ת״א	he	HOUSE	אבן גבירול 30	32.07518,34.78205	
+אבן גבירול 30 ת'א	he	HOUSE	אבן גבירול 30	32.07518,34.78205	
+אבן גבירול 30 ת׳א	he	HOUSE	אבן גבירול 30	32.07518,34.78205	
+בן יהודה 10 תל אביב	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+בן-יהודה 10 תל אביב	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+בן יהודה 10 ת"א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+בן יהודה 10 ת״א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+בן יהודה 10 ת'א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+בן יהודה 10 ת׳א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
+תחנה מרכזית חדשה תל אביב	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+התחנה המרכזית החדשה	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+התחנה המרכזית החדשה תל אביב	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה ת"א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה ת״א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה ת'א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה ת׳א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בית חולים איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בי"ח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בי״ח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בי'ח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בי׳ח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+ביח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+איכילוב תל אביב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+סוראסקי	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בית חולים איכילוב ת"א	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בית חולים איכילוב ת״א	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בית חולים איכילוב ת'א	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+בית חולים איכילוב ת׳א	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
+Ichilov hospital	en	PLACE	Ichilov Hospital	32.08125,34.78898	
+Ichilov	en	PLACE	Ichilov Hospital	32.08125,34.78898	
+ichilov	en	PLACE	Ichilov Hospital	32.08125,34.78898	
+אוניברסיטת תל אביב	he	PLACE	אוניברסיטת תל אביב	32.11344,34.80369	
+את"א	he	PLACE	אוניברסיטת תל אביב	32.11344,34.80369	
+את״א	he	PLACE	אוניברסיטת תל אביב	32.11344,34.80369	
+את'א	he	PLACE	אוניברסיטת תל אביב	32.11344,34.80369	
+את׳א	he	PLACE	אוניברסיטת תל אביב	32.11344,34.80369	
+דיזנגוף סנטר	he	PLACE	דיזנגוף סנטר	32.07530,34.77370	
+בן גוריון 3 תל אביב	he	HOUSE	בן גוריון 3	32.08561,34.77052	
+בן גוריון 3 ת"א	he	HOUSE	בן גוריון 3	32.08561,34.77052	
+בן גוריון 3 ת״א	he	HOUSE	בן גוריון 3	32.08561,34.77052	
+בן גוריון 3 ת'א	he	HOUSE	בן גוריון 3	32.08561,34.77052	
+בן גוריון 3 ת׳א	he	HOUSE	בן גוריון 3	32.08561,34.77052	
+יהודה 5 תל אביב	he	NONE			no plain יהודה street may exist: never בן יהודה or יהודה הלוי
+יהודה 5 ת"א	he	NONE			no plain יהודה street may exist: never בן יהודה or יהודה הלוי
+יהודה 5 ת״א	he	NONE			no plain יהודה street may exist: never בן יהודה or יהודה הלוי
+יהודה 5 ת'א	he	NONE			no plain יהודה street may exist: never בן יהודה or יהודה הלוי
+יהודה 5 ת׳א	he	NONE			no plain יהודה street may exist: never בן יהודה or יהודה הלוי
+Ben Yehuda 10, Tel Aviv	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Ben Yehuda 10, ת"א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Ben Yehuda 10, ת״א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Ben Yehuda 10, ת'א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+Ben Yehuda 10, ת׳א	en	NONE			English street names are not in Transitous's index (2026-10-04); the phone's Geocoder answers it in the app, which the JVM can't replay
+יפו 97 ירושלים	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97, ירושלים	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 בירושלים	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 י-ם	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 י"ם	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 י״ם	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 י'ם	he	HOUSE	יפו 97	31.78438,35.21497	
+יפו 97 י׳ם	he	HOUSE	יפו 97	31.78438,35.21497	
+קרן היסוד 20 ירושלים	he	HOUSE	קרן היסוד 20	31.77287,35.22033	
+קרן היסוד 20 י-ם	he	HOUSE	קרן היסוד 20	31.77287,35.22033	
+King George 20, Jerusalem	en	TOWN	Jerusalem	31.77885,35.22579	
+King George 20 Jerusalem	en	TOWN	Jerusalem	31.77885,35.22579	
+התחנה המרכזית ירושלים	he	PLACE	התחנה המרכזית	31.78849,35.20260	
+התחנה המרכזית, ירושלים	he	PLACE	התחנה המרכזית	31.78849,35.20260	
+הכותל המערבי	he	PLACE	הכותל המערבי	31.77562,35.23386	
+קניון מלחה	he	PLACE	קניון מלחה	31.75169,35.18837	
+ברזילי ירושלים	he	HOUSE	ברזילי	31.75201,35.22327	
+ברזילי, ירושלים	he	HOUSE	ברזילי	31.75201,35.22327	
+הרצל 12 חיפה	he	HOUSE	הרצל 12	32.81244,34.99643	
+רחוב הרצל 12 חיפה	he	HOUSE	הרצל 12	32.81244,34.99643	
+הרצל 12, חיפה	he	HOUSE	הרצל 12	32.81244,34.99643	
+הרצל 12 בחיפה	he	HOUSE	הרצל 12	32.81244,34.99643	
+Herzl St 12, Haifa	en	TOWN	Haifa	32.81912,34.99839	
+Herzl St 12 Haifa	en	TOWN	Haifa	32.81912,34.99839	
+הרצל חיפה	he	PLACE	הרצל/יואל	32.81274,34.99618	
+רחוב הרצל חיפה	he	PLACE	הרצל/יואל	32.81274,34.99618	
+הרצל, חיפה	he	PLACE	הרצל/יואל	32.81274,34.99618	
+שדרות הנשיא 100 חיפה	he	STREET	שדרות הנשיא	32.80388,34.98724	no source has this house in Haifa (run 4, 2026-10-07)
+שד' הנשיא 100 חיפה	he	STREET	שדרות הנשיא	32.80388,34.98724	no source has this house in Haifa (run 4, 2026-10-07)
+הטכניון חיפה	he	PLACE	לוחמי חרות ישראל/דרך הטכניון	32.77757,35.03009	Transitous has no entry for the Technion itself (2026-10-11): never the obelisk
+הטכניון	he	PLACE	לוחמי חרות ישראל/דרך הטכניון	32.77757,35.03009	Transitous has no entry for the Technion itself (2026-10-11): never the obelisk
+בית חולים רמב"ם חיפה	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+בית חולים רמב״ם חיפה	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+בית חולים רמב'ם חיפה	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+בית חולים רמב׳ם חיפה	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+רמב"ם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+רמב״ם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+רמב'ם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+רמב׳ם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+רמבם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+בית חולים רמבם	he	PLACE	רמב"ם - הקריה הרפואית לבריאות האדם	32.83217,34.98377	
+שדרות רגר 1 באר שבע	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שד' רגר 1 ב"ש	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שד' רגר 1 ב״ש	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שד' רגר 1 ב'ש	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שד' רגר 1 ב׳ש	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שדרות רגר 1 באר-שבע	he	STREET	שדרות יצחק רגר 107	31.26287,34.79781	
+שדרות רגר באר שבע	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+שדרות רגר ב"ש	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+שדרות רגר ב״ש	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+שדרות רגר ב'ש	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+שדרות רגר ב׳ש	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+שד' רגר באר שבע	he	HOUSE	שדרות יצחק רגר	31.24366,34.79353	
+הרצל 12, באר שבע	he	STREET	הרצל 126	31.24325,34.79150	
+הרצל 12 ב"ש	he	STREET	הרצל 126	31.24325,34.79150	
+הרצל 12 ב״ש	he	STREET	הרצל 126	31.24325,34.79150	
+הרצל 12 ב'ש	he	STREET	הרצל 126	31.24325,34.79150	
+הרצל 12 ב׳ש	he	STREET	הרצל 126	31.24325,34.79150	
+הרצל 12 באר שבע	he	STREET	הרצל 126	31.24325,34.79150	
+אוניברסיטת בן גוריון	he	PLACE	אוניברסיטת בן גוריון/יצחק רגר	31.26420,34.79827	
+קניון הנגב באר שבע	he	PLACE	קניון הנגב	31.24405,34.79447	
+קניון הנגב ב"ש	he	PLACE	קניון הנגב	31.24405,34.79447	
+קניון הנגב ב״ש	he	PLACE	קניון הנגב	31.24405,34.79447	
+קניון הנגב ב'ש	he	PLACE	קניון הנגב	31.24405,34.79447	
+קניון הנגב ב׳ש	he	PLACE	קניון הנגב	31.24405,34.79447	
+תחנה מרכזית באר שבע	he	PLACE	ת.מרכזית באר שבע/הורדה	31.24302,34.79614	
+תחנה מרכזית ב"ש	he	PLACE	ת.מרכזית באר שבע/הורדה	31.24302,34.79614	
+תחנה מרכזית ב״ש	he	PLACE	ת.מרכזית באר שבע/הורדה	31.24302,34.79614	
+תחנה מרכזית ב'ש	he	PLACE	ת.מרכזית באר שבע/הורדה	31.24302,34.79614	
+תחנה מרכזית ב׳ש	he	PLACE	ת.מרכזית באר שבע/הורדה	31.24302,34.79614	
+מנחם בגין 10 באר שבע	he	STREET	מנחם בגין	31.24996,34.80060	the house may be in no source
+מנחם בגין 10 ב"ש	he	STREET	מנחם בגין	31.24996,34.80060	the house may be in no source
+מנחם בגין 10 ב״ש	he	STREET	מנחם בגין	31.24996,34.80060	the house may be in no source
+מנחם בגין 10 ב'ש	he	STREET	מנחם בגין	31.24996,34.80060	the house may be in no source
+מנחם בגין 10 ב׳ש	he	STREET	מנחם בגין	31.24996,34.80060	the house may be in no source
+ז'בוטינסקי 100 פתח תקווה	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+ז׳בוטינסקי 100 פ"ת	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+ז׳בוטינסקי 100 פ״ת	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+ז׳בוטינסקי 100 פ'ת	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+ז׳בוטינסקי 100 פ׳ת	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+זבוטינסקי 100 פתח תקווה	he	HOUSE	זאב ז'בוטינסקי 100	32.09295,34.85661	
+Jabotinsky 100, Petah Tikva	en	TOWN	Petah Tikva	32.08776,34.88600	
+Jabotinsky 100, פ"ת	en	TOWN	Petah Tikva	32.08776,34.88600	
+Jabotinsky 100, פ״ת	en	TOWN	Petah Tikva	32.08776,34.88600	
+Jabotinsky 100, פ'ת	en	TOWN	Petah Tikva	32.08776,34.88600	
+Jabotinsky 100, פ׳ת	en	TOWN	Petah Tikva	32.08776,34.88600	
+ביאליק 12א רמת גן	he	STREET	ביאליק	32.07916,34.81493	a lettered house may be in no source: never 12 or 12ב
+ביאליק 12א ר"ג	he	STREET	ביאליק	32.07916,34.81493	a lettered house may be in no source: never 12 or 12ב
+ביאליק 12א ר״ג	he	STREET	ביאליק	32.07916,34.81493	a lettered house may be in no source: never 12 or 12ב
+ביאליק 12א ר'ג	he	STREET	ביאליק	32.07916,34.81493	a lettered house may be in no source: never 12 or 12ב
+ביאליק 12א ר׳ג	he	STREET	ביאליק	32.07916,34.81493	a lettered house may be in no source: never 12 or 12ב
+ויצמן 50 כפר סבא	he	STREET	ויצמן	32.17597,34.90586	
+ויצמן 50 כ"ס	he	STREET	ויצמן	32.17597,34.90586	
+ויצמן 50 כ״ס	he	STREET	ויצמן	32.17597,34.90586	
+ויצמן 50 כ'ס	he	STREET	ויצמן	32.17597,34.90586	
+ויצמן 50 כ׳ס	he	STREET	ויצמן	32.17597,34.90586	
+הרצל 20 נתניה	he	HOUSE	הרצל 20	32.32903,34.85553	
+הרצל 20, נתניה	he	HOUSE	הרצל 20	32.32903,34.85553	
+רוטשילד 50 ראשון לציון	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ראשל"צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ראשל״צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ראשל'צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ראשל׳צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ראשלצ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ר"ל	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ר״ל	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ר'ל	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 ר׳ל	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 רשל"צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 רשל״צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 רשל'צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+רוטשילד 50 רשל׳צ	he	HOUSE	רוטשילד 50	31.96395,34.80115	
+ויצמן 10 נס ציונה	he	HOUSE	ויצמן 10	31.92673,34.79827	
+ויצמן 10 נס"צ	he	HOUSE	ויצמן 10	31.92673,34.79827	
+ויצמן 10 נס״צ	he	HOUSE	ויצמן 10	31.92673,34.79827	
+ויצמן 10 נס'צ	he	HOUSE	ויצמן 10	31.92673,34.79827	
+ויצמן 10 נס׳צ	he	HOUSE	ויצמן 10	31.92673,34.79827	
+ויצמן 10 נסצ	he	HOUSE	ויצמן 10	31.92673,34.79827	
+הוד השרון	he	PLACE	הוד השרון	32.16360,34.89435	
+הוד"ש	he	PLACE	הוד השרון	32.16360,34.89435	
+הוד״ש	he	PLACE	הוד השרון	32.16360,34.89435	
+הוד'ש	he	PLACE	הוד השרון	32.16360,34.89435	
+הוד׳ש	he	PLACE	הוד השרון	32.16360,34.89435	
+הודש	he	PLACE	הוד השרון	32.16360,34.89435	
+רבי עקיבא 100 בני ברק	he	HOUSE	רבי עקיבא 100	32.08577,34.83243	
+רבי עקיבא 100 ב"ב	he	HOUSE	רבי עקיבא 100	32.08577,34.83243	
+רבי עקיבא 100 ב״ב	he	HOUSE	רבי עקיבא 100	32.08577,34.83243	
+רבי עקיבא 100 ב'ב	he	HOUSE	רבי עקיבא 100	32.08577,34.83243	
+רבי עקיבא 100 ב׳ב	he	HOUSE	רבי עקיבא 100	32.08577,34.83243	
+קריית שמונה	he	PLACE	קרית שמונה	33.20747,35.57078	
+ק"ש	he	PLACE	קרית שמונה	33.20747,35.57078	
+ק״ש	he	PLACE	קרית שמונה	33.20747,35.57078	
+ק'ש	he	PLACE	קרית שמונה	33.20747,35.57078	
+ק׳ש	he	PLACE	קרית שמונה	33.20747,35.57078	
+קריית גת	he	PLACE	קריית גת	31.60940,34.77120	
+ק"ג	he	PLACE	קריית גת	31.60940,34.77120	
+ק״ג	he	PLACE	קריית גת	31.60940,34.77120	
+ק'ג	he	PLACE	קריית גת	31.60940,34.77120	
+ק׳ג	he	PLACE	קריית גת	31.60940,34.77120	
+רעננה	he	PLACE	רעננה	32.18602,34.86784	
+רעננה,	he	PLACE	רעננה	32.18602,34.86784	
+עין גדי	he	PLACE	עין גדי	31.45240,35.38482	
+Eilat	en	PLACE	Eilat	29.55693,34.94979	
+eilat	en	PLACE	Eilat	29.55693,34.94979	
+יפו 97	he	HOUSE	יפו 97	31.78438,35.21497	no town typed: may show as not found, never Dizengoff 97
+רמת אביב	he	PLACE	רמת אביב	32.10886,34.79509	
+רמת-אביב	he	PLACE	רמת אביב	32.10886,34.79509	
+נווה צדק	he	PLACE	נווה צדק	32.06855,34.76144	
+גילה	he	PLACE	גילה	31.73114,35.18677	
+רמות	he	PLACE	רמות	31.81561,35.19549	
+נווה שאנן	he	PLACE	נווה שאנן	32.06060,34.78221	
+פסגת זאב	he	PLACE	פסגת זאב	31.82126,35.24857	
+הדר הכרמל	he	PLACE	הדר הכרמל	32.81128,34.99711	
+קריית יובל	he	PLACE	קרית יובל/שמריהו לוין	31.76847,35.17870	
+איינשטיין 40 רמת אביב	he	NONE			Transitous has only stops and places on איינשטיין, no house numbers (2026-10-12)

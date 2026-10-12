@@ -1,0 +1,421 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    13.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana",
+  "id": "node/[348385591]",
+  "lat": 32.1860244,
+  "lon": 34.8678359,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Petah Tikva Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Raanana",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.350000381469727
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    9.0,
+    3.0
+   ],
+   [
+    13.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana 15",
+  "id": "",
+  "lat": 53.0009331,
+  "lon": 6.0713591,
+  "street": "Ra'anana",
+  "houseNumber": "15",
+  "country": "NL",
+  "tz": "Europe/Amsterdam",
+  "areas": [
+   {
+    "name": "Netherlands",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Netherlands",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Frisia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Opsterland",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gorredijk",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": 8.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    13.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana",
+  "id": "",
+  "lat": 53.0001515,
+  "lon": 6.0705687,
+  "country": "NL",
+  "tz": "Europe/Amsterdam",
+  "areas": [
+   {
+    "name": "Netherlands",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Netherlands",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Frisia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Opsterland",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gorredijk",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": 22.0
+ },
+ {
+  "type": "PLACE",
+  "category": "village",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Tabenken",
+  "id": "node/[2461017386]",
+  "lat": 6.5081491,
+  "lon": 10.7342966,
+  "country": "CM",
+  "tz": "Africa/Douala",
+  "areas": [
+   {
+    "name": "Cameroon",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Northwest",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Donga-Mantung",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nkambe",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 24.0
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Tankasina",
+  "id": "node/[9919856391]",
+  "lat": -19.4075836,
+  "lon": 47.6964963,
+  "country": "MG",
+  "tz": "Africa/Nairobi",
+  "areas": [
+   {
+    "name": "Madagascar",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Province d’Antananarivo",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Analamanga",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Andramasina",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Fitsinjovana Bakaro",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 24.0
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    3.0
+   ]
+  ],
+  "name": "Tabernáki",
+  "id": "node/[8286164618]",
+  "lat": 39.360931,
+  "lon": 23.2128225,
+  "country": "GR",
+  "tz": "Europe/Athens",
+  "areas": [
+   {
+    "name": "Greece",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Thessaly and Central Greece",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Thessaly",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Magnesia Regional Unit",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South Pilio Municipality",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Municipal Unit of Afetes",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 25.666667938232422
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Trabenna",
+  "id": "way/[16198841]",
+  "lat": 36.8657639,
+  "lon": 30.4752139,
+  "country": "TR",
+  "tz": "Europe/Istanbul",
+  "areas": [
+   {
+    "name": "Turkey",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mediterranean Region",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Antalya",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Konyaaltı",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 26.25
+ },
+ {
+  "type": "PLACE",
+  "category": "peak_8",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Tabanki",
+  "id": "node/[13342951104]",
+  "lat": 45.5035074,
+  "lon": 15.4460702,
+  "country": "HR",
+  "tz": "Europe/Zagreb",
+  "areas": [
+   {
+    "name": "Croatia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Karlovac County",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Općina Netretić",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Brajakovo Brdo",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 26.71428680419922
+ }
+]

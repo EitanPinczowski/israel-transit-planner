@@ -1,0 +1,524 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול 30",
+  "id": "",
+  "lat": 32.075175,
+  "lon": 34.78205,
+  "street": "אבן גבירול",
+  "houseNumber": "30",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -63.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול 30",
+  "id": "",
+  "lat": 32.0906767,
+  "lon": 34.8302667,
+  "street": "אבן גבירול",
+  "houseNumber": "30",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/מאנה",
+  "id": "il-Israel-MOT_13599",
+  "lat": 32.07818,
+  "lon": 34.781166,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.661168870574329e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/פנקס",
+  "id": "il-Israel-MOT_44589",
+  "lat": 32.09050800000001,
+  "lon": 34.78288,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.0640199333429337e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/ארלוזורוב",
+  "id": "il-Israel-MOT_45039",
+  "lat": 32.084804999999996,
+  "lon": 34.781548,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 8.568898192606866e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/דיזנגוף",
+  "id": "il-Israel-MOT_13594",
+  "lat": 32.072777,
+  "lon": 34.781696,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/השופטים",
+  "id": "il-Israel-MOT_13597",
+  "lat": 32.07649,
+  "lon": 34.781586,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.9225204343674704e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    4.0
+   ],
+   [
+    28.0,
+    8.0
+   ]
+  ],
+  "name": "אבן גבירול/ז'בוטינסקי",
+  "id": "il-Israel-MOT_45041",
+  "lat": 32.08874,
+  "lon": 34.78255000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 6.45698091830127e-05
+ }
+]
