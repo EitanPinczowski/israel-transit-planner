@@ -189,6 +189,7 @@ internal fun SettingsContent(
     val s = state.settings
     fun set(n: UserSettings) = vm.updateSettings(n)
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (il.transit.core.calendar.Holidays.outOfDate(java.time.LocalDate.now(il.transit.core.features.ISRAEL))) item { HolidayTableOutOfDate() }
         item { AppearanceSection(s, ::set, showTour = { set(s.copy(tourSeen = false)); onShowTour(); vm.showSettings(false) }) }
         item {
             Section(R.string.max_transfers) {

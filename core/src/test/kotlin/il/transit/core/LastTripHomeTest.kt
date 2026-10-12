@@ -2,10 +2,12 @@ package il.transit.core
 
 import il.transit.core.api.Itinerary
 import il.transit.core.api.PlanResponse
+import il.transit.core.calendar.Holiday
 import il.transit.core.geo.LatLon
 import il.transit.core.history.TripRecord
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
+import il.transit.core.plan.LastTripAlert
 import il.transit.core.plan.LastTripChecker
 import il.transit.core.plan.LastTripDay
 import il.transit.core.plan.LastTripHome
@@ -61,6 +63,33 @@ class LastTripHomeTest {
         assertEquals(LocalTime.of(19, 0), LastTripHome.checkTime(LocalDate.of(2026, 10, 8))) // Thursday
         assertEquals(LocalTime.of(12, 0), LastTripHome.checkTime(LocalDate.of(2026, 10, 9))) // Friday
         assertEquals(LocalTime.of(20, 0), LastTripHome.checkTime(LocalDate.of(2026, 10, 10))) // Saturday
+    }
+
+    @Test fun `check times - a weekday holiday eve checks at the Friday time`() {
+        assertEquals(LocalTime.of(12, 0), LastTripHome.checkTime(LocalDate.of(2027, 4, 21))) // Wed, Erev Pesach
+        assertEquals(LocalTime.of(12, 0), LastTripHome.checkTime(LocalDate.of(2026, 9, 20))) // Sun, Erev Yom Kippur
+        assertEquals(LocalTime.of(12, 0), LastTripHome.checkTime(LocalDate.of(2026, 4, 7))) // Tue, eve of Pesach VII (Chol HaMoed)
+        assertEquals(Holiday.PESACH_1, LastTripHome.eve(LocalDate.of(2027, 4, 21)))
+        assertEquals(Holiday.YOM_KIPPUR, LastTripHome.eve(LocalDate.of(2026, 9, 20)))
+        // Rosh Hashana day 1 is no eve (no service at all), Chol HaMoed alone is not either.
+        assertNull(LastTripHome.eve(LocalDate.of(2026, 9, 12)))
+        assertEquals(LocalTime.of(19, 0), LastTripHome.checkTime(LocalDate.of(2027, 4, 25))) // Sun, Chol HaMoed
+        // An eve on a Saturday (Shavuot on Sunday 20 May 2029) keeps the Saturday time: no service before.
+        assertNull(LastTripHome.eve(LocalDate.of(2029, 5, 19)))
+        assertEquals(LocalTime.of(20, 0), LastTripHome.checkTime(LocalDate.of(2029, 5, 19)))
+        // An app start on Erev Pesach morning arms the noon check (UTC+3: 09:00Z).
+        assertEquals(t("2027-04-21T09:00:00Z"), LastTripHome.nextCheck(t("2027-04-21T05:00:00Z"), null))
+    }
+
+    @Test fun `alert - on a holiday eve it says which holiday starts tonight`() {
+        val last = tripHome("2027-04-21T11:00:00Z") // Erev Pesach: walk 14:00, bus 14:08
+        val a = LastTripHome.alert(LastRide(last, tripHome("2027-04-22T17:30:00Z")), t("2027-04-21T09:05:00Z"))!!
+        assertEquals("PESACH_1", a.eve)
+        assertEquals(Holiday.PESACH_1, a.eveOf)
+        assertEquals(DayOfWeek.THURSDAY.value, a.nextDay) // (next: Thursday 20:38), the timetable knows
+        // An ordinary evening has none, and a stored alert from before D3 decodes with none.
+        assertNull(LastTripHome.alert(LastRide(tripHome("2026-10-07T20:02:00Z"), null), t("2026-10-07T16:05:00Z"))!!.eve)
+        assertNull(LastTripAlert("2026-10-07", 0, "23:10", "x").eveOf)
     }
 
     @Test fun `next check - ahead today, at once when missed, else tomorrow`() {

@@ -5,6 +5,9 @@ import il.transit.core.api.BudgetedTransitApi
 import il.transit.core.api.Endpoint
 import il.transit.core.api.Itinerary
 import il.transit.core.api.TransitApi
+import il.transit.core.calendar.DayKind
+import il.transit.core.calendar.Holiday
+import il.transit.core.calendar.Holidays
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
@@ -53,11 +56,22 @@ object LastTripHome {
         return !t.isBefore(QUIET_FROM) && t.isBefore(LastRideFinder.DAY_STARTS)
     }
 
-    /** When the day's check runs: 19:00 Sun–Thu, 12:00 Friday (service ends in the afternoon), 20:00 Saturday. */
-    fun checkTime(day: LocalDate): LocalTime = when (day.dayOfWeek) {
-        DayOfWeek.FRIDAY -> LocalTime.of(12, 0)
-        DayOfWeek.SATURDAY -> LocalTime.of(20, 0)
+    /**
+     * When the day's check runs: 19:00 Sun–Thu, 12:00 Friday (service ends in the afternoon),
+     * 20:00 Saturday. A holiday eve on a weekday checks at the Friday time (Phase 10 D3): its
+     * buses run a Friday timetable and its trains stop in the afternoon.
+     */
+    fun checkTime(day: LocalDate): LocalTime = when {
+        day.dayOfWeek == DayOfWeek.SATURDAY -> LocalTime.of(20, 0)
+        day.dayOfWeek == DayOfWeek.FRIDAY || eve(day) != null -> LocalTime.of(12, 0)
         else -> LocalTime.of(19, 0)
+    }
+
+    /** The holiday that starts in [day]'s evening, when [day] is its eve (Sun–Fri; a Saturday has no service anyway). */
+    fun eve(day: LocalDate): Holiday? {
+        if (day.dayOfWeek == DayOfWeek.SATURDAY) return null
+        val d = Holidays.day(day) ?: return null
+        return d.holiday.takeIf { d.kind == DayKind.EVE || d.kind == DayKind.YOM_KIPPUR_EVE }
     }
 
     private fun checkAt(day: LocalDate): Instant = day.atTime(checkTime(day)).atZone(ISRAEL).toInstant()
@@ -115,13 +129,15 @@ object LastTripHome {
         val board = last.firstTransitLeg ?: return null
         val next = lr.next?.takeIf { lr.longGap }
         val nextAt = next?.let(::boardingAt)?.atZone(ISRAEL)
+        val day = LastRideFinder.serviceDay(last.start)
         return LastTripAlert(
-            serviceDay = LastRideFinder.serviceDay(last.start).toString(),
+            serviceDay = day.toString(),
             leaveAtEpoch = last.start.epochSecond,
             boardTime = hhmm(board.start),
             boardStop = board.from.name,
             nextDay = nextAt?.dayOfWeek?.value,
             nextTime = nextAt?.let { hhmm(it.toInstant()) },
+            eve = eve(day)?.name,
         )
     }
 
@@ -156,10 +172,13 @@ data class LastTripAlert(
     /** [LastRide.longGap]: when service resumes ("(next: Saturday 19:30)"); ISO day of week. */
     val nextDay: Int? = null,
     val nextTime: String? = null,
+    /** On a holiday eve, the [Holiday] that starts tonight: the text says why the check came at noon. */
+    val eve: String? = null,
 ) {
     val leaveAt: Instant get() = Instant.ofEpochSecond(leaveAtEpoch)
     val notifyAt: Instant get() = leaveAt.minus(LastTripHome.WARNING)
     val day: LocalDate get() = LocalDate.parse(serviceDay)
+    val eveOf: Holiday? get() = eve?.let { e -> Holiday.entries.firstOrNull { it.name == e } }
 }
 
 /**
