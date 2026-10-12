@@ -464,6 +464,7 @@ internal fun ResultsPanel(
                 AssistChip(onClick = vm::dismissRoutine, label = { Text(stringResource(R.string.routine_chip, name)) })
             }
             if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm)
+            DayNoticeBanner(state, vm) // Phase 10 D3: holiday / no service / timetable horizon, above the options
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {

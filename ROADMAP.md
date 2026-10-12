@@ -232,9 +232,9 @@ only where the plan says. Tick only your own package's lines.
 - [x] Fast JVM address corpus (≥ 200 rows from recorded fixtures) in `core test`
 
 ### D3 — Holidays + dates (`claude/p10-holidays`, 0 requests, 1 per tap)
-- [ ] Bundled holiday table 2026–2031 (generated, dates pinned against a source); Trip-tab banner
-- [ ] 0 options: "no service that day" / "the timetable may not reach this date" + plan for the nearest day
-- [ ] Last trip home alert checks at the Friday time on a holiday eve
+- [x] Bundled holiday table 2026–2031 (generated, dates pinned against a source); Trip-tab banner
+- [x] 0 options: "no service that day" / "the timetable may not reach this date" + plan for the nearest day
+- [x] Last trip home alert checks at the Friday time on a holiday eve
 
 ### D4 — Test hardening (`claude/p10-test-hardening`, Sonnet, 0 requests)
 - [x] Network-fault tests: 429/503 retry, slow, cancelled, malformed; budgets and cache stay right

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Holidays + dates (Phase 10 D3). Names as Israelis write them in English. -->
+    <string name="holiday_rosh_hashana">Rosh Hashana</string>
+    <string name="holiday_yom_kippur">Yom Kippur</string>
+    <string name="holiday_sukkot">Sukkot</string>
+    <string name="holiday_chol_hamoed_sukkot">Chol HaMoed Sukkot</string>
+    <string name="holiday_shmini_atzeret">Shmini Atzeret</string>
+    <string name="holiday_pesach">Pesach</string>
+    <string name="holiday_pesach_7">the last day of Pesach</string>
+    <string name="holiday_chol_hamoed_pesach">Chol HaMoed Pesach</string>
+    <string name="holiday_shavuot">Shavuot</string>
+    <string name="holiday_yom_haatzmaut">Yom HaAtzmaut</string>
+
+    <!-- The banner above the options. %1$s = "Thu 22 Apr", %2$s = the holiday. Never a time. -->
+    <string name="day_no_service">⁨%1$s⁩ is %2$s: no buses or trains until the holiday ends</string>
+    <!-- %s = the holiday that starts in the evening ("Erev Pesach"). -->
+    <string name="day_eve">Erev %s: buses run a Friday timetable, trains stop in the afternoon</string>
+    <string name="day_yom_kippur_eve">Erev Yom Kippur: buses and trains stop early in the afternoon</string>
+    <string name="day_reduced">%s: reduced service, check the times</string>
+
+    <!-- A search with no options on Shabbat or a holiday, with a button that plans once. -->
+    <string name="day_none">No service that day</string>
+    <string name="day_none_evening">No service that evening</string>
+    <string name="day_none_shabbat">Shabbat: no service that day</string>
+    <string name="day_none_shabbat_evening">Shabbat: no service that evening</string>
+    <!-- %s = "Thu 22 Apr": beyond how far the timetable reaches. -->
+    <string name="day_beyond">The timetable may not reach ⁨%s⁩ yet</string>
+    <!-- %s = "Sat 20:00" or "Thu 15 Oct 08:00". -->
+    <string name="day_plan_for">Plan for ⁨%s⁩</string>
+
+    <!-- Settings, from the holiday table's last year on. -->
+    <string name="holiday_table_old">Holiday table out of date: update the app</string>
+
+    <!-- Last trip home on a holiday eve: why the alert came early. %s = the holiday. -->
+    <string name="last_trip_eve">(Erev %s: service ends early)</string>
+</resources>
