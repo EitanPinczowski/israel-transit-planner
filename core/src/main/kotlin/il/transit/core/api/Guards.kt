@@ -69,8 +69,7 @@ class GuardedTransitApi(
     private suspend fun <T> withRetry(call: suspend () -> T): T = try {
         call()
     } catch (e: TransitHttpException) {
-        if (e.code != 429 && e.code != 503) throw e
-        delay(e.retryAfterSec?.let { it * 1000L } ?: backoff.toMillis())
+        delay((retryWait(e, backoff) ?: throw e).toMillis())
         call()
     }
 
@@ -78,6 +77,18 @@ class GuardedTransitApi(
         val TRIP_TTL: Duration = Duration.ofSeconds(30)
         val MAP_TRIPS_TTL: Duration = Duration.ofSeconds(20)
     }
+}
+
+/** Longest `Retry-After` we sleep through; a server asking for more is obeyed by not asking again now. */
+val MAX_RETRY_WAIT: Duration = Duration.ofSeconds(30)
+
+/**
+ * How long to wait before the one retry; null = no retry: not a 429/503, or the server asked us to
+ * stay away longer than [MAX_RETRY_WAIT] (sleeping on a guard's slot for an hour would block every search).
+ */
+fun retryWait(e: TransitHttpException, backoff: Duration): Duration? {
+    if (e.code != 429 && e.code != 503) return null
+    return (e.retryAfterSec?.let { Duration.ofSeconds(it.toLong()) } ?: backoff).takeIf { it <= MAX_RETRY_WAIT }
 }
 
 class BudgetExceededException(val budget: Int) :
