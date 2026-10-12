@@ -3,7 +3,6 @@
 package il.transit.planner.ui.screens
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.text.KeyboardActions
@@ -81,13 +80,15 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { state.suggestions.firstOrNull()?.let(vm::pick) }),
+        // The mic while the box is empty, ✕ once something is typed: two icons would leave a small
+        // phone's field (~200 dp beside its label) almost no room to type. Back, or tapping away,
+        // still closes an empty search.
         trailingIcon = {
-            Row {
-                if (voice != null) {
-                    IconButton(onClick = voice) {
-                        Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_search))
-                    }
+            if (voice != null && state.query.isEmpty()) {
+                IconButton(onClick = voice) {
+                    Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_search))
                 }
+            } else {
                 IconButton(onClick = vm::cancelEditing) {
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
                 }

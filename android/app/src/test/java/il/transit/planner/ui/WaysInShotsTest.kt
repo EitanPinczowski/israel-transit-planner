@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 /**
- * Phase 10 D6: the search field with the voice mic (at the end: the start side in Hebrew), a typed
+ * Phase 10 D6: the empty search field with the voice mic (at the end: the start side in Hebrew), a typed
  * stop number the phone holds (its stop as the answer), and one it doesn't ("not in this area yet").
  */
 @RunWith(Parameterized::class)
@@ -38,7 +38,8 @@ class WaysInShotsTest(private val v: Variant) {
     val paparazzi = Paparazzi(deviceConfig = v.device, maxPercentDifference = 0.1)
 
     @Test fun voiceMic() = paparazzi.snapshot("search_voice_mic") {
-        Shot(UiState(editing = Field.TO, query = if (v.rtl) "קניון עזריאלי" else "Azrieli Mall"))
+        // Empty box: the mic in place of ✕ (it comes back once something is typed).
+        Shot(UiState(editing = Field.TO, query = ""))
     }
 
     @Test fun stopCodeHit() = paparazzi.snapshot("search_stop_code_hit") {
