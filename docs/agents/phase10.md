@@ -22,6 +22,7 @@ grouped into eleven packages:
 | D9 Rain-aware walking | 19 rain from Open-Meteo on the walking parts (new outside service) | 5 | 1 Open-Meteo per search, cached 1 h | Sonnet designer | $10–15 |
 | D10 Live Updates | 8 ride + leave countdown as an Android 16 Live Update | 5 | 0 | Sonnet logic | $15–20 |
 | D11 App polish | keep state across process death; map ↔ list highlighting; thumb-zone actions + haptics | 6 | 0 | Sonnet designer | $15–20 |
+| D12 Spare minute + sort everywhere | owner, 2026-10-12: ≥ 1 min to spare at every change; Fastest / Fewest transfers / Least walking in every tab | after D6, before D7 | 0 | Sonnet logic | $8–12 |
 
 Total about **$150–190** of implementer work, plus about $1 per Sonnet review.
 
@@ -680,6 +681,53 @@ none expected
 
 ---
 
+## D12: Spare minute + sort in every tab (owner, 2026-10-12)
+**Branch:** `claude/p10-spare-sort`
+**Skills:** `special-features`, `i18n-rtl`, `add-feature`, `android-build`
+**Needs:** D6 merged. Runs alone, before D7.
+**Owns:** `plan/TripPlanner.kt` (`TripSort`, `sortOptions`), `user/User.kt` (the buffer field and
+its choices), the transfer-buffer row in `SettingsDialog.kt`, `SortChips` in `TripPanel.kt`
+**Shared-file hooks:** `MainViewModel`: the `options` / `selectedCarPath` getters and the
+reselect calls, so the order applies in every tab; `TripPanel.kt`: the one line that shows
+`SortChips` only for `AppMode.TRIP`
+
+> **1. At least 1 minute to spare at every change (owner, 2026-10-12).**
+> - Every plan request in every tab (Trip, errands, Better start, Drop-off, Pick-up, Park & ride,
+>   last trip home) sends `additionalTransferTime` of **at least 1 min**. It is sent on top of
+>   the change walk, which already includes MOTIS's own minimum.
+> - The buffer setting loses "Off". Its choices become **1 (default), 3, 5, 8, 10**.
+> - A saved `transferBufferMin = null` reads as 1. Keep the JSON field name, so old settings
+>   still load. Pin this in `UserJsonTest`.
+> - The D1 transfer chip thresholds stay as decided (never below the buffer).
+> - The cache key changes, so old cached plans are simply missed. That is fine.
+> - No extra requests.
+>
+> **2. Fastest / Fewest transfers / Least walking in every tab (owner, 2026-10-12).**
+> - Show `SortChips` in all five tabs whenever there are 2 or more options. Keep one shared
+>   `settings.tripSort`.
+> - Sort the **payload lists** (Better start, Drop-off, Pick-up and Park & ride options), not
+>   only the itineraries. The selected card, its car path, the map highlight and the D5
+>   "safer change" must keep pointing at the same option after a re-sort.
+> - Fastest = earliest arrival at the destination (latest departure for arrive-by), car part
+>   included. Fewest transfers = transit transfers. Least walking = `walkSec` of the whole option.
+> - Ties keep the planner's order.
+> - The walk-only and baseline options sort like any other option.
+> - Errands (chain) results stay in leg order. No chips there.
+>
+> **Tests:** `SortOptionsTest`: each sort in each mode's payload type, with ties and arrive-by.
+> A test that every mode's request carries `additionalTransferTime ≥ 1` (use the fake API's
+> recorded queries). The settings migration in `UserJsonTest`. Paparazzi: the chips on a
+> Drop-off result. The emulator journeys stay green, then refresh the goldens from that head.
+>
+> **Reviewer checks (Sonnet logic):**
+> - Re-sort in Drop-off and Park & ride with option 2 selected: the map car path and the
+>   card still match.
+> - An old settings file with the buffer Off: the plan sends 1.
+> - Arrive-by + Fastest.
+>
+> **Docs:** the `special-features` skill (sorting the front), a release fragment
+> `docs/releases/next/d12-spare-sort.md` (en + he), and a ROADMAP line for D12.
+
 ## Owner decisions this plan needs (ask before Wave 1)
 
 Proposals in bold. The boss records the answers here, under a "Decided" line, before starting
@@ -691,6 +739,8 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
    "Tight: may miss the change" only when the slack is **below 0** (a live delay). MOTIS's
    transfer walks already include its minimum change time, so 5/8 min put a chip on 52 of 61
    recorded options with a change. Buffer unchanged: Off by default, 3/5/8/10.
+   **Superseded (owner, 2026-10-12, D12):** at least 1 min spare at every change in every tab;
+   the buffer choices become 1 (default)/3/5/8/10, with no Off.
 2. **Holidays listed (D3):** **all days with no service (Rosh Hashana, Yom Kippur, Sukkot,
    Shmini Atzeret, Pesach 1 and 7, Shavuot) and their eves, plus Yom HaAtzmaut and Chol HaMoed
    as "reduced service, check the times"**. Muslim, Christian and Druze holidays are not covered.

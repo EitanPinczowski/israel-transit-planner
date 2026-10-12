@@ -216,7 +216,7 @@ merges. Tick only your own package's lines.
 Owner's picks from `docs/research/phase10-ideas.md` ("Owner's picks" and "Owner's additions").
 One cloud session per package; briefs, shared-file table, request budgets and owner decisions
 in `docs/agents/phase10.md`. Usually one Opus implementer at a time, at most 2 per wave:
-Wave 1 (D1, D2) → Wave 2 (D3, D4) → **v0.8.6** → Wave 3 (D5, D6) → Wave 4 (D7, D8) →
+Wave 1 (D1, D2) → Wave 2 (D3, D4) → **v0.8.6** → Wave 3 (D5, D6) → D12 → Wave 4 (D7, D8) →
 Wave 5 (D9, D10) → Wave 6 (D11) → **v0.9.0**. Gemini reviews every PR; a targeted Sonnet pass
 only where the plan says. Tick only your own package's lines.
 
