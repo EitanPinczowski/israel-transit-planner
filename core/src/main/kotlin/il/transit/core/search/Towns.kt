@@ -81,29 +81,35 @@ object Towns {
  * town ("טבנקין 15 ברעננה" → רעננה). Everything else is left as typed.
  */
 object QueryText {
-    private val TOWN_ABBREVIATIONS = mapOf(
-        "תא" to "תל אביב", "בש" to "באר שבע", "פת" to "פתח תקווה", "רג" to "רמת גן",
-        "ראשלצ" to "ראשון לציון", "רשלצ" to "ראשון לציון", "כס" to "כפר סבא", "קש" to "קריית שמונה",
-        "קג" to "קריית גת", "ים" to "ירושלים", "י ם" to "ירושלים",
-    )
     private val STREET = setOf("רחוב", "רח", "רח׳", "רח'")
     private val BOULEVARD = setOf("שד'", "שד׳", "שד")
+    private const val MARKS = "\"'״׳"
 
     fun expand(text: String): String {
         val tokens = text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        // An acronym in English text ("Herzl 5, ת\"א") is spelled out in English.
+        val english = tokens.any { t -> t.any { it in 'a'..'z' || it in 'A'..'Z' } } && tokens.none { t -> t.any { it in 'א'..'ת' } && !isAcronym(t) }
         val out = tokens.mapNotNull { raw ->
             val token = raw.trimEnd(',', '.')
             val comma = if (raw.endsWith(",")) "," else ""
-            val bare = token.filterNot { it in "\"'״׳" }.replace('-', ' ')
+            val bare = token.filterNot { it in MARKS }.replace('-', ' ')
             when {
-                // Only with gershayim (ת"א, י-ם): a bare "תא" or "ים" is a word, not a town.
-                token.any { it in "\"״" } || token == "י-ם" -> TOWN_ABBREVIATIONS[bare]?.plus(comma) ?: raw
+                // ת"א, ת'א, י-ם; with no mark only where the letters are no other word (Aliases.acronym).
+                isAcronym(token) -> Aliases.acronym(bare, marked = token != bare, english = english)?.plus(comma) ?: raw
                 token in STREET && tokens.size > 1 -> comma.ifEmpty { null }
                 token in BOULEVARD -> "שדרות$comma"
                 else -> raw
             }
         }
         return unprefix(out.joinToString(" ").trim().trimStart(',').trim())
+    }
+
+    /** Hebrew letters with a mark between two of them (not only at the end: "שד'" is a word), or י-ם, or a bare one [Aliases] knows. */
+    private fun isAcronym(token: String): Boolean {
+        val t = token.trimEnd(',', '.')
+        if (t.isEmpty() || !t.all { it in 'א'..'ת' || it in MARKS || it == '-' }) return false
+        val inner = t.dropLast(1).drop(1)
+        return t == "י-ם" || inner.any { it in MARKS } || Aliases.acronym(t, marked = false, english = false) != null
     }
 
     /** "ביאליק 5 בתל אביב" → "ביאליק 5 תל אביב": ב/ל/מ off a town name after the street (to a comma or the end, numbers aside). */

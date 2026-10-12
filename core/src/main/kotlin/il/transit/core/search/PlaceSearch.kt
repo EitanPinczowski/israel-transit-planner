@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 
 /**
@@ -32,11 +33,17 @@ data class SearchAnswer(
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
-    /** Answers that are what was typed ([PlaceSearch.exact]); only these may be shown as the answer. */
-    val exact: List<GeocodeMatch> get() = ordered.filter { PlaceSearch.exact(query, it, town) }
+    /** How much of [query] [m] is ([PlaceSearch.level]). */
+    fun level(m: GeocodeMatch): MatchLevel = PlaceSearch.level(query, m, town)
+
+    /** What [m]'s row says: its level, and the typed house a street-only answer lacks. */
+    fun note(m: GeocodeMatch): MatchNote = level(m).let { l -> MatchNote(l, if (l == MatchLevel.STREET) PlaceSearch.houseOf(query)?.label else null) }
+
+    /** Answers that are what was typed ([MatchLevel.isAnswer]); only these may be shown as the answer. */
+    val exact: List<GeocodeMatch> get() = ordered.filter { level(it).isAnswer }
 
     /** The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest matches". */
-    val closest: List<GeocodeMatch> get() = ordered.filterNot { PlaceSearch.exact(query, it, town) }
+    val closest: List<GeocodeMatch> get() = ordered.filterNot { level(it).isAnswer }
 
     val all: List<GeocodeMatch> get() = exact + closest
 
@@ -69,14 +76,19 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         max: Int = 8,
         interim: ((SearchAnswer) -> Unit)? = null,
     ): SearchAnswer {
-        val q = Aliases.rewrite(QueryText.expand(text))
+        // "דירה 4", "קומה 2": no geocoder knows apartments, and the corpus shares one answer with or without them.
+        val q = Aliases.rewrite(QueryText.expand(APARTMENT.replace(text, " ").replace(Regex("\\s+"), " ").trim().trimEnd(',')))
         val town = Towns.typedIn(q).firstOrNull()
-        // A typed town says where better than the phone's position does.
-        val bias = town?.centre ?: near
+        // A neighbourhood and no town ("רמת אביב"): its town, the nearest first when it is in two ("רמות").
+        val area = if (town == null) Neighbourhoods.typedIn(q).firstOrNull()?.let { Neighbourhoods.townsByDistance(it, near) }.orEmpty() else emptyList()
+        // A typed town (or a neighbourhood's) says where better than the phone's position does.
+        val bias = town?.centre ?: area.firstOrNull()?.centre ?: near
         fun inTown(m: GeocodeMatch) = town == null || Towns.holds(town, m)
+        // Answers in the neighbourhood's towns first, in that order; the rest after (it may be a street name too).
+        fun areaRank(m: GeocodeMatch) = area.indexOfFirst { Towns.holds(it, m) }.let { if (it < 0) area.size else it }
         val house = houseOf(q)
         val primary = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)
-            .sortedByDescending { house != null && house.matches(it) }
+            .sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) })
         if (backup == null || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q)
         interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true))
         val extra = try {
@@ -92,7 +104,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
-        return SearchAnswer(primary, kept.sortedByDescending { house != null && house.matches(it) }, town, missed = true, query = q)
+        return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q)
     }
 
     /**
@@ -100,6 +112,9 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
      * "12-14" (any number in the range). "12/3", "12 דירה 4" are house 12.
      */
     data class House(val from: Int, val to: Int = from, val letter: Char? = null) {
+        /** As typed: "15", "12א", "12–14". */
+        val label: String get() = if (to != from) "$from–$to" else "$from${letter ?: ""}"
+
         fun matches(m: GeocodeMatch): Boolean {
             val own = listOfNotNull(m.houseNumber) + m.name.split(Regex("[\\s,/]+")).filter { it.firstOrNull()?.isDigit() == true }
             return own.any { w ->
@@ -213,31 +228,55 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
          *   but the town ("רעננה"): the town itself.
          * Otherwise it is only a closest match, shown as such.
          */
-        fun exact(query: String, m: GeocodeMatch, typed: Town? = Towns.typedIn(query).firstOrNull()): Boolean {
+        fun exact(query: String, m: GeocodeMatch, typed: Town? = Towns.typedIn(query).firstOrNull()): Boolean =
+            level(query, m, typed).isAnswer
+
+        /**
+         * How much of [query] [m] is (Phase 10 D2): the [exact] rules, with the near misses told
+         * apart. The street with another number (or none) is [MatchLevel.STREET]; the typed town
+         * alone, when more was typed, is [MatchLevel.TOWN].
+         */
+        fun level(query: String, m: GeocodeMatch, typed: Town? = Towns.typedIn(query).firstOrNull()): MatchLevel {
             val clean = APARTMENT.replace(QueryText.expand(query), " ")
             val house = houseOf(clean)
-            if (house != null && !house.matches(m)) return false
+            val houseOk = house == null || house.matches(m)
             var words = tokens(clean).filter { it.length >= 2 && !isNumber(it) && it !in FILLER }
-            if (typed != null) words = without(words, typed.names) ?: words
-            // An untyped town the answer lies in ("…, Neve Ativ"); never all that was typed ("חיפה 10" is a street).
-            else without(words, answerTowns(m))?.takeIf { rest -> rest.any { !isGeneric(it) } }?.let { words = it }
+            if (typed != null) {
+                words = without(words, typed.names) ?: words
+            } else {
+                // An untyped town the answer lies in ("…, Neve Ativ"); never all that was typed ("חיפה 10" is a street).
+                without(words, answerTowns(m))?.takeIf { rest -> rest.any { !isGeneric(it) } }?.let { words = it }
+                // A neighbourhood of the answer's town, typed with a street ("איינשטיין 40 רמת אביב"): where, not which.
+                Neighbourhoods.typedIn(clean).firstOrNull { n -> n.towns.any { Towns.holds(it, m) } }?.let { n ->
+                    without(words, n.names)?.takeIf { rest -> rest.any { !isGeneric(it) } }?.let { words = it }
+                }
+            }
             val kinds = words.filter(::isGeneric)
             val names = words.filterNot(::isGeneric)
             val hay = tokens(listOfNotNull(m.name, m.street).joinToString(" "))
             // Town words aren't the place's name, unless typed as its name ("מודיעין" in "ת. רכבת מודיעין מרכז").
             val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet() - words.toSet()
+            val isTypedTown = typed != null && Towns.named(m.name.substringBefore(',')) == typed
+            val town = if (isTypedTown) MatchLevel.TOWN else MatchLevel.NONE
             if (names.isEmpty()) {
-                if (kinds.isEmpty()) return house == null && typed != null && Towns.named(m.name.substringBefore(',')) == typed
+                if (kinds.isEmpty()) return if (!isTypedTown) MatchLevel.NONE else if (house == null) MatchLevel.PLACE else MatchLevel.TOWN
                 val needed = kinds.filter { it !in WEAK && it.removePrefix("ה") !in WEAK }
-                return needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true
+                val named = needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true
+                return if (named && houseOk) MatchLevel.PLACE else town
             }
-            if (!names.all { w -> hay.any { same(w, it) } }) return false
+            if (!names.all { w -> hay.any { same(w, it) } }) return town
             return if (m.type == "ADDRESS") {
                 val street = tokens(m.street ?: m.name).filter { it.length >= 2 && !isNumber(it) && it !in FILLER && !isGeneric(it) && it !in towns }
-                street.all { s -> s in OPTIONAL || words.any { same(it, s) } }
+                val onStreet = street.all { s -> s in OPTIONAL || words.any { same(it, s) } }
+                when {
+                    !onStreet -> town
+                    houseOk -> MatchLevel.HOUSE
+                    else -> MatchLevel.STREET
+                }
             } else {
                 // A stop is named by its street and the crossing one ("הרצל/יואל"): either may be the one typed.
-                m.name.split('/').any { part -> lead(part, towns, skipKinds = true)?.let { l -> names.any { same(it, l) } } ?: false }
+                val named = m.name.split('/').any { part -> lead(part, towns, skipKinds = true)?.let { l -> names.any { same(it, l) } } ?: false }
+                if (named && houseOk) MatchLevel.PLACE else town
             }
         }
 
@@ -339,6 +378,11 @@ object Translit {
  * at most one backup request), whatever its length. Shorter than [MIN_CHARS]: no request.
  * A failed search answers empty ([onAnswer] gets `failed = true`). After a Transitous miss
  * [onAnswer] is called twice: its answers (`pending`) at once, then with the backup's.
+ *
+ * Stale answers (Phase 10 D2): cancelling the job cancels the HTTP calls with it (`MotisClient`,
+ * `PhotonClient`), but the phone's Geocoder blocks and may still return. So every [onText] and
+ * [cancel] takes a new sequence number, and an answer reaches [onAnswer] only while its search's
+ * number is still the latest: an old query's answer never replaces a newer one's.
  */
 class TypingSearch(
     private val scope: CoroutineScope,
@@ -347,26 +391,32 @@ class TypingSearch(
     private val onAnswer: (query: String, answer: SearchAnswer, failed: Boolean) -> Unit,
 ) {
     private var job: Job? = null
+    private val seq = AtomicInteger()
 
     fun onText(text: String, language: String, near: () -> LatLon?) {
         job?.cancel()
+        val mine = seq.incrementAndGet()
         val q = text.trim()
         if (q.length < MIN_CHARS) return
+        fun answer(a: SearchAnswer, failed: Boolean) {
+            if (seq.get() == mine) onAnswer(q, a, failed)
+        }
         job = scope.launch {
             delay(debounceMs)
-            val (answer, failed) = try {
+            val (result, failed) = try {
                 // Transitous's answers show at once when the backup is asked; then the full answer.
-                search.search(q, language, near(), interim = { onAnswer(q, it, false) }) to false
+                search.search(q, language, near(), interim = { answer(it, false) }) to false
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 SearchAnswer(emptyList()) to true
             }
-            onAnswer(q, answer, failed)
+            answer(result, failed)
         }
     }
 
     fun cancel() {
+        seq.incrementAndGet()
         job?.cancel()
         job = null
     }
