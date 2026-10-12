@@ -26,6 +26,12 @@ def rows(path: pathlib.Path):
             yield line.split("\t")
 
 
+def norm(s: str) -> str:
+    """PlaceSearch.normalize: lower case, no quote marks, dashes as spaces."""
+    s = "".join(c for c in s.lower() if c not in "\"'״׳`")
+    return " ".join(s.replace("-", " ").replace("־", " ").replace("–", " ").split())
+
+
 def kt(s: str) -> str:
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
@@ -40,9 +46,9 @@ def main() -> int:
             if t not in towns:
                 errors.append(f"{names[0]}: unknown town {t!r} (add it to towns_seed.tsv)")
         for n in names:
-            if n in seen:
-                errors.append(f"{n}: listed twice")
-            seen.add(n)
+            if norm(n) in seen:
+                errors.append(f"{n}: listed twice (the same name without its marks)")
+            seen.add(norm(n))
         out.append(f"        Neighbourhood(listOf({', '.join(kt(n) for n in names)}), listOf({', '.join(kt(t) for t in town.split('|'))})),")
     if errors:
         print("\n".join(errors), file=sys.stderr)

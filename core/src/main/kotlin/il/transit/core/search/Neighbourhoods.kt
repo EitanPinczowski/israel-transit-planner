@@ -30,10 +30,11 @@ object Neighbourhoods {
     /**
      * The neighbourhood [query] names, if any: the longest run of words that is one, not after a
      * street word, and not a name followed only by a house number ("גילה 5" is a street). Empty
-     * when none. The caller asks only when no town was typed.
+     * when none. Read from the text as typed ("רחוב" is dropped before the search). The caller asks only
+     * when no town was typed.
      */
     fun typedIn(query: String): List<Neighbourhood> {
-        val words = PlaceSearch.normalize(QueryText.expand(query)).replace(",", " ").split(' ').filter { it.isNotEmpty() }
+        val words = PlaceSearch.normalize(query).replace(",", " ").split(' ').filter { it.isNotEmpty() }
         for (k in minOf(longest, words.size) downTo 1) {
             for (start in 0..words.size - k) {
                 val n = byName[words.subList(start, start + k).joinToString(" ")] ?: continue

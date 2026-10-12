@@ -77,10 +77,11 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         interim: ((SearchAnswer) -> Unit)? = null,
     ): SearchAnswer {
         // "דירה 4", "קומה 2": no geocoder knows apartments, and the corpus shares one answer with or without them.
-        val q = Aliases.rewrite(QueryText.expand(APARTMENT.replace(text, " ").replace(Regex("\\s+"), " ").trim().trimEnd(',')))
+        val typed = APARTMENT.replace(text, " ").replace(Regex("\\s+"), " ").trim().trimEnd(',')
+        val q = Aliases.rewrite(QueryText.expand(typed))
         val town = Towns.typedIn(q).firstOrNull()
         // A neighbourhood and no town ("רמת אביב"): its town, the nearest first when it is in two ("רמות").
-        val area = if (town == null) Neighbourhoods.typedIn(q).firstOrNull()?.let { Neighbourhoods.townsByDistance(it, near) }.orEmpty() else emptyList()
+        val area = if (town == null) Neighbourhoods.typedIn(typed).firstOrNull()?.let { Neighbourhoods.townsByDistance(it, near) }.orEmpty() else emptyList()
         // A typed town (or a neighbourhood's) says where better than the phone's position does.
         val bias = town?.centre ?: area.firstOrNull()?.centre ?: near
         fun inTown(m: GeocodeMatch) = town == null || Towns.holds(town, m)
@@ -247,7 +248,7 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
                 // An untyped town the answer lies in ("…, Neve Ativ"); never all that was typed ("חיפה 10" is a street).
                 without(words, answerTowns(m))?.takeIf { rest -> rest.any { !isGeneric(it) } }?.let { words = it }
                 // A neighbourhood of the answer's town, typed with a street ("איינשטיין 40 רמת אביב"): where, not which.
-                Neighbourhoods.typedIn(clean).firstOrNull { n -> n.towns.any { Towns.holds(it, m) } }?.let { n ->
+                Neighbourhoods.typedIn(APARTMENT.replace(query, " ")).firstOrNull { n -> n.towns.any { Towns.holds(it, m) } }?.let { n ->
                     without(words, n.names)?.takeIf { rest -> rest.any { !isGeneric(it) } }?.let { words = it }
                 }
             }
