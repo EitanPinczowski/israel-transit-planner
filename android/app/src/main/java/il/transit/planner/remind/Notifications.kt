@@ -108,7 +108,7 @@ object Notifications {
             ""
         }
         val open = PendingIntent.getActivity(context, 2, NextTripTile.tripHomeIntent(context), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        post(context, ID_LAST_TRIP, context.getString(R.string.last_trip_title), head + next, CHANNEL_LAST_TRIP) { b ->
+        post(context, ID_LAST_TRIP, context.getString(R.string.last_trip_title), head + next + LastTripReceiver.eveNote(context, a), CHANNEL_LAST_TRIP) { b ->
             b.setContentIntent(open).setPriority(NotificationCompat.PRIORITY_DEFAULT)
         }
     }

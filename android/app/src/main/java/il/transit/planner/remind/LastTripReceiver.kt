@@ -19,7 +19,9 @@ import il.transit.core.plan.LastTripChecker
 import il.transit.core.plan.LastTripDay
 import il.transit.core.plan.LastTripHome
 import il.transit.core.user.Home
+import il.transit.planner.R
 import il.transit.planner.TransitApp
+import il.transit.planner.ui.screens.holidayName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -32,7 +34,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * "Last trip home" (Phase 9 C5; decisions in core `LastTripHome`). Two alarms:
- *  - [ACTION_CHECK], inexact, once per evening (19:00 Sun–Thu, 12:00 Fri, 20:00 Sat): hands
+ *  - [ACTION_CHECK], inexact, once per evening (19:00 Sun–Thu, 12:00 Fri and holiday eves, 20:00 Sat): hands
  *    the check to [LastTripWorker] (a broadcast must finish within seconds; three `plan` calls
  *    on a slow network may not), which waits for a network and retries a check that had no
  *    signal 15 min later while the day's budget lasts;
@@ -135,6 +137,13 @@ class LastTripReceiver : BroadcastReceiver() {
         fun saveSeen(context: Context, at: LatLon?) {
             if (at != null) LastTripStore(context).setSeen(LastTripHome.Seen(at, Instant.now()))
         }
+
+        /**
+         * " (Erev Pesach: service ends early)" on a holiday eve (Phase 10 D3), when the check ran
+         * at noon instead of 19:00 ([LastTripHome.checkTime]); "" on other days.
+         */
+        fun eveNote(context: Context, a: LastTripAlert): String =
+            a.eveOf?.let { " " + context.getString(R.string.last_trip_eve, context.getString(holidayName(it))) } ?: ""
 
         private fun set(context: Context, at: Instant, action: String, exact: Boolean) =
             ReminderScheduler.setAlarm(context, at, pending(context, action), exact)

@@ -72,6 +72,9 @@ interface MainActions {
     fun saveHere() = Unit
     fun cancelDraft() = Unit
     fun saveDraft(name: String, asHome: Boolean) = Unit
+
+    /** "Plan for <day>" (Phase 10 D3): the same trip, leaving at [at]; one `plan`, only on the tap. */
+    fun planOn(at: Instant) { setTime(TimeMode.DEPART_AT, at); plan() }
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */

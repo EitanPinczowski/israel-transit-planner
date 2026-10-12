@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- חגים ותאריכים (שלב 10, D3). -->
+    <string name="holiday_rosh_hashana">ראש השנה</string>
+    <string name="holiday_yom_kippur">יום כיפור</string>
+    <string name="holiday_sukkot">סוכות</string>
+    <string name="holiday_chol_hamoed_sukkot">חול המועד סוכות</string>
+    <string name="holiday_shmini_atzeret">שמיני עצרת</string>
+    <string name="holiday_pesach">פסח</string>
+    <string name="holiday_pesach_7">שביעי של פסח</string>
+    <string name="holiday_chol_hamoed_pesach">חול המועד פסח</string>
+    <string name="holiday_shavuot">שבועות</string>
+    <string name="holiday_yom_haatzmaut">יום העצמאות</string>
+
+    <string name="day_no_service">%2$s, ⁨%1$s⁩: אין אוטובוסים ורכבות עד צאת החג</string>
+    <string name="day_eve">ערב %s: אוטובוסים בלוח זמנים של שישי, הרכבות מפסיקות אחר הצהריים</string>
+    <string name="day_yom_kippur_eve">ערב יום כיפור: האוטובוסים והרכבות מפסיקים מוקדם אחר הצהריים</string>
+    <string name="day_reduced">%s: שירות מצומצם, כדאי לבדוק את הזמנים</string>
+
+    <string name="day_none">אין שירות ביום הזה</string>
+    <string name="day_none_evening">אין שירות בערב הזה</string>
+    <string name="day_none_shabbat">שבת: אין שירות ביום הזה</string>
+    <string name="day_none_shabbat_evening">שבת: אין שירות בערב הזה</string>
+    <string name="day_beyond">ייתכן שלוח הזמנים עוד לא מגיע ל⁨%s⁩</string>
+    <string name="day_plan_for">לתכנן ל⁨%s⁩</string>
+
+    <string name="holiday_table_old">טבלת החגים לא מעודכנת: כדאי לעדכן את האפליקציה</string>
+
+    <string name="last_trip_eve">(ערב %s: השירות מסתיים מוקדם)</string>
+</resources>
