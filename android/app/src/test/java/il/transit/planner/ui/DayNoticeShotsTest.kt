@@ -33,7 +33,8 @@ import java.time.Instant
 
 /**
  * Holidays + dates (Phase 10 D3): the banner above the options and the 0-options notices, in
- * English and Hebrew, light and dark, and Hebrew on the smallest phone (360 × 640 dp). The
+ * English and Hebrew, light and dark, Hebrew on the smallest phone (360 × 640 dp) and both at
+ * 1.5× text there. The
  * options are a real Be'er Sheva → Tel Aviv answer; only the searched day changes.
  */
 @RunWith(Parameterized::class)
@@ -122,6 +123,9 @@ class DayNoticeShotsTest(private val v: Variant) {
             Variant("en_dark", phone.copy(nightMode = NightMode.NIGHT), dark = true, rtl = false),
             Variant("he_dark", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, nightMode = NightMode.NIGHT), dark = true, rtl = true),
             Variant("he_small", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL), dark = false, rtl = true),
+            // Large text on the small phone: the longest lines and the button must still fit.
+            Variant("he_large", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.5f), dark = false, rtl = true),
+            Variant("en_large", small.copy(fontScale = 1.5f), dark = false, rtl = false),
         )
     }
 }

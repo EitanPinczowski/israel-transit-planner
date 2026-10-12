@@ -48,12 +48,16 @@ object DayNotice {
 
     /**
      * The banner above the options for a search at [searched], or null. An eve that is a
-     * Saturday has no banner: there is no service that day anyway.
+     * Saturday has no banner: there is no service that day anyway. A no-service day has none
+     * from [RESUME] on when the next day has service: the holiday is over and buses run.
      */
     fun banner(searched: Instant): HolidayDay? {
-        val d = Holidays.day(searched.atZone(ISRAEL).toLocalDate()) ?: return null
+        val local = searched.atZone(ISRAEL)
+        val d = Holidays.day(local.toLocalDate()) ?: return null
         val eve = d.kind == DayKind.EVE || d.kind == DayKind.YOM_KIPPUR_EVE
-        return d.takeUnless { eve && d.date.dayOfWeek == DayOfWeek.SATURDAY }
+        if (eve && d.date.dayOfWeek == DayOfWeek.SATURDAY) return null
+        val over = d.kind == DayKind.NO_SERVICE && !local.toLocalTime().isBefore(RESUME) && !Holidays.restDay(d.date.plusDays(1))
+        return d.takeUnless { over }
     }
 
     /** What to say when a search at [searched], run at [now], found 0 options; null = the usual text. */

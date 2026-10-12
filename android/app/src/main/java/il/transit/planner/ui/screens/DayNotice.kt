@@ -2,6 +2,7 @@ package il.transit.planner.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import il.transit.core.calendar.HolidayDay
 import il.transit.core.features.ISRAEL
 import il.transit.core.present.DayNotice
 import il.transit.core.present.DayNotice.Notice
+import il.transit.core.plan.TimeMode
 import il.transit.core.present.hhmm
 import il.transit.planner.R
 import il.transit.planner.ui.AppMode
@@ -62,7 +64,12 @@ internal fun DayNoticeBanner(state: UiState, vm: MainActions) {
                     is Notice.NoService -> n.resume to dayTime(n.resume, locale)
                     is Notice.BeyondHorizon -> n.instead to "${dayDate(n.instead.atZone(ISRAEL).toLocalDate(), locale)} ${hhmm(n.instead)}"
                 }
-                TextButton(onClick = { vm.planOn(at) }) { Text(stringResource(R.string.day_plan_for, label)) }
+                // Service resumes at a departure time; a week earlier keeps an arrive-by search arrive-by.
+                val arriveBy = n is Notice.BeyondHorizon && state.timeMode == TimeMode.ARRIVE_BY
+                // No start padding, so the label lines up with the text above it (LTR and RTL).
+                TextButton(onClick = { vm.planOn(at, arriveBy) }, contentPadding = PaddingValues(start = 0.dp, end = 12.dp, top = 8.dp, bottom = 8.dp)) {
+                    Text(stringResource(R.string.day_plan_for, label))
+                }
             }
         }
     }

@@ -44,6 +44,11 @@ class DayNoticeTest {
         assertEquals(DayKind.REDUCED, DayNotice.banner(t("2026-09-29T06:00:00Z"))!!.kind) // Chol HaMoed Sukkot
         assertNull(DayNotice.banner(t("2026-10-13T05:00:00Z"))) // an ordinary Tuesday
         assertNull(DayNotice.banner(t("2029-05-19T09:00:00Z"))) // an eve on a Saturday: Shabbat says it already
+        // The holiday is over at 20:00 when the next day has service (Thu 22 Apr 2027, 21:30): no banner.
+        assertNull(DayNotice.banner(t("2027-04-22T18:30:00Z")))
+        assertEquals(Holiday.PESACH_1, DayNotice.banner(t("2027-04-22T16:30:00Z"))!!.holiday) // 19:30: still on
+        // Rosh Hashana day 1 at 21:00: day 2 follows, so the banner stays.
+        assertEquals(DayKind.NO_SERVICE, DayNotice.banner(t("2026-09-12T18:00:00Z"))!!.kind)
         // After midnight the holiday is the civil day's: Thu 22 Apr 01:30 is Pesach.
         assertEquals(Holiday.PESACH_1, DayNotice.banner(t("2027-04-21T22:30:00Z"))!!.holiday)
     }
