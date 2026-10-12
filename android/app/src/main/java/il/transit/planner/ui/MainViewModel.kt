@@ -202,6 +202,8 @@ data class UiState(
     val pages: TripPagesUi = TripPagesUi(),
     /** Map pin sheet, the save-place dialog, recent picks (search fix). */
     val places: PlacesUi = PlacesUi(),
+    /** "Safer change" for the opened option (Phase 10 D5). */
+    val bigStop: BigStopUi = BigStopUi(),
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -839,7 +841,15 @@ class MainViewModel(
         viewModelScope.launch { store.setReminder(null) }
     }
 
-    fun select(index: Int) = _state.update { it.copy(selected = index) }
+    fun select(index: Int) {
+        _state.update { it.copy(selected = index) }
+        bigStops.run(_state) // Phase 10 D5: 0 requests, or 2 `trip` for a change at a small stop
+    }
+
+    private val bigStops = BigStopCheck(viewModelScope, api) { language }
+
+    /** "Use this change" / "Back to the original change" (Phase 10 D5). */
+    fun useBigStop(use: Boolean) = _state.update { applyBigStop(it, use) }
 
     // --- last trip ------------------------------------------------------------------------
 

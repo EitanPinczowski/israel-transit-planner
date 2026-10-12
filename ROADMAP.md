@@ -241,7 +241,7 @@ only where the plan says. Tick only your own package's lines.
 - [x] Routing invariants over every fixture and special feature
 
 ### D5 — Big-stop changes (`claude/p10-big-stops`, ≤ 2 requests per opened option)
-- [ ] Change at a big stop on the same two vehicles (same arrival, more slack); "Use this change"
+- [x] Change at a big stop on the same two vehicles (same arrival, more slack); "Use this change"
 
 ### D6 — Ways in (`claude/p10-ways-in`, 0–1 request per use)
 - [ ] Share an address, a `geo:` link or a Waze / Google Maps link into the planner

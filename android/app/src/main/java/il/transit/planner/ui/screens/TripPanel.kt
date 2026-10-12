@@ -486,7 +486,7 @@ internal fun ResultsPanel(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
                             transferBufferMin = state.settings.transferBufferMin,
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
-                            extra = { UsualLine(state, itin); if (state.canPage()) MissLine(state, vm) },
+                            extra = { UsualLine(state, itin); BigStopRow(state, vm); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
                     }
                     if (state.canPage()) item { PageButtons(state, vm) }
