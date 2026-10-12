@@ -3,6 +3,7 @@
 package il.transit.planner.ui.screens
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,13 +35,16 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import il.transit.core.search.StopCode
 import il.transit.planner.R
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.MainActions
 import il.transit.planner.ui.UiState
+import il.transit.planner.ui.rememberVoiceSearch
 import kotlinx.coroutines.delay
 
 /**
@@ -58,6 +62,10 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     val field = state.editing ?: return
     val focus = remember { FocusRequester() }
     var hadFocus by remember(field) { mutableStateOf(false) }
+    // Voice (Phase 10 D6): what was heard is typed into the box and searched like typing.
+    val voice = rememberVoiceSearch(vm::onQuery)
+    // A stop number no stop on the phone carries (D6): say so under the box; the list offers the map.
+    val missingStop = StopCode.of(state.query)?.takeIf { state.places.notFound }
     OutlinedTextField(
         value = state.query,
         onValueChange = vm::onQuery,
@@ -74,10 +82,18 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { state.suggestions.firstOrNull()?.let(vm::pick) }),
         trailingIcon = {
-            IconButton(onClick = vm::cancelEditing) {
-                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+            Row {
+                if (voice != null) {
+                    IconButton(onClick = voice) {
+                        Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_search))
+                    }
+                }
+                IconButton(onClick = vm::cancelEditing) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+                }
             }
         },
+        supportingText = missingStop?.let { code -> { Text(stringResource(R.string.stop_code_missing, code)) } },
     )
     // No focus target in a screenshot test: nothing to open there.
     LaunchedEffect(field) { runCatching { focus.requestFocus() } }

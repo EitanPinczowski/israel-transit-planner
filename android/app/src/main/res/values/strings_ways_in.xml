@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 10 D6: "open with" / "share to" label on other apps' places. -->
+    <string name="shared_open_label">Plan a trip here</string>
+    <string name="shared_short_link">This link can\'t be opened here. Paste the address instead.</string>
+    <string name="shared_outside_israel">This place is outside Israel. The app plans trips in Israel only.</string>
+    <string name="shared_unreadable">No place found in what was shared. Paste the address instead.</string>
+    <!-- Voice search: the mic at the end of the search field, and the line shown on its first use. -->
+    <string name="voice_search">Search by voice</string>
+    <string name="voice_privacy">Speech goes to your phone\'s speech service, not to this app</string>
+    <!-- A typed stop number that no stop the phone holds carries. %1$s = the number ("47899"). -->
+    <string name="stop_code_missing">Stop %1$s is not in this area yet: open the map near it</string>
+</resources>

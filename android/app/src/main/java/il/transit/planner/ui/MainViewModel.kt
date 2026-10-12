@@ -42,10 +42,12 @@ import il.transit.core.plan.reselect
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripResult
 import il.transit.core.plan.TripPages
+import il.transit.core.present.SharedPlace
 import il.transit.core.present.StopPlatform
 import il.transit.core.present.stopPlatform
 import il.transit.core.present.needsFullNameHint
 import il.transit.core.present.geocodeDetail
+import il.transit.core.search.StopCode
 import il.transit.core.search.BackupGeocoder
 import il.transit.core.search.LocalFirst
 import il.transit.core.search.LocalHit
@@ -115,6 +117,8 @@ data class Suggestion(
     val match: il.transit.core.search.MatchNote? = null,
     /** A neighbourhood in several towns: tapping searches this text, which names the town (owner, 2026-10-12). */
     val refine: String? = null,
+    /** A typed stop number's stop (Phase 10 D6): tapping opens its stop sheet. */
+    val stopId: String? = null,
 )
 
 data class StopSheet(
@@ -263,7 +267,7 @@ class MainViewModel(
     var locationProvider: () -> LatLon? = { null }
 
     private val planner = TripPlanner(api)
-    private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup)) { q, answer, failed -> showAnswer(q, answer, failed) }
+    private val typing = TypingSearch(viewModelScope, PlaceSearch(api, backup, stopsCache?.let { c -> c::known })) { q, answer, failed -> showAnswer(q, answer, failed) }
     private val picker = PlacePicker(api, backup, store, { language }, viewModelScope, { f -> _state.update(f) }, { _state.value })
     private var planJob: Job? = null
     private var stopsJob: Job? = null
@@ -360,11 +364,26 @@ class MainViewModel(
 
     fun pick(s: Suggestion) {
         s.refine?.let { onQuery(it); return } // which town: search there now (1 request)
+        s.stopId?.let { cancelEditing(); openStop(it, s.name); return } // a typed stop number (D6)
         if (!s.saved) picker.remember(SavedPlace(s.name, s.at.lat, s.at.lon))
         setField(PlaceRef.Point(s.name, s.at))
     }
 
     fun pickMyLocation() = setField(PlaceRef.MyLocation)
+
+    /**
+     * A place shared from another app (Phase 10 D6): coordinates are the destination at once (0
+     * requests; named by the link, else "Pin · lat, lon"); text opens the search with it typed (one
+     * geocode). Short links, other countries and the rest are told by the Activity, not here.
+     */
+    fun openShared(place: SharedPlace) {
+        _state.update { it.copy(mode = AppMode.TRIP, chainStops = emptyList(), chain = null, stopSheet = null, error = null, selected = 0) }
+        when (place) {
+            is SharedPlace.Point -> { _state.update { it.copy(editing = Field.TO) }; setField(PlaceRef.Point(place.label, place.at)) }
+            is SharedPlace.Text -> { startEditing(Field.TO); onQuery(place.query) }
+            else -> Unit
+        }
+    }
 
     private fun setField(ref: PlaceRef) {
         val field = _state.value.editing ?: Field.TO
@@ -1142,7 +1161,7 @@ class MainViewModel(
     )
 
     private fun toSuggestion(m: GeocodeMatch): Suggestion {
-        return Suggestion(m.name, geocodeDetail(m), LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP")
+        return Suggestion(m.name, geocodeDetail(m), LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP", stopId = m.id.takeIf { m.category == StopCode.CATEGORY })
     }
 
     companion object {

@@ -19,6 +19,13 @@
     <!-- One-tap update: Android still asks the user, and refuses an APK signed with another key. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Voice search (Phase 10 D6): API 30+ hides apps unless we say which intent we look for. -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+        </intent>
+    </queries>
+
     <application
         android:name=".TransitApp"
         android:allowBackup="true"
@@ -36,6 +43,39 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Phase 10 D6: places shared from other apps. Parsed on the phone (core SharedPlace). -->
+            <intent-filter android:label="@string/shared_open_label">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter android:label="@string/shared_open_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="geo" />
+            </intent-filter>
+            <!-- Map links, offered in the "open with" chooser (never verified: not our domains).
+                 Every <data> names scheme, host and path together: the parts of one filter combine. -->
+            <intent-filter android:label="@string/shared_open_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="maps.google.com" />
+            </intent-filter>
+            <intent-filter android:label="@string/shared_open_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="www.google.com" android:pathPrefix="/maps" />
+            </intent-filter>
+            <intent-filter android:label="@string/shared_open_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="waze.com" android:pathPrefix="/ul" />
+                <data android:scheme="https" android:host="www.waze.com" android:pathPrefix="/ul" />
             </intent-filter>
         </activity>
 

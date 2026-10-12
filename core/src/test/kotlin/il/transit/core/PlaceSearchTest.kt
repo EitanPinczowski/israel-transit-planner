@@ -474,4 +474,22 @@ class PlaceSearchTest {
     @Test fun `an empty answer is no answer`() {
         assertTrue(photon("photon_empty").isEmpty())
     }
+
+    // --- stop numbers (Phase 10 D6) -----------------------------------------------------
+
+    @Test fun `a stop number goes to StopCode, a house number or 15 alone to the geocoder`() = runTest {
+        val api = FakeTransitApi()
+        val backup = FakeBackup()
+        var asked = 0
+        val search = PlaceSearch(api, backup) { asked++; emptyList() }
+        search.search("47899", "he", raanana)
+        search.search("תחנה 47899", "he", raanana)
+        assertEquals("the stop number never reaches Transitous or the backup", emptyList<String>(), api.calls)
+        assertEquals(emptyList<String>(), backup.calls)
+        assertEquals(2, asked)
+        search.search("15", "he", raanana)
+        search.search("הרצל 15", "he", raanana)
+        assertEquals(listOf("geocode", "geocode"), api.calls)
+        assertEquals("only stop numbers read the stops cache", 2, asked)
+    }
 }

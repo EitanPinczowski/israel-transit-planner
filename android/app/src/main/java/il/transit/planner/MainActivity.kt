@@ -57,6 +57,8 @@ import il.transit.planner.ui.screens.TripDetailsSheet
 import il.transit.core.present.LegPalette
 import il.transit.core.present.vehicleGeoJson
 import android.content.Intent
+import android.widget.Toast
+import il.transit.core.present.SharedPlace
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -104,6 +106,28 @@ class MainActivity : ComponentActivity() {
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         if (intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
+        openShared(intent)
+    }
+
+    /**
+     * A place shared from another app (Phase 10 D6): WhatsApp text, a `geo:` link, a Google Maps or
+     * Waze link. Parsed on the phone ([SharedPlace]); a point or text goes to the ViewModel, the rest
+     * is said here in one line.
+     */
+    private fun openShared(intent: Intent) {
+        val raw = when (intent.action) {
+            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)
+            Intent.ACTION_VIEW -> intent.dataString
+            else -> return
+        }
+        val place = SharedPlace.parse(raw)
+        val refusal = when (place) {
+            SharedPlace.ShortLink -> R.string.shared_short_link
+            SharedPlace.OutsideIsrael -> R.string.shared_outside_israel
+            SharedPlace.Unreadable -> R.string.shared_unreadable
+            else -> null
+        }
+        if (refusal != null) Toast.makeText(this, refusal, Toast.LENGTH_LONG).show() else vm.openShared(place)
     }
 
     /** What to do once the notification-permission prompt is answered. */
@@ -146,6 +170,8 @@ class MainActivity : ComponentActivity() {
         if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         // "Start trip" on the leave-now countdown (C5).
         if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
+        // Shared from WhatsApp, Waze, Google Maps… while the app was closed (D6).
+        if (fresh) openShared(intent)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
