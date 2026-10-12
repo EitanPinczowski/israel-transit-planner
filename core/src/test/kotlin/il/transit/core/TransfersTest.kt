@@ -138,7 +138,7 @@ class TransfersTest {
             to = il.transit.core.api.Endpoint.Coord(LatLon(32.08, 34.78)),
             time = NOON,
         )
-        assertTrue(req.copy(preferences = UserSettings().preferences()).toQuery().none { it.first == "additionalTransferTime" })
+        assertTrue(("additionalTransferTime" to "1") in req.copy(preferences = UserSettings().preferences()).toQuery())
         val withBuffer = req.copy(preferences = UserSettings(transferBufferMin = 8).preferences())
         assertTrue(("additionalTransferTime" to "8") in withBuffer.toQuery())
 
@@ -155,7 +155,7 @@ class TransfersTest {
     fun `the buffer round-trips in JSON and old files still decode`() {
         val s = UserSettings(transferBufferMin = 5)
         assertEquals(s, UserJson.decodeSettings(UserJson.encodeSettings(s)))
-        assertNull(UserJson.decodeSettings("""{"maxWalkMin":10}""").transferBufferMin)
-        assertEquals(listOf(null, 3, 5, 8, 10), UserSettings.TRANSFER_BUFFER_CHOICES)
+        assertEquals(1, UserJson.decodeSettings("""{"maxWalkMin":10}""").transferBufferMin)
+        assertEquals(listOf(1, 3, 5, 8, 10), UserSettings.TRANSFER_BUFFER_CHOICES)
     }
 }

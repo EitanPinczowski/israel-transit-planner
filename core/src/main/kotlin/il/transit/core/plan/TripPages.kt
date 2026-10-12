@@ -17,11 +17,49 @@ object TripPages {
     /**
      * MOTIS also returns trips that wait out a night or Shabbat (Friday 16:19, arrive Saturday
      * 17:25: 25 h). Nobody wants those next to a 91-min option: drop anything over twice the
-     * fastest and over [TripPlanner.MAX_EXTRA_SEC] longer.
+     * fastest and over [TripPlanner.MAX_EXTRA_SEC] longer. Then the unreasonable chains go
+     * ([reasonable]).
      */
     fun sane(options: List<Itinerary>): List<Itinerary> {
         val fastest = options.minOfOrNull { it.duration } ?: 0
-        return options.filter { it.duration <= maxOf(2 * fastest, fastest + TripPlanner.MAX_EXTRA_SEC) }
+        val short = options.filter { it.duration <= maxOf(2 * fastest, fastest + TripPlanner.MAX_EXTRA_SEC) }
+        return reasonable(short, { it.transfers }, { it.end }, { it.start })
+    }
+
+    /**
+     * [options] without the unreasonable chains (D12). The window bounds both ends, whatever
+     * the time mode: X goes when some Y has at least [TripPlanner.CHAIN_FEWER_CHANGES] fewer
+     * changes, arrives at most [TripPlanner.CHAIN_WINDOW_SEC] after X **and** leaves at most
+     * that much before X. The departure bound is the arrive-by reading; on depart-after lists it
+     * also keeps a direct bus at 07:00 from wiping out every 2-change option that leaves at
+     * 10:00 (someone who takes X could not have taken that Y).
+     * X with [TripPlanner.LONG_CHAIN_CHANGES]+ changes goes when an option with at most
+     * [TripPlanner.SHORT_CHAIN_CHANGES] is within the same window (owner, 2026-10-12; with
+     * today's constants that Y also has 2+ fewer changes, so the first rule already covers it).
+     * [mayReplace] (y, x) limits which Y can drop X in both rules; the car tabs pass "costs the
+     * driver no more than X", so a chain that saves the driver time stays. Each Y is from
+     * [options] as given, and Y has fewer changes than X, so the fewest-change option is never
+     * dropped and a non-empty list stays non-empty. Order kept.
+     */
+    fun <T> reasonable(
+        options: List<T>,
+        transfers: (T) -> Int,
+        arrival: (T) -> Instant,
+        departure: (T) -> Instant,
+        mayReplace: (y: T, x: T) -> Boolean = { _, _ -> true },
+    ): List<T> {
+        if (options.size < 2) return options
+        val window = TripPlanner.CHAIN_WINDOW_SEC.toLong()
+        fun alternative(y: T, x: T): Boolean =
+            !arrival(y).isAfter(arrival(x).plusSeconds(window)) && !departure(y).isBefore(departure(x).minusSeconds(window))
+        val kept = options.filter { x ->
+            val changes = transfers(x)
+            val longChain = changes >= TripPlanner.LONG_CHAIN_CHANGES &&
+                options.any { y -> transfers(y) <= TripPlanner.SHORT_CHAIN_CHANGES && alternative(y, x) && mayReplace(y, x) }
+            val beaten = options.any { y -> transfers(y) <= changes - TripPlanner.CHAIN_FEWER_CHANGES && alternative(y, x) && mayReplace(y, x) }
+            !longChain && !beaten
+        }
+        return kept.ifEmpty { options }
     }
 
     /** The planner's order: earliest arrival first, or latest departure first for arrive-by. */

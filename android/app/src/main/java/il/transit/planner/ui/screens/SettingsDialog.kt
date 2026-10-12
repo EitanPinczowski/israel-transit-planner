@@ -203,7 +203,7 @@ internal fun SettingsContent(
                 UserSettings.TRANSFER_BUFFER_CHOICES.forEach { m ->
                     FilterChip(
                         s.transferBufferMin == m, { set(s.copy(transferBufferMin = m)) },
-                        label = { Text(m?.let { stringResource(R.string.minutes_short, it) } ?: stringResource(R.string.transfer_buffer_off)) },
+                        label = { Text(stringResource(R.string.minutes_short, m)) },
                     )
                 }
             }

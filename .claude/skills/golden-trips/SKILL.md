@@ -1,6 +1,6 @@
 ---
 name: golden-trips
-description: Check routing sanity against eleven real reference trips. Use after changing planning logic, the traffic factor, candidate pruning, or when results "look wrong".
+description: Check routing sanity against twelve real reference trips. Use after changing planning logic, the traffic factor, candidate pruning, or when results "look wrong".
 ---
 
 # Golden trips
@@ -22,13 +22,14 @@ owner's machine) and they spend real requests, so run them deliberately, not in 
 | 9 | Pick-up: Tel Aviv → Be'er Sheva home | Be'er Sheva Center or North station |
 | 10 | Tel Aviv Carlebach → Petah Tikva (Red Line light rail) | light rail |
 | 11 | Park & ride: Meitar → Tel Aviv, Sunday 07:30 peak, 20′ limit | in reach at ×1.3: Be'er Sheva North (877 s free flow) and Center (902 s); Lehavim is not. Park at North, leave 08:10, direct 08:34 train, arrive 09:46 — same arrival as the baseline (walk + bus 253 + train, leaves 07:30) but no transfer and 40′ later from home. Center's same train is dominated (longer drive). 4 requests (2026-10-04 for Sun 2026-10-11, n=1; `ParkRideRecordedTest`). |
+| 12 | Near Kela Alon (Golan) → Tabenkin 15, Tel Aviv, Tuesday 07:00 | no 5-change chain: 59א + 845 + 616 (2 changes, 07:56–11:50) is first; MOTIS's 6-bus chain (11:49) is dropped by the D12 chain rule (2026-10-12 for Tue 2026-10-13, n=1; `SortOptionsTest`). |
 
 Automated first pass: `./gradlew -p core goldenTrips -q` (optional `--args=YYYY-MM-DD` for the
 weekday; default next Tuesday, trip 6 that week's Friday). Source: `core/src/golden/`, a
 separate source set so `test`/CI never run it. It checks an answer exists, the expected mode,
 legs that chain in time (≤ 60 s overlap) and space (≤ 400 m), ends within 1.5 km, arrive-by
 kept, fares present, Pareto fronts, feature budgets — and writes `core/build/golden/report.md`.
-Exit 1 if any trip fails. ~21 requests (2026-10-03: 10/10 pass, 21 requests).
+Exit 1 if any trip fails. ~22 requests (trip 12 added by D12) (2026-10-03: 10/10 pass, 21 requests).
 
 Then by hand: record each answer with `tools/record_fixture.py`, summarise with
 `tools/plan_summary.py`, compare by hand with Moovit/Google on the same departure time.

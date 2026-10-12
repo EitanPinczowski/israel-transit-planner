@@ -468,6 +468,7 @@ internal fun ResultsPanel(
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
+            if (!state.loading && state.error == null && state.chain == null && state.options.size > 1) SortChips(state, vm) // D12: every tab
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -476,7 +477,6 @@ internal fun ResultsPanel(
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, list)
                 state.mode == AppMode.PARK_RIDE && state.parkRide.result != null -> ParkRideList(state, state.parkRide.result, vm, list)
                 else -> LazyColumn(list) {
-                    if (state.mode == AppMode.TRIP && (state.results?.itineraries?.size ?: 0) > 1) item { SortChips(state, vm) }
                     state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
                         if (state.chain != null) {
