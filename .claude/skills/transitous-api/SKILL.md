@@ -163,7 +163,7 @@ Holidays + dates (Phase 10 D3) build every notice from the bundled calendar, 0 r
 calls, Be'er Sheva → Tel Aviv 08:00 (`plan_horizon_20261111/20261210/20270110`): +30, +60 and
 +90 days answer no itinerary (`n_routes_visited: 0`), while +8 days answered (`plan_pages_*`,
 recorded 2026-10-05 for 13 Oct). So the MOT timetable on Transitous reaches at least 8 and under
-30 days ahead; "may not reach" shows only past 8. Two more calls (+14, +21) would tighten it.
+30 days ahead; "may not reach" shows only past 8. Owner, 2026-10-12: keep 8, no extra calls.
 
 | background job | requests | worst case per day | constraints |
 |---|---|---|---|
