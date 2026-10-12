@@ -270,6 +270,23 @@ dropped (the phone's Geocoder is also asked inside the box).
   was blocked from the cloud session: only `טבנקין 15 רעננה` is replayed; rows the phone's Geocoder
   answers in the app are known gaps here (the emulator `AddressCorpusTest` covers that chain).
 
+**Ways in (Phase 10 D6), ≤ 1 request per use:**
+- **Stop numbers are not in Transitous's geocoder** (2026-10-12, 2 live calls, `geocode_stopcode_13907`,
+  `…_stop` with `type=STOP`): "13907" (Be'er Sheva central's intercity platforms) near Be'er Sheva answers
+  names containing "1390" in Iraq, Spain and Australia, nothing in Israel. So `search/StopCode` reads 3–6
+  digits (or "תחנה"/"stop" + digits; never "15" or "הרצל 15") and looks the code up in the stops the phone
+  already holds (`StopsStore.known()`, the map's stops tile cache, which keeps `stopCode`): **0 requests**,
+  routed by one branch at the top of `PlaceSearch.search`. My lines and the departure cache store no stop
+  code (`FavoriteLine` has the id and name only), so their stops count once the map has shown them. No hit:
+  "Stop 47899 is not in this area yet: open the map near it". A hit opens the stop sheet (its usual
+  `stoptimes`). Pinned in `StopCodeTest` and `PlaceSearchTest`.
+- **Shared places** (`present/SharedPlace`): `geo:` and Google Maps / Waze links with coordinates (also
+  Waze's `/ul/h<geohash>`) → the destination, **0 requests**, named by the link's label or "Pin · lat, lon";
+  address text (a WhatsApp message: the line with a street word, a town or "כתובת:") → the search box,
+  one geocode as if typed. Short links (`maps.app.goo.gl`, `goo.gl/maps`) are never resolved (that would
+  ask Google), outside Israel's box is refused. Pinned in `SharedPlaceTest`.
+- **Voice search**: the phone's own speech service (`RecognizerIntent`), 0 requests of ours.
+
 **Android's built-in Geocoder** (`android/.../data/AndroidGeocoder.kt`). An OS API: keyless, no
 account, no billing. On Play-services phones Google's address data answers it. **It is NOT the
 Google Maps SDK / Places** (`dead-ends`): don't remove it under the "no Google Maps" rule.

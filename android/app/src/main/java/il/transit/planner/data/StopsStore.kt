@@ -22,14 +22,22 @@ class StopsStore(private val file: File) {
     private var loaded = false
 
     suspend fun load(box: BBox, fetch: suspend (BBox) -> List<Place>): List<Place> = lock.withLock {
-        withContext(Dispatchers.IO) {
-            if (!loaded) {
-                cache.restore(StopsCacheJson.decode(runCatching { file.readText() }.getOrNull()))
-                loaded = true
-            }
-        }
+        restoreOnce()
         val (stops, fetched) = cache.load(box, Instant.now(), fetch)
         if (fetched) withContext(Dispatchers.IO) { runCatching { file.writeText(StopsCacheJson.encode(cache.all)) } }
         stops
+    }
+
+    /** Every stop held, whatever its age: where a typed stop number is looked up (Phase 10 D6), 0 requests. */
+    suspend fun known(): List<Place> = lock.withLock {
+        restoreOnce()
+        cache.all.flatMap { it.stops }
+    }
+
+    private suspend fun restoreOnce() = withContext(Dispatchers.IO) {
+        if (!loaded) {
+            cache.restore(StopsCacheJson.decode(runCatching { file.readText() }.getOrNull()))
+            loaded = true
+        }
     }
 }

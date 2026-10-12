@@ -1,0 +1,421 @@
+[
+ {
+  "type": "PLACE",
+  "category": "guidepost_14",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390",
+  "id": "node/[11190641570]",
+  "lat": 32.5955804,
+  "lon": 44.0373605,
+  "country": "IQ",
+  "tz": "Asia/Baghdad",
+  "areas": [
+   {
+    "name": "עיראק",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז כרבלא",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "قضاء کربلاء",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ناحية مرکز قضاء الکربلاء",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.25
+ },
+ {
+  "type": "PLACE",
+  "category": "fuel_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "SPBU 34-13907",
+  "id": "node/[4892485177]",
+  "lat": -6.2078268,
+  "lon": 106.9539593,
+  "country": "ID",
+  "tz": "Asia/Jakarta",
+  "areas": [
+   {
+    "name": "אינדונזיה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Daerah Khusus Ibukota Jakarta",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jakarta Timur",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cakung",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Pulo Gebang",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "RW 06",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -12.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "HERBOSO (1390)",
+  "id": "es-Bizkaibus_1342",
+  "lat": 43.240818000000004,
+  "lon": -3.3233533,
+  "country": "ES",
+  "tz": "Europe/Madrid",
+  "areas": [
+   {
+    "name": "ספרד",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Euskadi",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bizkaia",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Karrantza Harana / Valle de Carranza",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.099999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 9.976649835152784e-07
+ },
+ {
+  "type": "PLACE",
+  "category": "generator_wind_14",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390072",
+  "id": "node/[13062465948]",
+  "lat": 51.51687,
+  "lon": 8.43576,
+  "country": "DE",
+  "zip": "59602",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "גרמניה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נורדריין-וסטפאליה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Regierungsbezirk Arnsberg",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kreis Soest",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rüthen",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.050000190734863
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Wilson Dr",
+  "id": "au-nsw-Transport-for-New-South-Wales-southeasttablelands_2575309",
+  "lat": -34.374202999999994,
+  "lon": 150.4899,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2575",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Wingecarribee Shire Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Colo Vale",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.842185153895116e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Orara Way",
+  "id": "au-nsw-Transport-for-New-South-Wales-northcoast_2450339",
+  "lat": -30.112003,
+  "lon": 153.00355999999996,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2450",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Coffs Harbour City Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Nana Glen",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.10546288473779e-08
+ },
+ {
+  "type": "PLACE",
+  "category": "peak_8",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "BT-1390",
+  "id": "node/[2411543009]",
+  "lat": 8.9677786,
+  "lon": -82.5649637,
+  "country": "PA",
+  "tz": "America/Panama",
+  "areas": [
+   {
+    "name": "פנמה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bocas del Toro",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Almirante",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bajo Culubre",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -6.5
+ },
+ {
+  "type": "PLACE",
+  "category": "generator_wind_14",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "E-1390079",
+  "id": "node/[13062221205]",
+  "lat": 51.51546,
+  "lon": 8.43946,
+  "country": "DE",
+  "zip": "59602",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "גרמניה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נורדריין-וסטפאליה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Regierungsbezirk Arnsberg",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kreis Soest",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rüthen",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -6.300000190734863
+ }
+]

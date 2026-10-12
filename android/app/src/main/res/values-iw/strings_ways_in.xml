@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 10 D6: "open with" / "share to" label on other apps' places. -->
+    <string name="shared_open_label">לתכנן נסיעה לכאן</string>
+    <string name="shared_short_link">אי אפשר לפתוח כאן את הקישור הזה. אפשר להדביק את הכתובת במקומו.</string>
+    <string name="shared_outside_israel">המקום הזה מחוץ לישראל. האפליקציה מתכננת נסיעות בישראל בלבד.</string>
+    <string name="shared_unreadable">לא נמצא מקום במה ששותף. אפשר להדביק את הכתובת במקומו.</string>
+    <!-- Voice search: the mic at the end of the search field, and the line shown on its first use. -->
+    <string name="voice_search">חיפוש קולי</string>
+    <string name="voice_privacy">הדיבור נשלח לשירות הדיבור של הטלפון, לא לאפליקציה הזו</string>
+    <!-- A typed stop number that no stop the phone holds carries. %1$s = the number ("47899"). -->
+    <string name="stop_code_missing">תחנה ⁨%1$s⁩ עוד לא באזור הזה: פתחו את המפה לידה</string>
+</resources>

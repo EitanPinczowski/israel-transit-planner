@@ -1,0 +1,260 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "HERBOSO (1390)",
+  "id": "es-Bizkaibus_1342",
+  "lat": 43.240818000000004,
+  "lon": -3.3233533,
+  "country": "ES",
+  "tz": "Europe/Madrid",
+  "areas": [
+   {
+    "name": "ספרד",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Euskadi",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bizkaia",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Karrantza Harana / Valle de Carranza",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.099999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 9.976649835152784e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Wilson Dr",
+  "id": "au-nsw-Transport-for-New-South-Wales-southeasttablelands_2575309",
+  "lat": -34.374202999999994,
+  "lon": 150.4899,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2575",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Wingecarribee Shire Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": true
+   },
+   {
+    "name": "Colo Vale",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.842185153895116e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Orara Way",
+  "id": "au-nsw-Transport-for-New-South-Wales-northcoast_2450339",
+  "lat": -30.112003,
+  "lon": 153.00355999999996,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2450",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Coffs Harbour City Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": true
+   },
+   {
+    "name": "Nana Glen",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.10546288473779e-08
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Wilson Dr",
+  "id": "au-nsw-Transport-for-New-South-Wales-southeasttablelands_2575309",
+  "lat": -34.374202999999994,
+  "lon": 150.4899,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2575",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Wingecarribee Shire Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": true
+   },
+   {
+    "name": "Colo Vale",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.842185153895116e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "1390 Orara Way",
+  "id": "au-nsw-Transport-for-New-South-Wales-northcoast_2450339",
+  "lat": -30.112003,
+  "lon": 153.00355999999996,
+  "level": 0.0,
+  "country": "AU",
+  "zip": "2450",
+  "tz": "Australia/Sydney",
+  "areas": [
+   {
+    "name": "אוסטרליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ניו סאות' ויילס",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Coffs Harbour City Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": true
+   },
+   {
+    "name": "Nana Glen",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -6.900000095367432,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.10546288473779e-08
+ }
+]

@@ -244,9 +244,9 @@ only where the plan says. Tick only your own package's lines.
 - [x] Change at a big stop on the same two vehicles (same arrival, more slack); "Use this change"
 
 ### D6 — Ways in (`claude/p10-ways-in`, 0–1 request per use)
-- [ ] Share an address, a `geo:` link or a Waze / Google Maps link into the planner
-- [ ] Voice search in the search field
-- [ ] Search by stop number
+- [x] Share an address, a `geo:` link or a Waze / Google Maps link into the planner
+- [x] Voice search in the search field
+- [x] Search by stop number
 
 ### D7 — Stop timetables (`claude/p10-timetables`, 1–2 per open, ≤ 3 a night)
 - [ ] Day timetable for a line at a stop (today / tomorrow, by hour)

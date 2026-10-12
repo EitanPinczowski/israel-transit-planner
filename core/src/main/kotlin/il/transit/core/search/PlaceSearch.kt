@@ -1,6 +1,7 @@
 package il.transit.core.search
 
 import il.transit.core.api.GeocodeMatch
+import il.transit.core.api.Place
 import il.transit.core.api.TransitApi
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
@@ -32,11 +33,13 @@ data class SearchAnswer(
     val pending: Boolean = false,
     /** A neighbourhood in several towns, nothing asked yet: one row per town, nearest first ([TownChoice]). */
     val choices: List<TownChoice> = emptyList(),
+    /** The text was a stop number ([StopCode]): [primary] holds the known stops with that code, all answers. */
+    val stopCode: String? = null,
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
     /** How much of [query] [m] is ([PlaceSearch.level]). */
-    fun level(m: GeocodeMatch): MatchLevel = PlaceSearch.level(query, m, town)
+    fun level(m: GeocodeMatch): MatchLevel = if (stopCode != null) MatchLevel.PLACE else PlaceSearch.level(query, m, town)
 
     /** What [m]'s row says: its level, and the typed house a street-only answer lacks. */
     fun note(m: GeocodeMatch): MatchNote = level(m).let { l -> MatchNote(l, if (l == MatchLevel.STREET) PlaceSearch.houseOf(query)?.label else null) }
@@ -71,7 +74,12 @@ data class SearchAnswer(
  * must never stand in for it silently. Abbreviations are spelled out first ([QueryText]). A
  * backup failure is never the search's failure: the Transitous answers still show.
  */
-class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeocoder?) {
+class PlaceSearch(
+    private val transit: TransitApi,
+    private val backup: BackupGeocoder?,
+    /** Stops the phone already holds (the map's stops cache): where a typed stop number is looked up ([StopCode]). */
+    private val knownStops: (suspend () -> List<Place>)? = null,
+) {
     /**
      * [interim] gets Transitous's answers at once (`pending`) when the backup is about to be
      * asked, so the screen is never empty while it answers; the backup gets [BACKUP_DEADLINE_MS]
@@ -84,6 +92,11 @@ class PlaceSearch(private val transit: TransitApi, private val backup: BackupGeo
         max: Int = 8,
         interim: ((SearchAnswer) -> Unit)? = null,
     ): SearchAnswer {
+        // A stop number ("47899", "תחנה 47899"): looked up on the phone, 0 requests (Transitous doesn't index codes).
+        StopCode.of(text)?.let { code ->
+            val hits = StopCode.find(code, knownStops?.invoke().orEmpty(), near).take(max)
+            return SearchAnswer(hits.map(StopCode::asMatch), query = text.trim(), stopCode = code)
+        }
         // "דירה 4", "קומה 2": no geocoder knows apartments, and the corpus shares one answer with or without them.
         val typed = APARTMENT.replace(text, " ").replace(Regex("\\s+"), " ").trim().trimEnd(',')
         val q = Aliases.rewrite(QueryText.expand(typed))

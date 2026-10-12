@@ -34,13 +34,16 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import il.transit.core.search.StopCode
 import il.transit.planner.R
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.MainActions
 import il.transit.planner.ui.UiState
+import il.transit.planner.ui.rememberVoiceSearch
 import kotlinx.coroutines.delay
 
 /**
@@ -58,6 +61,10 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     val field = state.editing ?: return
     val focus = remember { FocusRequester() }
     var hadFocus by remember(field) { mutableStateOf(false) }
+    // Voice (Phase 10 D6): what was heard is typed into the box and searched like typing.
+    val voice = rememberVoiceSearch(vm::onQuery)
+    // A stop number no stop on the phone carries (D6): say so under the box; the list offers the map.
+    val missingStop = StopCode.of(state.query)?.takeIf { state.places.notFound }
     OutlinedTextField(
         value = state.query,
         onValueChange = vm::onQuery,
@@ -73,10 +80,24 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { state.suggestions.firstOrNull()?.let(vm::pick) }),
+        // The mic while the box is empty, ✕ once something is typed: two icons would leave a small
+        // phone's field (~200 dp beside its label) almost no room to type. Back, or tapping away,
+        // still closes an empty search.
         trailingIcon = {
-            IconButton(onClick = vm::cancelEditing) {
-                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+            if (voice != null && state.query.isEmpty()) {
+                IconButton(onClick = voice) {
+                    Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_search))
+                }
+            } else {
+                IconButton(onClick = vm::cancelEditing) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+                }
             }
+        },
+        supportingText = if (missingStop != null) {
+            { Text(stringResource(R.string.stop_code_missing, missingStop)) }
+        } else {
+            null
         },
     )
     // No focus target in a screenshot test: nothing to open there.

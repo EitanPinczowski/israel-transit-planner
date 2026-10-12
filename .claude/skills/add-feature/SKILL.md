@@ -44,4 +44,13 @@ description: Recipe for adding any user-visible feature end to end - core logic,
   once. Never re-ask in a loop; the next tap shows the rationale again.
 - The permission line in `AndroidManifest.xml` carries a comment saying why.
 
+## Intents from other apps (shares, links)
+- Filters on `MainActivity` (it is `singleTop`): handle the intent in `onCreate` only on a fresh
+  launch (not after rotation or from Recents) and in `onNewIntent`. Phase 10 D6's `openShared`.
+- Parse in `core` (pure, tested: `present/SharedPlace`), never in the Activity. One ViewModel entry
+  point; refusals are a one-line Toast from the Activity.
+- Each `<data>` names scheme, host and path together: the parts of one filter combine.
+- An intent to another app (speech, camera) needs a `<queries>` entry on API 30+, and the
+  feature hides when nothing answers it (`ui/VoiceSearch`).
+
 Keep screens thin and logic in `core`: `core` is the only part a cloud session can compile.
