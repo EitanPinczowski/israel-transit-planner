@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 10 D2: on a "Closest matches" row, what it is missing. %1$s = the house number typed ("15", "12א", "12–14"). -->
+    <string name="search_level_street_no_number">רק הרחוב: אין מספר ⁨%1$s⁩</string>
+    <string name="search_level_street">רק הרחוב</string>
+    <string name="search_level_town">רק העיר</string>
+</resources>
