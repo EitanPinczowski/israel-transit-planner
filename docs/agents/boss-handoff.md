@@ -4,19 +4,25 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-11, 21:20 Israel time)
-- **Released:** v0.8.0 (2026-10-06) and **v0.8.5** (2026-10-11: search fix, PR #51).
-- **Merged since 0.8.0:** #49 Android 8 Back, #50 Phase 10 research + owner picks, #51 search fix,
-  #52 notes 0.8.5 + Phase 10 additions, #53 Gemini config (removed again: not free), #55 Phase 10 plan (approved
-  2026-10-12, all 10 decisions as proposed).
-- **Gemini: dropped** (owner, 2026-10-12). Its GitHub reviewer needs Google Cloud billing. Reviews are
-  targeted Sonnet passes. The owner may uninstall the GitHub app.
-- **Running:** Phase 10 D1 (ride details + transfers), started 2026-10-12 01:32.
-- **Next:** Phase 10 in plan order (`docs/agents/phase10.md`), one Opus implementer at a time.
-- **Open follow-ups:** a holiday-eve last-trip notice (owner to decide); the full CBS town list
-  (data.gov.il was blocked by the environment); one unexplained app crash on the P3-he-light
-  emulator profile during #51 (passed on re-run); scratch branches `claude/geocoder-check`,
-  `corpus-run/search-fix`, `claude/a8-back-diag` for the owner to delete.
+## State (2026-10-12, 18:25 Israel time)
+- **Released:** v0.8.5 (2026-10-11, search fix) and **v0.8.6** (2026-10-12: Phase 10 Waves 1–2: ride details +
+  transfer chip, search hardening, holidays + dates).
+- **Phase 10 merged:** #56 D1, #57 D2, #58 D3, #59 D4, #60 notes 0.8.6, #61 D5 (big-stop changes).
+  Costs incl. Sonnet reviews: D1 $13.3, D2 $12.9, D3 $12.0, D4 $2.0, D5 $20.4 (over its $18 cap).
+- **Owner decisions taken this round** (all recorded in `phase10.md` "Owner decisions"): transfer chip
+  < 2 min (< 4 with a train), "Tight" only < 0; two-town neighbourhoods list one row per town (B);
+  `HORIZON_DAYS = 8`, no extra calls; big-stop matching within 300 m with the walk counted (B).
+- **Running:** D6 ways in (session `session_01BwYkZZfGtRamoBJXHphBpo`, started 17:54), Opus, $12–18. It was
+  told #61 merged and to merge main in. Its review is the Sonnet logic pass from its "Reviewer checks".
+- **Next:** Wave 4 (D7 stop timetables, D8 fares + report), one Opus implementer at a time while the
+  7-day limit reads `allowed_warning` (resets about 2026-10-18 18:00 Israel time).
+- **Merge approvals:** the owner OKs each merge (sometimes ahead: "if clean then merge"). The owner
+  pre-approved releases at wave ends ("release without asking again", 2026-10-12, for 0.8.6).
+- **Open follow-ups:** the full CBS town list (data.gov.il blocked); Photon is blocked from cloud
+  sessions (JVM address corpus has known gaps); scratch branches `claude/geocoder-check`,
+  `corpus-run/search-fix`, `claude/a8-back-diag` and the Gemini GitHub app for the owner to remove.
+- **Gotcha learned:** Maven Central often answers 429 to cloud sessions; reviewers then rely on green CI.
+  Transitous trip ids expire with each feed update (noted in `transitous-api`).
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
