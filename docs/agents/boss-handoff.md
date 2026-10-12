@@ -42,6 +42,9 @@ decisions already recorded.
 
 - **Token pool (owner, 2026-10-12):** keep packages at $10–20, Sonnet passes targeted, and start a
   fresh boss session when the current one gets long (a long context is re-read every turn).
+- **Handoff PRs need no extra permission (owner, 2026-10-12):** a docs-only PR that updates this
+  file for a boss handoff is merged by the boss as soon as its checks are green, without asking.
+  Feature PRs still need the owner's OK.
 
 ## Gotchas learned
 - **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
