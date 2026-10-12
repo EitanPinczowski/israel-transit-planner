@@ -18,6 +18,9 @@ when there is a job for it, and archives the session when the job is done.
 - Cheap work goes to a cheaper model: research and review run on Sonnet. Planning and code that
   ships run on Opus.
 
+- Every session is created with the tag `remote-agents-project:israel-transit`, which puts it in the
+  owner's Claude project (owner, 2026-10-12).
+
 The rest of the team rules are in the `parallel-work` skill.
 
 ## Flow
