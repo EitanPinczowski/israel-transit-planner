@@ -718,8 +718,8 @@ reselect calls, so the order applies in every tab; `TripPanel.kt`: the one line 
 > The case: Golan to Tabenkin St 15, Tel Aviv. It came out as 07:12–11:01, 7 buses, 6 changes,
 > four of them with 0–1 min to spare, listed first under Fastest.
 > - In `TripPages.sane` (every tab's transit options go through it), drop option X when another
->   option Y has **at least 2 fewer changes and arrives at most 20 min after X**. For arrive-by,
->   use Y leaving at most 20 min before X.
+>   option Y has **at least 2 fewer changes and arrives at most 10 min after X**. For arrive-by,
+>   use Y leaving at most 10 min before X.
 > - Drop any option with **5 or more changes** when an option with 3 or fewer exists at all.
 > - An option is never dropped when it is the only one left. Put the constants in
 >   `TripPlanner` and pin them with tests.
@@ -735,7 +735,7 @@ reselect calls, so the order applies in every tab; `TripPanel.kt`: the one line 
 > Drop-off result. The emulator journeys stay green, then refresh the goldens from that head.
 >
 > **Reviewer checks (Sonnet logic):**
-> - The chain rule: never drops the last option; arrive-by direction; a 2-change gap at exactly 20 min.
+> - The chain rule: never drops the last option; arrive-by direction; a 2-change gap at exactly 10 min.
 > - Re-sort in Drop-off and Park & ride with option 2 selected: the map car path and the
 >   card still match.
 > - An old settings file with the buffer Off: the plan sends 1.
