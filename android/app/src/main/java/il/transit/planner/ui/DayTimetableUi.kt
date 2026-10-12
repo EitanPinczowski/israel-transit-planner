@@ -30,6 +30,9 @@ sealed interface TimetableAction {
 
     /** Back to the departures. */
     data object Close : TimetableAction
+
+    /** The open failed: ask again for the same line and day (2 requests at most). */
+    data object Retry : TimetableAction
 }
 
 /** The day timetable inside the stop sheet. [rows] are the line's departures that day, earliest first. */
@@ -84,6 +87,9 @@ class DayTimetableHolder(
                 load(state, sheet.stopId, open.copy(tomorrow = action.tomorrow, now = clock.instant(), loading = true, loadingMore = false, failed = false, rows = emptyList(), page = null, savedAt = null, savedLastNight = false))
             }
             TimetableAction.More -> more(state, sheet.stopId, open ?: return)
+            TimetableAction.Retry -> if (open != null && open.failed) {
+                load(state, sheet.stopId, open.copy(now = clock.instant(), loading = true, failed = false, rows = emptyList(), page = null, savedAt = null, savedLastNight = false))
+            }
             TimetableAction.Close -> {
                 job?.cancel()
                 state.update { it.copy(stopSheet = it.stopSheet?.copy(timetable = null)) }

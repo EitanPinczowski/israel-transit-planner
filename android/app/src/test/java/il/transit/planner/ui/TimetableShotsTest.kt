@@ -73,6 +73,18 @@ class TimetableShotsTest(private val v: Variant) {
         shot("timetable_offline", sheet(omer, t))
     }
 
+    /** No answer and no saved board: the note and Retry. */
+    @Test fun failed() = shot(
+        "timetable_failed",
+        sheet(omer, timetable("28", omerHeadsign, "#F57C00", il("2026-10-14T08:30"), emptyList(), null).copy(failed = true)),
+    )
+
+    /** The line does not run that day (Saturday). */
+    @Test fun none() {
+        val page = TimetablePage(omer, "28", omerHeadsign, LocalDate.parse("2026-10-17"), emptyList(), nextCursor = null, requests = 1)
+        shot("timetable_none", sheet(omer, timetable("28", omerHeadsign, "#F57C00", il("2026-10-17T10:00"), emptyList(), page).copy(tomorrow = true)))
+    }
+
     /** The stop's departures with no signal: last night's board, still ahead only. */
     @Test fun stopOffline() {
         val board = SavedBoard.of(omer, omerResp, il("2026-10-14T02:14"))

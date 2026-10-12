@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import il.transit.core.features.ISRAEL
@@ -88,8 +89,10 @@ internal fun ColumnScope.TimetableBody(t: TimetableUi, vm: MainActions) {
     t.savedAt?.let { at -> SavedNote(at, t.savedLastNight) }
     when {
         t.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        t.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
-        t.rows.isEmpty() && !t.canLoadMore -> Text(stringResource(R.string.timetable_none), Modifier.padding(vertical = 12.dp))
+        t.failed -> EmptyNote(stringResource(R.string.err_network)) {
+            OutlinedButton(onClick = { vm.timetable(TimetableAction.Retry) }) { Text(stringResource(R.string.retry)) }
+        }
+        t.rows.isEmpty() && !t.canLoadMore -> EmptyNote(stringResource(if (t.savedAt != null) R.string.timetable_none_left else R.string.timetable_none))
         else -> {
             val grid = DayTimetable.grid(t.rows, t.now)
             val list = rememberLazyListState()
@@ -109,9 +112,10 @@ internal fun ColumnScope.TimetableBody(t: TimetableUi, vm: MainActions) {
             }
         }
     }
+    HorizontalDivider(Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.outlineVariant)
     Text(
         stringResource(R.string.timetable_scheduled),
-        Modifier.padding(top = 6.dp, bottom = 4.dp),
+        Modifier.padding(top = 8.dp, bottom = 4.dp),
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -149,7 +153,9 @@ private fun HourRow(h: DayTimetable.Hour) {
                             c.minute,
                             Modifier.padding(horizontal = 6.dp, vertical = 2.dp).semantics { contentDescription = time },
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (c.gone) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
+                            // onSurfaceVariant, not outline: gone times still read (≥ 4.5:1) in both themes.
+                            color = if (c.gone) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (c.gone) FontWeight.Light else null,
                         )
                     }
                 }
@@ -164,7 +170,17 @@ private fun HourRow(h: DayTimetable.Hour) {
 internal fun SavedNote(at: Instant, lastNight: Boolean) {
     val text = if (lastNight) stringResource(R.string.timetable_saved_last_night, hhmm(at))
     else stringResource(R.string.timetable_saved_at, DAY.format(at.atZone(ISRAEL)), hhmm(at))
-    Text(text, Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+    // Not the error red: a saved board is a normal offline state, not a failure.
+    Text(text, Modifier.padding(vertical = 4.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+}
+
+/** No departures, or no answer: a centred note, with an action below it when there is one. */
+@Composable
+private fun EmptyNote(text: String, action: @Composable () -> Unit = {}) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+        action()
+    }
 }
 
 private val DAY: DateTimeFormatter = DateTimeFormatter.ofPattern("d/M")
