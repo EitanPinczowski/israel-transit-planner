@@ -68,7 +68,7 @@ class RoutingInvariantsTest {
 
     private fun times(p: Place): List<Instant> = listOfNotNull(p.arrival, p.departure).map(::parseTime)
 
-    private fun checkItinerary(where: String, it: Itinerary) {
+    internal fun checkItinerary(where: String, it: Itinerary) {
         assertTrue("$where: arrival before departure", !it.end.isBefore(it.start))
         assertTrue("$where: negative duration", it.duration >= 0)
         assertTrue("$where: transfers < 0", it.transfers >= 0)

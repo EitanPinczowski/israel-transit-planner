@@ -78,6 +78,9 @@ interface MainActions {
      * arriving by then. One `plan`, only on the tap: [setTime] plans by itself once the trip is complete.
      */
     fun planOn(at: Instant, arriveBy: Boolean = false) = setTime(if (arriveBy) TimeMode.ARRIVE_BY else TimeMode.DEPART_AT, at)
+
+    /** "Use this change" (true) / "Back to the original change" (Phase 10 D5). */
+    fun useBigStop(use: Boolean) = Unit
 }
 
 /** The real thing: forwards to the ViewModel (whose methods may return Jobs; ignored). */
@@ -102,6 +105,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun setMaxParkRideDrive(min: Int) { vm.setMaxParkRideDrive(min) }
     override fun plan() { vm.plan() }
     override fun select(index: Int) { vm.select(index) }
+    override fun useBigStop(use: Boolean) { vm.useBigStop(use) }
     override fun clearResults() { vm.clearResults() }
     override fun cancelReminder() { vm.cancelReminder() }
     override fun stopRide() { vm.stopRide() }

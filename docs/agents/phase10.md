@@ -701,6 +701,13 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
 3. **"Big stop" (D5):** **a rail or light-rail station, a stop named תחנה מרכזית / מסוף /
    Central Station / Terminal, or a stop with platforms in its description**; offered only when
    it gives **≥ 3 min more slack** and the same arrival.
+   **Matching, decided (owner, 2026-10-12): B.** Besides the same stop id, parent station or
+   name (within 150 m), a big stop on the other line also matches within **300 m**
+   (`BigStopChanges.NEAR_BIG_M`), whatever its name (Be'er Sheva central's city and intercity
+   platforms). The walk is counted at a fixed 1 m/s (`WALK_MPS`) against the slack, the offer
+   still needs ≥ 3 min more slack after it, and the row says the walk ("Walk 4 min to …").
+   After the logic review: slack ranks only up to 10 min (`RANK_CAP_SEC`), and a re-opened
+   option sends 0 requests for as long as its results last (`BigStopSession`).
 4. **Short map links (D6):** **"paste the address instead"**, no call to Google to expand them.
 5. **Offline timetables (D7):** **3 starred stops a night**, so the night worst case is 6 + 3 =
    **9 requests**, Wi-Fi + charging only.
