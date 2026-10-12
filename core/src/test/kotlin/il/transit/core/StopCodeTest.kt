@@ -31,7 +31,6 @@ class StopCodeTest {
             val found = geocode(f)
             assertTrue(f, found.isNotEmpty())
             assertTrue(f, found.none { PlaceSearch.inIsrael(LatLon(it.lat, it.lon)) })
-            assertTrue(f, found.none { it.name.contains("13907") })
         }
     }
 

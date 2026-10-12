@@ -93,7 +93,11 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
                 }
             }
         },
-        supportingText = missingStop?.let { code -> { Text(stringResource(R.string.stop_code_missing, code)) } },
+        supportingText = if (missingStop != null) {
+            { Text(stringResource(R.string.stop_code_missing, missingStop)) }
+        } else {
+            null
+        },
     )
     // No focus target in a screenshot test: nothing to open there.
     LaunchedEffect(field) { runCatching { focus.requestFocus() } }

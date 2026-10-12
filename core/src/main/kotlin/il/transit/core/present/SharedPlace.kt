@@ -50,7 +50,7 @@ sealed interface SharedPlace {
             if (text.isEmpty()) return Unreadable
             var short = false
             for (m in URL.findAll(text)) {
-                when (val p = link(m.groupValues[1].trimEnd('.', ',', ')', '!', '?'))) {
+                when (val p = link(trimUrl(m.groupValues[1]))) {
                     null -> Unit
                     ShortLink -> short = true
                     else -> return p
@@ -58,8 +58,15 @@ sealed interface SharedPlace {
             }
             // A short link next to the address ("הרצל 15, תל אביב\nhttps://maps.app.goo.gl/…"): the address.
             val rest = URL.replace(text, " ").trim()
-            address(rest)?.let { return Text(it) }
+            address(rest, loose = !short)?.let { return Text(it) }
             return if (short) ShortLink else Unreadable
+        }
+
+        /** Sentence punctuation after a link is not part of it; a ")" only when it closes nothing ("…(Azrieli)" keeps it). */
+        private fun trimUrl(url: String): String {
+            var u = url.trimEnd('.', ',', '!', '?')
+            while (u.endsWith(")") && u.count { it == ')' } > u.count { it == '(' }) u = u.dropLast(1).trimEnd('.', ',', '!', '?')
+            return u
         }
 
         /** One link: a place, [ShortLink], or null (not a map link). */
@@ -130,19 +137,21 @@ sealed interface SharedPlace {
                 if (k.isEmpty()) null else k.lowercase() to decode(kv.substringAfter('='))
             }.toMap()
 
-        private fun decode(s: String): String = runCatching { URLDecoder.decode(s, Charsets.UTF_8) }.getOrDefault(s)
+        private fun decode(s: String): String = runCatching { URLDecoder.decode(s, "UTF-8") }.getOrDefault(s)
 
         /**
          * The address in a message ("נפגשים ברחוב הרצל 15 בתל אביב בשמונה"): the line with a
          * street word, a town we know, or a word and a house number; from its street word (or
          * after "כתובת:" / "at"). A short text with none of these is searched as it is (a place
-         * name: "קניון עזריאלי"). Null when there is nothing to search.
+         * name: "קניון עזריאלי"), unless [loose] is off (words next to a short link: "תראה כאן").
+         * Null when there is nothing to search.
          */
-        fun address(text: String): String? {
+        fun address(text: String, loose: Boolean = true): String? {
             val lines = text.split(Regex("""[\n\r]+|(?<=[.!?;])\s+""")).map { it.trim().trim('.', '!', '?', ';', ',') }.filter { it.isNotEmpty() }
             if (lines.isEmpty()) return null
             val best = lines.map { it to score(it) }.filter { it.second > 0 }.maxByOrNull { it.second }?.first
             if (best == null) {
+                if (!loose) return null
                 val only = lines.singleOrNull() ?: return null
                 return only.takeIf { it.length <= MAX_QUERY && it.split(' ').size <= 6 && it.any(Char::isLetter) }
             }
