@@ -50,7 +50,7 @@ internal fun BigStopRow(state: UiState, vm: MainActions) {
                 }
                 Text(what, style = MaterialTheme.typography.bodySmall)
                 // Owner decision B: the second vehicle may leave from a big stop nearby; say the walk.
-                if (t.walkMin > 0 && t.how != BigStopHow.SAME_STOP) {
+                if (t.walkMin > 0) {
                     Text(stringResource(R.string.big_stop_walk, t.walkMin, t.boardStop), style = MaterialTheme.typography.bodySmall)
                 }
                 Text(stringResource(R.string.big_stop_same, t.slackMin, t.originalSlackMin), style = MaterialTheme.typography.bodySmall)
