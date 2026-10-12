@@ -45,6 +45,9 @@ decisions already recorded.
 - **Handoff PRs need no extra permission (owner, 2026-10-12):** a docs-only PR that updates this
   file for a boss handoff is merged by the boss as soon as its checks are green, without asking.
   Feature PRs still need the owner's OK.
+- **Claude project `israel-transit` (owner, 2026-10-12):** every session for this repo (boss, implementers,
+  reviews, researchers, planners) is created with the tag `remote-agents-project:israel-transit` and
+  nothing else for the project. The old `team` / `phase8` tags were moved over on 2026-10-12.
 
 ## Gotchas learned
 - **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
