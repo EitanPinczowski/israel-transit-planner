@@ -51,6 +51,12 @@ class BigStopShotsTest(private val v: Variant) {
     /** "Get off line 370 2 stops earlier, at …". */
     @Test fun earlier() = results("big_stop_earlier", state(change(extraStops = -2), applied = false))
 
+    /** Owner decision B: the second bus leaves from the city platforms nearby: "Walk 4 min to …". */
+    @Test fun walk() = results("big_stop_walk", state(change(extraStops = 1, boardStop = "ת.מרכזית תל אביב/רציפים עירוניים", walkMin = 4), applied = false))
+
+    /** Same stop off the first vehicle: "Take line 4 from … instead." */
+    @Test fun sameStop() = results("big_stop_same_stop", state(change(extraStops = 0, boardStop = "מסוף לה גווארדיה", walkMin = 2), applied = false))
+
     /** After "Use this change": "Changing at …: 9 min instead of 2." + "Back to the original change". */
     @Test fun applied() = results("big_stop_applied", state(change(extraStops = 1), applied = true))
 
@@ -73,11 +79,12 @@ class BigStopShotsTest(private val v: Variant) {
         }
     }
 
-    private fun change(extraStops: Int): BigStopChange {
+    private fun change(extraStops: Int, boardStop: String? = null, walkMin: Int = 0): BigStopChange {
         val t = transfers(option).first()
         return BigStopChange(
             original = option, changed = option.copy(), transfer = t,
             stop = "ת.מרכזית תל אביב קומה 6/הורדה", fromLeg = t.fromLeg, toLeg = t.toLeg,
+            boardStop = boardStop ?: "ת.מרכזית תל אביב קומה 6/הורדה", walkMin = walkMin,
             extraStops = extraStops, slackMin = 9, originalSlackMin = 2,
         )
     }

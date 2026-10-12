@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import il.transit.core.present.BigStopHow
 import il.transit.core.present.LegKind
 import il.transit.core.present.bigStopText
 import il.transit.planner.R
@@ -38,12 +39,20 @@ internal fun BigStopRow(state: UiState, vm: MainActions) {
     ) {
         Column(Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)) {
             if (applied) {
-                Text(stringResource(R.string.big_stop_applied, t.stop, t.slackMin, t.originalSlackMin), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.big_stop_applied, t.boardStop, t.slackMin, t.originalSlackMin), style = MaterialTheme.typography.bodySmall)
             } else {
                 val first = line(t.firstLine, t.firstKind)
                 val second = line(t.secondLine, t.secondKind)
-                val how = if (t.stayOn) R.plurals.big_stop_stay else R.plurals.big_stop_earlier
-                Text(pluralStringResource(how, t.stops, first, t.stops, t.stop, second), style = MaterialTheme.typography.bodySmall)
+                val what = when (t.how) {
+                    BigStopHow.STAY_ON -> pluralStringResource(R.plurals.big_stop_stay, t.stops, first, t.stops, t.stop, second)
+                    BigStopHow.EARLIER -> pluralStringResource(R.plurals.big_stop_earlier, t.stops, first, t.stops, t.stop, second)
+                    BigStopHow.SAME_STOP -> stringResource(R.string.big_stop_board, second, t.boardStop)
+                }
+                Text(what, style = MaterialTheme.typography.bodySmall)
+                // Owner decision B: the second vehicle may leave from a big stop nearby; say the walk.
+                if (t.walkMin > 0 && t.how != BigStopHow.SAME_STOP) {
+                    Text(stringResource(R.string.big_stop_walk, t.walkMin, t.boardStop), style = MaterialTheme.typography.bodySmall)
+                }
                 Text(stringResource(R.string.big_stop_same, t.slackMin, t.originalSlackMin), style = MaterialTheme.typography.bodySmall)
             }
             // No start padding, so the label lines up with the text above it (LTR and RTL).

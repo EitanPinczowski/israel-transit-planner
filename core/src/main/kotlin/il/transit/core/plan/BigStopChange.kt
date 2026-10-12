@@ -32,8 +32,12 @@ data class BigStopChange(
     val changed: Itinerary,
     /** The change it replaces (the one with the least slack). */
     val transfer: Transfer,
-    /** Where to change instead. */
+    /** Where to get off the first vehicle instead. */
     val stop: String,
+    /** Where to board the second vehicle: [stop], or a big stop near it (owner decision B). */
+    val boardStop: String = stop,
+    /** Minutes of walking between [stop] and [boardStop] (0 at the same stop). */
+    val walkMin: Int = 0,
     /** Leg indices in [original] (and [changed]) of the vehicle left and the vehicle boarded. */
     val fromLeg: Int,
     val toLeg: Int,
@@ -60,6 +64,19 @@ object BigStopChanges {
     /** Stops matched by distance: within this, with the same name. */
     const val MATCH_M = 150.0
 
+    /**
+     * Owner decision B (2026-10-12): a big stop on the other line also matches within this
+     * distance, whatever its name (Be'er Sheva central's city and intercity platforms are
+     * ~100–200 m apart under different parents). The walk is counted against the slack.
+     */
+    const val NEAR_BIG_M = 300.0
+
+    /**
+     * Slack above this ranks no higher: otherwise the most slack would send the user off
+     * early to wait 25 min at a station one stop after boarding (review, 2026-10-12).
+     */
+    const val RANK_CAP_SEC = 600L
+
     /** Walking pace for the walk between two platforms (straight line; slow, so slack is not overstated). */
     const val WALK_MPS = 1.0
 
@@ -80,27 +97,33 @@ object BigStopChanges {
      * The safer change for [itin], or null. Network errors give null (the card just shows no
      * suggestion); cancellation propagates.
      */
-    suspend fun find(itin: Itinerary, api: TransitApi, bufferMin: Int?, language: String = "he"): BigStopChange? {
+    suspend fun find(itin: Itinerary, api: TransitApi, bufferMin: Int?, language: String = "he"): BigStopChange? = try {
+        findOrThrow(itin, api, bufferMin, language)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        null
+    }
+
+    /** [find], but a network or answer error propagates (so [BigStopSession] does not remember it). */
+    internal suspend fun findOrThrow(itin: Itinerary, api: TransitApi, bufferMin: Int?, language: String): BigStopChange? {
         val t = toCheck(itin) ?: return null
         val budgeted = BudgetedTransitApi(api, BUDGET)
-        val (tripA, tripB) = try {
-            budgeted.trip(itin.legs[t.fromLeg].tripId!!, language) to budgeted.trip(itin.legs[t.toLeg].tripId!!, language)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            return null
-        }
+        val tripA = budgeted.trip(itin.legs[t.fromLeg].tripId!!, language)
+        val tripB = budgeted.trip(itin.legs[t.toLeg].tripId!!, language)
         return pick(itin, t, tripA, tripB, bufferMin)
     }
 
     /**
      * The best candidate from the two `trip` answers: a stop the first vehicle reaches (after
      * the user boards it) and the second leaves from (before the user gets off it), matched by
-     * stop id, parent station, or the same name within [MATCH_M]. Kept only if it is big, the
-     * first vehicle gets there before the second leaves with ≥ the original slack +
-     * [MORE_SLACK_SEC] and ≥ the user's buffer, and the walk is no longer than the original's.
-     * The most slack wins (then the fewest extra stops). A loop line that passes a stop twice
-     * is matched by index and time, so a visit on the wrong lap never qualifies.
+     * stop id, parent station, the same name within [MATCH_M], or (owner decision B) a big stop
+     * within [NEAR_BIG_M]. Kept only if one of the two is big and the first vehicle gets there
+     * before the second leaves with, after the walk between them at [WALK_MPS], ≥ the original
+     * slack + [MORE_SLACK_SEC] and ≥ the user's buffer. Ranked by slack capped at
+     * [RANK_CAP_SEC], then the fewest extra stops, then the shorter walk. A loop line that
+     * passes a stop twice is matched by index and time, so a visit on the wrong lap never
+     * qualifies.
      */
     fun pick(itin: Itinerary, t: Transfer, tripA: Itinerary, tripB: Itinerary, bufferMin: Int?): BigStopChange? {
         val legA = itin.legs[t.fromLeg]
@@ -111,7 +134,6 @@ object BigStopChanges {
         val alightA = matchStop(a.stops, legA.to, legA.end, after = boardA) ?: return null
         val boardB = matchStop(b.stops, legB.from, legB.start) ?: return null
         val alightB = matchStop(b.stops, legB.to, legB.end, after = boardB) ?: return null
-        val originalWalkM = if (legA.to.stopId != null && legA.to.stopId == legB.from.stopId) 0.0 else Geo.distanceM(legA.to.latLon, legB.from.latLon)
         val minSlack = maxOf(t.slackSec + MORE_SLACK_SEC, (bufferMin ?: 0) * 60L)
 
         class Cand(val j: Int, val k: Int, val slack: Long, val walkM: Double)
@@ -123,26 +145,30 @@ object BigStopChanges {
             for (k in 0 until alightB) {
                 if (j == alightA && k == boardB) continue
                 val q = b.stops[k]
-                if (q.cancelled || !sameStop(p, q)) continue
-                if (!isBig(p, a.mode) && !isBig(q, b.mode)) continue
+                if (q.cancelled) continue
+                val big = isBig(p, a.mode) || isBig(q, b.mode)
+                if (!big || !(sameStop(p, q) || Geo.distanceM(p.latLon, q.latLon) <= NEAR_BIG_M)) continue
                 val leave = departure(q) ?: continue
                 // The user boards the first vehicle before this stop, and is on the second one
                 // before the final stop (index order), and in time order too (a loop's other lap).
                 if (arrive.isBefore(legA.start) || leave.isAfter(legB.end)) continue
                 val walkM = if (p.stopId != null && p.stopId == q.stopId) 0.0 else Geo.distanceM(p.latLon, q.latLon)
-                if (walkM > originalWalkM) continue
                 val slack = Duration.between(arrive, leave).seconds - walkSec(walkM)
                 if (slack < minSlack) continue
                 cands += Cand(j, k, slack, walkM)
             }
         }
-        val best = cands.maxWithOrNull(compareBy<Cand> { it.slack }.thenBy { -kotlin.math.abs(it.j - alightA) }) ?: return null
+        val best = cands.maxWithOrNull(
+            compareBy<Cand> { minOf(it.slack, RANK_CAP_SEC) }.thenBy { -kotlin.math.abs(it.j - alightA) }.thenBy { -it.walkM },
+        ) ?: return null
         val changed = recut(itin, t, tripA, a, boardA, best.j, tripB, b, best.k, alightB, best.walkM) ?: return null
         return BigStopChange(
             original = itin,
             changed = changed,
             transfer = t,
             stop = a.stops[best.j].name,
+            boardStop = b.stops[best.k].name,
+            walkMin = ((walkSec(best.walkM) + 59) / 60).toInt(),
             fromLeg = t.fromLeg,
             toLeg = changed.legs.indexOfLast { it.isTransit && it.tripId == legB.tripId }.takeIf { it >= 0 } ?: t.toLeg,
             extraStops = best.j - alightA,
@@ -271,6 +297,37 @@ object BigStopChanges {
         val j = (i until pts.size).minBy { Geo.distanceM(pts[it], to) }
         val part = pts.subList(i, j + 1).ifEmpty { return null }
         return il.transit.core.api.EncodedPolyline(encodePolyline(part, g.precision), g.precision, part.size)
+    }
+}
+
+/**
+ * The checks done for one set of results (review, 2026-10-12): an option opened again, found
+ * or not, sends 0 requests until the results change, even after the guard's 30 s cache has
+ * expired. A failed check (offline, an error) is not remembered, so the next open tries again.
+ * Options are told apart by identity: the results hold each one once.
+ */
+class BigStopSession(private val api: TransitApi) {
+    private var results: Any? = null
+    private val done = java.util.IdentityHashMap<Itinerary, BigStopChange?>()
+
+    /** Whether [itin] of [results] was checked already, and its answer ([BigStopChange] or null). */
+    @Synchronized
+    fun known(results: Any, itin: Itinerary): Boolean {
+        if (results !== this.results) { done.clear(); this.results = results }
+        return done.containsKey(itin)
+    }
+
+    suspend fun check(results: Any, itin: Itinerary, bufferMin: Int?, language: String = "he"): BigStopChange? {
+        synchronized(this) { if (known(results, itin)) return done[itin] }
+        val c = try {
+            BigStopChanges.findOrThrow(itin, api, bufferMin, language)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return null
+        }
+        synchronized(this) { if (results === this.results) done[itin] = c }
+        return c
     }
 }
 

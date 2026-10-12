@@ -7,6 +7,8 @@ import il.transit.core.api.MotisJson
 import il.transit.core.api.Place
 import il.transit.core.api.PlanResponse
 import il.transit.core.plan.BigStopChanges
+import il.transit.core.plan.BigStopSession
+import il.transit.core.present.BigStopHow
 import il.transit.core.present.bigStopText
 import il.transit.core.present.transfers
 import il.transit.core.ride.RideEvent
@@ -158,8 +160,10 @@ class BigStopChangeTest {
         RoutingInvariantsTest().checkItinerary("original", itin)
 
         val text = bigStopText(c)
-        assertTrue(text.stayOn)
+        assertEquals(BigStopHow.STAY_ON, text.how)
         assertEquals(1, text.stops)
+        assertEquals(0, text.walkMin)
+        assertEquals(central.name, text.boardStop)
         assertEquals("370", text.firstLine)
         assertEquals("18", text.secondLine)
         assertEquals(10, text.slackMin)
@@ -205,6 +209,108 @@ class BigStopChangeTest {
         assertEquals(emptyList<Place>(), boarded.intermediateStops)
         assertEquals(itin.end, c.changed.end)
         RoutingInvariantsTest().checkItinerary("loop re-cut", c.changed)
+    }
+
+    // ---- owner decision B: a big stop on the other line within 300 m, the walk counted ----------
+
+    /** Like Be'er Sheva central: the city platforms under another parent and name, [m] metres north of the 370's stop. */
+    private fun cityPlatforms(m: Double) = Place(
+        "ת.מרכזית/עירוניים לצפון", central.lat + m / 111_000.0, central.lon, stopId = "il-Israel-MOT_99002",
+        description = "רחוב:   עיר: תל אביב יפו רציף: 11   קומה:",
+    )
+
+    @Test fun `platforms 200 m apart - matched, the walk counted and named`() = runTest {
+        val city = cityPlatforms(200.0)
+        val bus = bus18(laGuardia to "2026-10-13T06:18:00Z", city to "2026-10-13T06:32:00Z", end to "2026-10-13T06:40:00Z")
+        val itin = option(bus, 3, 0)
+        val c = BigStopChanges.find(itin, apiFor(bus), null)!!
+        assertEquals(central.name, c.stop)
+        assertEquals(city.name, c.boardStop)
+        // 12 min between the two vehicles, ~200 s of it walking.
+        assertEquals(8, c.slackMin)
+        assertEquals(4, c.walkMin)
+        val walk = c.changed.legs[c.fromLeg + 1]
+        assertEquals("WALK", walk.mode)
+        assertEquals(city.stopId, walk.to.stopId)
+        assertEquals(1, transfers(c.changed).size)
+        assertTrue(transfers(c.changed).single().slackSec in 480L..540L)
+        assertEquals(itin.end, c.changed.end)
+        RoutingInvariantsTest().checkItinerary("walk re-cut", c.changed)
+        val text = bigStopText(c)
+        assertEquals(4, text.walkMin)
+        assertEquals(city.name, text.boardStop)
+    }
+
+    @Test fun `platforms 400 m apart - no match`() = runTest {
+        val bus = bus18(laGuardia to "2026-10-13T06:18:00Z", cityPlatforms(400.0) to "2026-10-13T06:32:00Z", end to "2026-10-13T06:40:00Z")
+        assertNull(BigStopChanges.find(option(bus, 3, 0), apiFor(bus), null))
+    }
+
+    @Test fun `a walk that eats the gain - no offer`() = runTest {
+        // 8 min between the vehicles, minus ~200 s of walking: under the original 2 min + 3.
+        val bus = bus18(laGuardia to "2026-10-13T06:18:00Z", cityPlatforms(200.0) to "2026-10-13T06:28:00Z", end to "2026-10-13T06:40:00Z")
+        assertNull(BigStopChanges.find(option(bus, 3, 0), apiFor(bus), null))
+    }
+
+    @Test fun `same stop off the first bus, the second boarded at a terminal nearby - no stop count in the text`() = runTest {
+        val terminal = Place("מסוף לה גווארדיה", laGuardia.lat + 100 / 111_000.0, laGuardia.lon, stopId = "il-Israel-MOT_99003")
+        val bus = bus18(laGuardia to "2026-10-13T06:18:00Z", terminal to "2026-10-13T06:26:00Z", end to "2026-10-13T06:40:00Z")
+        val c = BigStopChanges.find(option(bus, 3, 0), apiFor(bus), null)!!
+        assertEquals(0, c.extraStops)
+        assertEquals(laGuardia.name, c.stop)
+        assertEquals(terminal.name, c.boardStop)
+        val text = bigStopText(c)
+        assertEquals(BigStopHow.SAME_STOP, text.how)
+        assertEquals(0, text.stops)
+        assertEquals(2, text.walkMin)
+        RoutingInvariantsTest().checkItinerary("same-stop re-cut", c.changed)
+    }
+
+    @Test fun `ranking caps the slack - not sent off early to wait half an hour`() = runTest {
+        // Bus 18 also passes a terminal by Merkaz Oren (one stop after boarding the 370) at 05:40:
+        // 29 min to wait there, against 12 min at Tel Aviv's central station. Capped, the nearer one wins.
+        val oren = stops370[2]
+        val orenTerminal = Place("מסוף אורן", oren.lat + 50 / 111_000.0, oren.lon, stopId = "il-Israel-MOT_99004")
+        val bus = bus18(
+            orenTerminal to "2026-10-13T05:40:00Z", laGuardia to "2026-10-13T06:18:00Z",
+            central to "2026-10-13T06:32:00Z", end to "2026-10-13T06:40:00Z",
+        )
+        val c = BigStopChanges.find(option(bus, 3, 1), apiFor(bus), null)!!
+        assertEquals(central.name, c.stop)
+        assertEquals(1, c.extraStops)
+        assertEquals(12, c.slackMin)
+    }
+
+    @Test fun `session - an option opened again sends 0, found or not, until the results change`() = runTest {
+        val fake = apiFor(waits) // no guard: as if its 30 s cache had expired
+        val session = BigStopSession(fake)
+        val results = Any()
+        val a = option(waits, 3, 0)
+        val none = itinWith(listOf("370", "171")) // recorded: nothing better
+        val recordedFake = fakeWithRecordedTrips()
+        val noneSession = BigStopSession(recordedFake)
+        assertNotNull(session.check(results, a, null))
+        assertNull(noneSession.check(results, none, null))
+        assertNotNull(session.check(results, option(waits, 3, 0), null)) // another option (identity)
+        assertNotNull(session.check(results, a, null))
+        assertNull(noneSession.check(results, none, null))
+        assertEquals(4, fake.calls.size) // A 2, B 2, A again 0
+        assertEquals(2, recordedFake.calls.size) // found nothing, still 0 again
+        assertTrue(session.known(results, a))
+        // New results: checked afresh.
+        assertNotNull(session.check(Any(), a, null))
+        assertEquals(6, fake.calls.size)
+    }
+
+    @Test fun `session - a failed check is not remembered`() = runTest {
+        var offline = true
+        val fake = FakeTransitApi().apply { onTrip = { id -> if (offline) throw IOException("offline") else if (id == "T18") waits else bus370 } }
+        val session = BigStopSession(fake)
+        val results = Any()
+        val a = option(waits, 3, 0)
+        assertNull(session.check(results, a, null))
+        offline = false
+        assertNotNull(session.check(results, a, null))
     }
 
     // ---- requests -------------------------------------------------------------------------------

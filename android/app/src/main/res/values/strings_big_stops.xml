@@ -10,6 +10,10 @@
         <item quantity="one">Safer change: get off %1$s one stop earlier, at ⁨%3$s⁩, take %4$s there.</item>
         <item quantity="other">Safer change: get off %1$s %2$d stops earlier, at ⁨%3$s⁩, take %4$s there.</item>
     </plurals>
+    <!-- Same stop off the first vehicle; the second boarded at a big stop nearby. %1$s the second line, %2$s that stop. -->
+    <string name="big_stop_board">Safer change: take %1$s from ⁨%2$s⁩ instead.</string>
+    <!-- Owner decision B: the walk to the second vehicle's stop. -->
+    <string name="big_stop_walk">Walk %1$d min to ⁨%2$s⁩.</string>
     <string name="big_stop_same">Same arrival; %1$d min to change instead of %2$d.</string>
     <string name="big_stop_use">Use this change</string>
     <string name="big_stop_applied">Changing at ⁨%1$s⁩: %2$d min instead of %3$d. Same arrival.</string>

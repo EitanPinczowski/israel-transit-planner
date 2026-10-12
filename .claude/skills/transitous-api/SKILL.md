@@ -179,7 +179,8 @@ Holidays + dates (Phase 10 D3) build every notice from the bundled calendar, 0 r
 (`BigStopChanges.BUDGET`), only when the user opens (selects) a Trip option whose tightest change is at
 a small stop; 0 for a direct option, a change already at a big stop, errands or an offline copy. The
 two are the vehicles around that change, cached by the guard like the trip sheet's own (opening the
-sheet within 30 s costs 0). Pinned in `BigStopChangeTest`. **Trip ids expire with each feed update**
+sheet within 30 s costs 0). An option opened again sends 0 for as long as its results last,
+found or not (`BigStopSession`; a failed check is not remembered). Pinned in `BigStopChangeTest`. **Trip ids expire with each feed update**
 (recorded 2026-10-12: ids from a plan of 2026-10-05, `…_051026`, answered 404 for the same service
 day; the current feed was `…_121026`), so a `trip` fixture needs a fresh `plan` first.
 

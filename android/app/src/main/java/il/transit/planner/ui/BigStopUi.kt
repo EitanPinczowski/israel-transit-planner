@@ -3,6 +3,7 @@ package il.transit.planner.ui
 import il.transit.core.api.TransitApi
 import il.transit.core.plan.BigStopChange
 import il.transit.core.plan.BigStopChanges
+import il.transit.core.plan.BigStopSession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,20 +31,25 @@ fun bigStopFor(s: UiState): Pair<BigStopChange, Boolean>? {
 /**
  * Runs the check when an option is opened (Trip tab, not errands, not a saved offline copy):
  * 0 requests unless its tightest change is at a small stop, then 2 `trip` (cached by the guard,
- * shared with the trip sheet). Opening another option cancels a check still running.
+ * shared with the trip sheet). An option opened again sends 0 for as long as the results last,
+ * found or not ([BigStopSession]). Opening another option cancels a check still running.
  */
 class BigStopCheck(private val scope: CoroutineScope, private val api: TransitApi, private val language: () -> String) {
     private var job: Job? = null
+    private val session = BigStopSession(api)
 
     fun run(state: MutableStateFlow<UiState>) {
         job?.cancel()
         val s = state.value
         val itin = s.selectedItinerary ?: return
         if (s.mode != AppMode.TRIP || s.chain != null || s.offlineSince != null) return
+        // One fetch of results: set per search, kept by Earlier/Later and by "Use this change".
+        val results: Any = s.resultsAt ?: s.results ?: return
         if (bigStopFor(s) != null || BigStopChanges.toCheck(itin) == null) return
         val buffer = s.settings.transferBufferMin
         job = scope.launch {
-            val c = BigStopChanges.find(itin, api, buffer, language()) ?: return@launch
+            // Remembered (found or not) for these results: answered at once, 0 requests.
+            val c = session.check(results, itin, buffer, language()) ?: return@launch
             state.update { if (it.selectedItinerary === itin) it.copy(bigStop = BigStopUi(c)) else it }
         }
     }
