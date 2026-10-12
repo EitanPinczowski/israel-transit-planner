@@ -1,0 +1,493 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "20 Jerusalem Street",
+  "id": "",
+  "lat": 54.5838194,
+  "lon": -5.9264602,
+  "street": "Jerusalem Street",
+  "houseNumber": "20",
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Northern Ireland",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Belfast City District",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Malone Lower",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -14.122640609741211
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Road",
+  "id": "gb-great-britain_270G00014204",
+  "lat": 53.227683999999996,
+  "lon": -0.6267550600000001,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Greater Lincolnshire",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lincolnshire",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North Kesteven",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Skellingthorpe",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.222640037536621,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.524294752172864e-07
+ },
+ {
+  "type": "PLACE",
+  "category": "farm",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Farm",
+  "id": "node/[2699063595]",
+  "lat": 53.2278875,
+  "lon": -0.6314011,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Greater Lincolnshire",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lincolnshire",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North Kesteven",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Skellingthorpe",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -8.622640609741211
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Star",
+  "id": "node/[3781042006]",
+  "lat": 51.5062881,
+  "lon": -0.2327557,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Greater London",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "London Borough of Hammersmith and Fulham",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.622640609741211
+ },
+ {
+  "type": "PLACE",
+  "category": "greengrocer_14",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Gate",
+  "id": "node/[6778729854]",
+  "lat": 51.5245508,
+  "lon": -0.202005,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Greater London",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Westminster",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.622640609741211
+ },
+ {
+  "type": "PLACE",
+  "category": "parking_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    12.0,
+    3.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Farm",
+  "id": "way/[824059801]",
+  "lat": 53.7465334,
+  "lon": -1.9457142,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "West Yorkshire",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Calderdale",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.622640609741211
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem",
+  "id": "node/[29090735]",
+  "lat": 31.7788472,
+  "lon": 35.2257856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ],
+   [
+    16.0,
+    9.0
+   ]
+  ],
+  "name": "Capel Jerusalem",
+  "id": "gb-great-britain_5220AWG60693",
+  "lat": 51.690434,
+  "lon": -4.249167400000001,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Wales",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Carmarthenshire",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Pembrey and Burry Port Town",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -7.972640514373779,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.7705653590383008e-05
+ }
+]

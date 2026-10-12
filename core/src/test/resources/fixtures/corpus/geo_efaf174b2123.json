@@ -1,0 +1,486 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "ויצמן 10",
+  "id": "",
+  "lat": 31.9267307,
+  "lon": 34.798267,
+  "street": "ויצמן",
+  "houseNumber": "10",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.50971984863281
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "קניותר/ויצמן",
+  "id": "il-Israel-MOT_15612",
+  "lat": 31.929675999999997,
+  "lon": 34.798885000000006,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -51.109718322753906,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.0885563319316134e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "ת. מרכזית נס ציונה/ויצמן",
+  "id": "il-Israel-MOT_23217",
+  "lat": 31.925479999999997,
+  "lon": 34.797720000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -46.859718322753906,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8804825231200084e-05
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "ויצמן",
+  "id": "",
+  "lat": 31.9243584,
+  "lon": 34.7979064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -45.00971984863281
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "וייצמן/החרש",
+  "id": "il-Israel-MOT_89",
+  "lat": 31.923039999999997,
+  "lon": 34.79803500000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.22510528564453,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.6863148630363867e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "וייצמן/הנפת הדגל",
+  "id": "il-Israel-MOT_24326",
+  "lat": 31.921332999999997,
+  "lon": 34.79822000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.22510528564453,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "ת. מרכזית נס ציונה",
+  "id": "il-Israel-MOT_15611",
+  "lat": 31.924923,
+  "lon": 34.797947,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -29.350000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.831614281400107e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    10.0
+   ]
+  ],
+  "name": "עירייה/ויצמן",
+  "id": "il-Israel-MOT_21366",
+  "lat": 31.931028,
+  "lon": 34.86743,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמלה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -24.700000762939453,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.6890700862859376e-05
+ }
+]

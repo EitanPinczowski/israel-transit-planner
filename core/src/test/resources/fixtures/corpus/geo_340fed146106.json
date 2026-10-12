@@ -1,0 +1,452 @@
+[
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת תל אביב",
+  "id": "node/[10235172861]",
+  "lat": 32.11344,
+  "lon": 34.803686,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.0
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת תל-אביב",
+  "id": "way/[819848529]",
+  "lat": 32.118064,
+  "lon": 34.80227,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת תל אביב",
+  "id": "way/[34967471]",
+  "lat": 32.1130256,
+  "lon": 34.7992147,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת בר אילן",
+  "id": "il-Israel-MOT_25092",
+  "lat": 32.06537600000001,
+  "lon": 34.845839999999995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קריית אונו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.60000228881836,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.8572661904036067e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "מסוף אוניברסיטת ת''א",
+  "id": "il-Israel-MOT_14125",
+  "lat": 32.117202999999996,
+  "lon": 34.804115,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.10000228881836,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.577223080559634e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת בר אילן/דרך אשכול",
+  "id": "il-Israel-MOT_39311",
+  "lat": 32.065727,
+  "lon": 34.84393,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.3520384022267535e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "אוניברסיטת בר אילן/קרן היסוד",
+  "id": "il-Sababus_16820",
+  "lat": 32.06743,
+  "lon": 34.845046999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    20.0
+   ],
+   [
+    21.0,
+    4.0
+   ],
+   [
+    26.0,
+    8.0
+   ]
+  ],
+  "name": "הגן הזואולוגי אוניברסיטת תל-אביב",
+  "id": "way/[98259532]",
+  "lat": 32.112981,
+  "lon": 34.8077063,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.5
+ }
+]

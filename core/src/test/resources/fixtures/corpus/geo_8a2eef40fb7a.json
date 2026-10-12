@@ -1,0 +1,449 @@
+[
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "בי\"ח איכילוב",
+  "id": "way/[26599740]",
+  "lat": 32.0812473,
+  "lon": 34.7889795,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.75
+ },
+ {
+  "type": "PLACE",
+  "category": "helipad_16",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "מנחת איכילוב",
+  "id": "way/[96637622]",
+  "lat": 32.080076,
+  "lon": 34.7894571,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "ביה\"ח איכילוב/ויצמן",
+  "id": "il-Israel-MOT_12903",
+  "lat": 32.080676999999994,
+  "lon": 34.788643,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -53.349998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.6379969969857484e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "doctors_14",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "טרום איכילוב",
+  "id": "way/[353185994]",
+  "lat": 32.092496,
+  "lon": 34.8379419,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בני ברק",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "תל אביב - יפו",
+  "id": "node/[278472603]",
+  "lat": 32.0852997,
+  "lon": 34.7818064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.73899841308594
+ },
+ {
+  "type": "PLACE",
+  "category": "clothes_16",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "אנטילופ",
+  "id": "node/[11176806151]",
+  "lat": 32.0854624,
+  "lon": 34.7900197,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.96428680419922
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "תל אביב מרכז",
+  "id": "il-Israel-MOT_37358",
+  "lat": 32.083714,
+  "lon": 34.79825000000001,
+  "level": 0.0,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.77886199951172,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.0008013946935534477
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    4.0
+   ],
+   [
+    20.0,
+    8.0
+   ]
+  ],
+  "name": "אידלסון",
+  "id": "node/[759498364]",
+  "lat": 32.0946481,
+  "lon": 34.7754439,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.28571319580078
+ }
+]

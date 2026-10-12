@@ -1,0 +1,512 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 101",
+  "id": "",
+  "lat": 32.0685248,
+  "lon": 34.7776317,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "101",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 109",
+  "id": "",
+  "lat": 32.0691535,
+  "lon": 34.7778663,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "109",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 105",
+  "id": "",
+  "lat": 32.0688354,
+  "lon": 34.7777549,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "105",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 103",
+  "id": "",
+  "lat": 32.0687012,
+  "lon": 34.777664,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "103",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 107",
+  "id": "",
+  "lat": 32.0689994,
+  "lon": 34.7777989,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "107",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד 10",
+  "id": "",
+  "lat": 32.062721,
+  "lon": 34.770193,
+  "street": "שדרות רוטשילד",
+  "houseNumber": "10",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -63.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד/שד''ל",
+  "id": "il-busofash_49933",
+  "lat": 32.064053,
+  "lon": 34.77445,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.60000228881836,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    2.0
+   ],
+   [
+    29.0,
+    4.0
+   ],
+   [
+    34.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות רוטשילד",
+  "id": "",
+  "lat": 32.0681999,
+  "lon": 34.7779348,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -54.5
+ }
+]

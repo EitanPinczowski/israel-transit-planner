@@ -1,0 +1,509 @@
+[
+ {
+  "type": "PLACE",
+  "category": "shelter_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "המקלט הגרעיני בתחנה המרכזית החדשה",
+  "id": "node/[12949677901]",
+  "lat": 32.0555241,
+  "lon": 34.7791843,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -53.650001525878906
+ },
+ {
+  "type": "PLACE",
+  "category": "convenience_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "התחנה הישראלית",
+  "id": "node/[1989843606]",
+  "lat": 32.071204,
+  "lon": 34.7897193,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.5
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "בית חסידים המרכזי",
+  "id": "way/[149264326]",
+  "lat": 32.088395,
+  "lon": 34.7757041,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -30.25
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "בית הכנסת המרכזי תל השומר",
+  "id": "node/[6412466103]",
+  "lat": 32.045626,
+  "lon": 34.8425698,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -29.271427154541016
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "כרם התימנים",
+  "id": "way/[803468679]",
+  "lat": 32.070489,
+  "lon": 34.770145,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -28.700000762939453
+ },
+ {
+  "type": "PLACE",
+  "category": "theatre_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "היכל התרבות",
+  "id": "way/[1019055536]",
+  "lat": 32.0738426,
+  "lon": 34.7798571,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -28.700000762939453
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "הבימה/שד' תרס''ט",
+  "id": "il-Israel-MOT_42146",
+  "lat": 32.072933000000006,
+  "lon": 34.778800000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -28.549999237060547,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.1494898899400141e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    14.0
+   ],
+   [
+    26.0,
+    10.0
+   ],
+   [
+    37.0,
+    4.0
+   ],
+   [
+    42.0,
+    8.0
+   ]
+  ],
+  "name": "בית הכנסת המרכזי היכל מאיר",
+  "id": "way/[149276622]",
+  "lat": 32.0785089,
+  "lon": 34.7806199,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -28.350000381469727
+ }
+]

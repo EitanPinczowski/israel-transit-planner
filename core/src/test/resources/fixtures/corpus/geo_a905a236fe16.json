@@ -1,0 +1,514 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 3",
+  "id": "",
+  "lat": 32.085606,
+  "lon": 34.770518,
+  "street": "בן גוריון",
+  "houseNumber": "3",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -62.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 31",
+  "id": "",
+  "lat": 32.084935,
+  "lon": 34.77299,
+  "street": "בן גוריון",
+  "houseNumber": "31",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 36",
+  "id": "",
+  "lat": 32.084317,
+  "lon": 34.773773,
+  "street": "בן גוריון",
+  "houseNumber": "36",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 34",
+  "id": "",
+  "lat": 32.084331,
+  "lon": 34.773693,
+  "street": "בן גוריון",
+  "houseNumber": "34",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 30",
+  "id": "",
+  "lat": 32.084448,
+  "lon": 34.773257,
+  "street": "בן גוריון",
+  "houseNumber": "30",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 38",
+  "id": "",
+  "lat": 32.084285,
+  "lon": 34.773918,
+  "street": "בן גוריון",
+  "houseNumber": "38",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 35",
+  "id": "",
+  "lat": 32.084861,
+  "lon": 34.773289,
+  "street": "בן גוריון",
+  "houseNumber": "35",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    12.0
+   ],
+   [
+    18.0,
+    1.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    8.0
+   ]
+  ],
+  "name": "בן גוריון 32",
+  "id": "",
+  "lat": 32.084407,
+  "lon": 34.773419,
+  "street": "בן גוריון",
+  "houseNumber": "32",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -60.25
+ }
+]

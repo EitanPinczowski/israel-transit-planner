@@ -188,7 +188,7 @@ answers are offered as answers; the rest are under "Closest matches", with "Not 
 + a "Pick on the map" button on top; a failed search (offline) says so instead.
 `Aliases` rewrites ~20 everyday names to their map name + town (איכילוב → "איכילוב תל אביב",
 תל השומר hospital → שיבא, נתב"ג…) — only alone or with the alias's own town ("ברזילי ירושלים"
-is a street). `QueryText.expand` first spells out ת"א/ב"ש/פ"ת/כ"ס/י-ם…, "שד'" → שדרות, drops
+is a street). `QueryText.expand` first spells out acronyms (`Aliases.acronym`, below), "שד'" → שדרות, drops
 רחוב/רח', and reads "ברעננה"/"בתל אביב" after the street as the town. **Timing:** Transitous's
 answers show at once (`pending`) when the backup is asked; the whole backup stage (phone, then
 Photon) is capped at `BACKUP_DEADLINE_MS` = 4 s, and the Photon call is cancelled with it (its own
@@ -199,6 +199,42 @@ pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day c
 only 2 min, since the phone's Geocoder answers nothing when offline —, ≤ 2 at once, one retry on
 429/503). A backup failure never fails the search. Every backup answer outside Israel's box is
 dropped (the phone's Geocoder is also asked inside the box).
+
+**Search hardening (Phase 10 D2), 0 new requests:**
+- **Stale searches:** `MotisClient` (like `PhotonClient`) enqueues and cancels the OkHttp call with
+  the coroutine, so new typing frees the connection and the guard's slot at once; a cancelled call
+  caches nothing. `TypingSearch` numbers each search: an answer reaches the screen only while its
+  number is the latest (the phone's blocking Geocoder may still return), and `cancel()` takes a
+  number too. Pinned in `TypingSearchTest` (5 keys in 300 ms → 1 geocode; a slow old answer is dropped).
+- **Acronyms** (`Aliases.acronym`): ת"א ר"ג פ"ת ב"ש ק"ש ק"ג ר"ל ראשל"צ נס"צ כ"ס הוד"ש ב"ב י-ם, את"א
+  (Tel Aviv University), בי"ח (hospital), with `"` `״` `'` `׳` between the letters, also after ב/ל/מ/ו
+  ("בת"א", "בי-ם"; the letters as they are first: ב"ב is בני ברק); with no mark
+  only ראשלצ/נסצ/הודש/ביח (the others are words). `Aliases.AMBIGUOUS` (ק"א, ק"ב, ק"מ, ר"ה…) is never
+  spelled out. In English text the English name ("Herzl 5, ת"א" → "…, Tel Aviv").
+- **Neighbourhoods** (`Neighbourhoods`, `NeighbourhoodsData` from `tools/gen_neighbourhoods.py` and
+  the hand-checked `tools/neighbourhoods_seed.tsv`, ~160): a name and no town ("רמת אביב", not "גילה 5"
+  nor "רחוב רמות") biases the one geocode to its town's `Towns` centre (no coordinates of our own);
+  answers in that town rank first, nothing is dropped (it may be a street name too). **In two towns**
+  ("רמות", "נווה שאנן"; owner, 2026-10-12): no request while typing; one row per town from the table
+  ("רמות · באר שבע", nearest the user first, `SearchAnswer.choices`), and tapping one searches
+  "רמות, באר שבע" (1 geocode, that town's centre). Pinned in `NeighbourhoodsTest`. A neighbourhood
+  typed with a street is "where", not part of the street name. The detail line names the town (`geocodeDetail`).
+- **Match levels** (`MatchLevel`, `PlaceSearch.level`): HOUSE (the address as typed), STREET (the
+  street, not the typed number), TOWN (only the town), PLACE (a place, stop, or the town typed
+  alone), NONE. Only HOUSE/PLACE are `exact` (the old rule, unchanged); `closest` is ordered STREET,
+  TOWN, NONE, and the row says "Street only: no number 15" / "Town only" (`SearchAnswer.note`).
+  An answer named exactly as typed comes first among the exact ones ("רמות" before "רמות אשכול").
+  Apartment words ("דירה 4", "קומה 2") are dropped before the request.
+- **JVM corpus** (`AddressCorpusJvmTest`, every `core test`): `fixtures/corpus/corpus.tsv` (267 rows:
+  the emulator corpus's queries, acronym/mark/comma/"ב"-town/apartment variants, neighbourhoods,
+  English) through `PlaceSearch` with Transitous and Photon replayed from `fixtures/corpus/`. Replay
+  key = the text sent, normalized, + language (variants share one recording); each was recorded with
+  the bias the app sends (2026-10-12: 60 geocodes, 1 s apart). A row: query, language, level,
+  expected name, `lat,lon` (150 m), known gap. **Adding a row:** append it and run the test; a new
+  search text fails it and writes the `record_fixture.py` commands to `core/build/corpus-missing.sh`
+  (`core/build/corpus-observed.tsv` shows what every row got). Photon (`corpus-missing-photon.tsv`)
+  was blocked from the cloud session: only `טבנקין 15 רעננה` is replayed; rows the phone's Geocoder
+  answers in the app are known gaps here (the emulator `AddressCorpusTest` covers that chain).
 
 **Android's built-in Geocoder** (`android/.../data/AndroidGeocoder.kt`). An OS API: keyless, no
 account, no billing. On Play-services phones Google's address data answers it. **It is NOT the

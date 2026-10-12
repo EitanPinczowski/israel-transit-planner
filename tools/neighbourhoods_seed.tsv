@@ -1,0 +1,175 @@
+# Well-known neighbourhoods for core/search/NeighbourhoodsData.kt (tools/gen_neighbourhoods.py). Hand-checked, 2026-10-12.
+# Columns: Hebrew names | English names (may be empty) | town(s), as named in tools/towns_seed.tsv; two towns = a name in both.
+# No coordinates: a neighbourhood only says which town to search in (its centre comes from Towns).
+# Left out on purpose: names that are mostly a street or a common word (יפו, הדר, אחוזה, לב העיר, מרכז העיר, הקריה).
+# Tel Aviv-Yafo
+רמת אביב	Ramat Aviv	תל אביב-יפו
+רמת אביב ג'	Ramat Aviv Gimel	תל אביב-יפו
+נווה אביבים	Neve Avivim	תל אביב-יפו
+אפקה	Afeka	תל אביב-יפו
+צהלה	Tzahala	תל אביב-יפו
+רמת החייל	Ramat HaHayal	תל אביב-יפו
+הדר יוסף	Hadar Yosef	תל אביב-יפו
+נווה שרת	Neve Sharet	תל אביב-יפו
+כוכב הצפון	Kokhav HaTzafon	תל אביב-יפו
+בבלי	Bavli	תל אביב-יפו
+הצפון הישן	Old North	תל אביב-יפו
+הצפון החדש	New North	תל אביב-יפו
+כרם התימנים	Kerem HaTeimanim	תל אביב-יפו
+נווה צדק	Neve Tzedek	תל אביב-יפו
+פלורנטין	Florentin	תל אביב-יפו
+נווה שאנן	Neve Sha'anan	תל אביב-יפו|חיפה
+שפירא	Shapira	תל אביב-יפו
+שכונת התקווה|התקווה	HaTikva	תל אביב-יפו
+יד אליהו	Yad Eliyahu	תל אביב-יפו
+ביצרון	Bitzaron	תל אביב-יפו
+קריית שלום|קרית שלום	Kiryat Shalom	תל אביב-יפו
+עג'מי	Ajami	תל אביב-יפו
+גבעת עליה		תל אביב-יפו
+צהלון	Tzahalon	תל אביב-יפו
+יפו העתיקה	Old Jaffa	תל אביב-יפו
+תל ברוך	Tel Baruch	תל אביב-יפו
+רמת הטייסים	Ramat HaTayasim	תל אביב-יפו
+נווה עופר	Neve Ofer	תל אביב-יפו
+מונטיפיורי		תל אביב-יפו
+נחלת בנימין		תל אביב-יפו
+# Jerusalem
+גילה	Gilo	ירושלים
+רמות	Ramot	ירושלים|באר שבע
+פסגת זאב	Pisgat Ze'ev	ירושלים
+נווה יעקב	Neve Yaakov	ירושלים
+רמת שלמה	Ramat Shlomo	ירושלים
+רמת אשכול	Ramat Eshkol	ירושלים|לוד
+הגבעה הצרפתית	French Hill	ירושלים
+גבעת שאול	Givat Shaul	ירושלים
+הר נוף	Har Nof	ירושלים
+קריית יובל|קרית יובל	Kiryat Yovel	ירושלים
+קריית מנחם|קרית מנחם	Kiryat Menachem	ירושלים
+עין כרם	Ein Karem	ירושלים
+בית הכרם	Beit HaKerem	ירושלים
+בית וגן	Bayit VeGan	ירושלים
+קריית משה|קרית משה	Kiryat Moshe	ירושלים|רחובות
+רוממה	Romema	ירושלים|חיפה
+רחביה	Rehavia	ירושלים
+טלביה	Talbiya	ירושלים
+קטמון|הקטמונים	Katamon	ירושלים
+בקעה	Baka	ירושלים
+תלפיות	Talpiot	ירושלים
+ארנונה	Arnona	ירושלים
+ארמון הנציב	Armon HaNatziv	ירושלים
+הר חומה	Har Homa	ירושלים
+גוננים	Gonenim	ירושלים
+המושבה הגרמנית	German Colony	ירושלים|חיפה
+המושבה היוונית	Greek Colony	ירושלים
+נחלאות	Nachlaot	ירושלים
+מאה שערים	Mea Shearim	ירושלים
+הבוכרים|שכונת הבוכרים	Bukharim	ירושלים
+מוסררה	Musrara	ירושלים
+ימין משה	Yemin Moshe	ירושלים
+ממילא	Mamilla	ירושלים
+עיר גנים	Ir Ganim	ירושלים
+מלחה	Malha	ירושלים
+בית חנינא	Beit Hanina	ירושלים
+שועפט|שועפאט	Shuafat	ירושלים
+העיר העתיקה	Old City	ירושלים
+סנהדריה	Sanhedria	ירושלים
+גבעת מרדכי	Givat Mordechai	ירושלים
+# Haifa
+הדר הכרמל	Hadar HaCarmel	חיפה
+כרמל צרפתי	French Carmel	חיפה
+מרכז הכרמל	Merkaz HaCarmel	חיפה
+רמת אלמוגי	Ramat Almogi	חיפה
+רמות רמז	Ramot Remez	חיפה
+רמת בגין	Ramat Begin	חיפה
+דניה	Denya	חיפה
+נווה דוד	Neve David	חיפה
+קריית חיים|קרית חיים	Kiryat Haim	חיפה
+קריית אליעזר|קרית אליעזר	Kiryat Eliezer	חיפה
+קריית שפרינצק|קרית שפרינצק	Kiryat Sprinzak	חיפה
+קריית שמואל|קרית שמואל	Kiryat Shmuel	חיפה
+ואדי ניסנאס	Wadi Nisnas	חיפה
+ואדי סאליב	Wadi Salib	חיפה
+עין הים	Ein HaYam	חיפה
+בת גלים	Bat Galim	חיפה
+נווה יוסף	Neve Yosef	חיפה
+רמת שאול	Ramat Shaul	חיפה
+ורדיה	Vardia	חיפה
+כבביר	Kababir	חיפה
+חליסה	Halisa	חיפה
+נאות פרס	Neot Peres	חיפה
+רמת הדר	Ramat Hadar	חיפה
+סטלה מאריס	Stella Maris	חיפה
+# Be'er Sheva
+נווה זאב	Neve Ze'ev	באר שבע
+נווה נוי	Neve Noy	באר שבע
+נחל עשן	Nahal Ashan	באר שבע
+נחל בקע	Nahal Beka	באר שבע
+שכונה א'	Shkhuna Alef	באר שבע
+שכונה ב'	Shkhuna Bet	באר שבע
+שכונה ג'	Shkhuna Gimel	באר שבע
+שכונה ד'	Shkhuna Dalet	באר שבע
+שכונה ה'	Shkhuna Hey	באר שבע
+שכונה ו'	Shkhuna Vav	באר שבע
+שכונה ט'	Shkhuna Tet	באר שבע
+# Ashdod (quarters)
+רובע א'		אשדוד
+רובע ב'		אשדוד
+רובע ג'		אשדוד
+רובע ד'		אשדוד
+רובע ה'		אשדוד
+רובע ו'		אשדוד
+רובע ז'		אשדוד
+רובע ח'		אשדוד
+רובע ט'		אשדוד
+רובע י'		אשדוד
+רובע י"א		אשדוד
+רובע י"ב		אשדוד
+# Ramat Gan, Bnei Brak, Givatayim
+מרום נווה	Marom Nave	רמת גן
+רמת חן	Ramat Chen	רמת גן
+נחלת גנים	Nahalat Ganim	רמת גן
+רמת עמידר	Ramat Amidar	רמת גן
+קריית קריניצי|קרית קריניצי	Kiryat Krinitzi	רמת גן
+תל השומר	Tel HaShomer	רמת גן
+הבורסה	Diamond Exchange|Bursa	רמת גן
+פרדס כץ	Pardes Katz	בני ברק
+# Petah Tikva
+כפר גנים	Kfar Ganim	פתח תקווה
+עין גנים	Ein Ganim	פתח תקווה
+הדר גנים	Hadar Ganim	פתח תקווה
+אם המושבות	Em HaMoshavot	פתח תקווה
+קריית אריה|קרית אריה	Kiryat Arye	פתח תקווה
+קריית מטלון|קרית מטלון	Kiryat Matalon	פתח תקווה
+סגולה	Segula	פתח תקווה
+כפר אברהם	Kfar Avraham	פתח תקווה
+שעריה	Shaarya	פתח תקווה
+נווה עוז	Neve Oz	פתח תקווה
+# Rishon LeZion, Holon, Bat Yam
+רמת אליהו	Ramat Eliyahu	ראשון לציון
+נחלת יהודה	Nahalat Yehuda	ראשון לציון
+נווה ים	Neve Yam	ראשון לציון
+קריית שרת|קרית שרת	Kiryat Sharet	חולון
+ג'סי כהן	Jessie Cohen	חולון
+תל גיבורים	Tel Giborim	חולון
+אגרובנק	Agrobank	חולון
+נאות רחל	Neot Rachel	חולון
+רמת יוסף	Ramat Yosef	בת ים
+# Sharon
+עיר ימים	Ir Yamim	נתניה
+רמת פולג	Ramat Poleg	נתניה
+קריית נורדאו|קרית נורדאו	Kiryat Nordau	נתניה
+קריית השרון|קרית השרון	Kiryat HaSharon	נתניה
+דורה	Dora	נתניה
+הרצליה פיתוח	Herzliya Pituach	הרצליה
+נווה עמל	Neve Amal	הרצליה
+נוף ים	Nof Yam	הרצליה
+הרצליה הצעירה	Herzliya HaTzeira	הרצליה
+נווה ישראל	Neve Israel	הרצליה
+מגדיאל	Magdiel	הוד השרון
+נווה נאמן	Neve Ne'eman	הוד השרון
+מורשה	Morasha	רמת השרון
+נווה מגן	Neve Magen	רמת השרון
+# Elsewhere
+גני אביב	Ganei Aviv	לוד
+עפולה עילית	Upper Afula	עפולה
+שחמון	Shahamon	אילת

@@ -111,6 +111,10 @@ data class Suggestion(
     val backup: Boolean = false,
     /** Not what was typed, only near it: listed under "Closest matches", never as the answer. */
     val closest: Boolean = false,
+    /** A closest match's level: the row says "Street only: no number 15" / "Town only" (Phase 10 D2). */
+    val match: il.transit.core.search.MatchNote? = null,
+    /** A neighbourhood in several towns: tapping searches this text, which names the town (owner, 2026-10-12). */
+    val refine: String? = null,
 )
 
 data class StopSheet(
@@ -341,8 +345,9 @@ class MainViewModel(
             st.copy(
                 // Exact answers first (Transitous's, or the backup's after a miss), then the closest, labelled.
                 suggestions = local.map { toSuggestion(it) } +
+                    answer.choices.map { c -> Suggestion(q, c.town.displayName(language), c.town.centre, saved = false, isStop = false, refine = c.query) } +
                     LocalFirst.serverAfter(local, answer.exact).map { m -> toSuggestion(m).copy(backup = m in answer.backup) } +
-                    LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true) },
+                    LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true, match = answer.note(m)) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
                 places = st.places.copy(
                     backupShown = answer.backup.any { it.id.startsWith("photon:") },
@@ -354,6 +359,7 @@ class MainViewModel(
     }
 
     fun pick(s: Suggestion) {
+        s.refine?.let { onQuery(it); return } // which town: search there now (1 request)
         if (!s.saved) picker.remember(SavedPlace(s.name, s.at.lat, s.at.lon))
         setField(PlaceRef.Point(s.name, s.at))
     }

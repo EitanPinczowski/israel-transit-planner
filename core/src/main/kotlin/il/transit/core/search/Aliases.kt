@@ -36,6 +36,57 @@ object Aliases {
         Alias(listOf("התחנה המרכזית החדשה", "תחנה מרכזית חדשה"), "התחנה המרכזית החדשה תל אביב", "Tel Aviv Central Bus Station, Tel Aviv"),
     )
 
+    private class Acronym(val he: String, val en: String, val bare: Boolean = false)
+
+    /**
+     * Acronyms people type, by their letters (Phase 10 D2), with ", ״, ' or ׳ between the letters
+     * (ת"א, ת'א); [Acronym.bare] ones also with no mark at all (ראשלצ), where the letters are no
+     * other word ("תא" is a cell, "ים" the sea).
+     */
+    private val ACRONYMS = mapOf(
+        "תא" to Acronym("תל אביב", "Tel Aviv"),
+        "בש" to Acronym("באר שבע", "Be'er Sheva"),
+        "פת" to Acronym("פתח תקווה", "Petah Tikva"),
+        "רג" to Acronym("רמת גן", "Ramat Gan"),
+        "ראשלצ" to Acronym("ראשון לציון", "Rishon LeZion", bare = true),
+        "רשלצ" to Acronym("ראשון לציון", "Rishon LeZion", bare = true),
+        "רל" to Acronym("ראשון לציון", "Rishon LeZion"),
+        "כס" to Acronym("כפר סבא", "Kfar Saba"),
+        "קש" to Acronym("קריית שמונה", "Kiryat Shmona"),
+        "קג" to Acronym("קריית גת", "Kiryat Gat"),
+        "נסצ" to Acronym("נס ציונה", "Ness Ziona", bare = true),
+        "הודש" to Acronym("הוד השרון", "Hod HaSharon", bare = true),
+        "בב" to Acronym("בני ברק", "Bnei Brak"),
+        "ים" to Acronym("ירושלים", "Jerusalem"),
+        "י ם" to Acronym("ירושלים", "Jerusalem"),
+        "אתא" to Acronym("אוניברסיטת תל אביב", "Tel Aviv University"),
+        "ביח" to Acronym("בית חולים", "hospital", bare = true),
+        "ביהח" to Acronym("בית חולים", "hospital", bare = true),
+    )
+
+    /**
+     * Never spelled out: more than one town (ק"א: קריית אתא or קריית ארבע; ק"ב, ק"מ, ר"ה) or not
+     * a place at all. Kept as typed; pinned in `AliasesTest`.
+     */
+    /** One letter people write before a town: ב (in), ל (to), מ (from), ו (and). */
+    private const val PREFIXES = "בלמו"
+
+    val AMBIGUOUS = setOf("קא", "קב", "קמ", "קי", "רה", "רח", "גג")
+
+    /**
+     * What the acronym [letters] (marks removed) stand for, or null: [marked] says the user typed
+     * a mark between them; [english] asks for the English name (an acronym in English text).
+     */
+    fun acronym(letters: String, marked: Boolean, english: Boolean): String? {
+        if (letters in AMBIGUOUS) return null
+        // "בת״א", "לב״ש", "ובי-ם": "in / to / and" + the acronym; the letters as they are first ("בב" is בני ברק).
+        val a = ACRONYMS[letters]
+            ?: letters.takeIf { it.length >= 3 && it[0] in PREFIXES }?.drop(1)?.takeIf { it !in AMBIGUOUS }?.let { ACRONYMS[it] }
+            ?: return null
+        if (!marked && !a.bare) return null
+        return if (english) a.en else a.he
+    }
+
     private val byName: Map<String, Alias> by lazy {
         ALL.flatMap { a -> a.names.map { PlaceSearch.normalize(it) to a } }.toMap()
     }

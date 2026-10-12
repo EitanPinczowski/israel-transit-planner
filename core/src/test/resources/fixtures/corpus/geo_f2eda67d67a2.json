@@ -1,0 +1,495 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "ביאליק/השוטרת",
+  "id": "il-Israel-MOT_13929",
+  "lat": 32.081042999999994,
+  "lon": 34.81484199999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.63291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8076878404826857e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "עיריית ר''ג/ביאליק",
+  "id": "il-Israel-MOT_13930",
+  "lat": 32.08225,
+  "lon": 34.81474699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.13291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8076878404826857e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "ביאליק",
+  "id": "il-Israel-MOT_48784",
+  "lat": 32.08728399999999,
+  "lon": 34.81285,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -45.16584014892578,
+  "modes": [
+   "TRAM"
+  ],
+  "importance": 3.326009027659893e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "ביאליק/נורדאו",
+  "id": "il-Israel-MOT_13933",
+  "lat": 32.084799999999994,
+  "lon": 34.812419999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.63291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.4727159395988565e-05
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "ביאליק",
+  "id": "",
+  "lat": 32.0791552,
+  "lon": 34.8149283,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.06584167480469
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "ביאליק/מבוא הרימון",
+  "id": "il-Israel-MOT_12917",
+  "lat": 32.086879999999994,
+  "lon": 34.808117,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.63291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.0700247003114782e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "בית ליגב",
+  "id": "way/[164670843]",
+  "lat": 32.0933932,
+  "lon": 34.8218692,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "נחלת גנים",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -30.282920837402344
+ },
+ {
+  "type": "PLACE",
+  "category": "fast_food_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    4.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    4.0
+   ]
+  ],
+  "name": "בר-לין",
+  "id": "node/[2051086928]",
+  "lat": 32.0863016,
+  "lon": 34.8110282,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -27.884021759033203
+ }
+]

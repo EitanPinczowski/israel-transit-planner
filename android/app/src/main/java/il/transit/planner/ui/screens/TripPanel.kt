@@ -348,7 +348,7 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
                     )
                 }
-                val detail = listOfNotNull(if (s.isStop) stringResource(R.string.stop) else null, s.detail).joinToString(" · ").ifEmpty { null }
+                val detail = listOfNotNull(matchNoteText(s.match), if (s.isStop) stringResource(R.string.stop) else null, s.detail).joinToString(" · ").ifEmpty { null }
                 val icon = when {
                     s.home -> Icons.Default.Home
                     s.recent -> Icons.Default.Refresh

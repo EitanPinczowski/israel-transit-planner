@@ -226,10 +226,10 @@ only where the plan says. Tick only your own package's lines.
 - [x] Tight-transfer warning chip ("Change at Savidor in 3 min") + "Keep transfers at least" setting
 
 ### D2 — Search hardening (`claude/p10-search-hardening`, 0 new requests)
-- [ ] Stale searches cancelled end to end; an old answer never replaces a newer query's
-- [ ] Acronyms (ת"א, ר"ג, פ"ת, ק"ש, את"א…) and a neighbourhood → town table
-- [ ] Explicit match levels (house / street / town / place) in the answer and the suggestion rows
-- [ ] Fast JVM address corpus (≥ 200 rows from recorded fixtures) in `core test`
+- [x] Stale searches cancelled end to end; an old answer never replaces a newer query's
+- [x] Acronyms (ת"א, ר"ג, פ"ת, ק"ש, את"א…) and a neighbourhood → town table
+- [x] Explicit match levels (house / street / town / place) in the answer and the suggestion rows
+- [x] Fast JVM address corpus (≥ 200 rows from recorded fixtures) in `core test`
 
 ### D3 — Holidays + dates (`claude/p10-holidays`, 0 requests, 1 per tap)
 - [ ] Bundled holiday table 2026–2031 (generated, dates pinned against a source); Trip-tab banner

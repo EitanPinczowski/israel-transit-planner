@@ -1,0 +1,476 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "איינשטיין/בארט",
+  "id": "il-busofash_37387154",
+  "lat": 32.11339,
+  "lon": 34.799484,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "איינשטיין/דרך נמיר",
+  "id": "il-Israel-MOT_52655",
+  "lat": 32.112705000000005,
+  "lon": 34.791940000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -38.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.9232602426200174e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "community_centre_14",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "מרכז קהילתי אריק איינשטיין",
+  "id": "way/[491868040]",
+  "lat": 32.0808439,
+  "lon": 34.772513,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -38.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "מעונות איינשטיין",
+  "id": "way/[98099028]",
+  "lat": 32.1130256,
+  "lon": 34.7992147,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -34.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "גן אריק איינשטיין",
+  "id": "way/[1250688386]",
+  "lat": 32.0062976,
+  "lon": 34.7412005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "בת ים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -34.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "מעונות איינשטיין D4",
+  "id": "node/[7052176744]",
+  "lat": 32.1129978,
+  "lon": 34.8005718,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.75
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "אריק איינשטיין",
+  "id": "",
+  "lat": 32.1639332,
+  "lon": 34.8154,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "הרצליה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    18.0
+   ],
+   [
+    19.0,
+    2.0
+   ],
+   [
+    22.0,
+    6.0
+   ],
+   [
+    29.0,
+    8.0
+   ]
+  ],
+  "name": "אריק איינשטיין",
+  "id": "",
+  "lat": 32.001179,
+  "lon": 34.7755854,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חולון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.0
+ }
+]

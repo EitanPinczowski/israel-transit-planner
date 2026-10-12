@@ -1,0 +1,479 @@
+[
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Ichilov Hospital",
+  "id": "way/[26599740]",
+  "lat": 32.0812473,
+  "lon": 34.7889795,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -56.83776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Rafael Hospital",
+  "id": "way/[97462937]",
+  "lat": 32.1143162,
+  "lon": 34.8433467,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.08776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Children's Hospital",
+  "id": "way/[295751889]",
+  "lat": 32.0478518,
+  "lon": 34.8439884,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramat Gan",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.0
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Chiha Hospital",
+  "id": "way/[302980705]",
+  "lat": 33.8414545,
+  "lon": 35.9051885,
+  "country": "LB",
+  "tz": "Asia/Beirut",
+  "areas": [
+   {
+    "name": "Lebanon",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beqaa Governorate",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Zahlé District",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -3.5
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "MGM Hospital,  -",
+  "id": "node/[2712684081]",
+  "lat": 17.989897,
+  "lon": 79.5931904,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Warangal",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Warangal mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.25
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "SKS Hospital,  -",
+  "id": "node/[8759169871]",
+  "lat": 17.4753103,
+  "lon": 78.4857756,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Medchal–Malkajgiri",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Balanagar mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hyderabad",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Greater Hyderabad Municipal Corporation West Zone",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": 1.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ]
+  ],
+  "name": "Old Hospital",
+  "id": "cy-Intercity_6102",
+  "lat": 34.917064999999994,
+  "lon": 33.62989,
+  "country": "CY",
+  "tz": "Asia/Nicosia",
+  "areas": [
+   {
+    "name": "Cyprus",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cyprus",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Larnaca District",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Δήμος Λάρνακας",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Larnaca",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Skala",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": 5.300000190734863,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.028362309327349e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ]
+  ],
+  "name": "New Hospital",
+  "id": "cy-LPT_6164",
+  "lat": 34.922000000000004,
+  "lon": 33.604530000000004,
+  "country": "CY",
+  "tz": "Asia/Nicosia",
+  "areas": [
+   {
+    "name": "Cyprus",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cyprus",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Larnaca District",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Δήμος Λάρνακας",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Larnaca",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Agios Nikolaos",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": 5.300000190734863,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.8333395675872453e-05
+ }
+]

@@ -1,0 +1,502 @@
+[
+ {
+  "type": "PLACE",
+  "category": "library_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Ben Yehuda Library",
+  "id": "way/[332328224]",
+  "lat": 32.0229058,
+  "lon": 34.7797669,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Holon",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -37.75
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Or Yehuda",
+  "id": "way/[94715099]",
+  "lat": 32.0367356,
+  "lon": 34.835872,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Or Yehuda",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -32.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Bar Yehuda",
+  "id": "way/[1232794551]",
+  "lat": 32.0955127,
+  "lon": 34.7838597,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -32.25
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Tel Yehuda",
+  "id": "node/[10948949444]",
+  "lat": 32.0723428,
+  "lon": 34.8216551,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramat Gan",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -30.274999618530273
+ },
+ {
+  "type": "PLACE",
+  "category": "doityourself_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Home Center Or Yehuda",
+  "id": "node/[1310640631]",
+  "lat": 32.0347569,
+  "lon": 34.8490395,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Or Yehuda",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -27.75
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Bar Yehuda",
+  "id": "way/[1233988399]",
+  "lat": 32.0560155,
+  "lon": 34.8652637,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kiryat Ono",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -27.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Yehuda Ha Levi Garden",
+  "id": "way/[1313218492]",
+  "lat": 32.0610192,
+  "lon": 34.8655144,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kiryat Ono",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -25.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    3.0
+   ],
+   [
+    19.0,
+    4.0
+   ]
+  ],
+  "name": "Yehuda",
+  "id": "way/[35668131]",
+  "lat": 32.123747,
+  "lon": 34.8324837,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -23.0
+ }
+]

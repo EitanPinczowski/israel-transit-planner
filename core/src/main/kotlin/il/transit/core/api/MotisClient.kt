@@ -3,14 +3,21 @@ package il.transit.core.api
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * HTTP client for a MOTIS server (Transitous by default).
@@ -115,24 +122,40 @@ class MotisClient(
         }
     }
 
+    /**
+     * Cancelling the caller (new typing, a closed screen) cancels the HTTP call itself: a blocking
+     * `execute()` would keep the connection and the guard's slot until the server answered (D2).
+     */
     private suspend fun <T> get(path: String, params: List<Pair<String, String>>, parse: (String) -> T): T =
         withContext(Dispatchers.IO) {
             val url = base.newBuilder().addPathSegments(path).apply {
                 params.forEach { (k, v) -> addQueryParameter(k, v) }
             }.build()
             val request = Request.Builder().url(url).header("User-Agent", userAgent).build()
-            http.newCall(request).execute().use { resp ->
-                val body = resp.body?.string().orEmpty()
-                if (!resp.isSuccessful) {
-                    throw TransitHttpException(
-                        resp.code,
-                        body.take(300),
-                        resp.header("Retry-After")?.toIntOrNull(),
-                    )
-                }
-                parse(body)
-            }
+            parse(fetch(http.newCall(request)))
         }
+
+    private suspend fun fetch(call: Call): String = suspendCancellableCoroutine { c ->
+        c.invokeOnCancellation { call.cancel() }
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                if (c.isActive) c.resumeWithException(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val result = runCatching {
+                    response.use { resp ->
+                        val body = resp.body?.string().orEmpty()
+                        if (!resp.isSuccessful) {
+                            throw TransitHttpException(resp.code, body.take(300), resp.header("Retry-After")?.toIntOrNull())
+                        }
+                        body
+                    }
+                }
+                if (c.isActive) result.fold({ c.resume(it) }, { c.resumeWithException(it) })
+            }
+        })
+    }
 
     companion object {
         const val TRANSITOUS = "https://api.transitous.org"

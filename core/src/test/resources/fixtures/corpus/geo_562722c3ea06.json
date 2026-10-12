@@ -1,0 +1,494 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "רוטשילד 50",
+  "id": "",
+  "lat": 31.9639508,
+  "lon": 34.8011489,
+  "street": "רוטשילד",
+  "houseNumber": "50",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -66.0494384765625
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "הרצל/רוטשילד",
+  "id": "il-Israel-MOT_15887",
+  "lat": 31.96484,
+  "lon": 34.802783999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.649444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.7973921785596758e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "רוטשילד/השקד",
+  "id": "il-Israel-MOT_23297",
+  "lat": 31.96426,
+  "lon": 34.79615000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.649444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.18036202568328e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "רוטשילד/השדה",
+  "id": "il-Israel-MOT_15869",
+  "lat": 31.96435,
+  "lon": 34.79444,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.649444580078125,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "קניון רוטשילד",
+  "id": "il-Israel-MOT_24754",
+  "lat": 31.963898,
+  "lon": 34.801502,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.149444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 8.124879059323575e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "רוטשילד/דב הוז",
+  "id": "il-Israel-MOT_15863",
+  "lat": 31.964525,
+  "lon": 34.79372800000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.149444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.1356991055654362e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "פינסקר/רוטשילד",
+  "id": "il-Israel-MOT_21681",
+  "lat": 31.965575999999995,
+  "lon": 34.807358,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.649444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.798607839504257e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    2.0
+   ],
+   [
+    18.0,
+    10.0
+   ],
+   [
+    29.0,
+    10.0
+   ]
+  ],
+  "name": "רוטשילד/התקווה",
+  "id": "il-Israel-MOT_15715",
+  "lat": 31.963925999999997,
+  "lon": 34.79938500000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -58.649444580078125,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.1356991055654362e-05
+ }
+]
