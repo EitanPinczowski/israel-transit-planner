@@ -191,10 +191,27 @@ class SortOptionsTest {
         val chain = itin(0, 60, 4)
         val direct = itin(0, 68, 2)
         val sameArrival = itin(0, 68, 2, walkMin = 1)
-        val front = listOf(pr(chain, 10), pr(direct, 12), pr(sameArrival, 15))
+        val front = listOf(pr(chain, 12), pr(direct, 12), pr(sameArrival, 15)) // direct costs the driver no more
         val shown = arrangeFront(front, TripSort.FASTEST) { it.itinerary }
         assertEquals(listOf(direct, sameArrival), shown.map { it.payload.itinerary })
         assertEquals(listOf(direct, sameArrival), arrangeFront(front, TripSort.FEWEST_TRANSFERS) { it.itinerary }.map { it.payload.itinerary })
+    }
+
+    @Test fun `car tabs - a chain that saves the driver time stays (review)`() {
+        fun d(it: Itinerary, detourMin: Int) =
+            Option(DropOffOption(DropOffKind.STOP_ON_THE_WAY, null, detourMin * 60, 600, it), detourMin * 60, it.end, it.transfers)
+        // X: 2-min detour, 2 changes, arrives 10:00. Y: 25-min detour, 0 changes, arrives 10:05.
+        val x = itin(0, 60, 2)
+        val y = itin(0, 65, 0)
+        val both = listOf(d(x, 2), d(y, 25))
+        assertEquals(listOf(x, y), arrangeFront(both, TripSort.FASTEST) { it.transit }.map { it.payload.transit })
+        // The same Y at no more driver time than X does replace it.
+        assertEquals(listOf(y), arrangeFront(listOf(d(x, 2), d(y, 2)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
+        // The 5+ rule too: a 5-change option with the shortest detour stays next to a pricier 1-change one.
+        val long = itin(0, 50, 5)
+        val short = itin(0, 120, 1)
+        assertEquals(listOf(long, short), arrangeFront(listOf(d(long, 3), d(short, 20)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
+        assertEquals(listOf(short), arrangeFront(listOf(d(long, 20), d(short, 3)), TripSort.FASTEST) { it.transit }.map { it.payload.transit })
     }
 
     // --- 1 minute to spare in every mode --------------------------------------------------

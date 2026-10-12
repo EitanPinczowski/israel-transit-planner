@@ -50,7 +50,9 @@ fun sortOptions(options: List<Itinerary>, sort: TripSort): List<Itinerary> = sor
  */
 fun <T> arrangeFront(options: List<Option<T>>, sort: TripSort, itinerary: (T) -> Itinerary): List<Option<T>> {
     val planned = options.sortedWith(compareBy<Option<T>> { it.arrival }.thenBy { it.driverCostSec }.thenBy { it.transfers })
-    val kept = TripPages.reasonable(planned, { it.transfers }, { it.arrival }, { itinerary(it.payload).start })
+    // A chain that saves the driver time is a real trade-off, not an unreasonable chain: only
+    // an option that costs the driver no more may replace it (review, D12).
+    val kept = TripPages.reasonable(planned, { it.transfers }, { it.arrival }, { itinerary(it.payload).start }) { y, x -> y.driverCostSec <= x.driverCostSec }
     return sortOptions(kept, sort, false, { itinerary(it.payload) }, { it.arrival })
 }
 

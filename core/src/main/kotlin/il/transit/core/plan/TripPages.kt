@@ -27,25 +27,35 @@ object TripPages {
     }
 
     /**
-     * [options] without the unreasonable chains (D12): X goes when some Y has at least
-     * [TripPlanner.CHAIN_FEWER_CHANGES] fewer changes, arrives at most
-     * [TripPlanner.CHAIN_WINDOW_SEC] after X and leaves at most that much before X. The second
-     * bound is the arrive-by reading; it also keeps a direct bus at 07:00 from wiping out every
-     * 2-change option that leaves at 10:00 (someone who takes X could not have taken that Y).
+     * [options] without the unreasonable chains (D12). The window bounds both ends, whatever
+     * the time mode: X goes when some Y has at least [TripPlanner.CHAIN_FEWER_CHANGES] fewer
+     * changes, arrives at most [TripPlanner.CHAIN_WINDOW_SEC] after X **and** leaves at most
+     * that much before X. The departure bound is the arrive-by reading; on depart-after lists it
+     * also keeps a direct bus at 07:00 from wiping out every 2-change option that leaves at
+     * 10:00 (someone who takes X could not have taken that Y).
      * X with [TripPlanner.LONG_CHAIN_CHANGES]+ changes goes when any option has at most
-     * [TripPlanner.SHORT_CHAIN_CHANGES]. Each Y is from [options] as given. The fewest-change
-     * option is never dropped, so a non-empty list stays non-empty. Order kept.
+     * [TripPlanner.SHORT_CHAIN_CHANGES] ("at all": no window).
+     * [mayReplace] (y, x) limits which Y can drop X in both rules; the car tabs pass "costs the
+     * driver no more than X", so a chain that saves the driver time stays. Each Y is from
+     * [options] as given, and Y has fewer changes than X, so the fewest-change option is never
+     * dropped and a non-empty list stays non-empty. Order kept.
      */
-    fun <T> reasonable(options: List<T>, transfers: (T) -> Int, arrival: (T) -> Instant, departure: (T) -> Instant): List<T> {
+    fun <T> reasonable(
+        options: List<T>,
+        transfers: (T) -> Int,
+        arrival: (T) -> Instant,
+        departure: (T) -> Instant,
+        mayReplace: (y: T, x: T) -> Boolean = { _, _ -> true },
+    ): List<T> {
         if (options.size < 2) return options
-        val fewest = options.minOf(transfers)
         val window = TripPlanner.CHAIN_WINDOW_SEC.toLong()
         fun alternative(y: T, x: T): Boolean =
             !arrival(y).isAfter(arrival(x).plusSeconds(window)) && !departure(y).isBefore(departure(x).minusSeconds(window))
         val kept = options.filter { x ->
             val changes = transfers(x)
-            val longChain = changes >= TripPlanner.LONG_CHAIN_CHANGES && fewest <= TripPlanner.SHORT_CHAIN_CHANGES
-            val beaten = options.any { y -> transfers(y) <= changes - TripPlanner.CHAIN_FEWER_CHANGES && alternative(y, x) }
+            val longChain = changes >= TripPlanner.LONG_CHAIN_CHANGES &&
+                options.any { y -> transfers(y) <= TripPlanner.SHORT_CHAIN_CHANGES && mayReplace(y, x) }
+            val beaten = options.any { y -> transfers(y) <= changes - TripPlanner.CHAIN_FEWER_CHANGES && alternative(y, x) && mayReplace(y, x) }
             !longChain && !beaten
         }
         return kept.ifEmpty { options }
