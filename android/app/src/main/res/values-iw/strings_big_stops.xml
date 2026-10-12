@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D5: החלפה בתחנה גדולה, אותם שני כלי רכב. English in values/. -->
+<resources>
+    <plurals name="big_stop_stay">
+        <item quantity="one">החלפה בטוחה יותר: הישארו ב%1$s עוד תחנה אחת עד ⁨%3$s⁩, ועלו שם ל%4$s.</item>
+        <item quantity="two">החלפה בטוחה יותר: הישארו ב%1$s עוד שתי תחנות עד ⁨%3$s⁩, ועלו שם ל%4$s.</item>
+        <item quantity="other">החלפה בטוחה יותר: הישארו ב%1$s עוד ⁨%2$d⁩ תחנות עד ⁨%3$s⁩, ועלו שם ל%4$s.</item>
+    </plurals>
+    <plurals name="big_stop_earlier">
+        <item quantity="one">החלפה בטוחה יותר: רדו מ%1$s תחנה אחת קודם, ב־⁨%3$s⁩, ועלו שם ל%4$s.</item>
+        <item quantity="two">החלפה בטוחה יותר: רדו מ%1$s שתי תחנות קודם, ב־⁨%3$s⁩, ועלו שם ל%4$s.</item>
+        <item quantity="other">החלפה בטוחה יותר: רדו מ%1$s ⁨%2$d⁩ תחנות קודם, ב־⁨%3$s⁩, ועלו שם ל%4$s.</item>
+    </plurals>
+    <string name="big_stop_same">אותה שעת הגעה; ⁨%1$d⁩ דק׳ להחלפה במקום ⁨%2$d⁩.</string>
+    <string name="big_stop_use">להחליף כאן</string>
+    <string name="big_stop_applied">החלפה ב־⁨%1$s⁩: ⁨%2$d⁩ דק׳ במקום ⁨%3$d⁩. אותה שעת הגעה.</string>
+    <string name="big_stop_back">חזרה להחלפה המקורית</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D5: change at a big stop, same two vehicles. Hebrew in values-iw/. -->
+<resources>
+    <!-- %1$s the first line ("Line 5" / "Train"), %2$d stops, %3$s the big stop, %4$s the second line. -->
+    <plurals name="big_stop_stay">
+        <item quantity="one">Safer change: stay on %1$s one more stop to ⁨%3$s⁩, take %4$s there.</item>
+        <item quantity="other">Safer change: stay on %1$s %2$d more stops to ⁨%3$s⁩, take %4$s there.</item>
+    </plurals>
+    <plurals name="big_stop_earlier">
+        <item quantity="one">Safer change: get off %1$s one stop earlier, at ⁨%3$s⁩, take %4$s there.</item>
+        <item quantity="other">Safer change: get off %1$s %2$d stops earlier, at ⁨%3$s⁩, take %4$s there.</item>
+    </plurals>
+    <string name="big_stop_same">Same arrival; %1$d min to change instead of %2$d.</string>
+    <string name="big_stop_use">Use this change</string>
+    <string name="big_stop_applied">Changing at ⁨%1$s⁩: %2$d min instead of %3$d. Same arrival.</string>
+    <string name="big_stop_back">Back to the original change</string>
+</resources>

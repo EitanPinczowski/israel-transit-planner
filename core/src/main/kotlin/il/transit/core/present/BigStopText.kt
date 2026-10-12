@@ -30,9 +30,10 @@ fun bigStopText(c: BigStopChange): BigStopText {
     return BigStopText(
         stayOn = c.extraStops > 0,
         stops = kotlin.math.abs(c.extraStops).coerceAtLeast(1),
-        firstLine = lineLabel(a),
+        // A train's label is its long route name: the UI says "the train" instead.
+        firstLine = lineLabel(a).takeIf { legKind(a.mode) != LegKind.TRAIN },
         firstKind = legKind(a.mode),
-        secondLine = lineLabel(b),
+        secondLine = lineLabel(b).takeIf { legKind(b.mode) != LegKind.TRAIN },
         secondKind = legKind(b.mode),
         stop = c.stop,
         slackMin = c.slackMin.coerceAtLeast(0),
