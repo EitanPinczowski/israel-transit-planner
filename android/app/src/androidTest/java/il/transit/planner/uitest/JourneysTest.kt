@@ -371,7 +371,7 @@ class JourneysTest {
         val template = n.extras.getString(android.app.Notification.EXTRA_TEMPLATE)
         if (AppDriver.sdk >= 36) {
             assertEquals("$journey: template", "android.app.Notification\$ProgressStyle", template)
-            assertTrue("$journey: promotion not requested", n.extras.getBoolean("android.requestPromotedOngoing") // EXTRA_REQUEST_PROMOTED_ONGOING, not in the 36 SDK stubs)
+            assertTrue("$journey: promotion not requested", n.extras.getBoolean("android.requestPromotedOngoing")) // EXTRA_REQUEST_PROMOTED_ONGOING: not in the 36 SDK stubs
             assertTrue("$journey: not promotable", n.hasPromotableCharacteristics())
         } else {
             assertTrue("$journey: no progress bar", n.extras.getInt(android.app.Notification.EXTRA_PROGRESS_MAX) > 0)
