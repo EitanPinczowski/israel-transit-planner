@@ -68,6 +68,8 @@ _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"
 }
 
+# TEMPORARY: this MapLibre-abort retry comes out when the app fix for the abort lands (an app
+# package owns that fix; boss, 2026-10-13). Keep the evidence dump and the empty-crash-buffer retry.
 # Known intermittent app-side crash (seen 2026-10-13, twin run 38353197088): a MapLibre worker
 # thread aborts with jni::PendingJavaException, all frames in libmaplibre.so, no Java FATAL.
 # It is NOT an emulator fault and is NOT hidden: it is retried once, reported as a MapLibre

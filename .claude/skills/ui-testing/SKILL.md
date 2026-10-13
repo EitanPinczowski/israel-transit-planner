@@ -120,6 +120,8 @@ fix and is an app change, outside the CI package.
   and a "Retry" block in the job summary, so it is never silent;
 - red at once: any other app crash (FATAL EXCEPTION, other native signal, ANR), any failed
   assertion, and any test that dies twice. Nothing is skipped or quarantined;
-- AVD 4 GB RAM / 576 MB heap / 6 GB disk, `-no-snapshot`, system image cached per API level, ANR
-  dialogs / package verifier / animations off (headroom; not the cause of this flake).
+- `-no-snapshot`, system image cached per API level, ANR dialogs / package verifier / animations off.
+  The AVD keeps its default RAM: memory was not the cause, and a 4 GB AVD may have starved the
+  runner ("lost communication", run 38355318297).
+- **The MapLibre-abort retry is temporary**: it comes out of `ui_instrument.sh` when the app fix lands.
 - When a Retry block shows up, count them: a MapLibre abort on every run means the app fix is due.
