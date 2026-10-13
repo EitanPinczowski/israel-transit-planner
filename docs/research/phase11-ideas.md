@@ -12,7 +12,7 @@ use, and gaps in the current app.
 exists. No web research and no other app was opened from this session; "Done by" lines for
 other apps are not repeated from memory except where `phase10-ideas.md` already sourced them.
 
-**Live checks: 4 of 5 allowed** (2026-10-13, `MotisClient.USER_AGENT` sent, ≥ 1 s apart, n=1 each):
+**Live checks: 6 of 8 allowed** (4 as below, 2 added for "Dead ends re-checked") (2026-10-13, `MotisClient.USER_AGENT` sent, ≥ 1 s apart, n=1 each):
 1. `plan` Tel Aviv Savidor → Haifa, Wed 14 Oct 08:00: 4 itineraries (train + bus). Legs carry
    `agencyName` and `bikesAllowed`. Itineraries carry **no fare data** (`fareTransfers` absent).
 2. `plan` Petah Tikva → Bat Yam, same time, `transitModes=TRAM`: 4 itineraries, all on the
@@ -225,6 +225,17 @@ the owner wants to prove light traffic before asking Transitous about routine us
 - **Commute routines.** Routines (Phase 6), C2/C3/C4/C5 cover leave time, insights, tile,
   last-trip alert. Idea 3 is the one open hole (what to do once the commute goes wrong).
 
+## Dead ends re-checked (2026-10-13)
+The boss asked for a re-check of the three data-based dead ends. **All three are unchanged;
+no idea is unlocked.** Calls: 2 new (stoptimes, rentals); `track` was read from check 1's plan.
+| dead end | check | result |
+|---|---|---|
+| Real-time for MOT lines | `stoptimes?center=32.0853,34.7818&radius=400&n=40`, Tel Aviv, Wed 14 Oct 08:00 | 37 departures (Egged, Dan, Metropolis): **0 with `realTime: true`**. Still scheduled only. (busofash runs at night, so it was not in this daytime sample.) |
+| `track` on Israel Railways legs | the 4 rail legs of check 1 (Savidor → Haifa) | `track` empty on all 8 places (from and to). Unchanged. |
+| `rentals` (bike/scooter) | `GET /api/v1/rentals?min=32.04,34.74&max=32.12,34.82`, Tel Aviv | `providers`, `stations`, `vehicles`, `zones` all empty. Unchanged. |
+
+Sample sizes are 1 query each, one hour of one day.
+
 ## Recommended first wave
 Build **1, 2 and 3**, in that order, and take **4** next if the owner wants it before a
 release.
@@ -235,7 +246,7 @@ release.
 - **2 — Share this trip.** The cheapest family feature, asked for in two research rounds, 0
   requests, S. It also gives Phase 11 an easy first release note.
 - **3 — "I missed it".** Fixes the worst moment of a daily commute with 1 request on tap. It
-  shares `remind/` and `ride/` files with D10, so it starts after D10 merges.
+  shares `remind/` and `ride/` files with D10, so it shares files with D10 (merged since).
 - **4 — Backup and restore** after those, because it protects everything the other features
   save (places, routines, My lines), and makes setting up a parent's phone a one-file job.
 
