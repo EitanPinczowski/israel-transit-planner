@@ -13,8 +13,10 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
 
 ## Hard rules (do not silently reverse)
 
-- **Free, no card, no API key in the app — ever.** No Google Maps SDK / Directions / Places,
-  no Moovit, no paid tier "just for testing". A proposal that needs a card is rejected.
+- **Free, no card — ever.** No Google Maps SDK / Directions / Places, no Moovit, no paid tier
+  "just for testing". A proposal that needs a card is rejected. An API key is allowed only on a
+  $0 plan with no card details (owner, 2026-10-13); the repo and APK are public, so the key's
+  terms must allow it to be public, and the app must work on when it is revoked.
   CI-only test logins are allowed when keyless and on a free plan (Test Lab Spark via
   Workload Identity, owner 2026-10-03).
 - **No server of our own.** The phone talks directly to free public services:
