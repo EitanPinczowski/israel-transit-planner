@@ -1,6 +1,6 @@
 # The app on emulators: every screen on 9 phone profiles (size, density, font scale,
 # Hebrew/English, light/dark, nav mode, cutout, landscape) with a layout audit, and the
-# user journeys on Android 8, 10, 13, 14 and 15. The `uitest` build answers from recorded
+# user journeys on Android 8, 10, 13, 14 and 15 (16: the Live Update journeys only). The `uitest` build answers from recorded
 # fixtures, so this sends nothing to Transitous or OpenFreeMap.
 #
 # Free: standard GitHub-hosted runners (public repo). Never switch to "larger runners".
@@ -98,7 +98,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: [26, 29, 33, 34, 35]
+        # 36: Android 16, the ride and countdown journeys only (Live Updates, Phase 10 D10).
+        api: [26, 29, 33, 34, 35, 36]
         # Android 8 runs the plain AOSP image (lighter). Its SystemUI crash over the lock
         # screen is handled in tools/ui_behaviour_run.sh.
         target: [google_apis]

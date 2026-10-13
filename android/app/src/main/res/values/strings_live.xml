@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D10: the Live Update's status-bar chip. It shows ~7 characters: keep these short. -->
+<resources>
+    <plurals name="live_stops">
+        <item quantity="one">%d stop</item>
+        <item quantity="other">%d stops</item>
+    </plurals>
+    <plurals name="live_min">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+</resources>

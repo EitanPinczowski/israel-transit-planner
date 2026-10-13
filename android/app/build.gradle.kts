@@ -26,7 +26,9 @@ plugins {
 
 android {
     namespace = "il.transit.planner"
-    compileSdk = 35
+    // 36 for the Android 16 Live Update APIs (Phase 10 D10). targetSdk stays 35 (owner decision 8):
+    // no Android 16 behaviour change rides along.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "il.transit.planner"
@@ -124,4 +126,33 @@ dependencies {
     androidTestImplementation(libs.espresso.accessibility)
     androidTestImplementation(libs.accessibility.test.framework)
     androidTestImplementation(libs.uiautomator)
+}
+
+// Paparazzi 1.3.5 (layoutlib Jellyfish, API 34) copies android.os.Build's inner classes from
+// its own copy and fails on API 36's new Build.VERSION_CODES_FULL (NoSuchElementException at
+// Renderer.kt, then every shot fails). compileSdk is 36 only for the Live Update APIs (D10), so the
+// screenshot tests keep rendering against the API 35 android.jar they used before: same goldens.
+// Remove this once Paparazzi is on a release that knows API 36.
+// AGP's mockable jar (an "android.jar" under its transforms cache) is rebuilt from the API 35
+// platform with AGP's own generator, and takes the same classpath slot.
+val mockable35 = layout.buildDirectory.file("mockable/mockable-android-35.jar")
+val mockableAndroid35 by tasks.registering {
+    val sdk35 = android.sdkDirectory.resolve("platforms/android-35/android.jar")
+    inputs.file(sdk35)
+    outputs.file(mockable35)
+    doLast {
+        val out = mockable35.get().asFile
+        out.parentFile.mkdirs()
+        com.android.builder.testing.MockableJarGenerator(false).createMockableJar(sdk35, out)
+    }
+}
+tasks.withType<Test>().configureEach {
+    dependsOn(mockableAndroid35)
+    val platformJar = { f: File -> f.name == "android.jar" || (f.name.startsWith("mockable-android") && "35" !in f.name) }
+    doFirst {
+        val jar = mockable35.get().asFile
+        val before = classpath // the old collection, so the new one does not refer to itself
+        logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $jar")
+        classpath = files(before.files.map { if (platformJar(it)) jar else it })
+    }
 }
