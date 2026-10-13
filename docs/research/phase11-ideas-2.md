@@ -1,5 +1,9 @@
 # Phase 11 ideas — research, round 2
 
+> **Updated later on 2026-10-13** after the owner changed a rule (see "Owner update" below). Where the
+> sections A2, A1 and C(a) say "breaks the hard rules", that was written under the old rule
+> (no key at all); the update re-judges them. Topic D (paying with the phone) is new.
+
 Asked by the boss on 2026-10-13. The owner picked 1 (reminder check), 3 ("I missed it"), 6
 (accessibility) and 9 (data and battery) from `phase11-ideas.md`, and added three topics:
 **A** live data, **B** Rav-Kav, **C** "which rail to take". Plus 4–6 new ideas.
@@ -17,6 +21,100 @@ Asked by the boss on 2026-10-13. The owner picked 1 (reminder check), 3 ("I miss
      for the wheelchair finding below). n=1, one time of day.
 - I did **not** call Israel Railways' servers (see A2: it needs an embedded key).
 - I could not run an Android phone, so nothing about NFC was tested.
+
+---
+
+## Owner update (2026-10-13): keys allowed if $0 and no card — sources re-judged
+
+The new rule: an API key in the app is allowed when it costs $0 and needs no card. The repo
+and APK are public, so **any key is public**. Two questions per source: do the provider's terms
+allow a key that sits in an app, and what happens if it is revoked?
+
+| source | key? | do the terms allow a public key in our app? | if revoked / blocked |
+|---|---|---|---|
+| **Israel Railways API** (`rail-api.rail.co.il`) | yes, an APIM subscription key; the key community wrappers use was **taken from rail.co.il's own JavaScript**. Israel Railways has **no developer sign-up that I could find**. | **No.** The key is theirs, for their website. A key we did not get from them is not "a key meant to sit in an app". Worse, there is a **dispute on record**: the railway sent a warning letter (9 August, year not shown in the result) to the developers of the free open-source app **Better Rail**, demanding they stop using its "information interfaces" and leave the app stores. It claimed unauthorised commercial use of its systems/APIs, server load and damage of "hundreds of thousands" of shekels; the developers deny it (Calcalist, Kipa, Israel National News; outcome not confirmed). It also told them to get data through the Ministry of Transport instead. | Rotated at will; the website changes its key with its JavaScript. Every installed APK would silently lose train delays and **our repo (public, with the key in it) would be the evidence**. |
+| **Stride** (Hasadna) | **none** (no key exists; nothing to revoke) | n/a. Public, open-source research API; terms not published. A polite, cached, per-tap client is the only fair use; ask Hasadna. | They can rate-limit or move it. Same "silent failure, stay on timetable" design as `GuardedWeather`. |
+| **MOT SIRI-SM** | registration (not a card), reportedly an allow-listed IP | A key/registration is **per developer**, issued to us by name; MOT terms are in Hebrew on gov.il, I could not read them. A key embedded in a public APK would be shared by everyone and probably breaches the registration terms. The IP allow-list makes it a server job anyway. | Revoked key = every APK loses data at once. |
+
+**Verdict after the rule change: unchanged.** The only free-key source with live trains is one
+we would be taking without permission, and the owner of that API is in an open dispute with
+a free hobby app doing the same thing. **Recommend: do not use the Israel Railways key.** If
+the owner still wants it, the ask is: write to Israel Railways (or the MOT) for a keyed
+developer agreement first.
+
+Note also the Better Rail developers say the Ministry's feed **missed holiday timetable
+changes** (they went back to the railway's site). That is the same gap the app's
+`HolidayCalendar` banner covers; it shows the MOT GTFS can be wrong on holiday trains too.
+
+## C(a) in depth: platform / track numbers — sources, live if possible
+
+Focus per the owner. Honest result: **only one source has platform numbers, and it is the
+Israel Railways API above.**
+- **Transitous `track`:** empty on Israel Railways legs (round 1 and again today). Dead end.
+- **Israel Railways API** (website API / app API): community notes (2018 wiki; wrapper
+  `israel-rail-api`, Home Assistant integration) show a `platform` per train and per stop and
+  `dst_platform`; the wiki also lists delays and train positions. Home Assistant uses it for
+  "platform the train leaves from, real-time delay". So live platforms exist **there**, and only
+  there. Freshness: the data is live (platforms are normally posted shortly before departure).
+  **I did not call it.** Access = the key problem above. Verdict: **blocked on permission, not on
+  technology.**
+- **MOT/Hasadna Stride:** serves buses (SIRI); no rail platform data found. The MOT feeds the
+  railway passes on do not appear to carry platforms (Better Rail's developers say the
+  Ministry feed lacks even holiday changes).
+- **Station departure screens, rail.co.il pages, Waze/Moovit:** scraping or private. No.
+- **Bundled "usual platform" table:** wrong whenever a platform changes. Do not build without
+  an owner-checked source.
+- **What the app can do today at no risk:** on the rail leg, say "platform: see the station
+  screen" and show the station name/exit; nothing more is honest.
+- **If the owner wants platforms:** the legitimate path is a written ask to Israel Railways
+  (or the MOT) for a developer key or a data agreement. I can draft that letter. Until then,
+  C(a) stays a dead end. (C(b), train numbers/direct vs stopping, still works and is free.)
+
+## D. Pay with the phone
+
+**Verdict: hand-off only.** A third-party app cannot pay a fare itself without becoming (or
+partnering with) a licensed payment provider; the official apps expose no documented
+integration I could find.
+
+- **How paying works in Israel (from the Ministry of Transport's guide and the app listings;
+  both from search snippets, I could not open the PDF):**
+  - *Rav-Kav card:* the contract/stored value lives on the card. **Rav-Kav Online**
+    (official; Google Play/App Store) loads contracts onto the card: tap the card to an
+    NFC phone, pick a contract, pay by card/Apple Pay/Google Pay. The app *writes the card* via
+    the operator's back end (the card needs the operator's secure keys), so a third party cannot.
+  - *Pay-per-ride without a card:* Ministry-approved payment apps (**Rav-Pass by HopOn**,
+    **Moovit**, **ANY WAY**, and the Ministry's own **HaTachana**; Tel Aviv's site also lists
+    Pango and Cello): scan a **QR code in the vehicle**, ride, billed at month end. These are
+    licensed by the Ministry; the listing says "official public transportation payment app
+    licensed by the Ministry of Transport".
+  - *Cash on buses is discontinued nationwide* (per travel report), so the phone/card is the only way.
+- **Can a third-party app do any of that?**
+  - *Load a contract:* no. Needs operator-side keys/SAM and a payment licence. Not possible.
+  - *Pay per ride by QR:* only as a licensed app. Becoming an approved payment app means a
+    Ministry licence, a payment processor and PCI/PSD-like obligations. **Not free, not
+    possible for a hobby app.** Do not scrape or replay the QR protocol.
+  - *Take card details in our app:* never. It would make us a payment provider and breaks "no
+    card" in spirit.
+- **What the official apps expose (hand-off):** I found **no documented URL scheme, intent
+  or deep-link API** for Rav-Kav Online, HopOn/Rav-Pass, Moovit, Pango or the operators'
+  apps, and could not open the apps' manifests from the cloud. The only thing that works
+  without anyone's help is:
+  1. **Open the app by package name** (`getLaunchIntentForPackage`, with `<queries>` for each
+     package in the manifest; package names to be read from the owner's phone, not confirmed
+     here) and, if it is not installed, open its store page (`market://details?id=…` /
+     `https://play.google.com/…`). One tap from the trip sheet: "Pay / top up with…".
+  2. A **user-chosen "my payment app"** setting (the user picks which of the installed apps
+     to open), because the user's choice is theirs; we do not recommend a vendor.
+  3. Any deeper link (to a specific contract or QR screen) is **undocumented**; if the app
+     exposes an exported activity it could change in any update. Not worth building.
+- **Legal/technical limits in one line:** open an app = fine; show a contract expiry typed by
+  the user (B3) = fine; read a card the user holds on their own phone = plausible (B1);
+  load/charge/pay = a payment-licence problem, not ours.
+- **Best fit:** an *S* effort "Pay with…" row in Settings and a button on the trip sheet that
+  opens the user's chosen payment app, plus B3's typed pass-expiry reminder. **0 requests. New
+  outside service: no.** The fare estimate (`FareEstimator`, "≈ ₪8") already tells the
+  user what to expect to pay. Owner decision: which apps to list, and a one-line disclaimer
+  ("we do not process payments").
 
 ---
 
@@ -310,3 +408,6 @@ version string, nothing else; make it a visible switch, default on, silent on fa
 5. Update check: approve `api.github.com` as an app-called service? (idea 6)
 6. Should `ROADMAP.md`/`transitous-api` be corrected about vehicle accessibility? (done by the
    boss or planner; this PR changes no skill.)
+
+7. (After the rule change) Do you want me to draft a written request to Israel Railways/MOT for a developer key or data agreement (live platforms and delays)? Recommended instead of using the website key.
+8. (D) Which payment apps to list in a "Pay with…" hand-off, with package names read from your phone.
