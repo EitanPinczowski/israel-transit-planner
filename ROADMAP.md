@@ -276,3 +276,83 @@ only where the plan says. Tick only your own package's lines.
 - [x] `docs/releases/v0.8.6.md` after Wave 2 (released 2026-10-12)
 - [x] `docs/releases/v0.9.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 10 feature checked on the Pixel
+
+## Phase 11 — reliability, trust and rigorous tests
+The owner's Phase 11 list (2026-10-13) from `docs/research/phase11-ideas.md` and
+`phase11-ideas-2.md`, plus a testing track for the whole app ("more testing", 2026-10-13). One
+cloud session per package; briefs, shared-file table, request budgets, CI time and owner
+decisions in `docs/agents/phase11.md`. One Opus implementer at a time while the 7-day limit
+warns, at most 2 per wave: Wave 1 (T1, T2) → Wave 2 (E1, T3) → Wave 3 (E2, T7) → Wave 4 (E3, T5)
+→ **v0.9.1** → Wave 5 (E4, T4) → Wave 6 (T6, T8) → Wave 7 (E5) → Wave 8 (E6, optional) →
+**v0.10.0**. Targeted Sonnet reviews where the plan says, and a Sonnet tester pass on every E
+package. Tick only your own package's lines.
+
+### T1 — Core test foundation (`claude/p11-core-tests`, Sonnet, 0 requests)
+- [ ] Core coverage measured and gated (Kover; the gate only ratchets up)
+- [ ] Property tests: time and DST math, Pareto, fares, `LiveProgress`, `UserJson`, `SavedUi`
+- [ ] Parser fuzz over every fixture kind (MOTIS, Open-Meteo, Photon): no crash
+- [ ] Request-budget inventory test + a `check_docs` rule; saved-data samples per release
+
+### T2 — Static gates + bug intake (`claude/p11-static-gates`, Sonnet, 0 requests)
+- [ ] Android Lint and ktlint as gates, each with a baseline
+- [ ] APK-size gate
+- [ ] OSV-scanner + licence check on dependencies
+- [ ] GitHub bug-report issue form for friends
+
+### E1 — Reminder check + pass expiry (`claude/p11-reminder-check`, 0 requests)
+- [ ] "Check reminders": notifications, channels, exact alarms, battery, standby, location, each with its settings page
+- [ ] "Test reminder in 1 minute" through the real alarm path
+- [ ] Rav-Kav pass-expiry reminder from a typed date (3 days before and the last day)
+
+### T3 — ViewModel + state tests (`claude/p11-viewmodel-tests`, Sonnet, 0 requests)
+- [ ] Every UI state transition per tab, with cancel, retry and error paths, on the JVM
+- [ ] Coverage of the Android JVM tests measured and ratcheted
+
+### E2 — I missed it (`claude/p11-missed-it`, 1 request per tap)
+- [ ] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet
+
+### T7 — System + chaos journeys (`claude/p11-system-chaos`, Sonnet, 0 requests)
+- [ ] PR-time `system` job: Doze, reboot re-arm, airplane mode, rotation / theme / language mid-flow, permission revoked mid-ride, process death in every tab
+- [ ] Nightly: app standby, time zone + DST, clock skew, low storage, split screen, pseudolocales, long monkey
+- [ ] CI flake log issue (quarantine-free; two flakes in 14 days → a fix package)
+
+### E3 — Leg labels (`claude/p11-leg-labels`, 0 requests, ≤ 10 recordings)
+- [ ] Train number and "Fewer stops" from `headsign`
+- [ ] Accessible-bus badge from `wheelchairAccessible` (buses only, after the ≤ 10-plan sample)
+
+### T5 — Routing correctness (`claude/p11-routing-tests`, Sonnet, ≤ 65 Transitous requests a week)
+- [ ] ~25 golden trips (every special feature, north, south, Jerusalem, night, Friday/Shabbat, holiday) with the invariants, run weekly live
+- [ ] Weekly contract check against Transitous, Open-Meteo and Photon; an issue on drift
+- [ ] GPS-replay tests of `RideTracker` (synthetic tracks now, the owner's real ones later)
+- [ ] Mutation testing: weekly report + a ratcheting gate on changed core classes
+
+### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
+- [ ] "Pay with…" opens the user's payment app or its store page
+- [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
+
+### T4 — Network-fault matrix (`claude/p11-fault-matrix`, 0 requests, local mock server)
+- [ ] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator
+- [ ] Request counts asserted end to end against each feature's budget
+
+### T6 — Security + in-app update (`claude/p11-security-update`, 0 requests, local mock server)
+- [ ] Intent fuzzing of exported components; FileProvider path checks
+- [ ] Update download refuses a wrong host, a bad digest, an off-list redirect, a cut download
+- [ ] End-to-end update: banner → download → system installer → new version
+
+### T8 — Release, upgrade, performance (`claude/p11-release-perf`, Sonnet, 0 requests)
+- [ ] Release-APK smoke on the emulator (network off) + startup-time gate
+- [ ] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
+- [ ] LeakCanary in every journey (uitest build); nightly map jank and 30-min ride battery reports
+- [ ] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
+
+### E5 — Accessibility (`claude/p11-accessibility`, 0 requests)
+- [ ] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)
+- [ ] Accessibility checks after every step of every journey; font 2.0 goldens
+
+### E6 — NFC Rav-Kav spike (`claude/p11-nfc-spike`, optional, 0 requests)
+- [ ] Debug-only read of the owner's own card, clean room; owner's go/no-go
+
+### Close-out (boss)
+- [ ] `docs/releases/v0.9.1.md` after Wave 4 (if the owner releases it)
+- [ ] `docs/releases/v0.10.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [ ] Owner: every Phase 11 feature checked on the Pixel (bug bash), incl. the TalkBack checklist
