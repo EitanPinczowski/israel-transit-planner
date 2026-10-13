@@ -146,24 +146,39 @@ internal fun TransferWarningTick(state: UiState) {
     LaunchedEffect(MainViewModel.optionId(itin), warns) { if (warns) Haptics.warn(view) }
 }
 
+/** The sort chips show above every results list with more than one option (D12). */
+internal fun UiState.showSortChips(): Boolean = !loading && error == null && chain == null && options.size > 1
+
+/** How many items [sortChipsItem] adds above a list's options. */
+internal fun UiState.sortItems(): Int = if (showSortChips()) 1 else 0
+
+/** The sort chips as a results list's first item: they scroll away with it instead of taking a card's room. */
+internal fun androidx.compose.foundation.lazy.LazyListScope.sortChipsItem(state: UiState, vm: il.transit.planner.ui.MainActions) {
+    if (state.showSortChips()) item { SortChips(state, vm) }
+}
+
 /**
  * The list state of a results list, scrolled to the selected card when its route is tapped on the
  * map (D11, [UiState.mapPick]). [before]: how many items the list shows above its options.
- * [fitSelected]: when new results show and the items above leave no room for the whole selected
- * card (a 360 dp phone), the list starts at that card; the items above are one scroll up.
+ * [fitSelected]: when new results show, or another option is chosen, and the selected card is not
+ * wholly in view (a 360 dp phone, banners above it), the list brings it to the top; the items
+ * above are one scroll up. The layout audit checks it (R8).
  */
 @Composable
 internal fun rememberOptionsListState(state: UiState, before: Int, fitSelected: Boolean = false): LazyListState {
     val list = rememberLazyListState()
     LaunchedEffect(state.mapPick) { if (state.mapPick > 0) list.animateScrollToItem(before + state.selected) }
     if (fitSelected) {
-        // Once per search (a quiet refresh keeps loading false), not on every 2-minute refresh.
-        LaunchedEffect(state.loading, state.results != null || state.chain != null) {
-            if (state.loading || (state.results == null && state.chain == null)) return@LaunchedEffect
+        // On a new search (a quiet refresh keeps loading false, so not every 2 minutes) and when
+        // another option is chosen; a card already fully in view never moves.
+        LaunchedEffect(state.loading, state.hasResults, state.selected) {
+            if (state.loading || !state.hasResults) return@LaunchedEffect
             val target = before + state.selected
             val info = snapshotFlow { list.layoutInfo }.first { it.totalItemsCount > target && it.viewportEndOffset > 0 }
             val card = info.visibleItemsInfo.firstOrNull { it.index == target }
-            if (card == null || card.offset + card.size > info.viewportEndOffset) list.scrollToItem(target)
+            if (card == null || card.offset < info.viewportStartOffset || card.offset + card.size > info.viewportEndOffset) {
+                list.animateScrollToItem(target)
+            }
         }
     }
     return list

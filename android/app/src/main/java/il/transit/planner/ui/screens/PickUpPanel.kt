@@ -162,7 +162,8 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun PickUpList(state: UiState, result: PickUpResult, vm: MainActions, modifier: Modifier) {
-    LazyColumn(modifier, state = rememberOptionsListState(state, before = 0)) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = state.sortItems(), fitSelected = true)) {
+        sortChipsItem(state, vm)
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
         }

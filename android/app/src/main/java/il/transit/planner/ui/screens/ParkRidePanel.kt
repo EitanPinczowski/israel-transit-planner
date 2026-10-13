@@ -40,7 +40,8 @@ import il.transit.planner.ui.UiState
 @Composable
 internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(modifier, state = rememberOptionsListState(state, before = if (result.options.isEmpty()) 1 else 0)) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = state.sortItems() + (if (result.options.isEmpty()) 1 else 0), fitSelected = true)) {
+        sortChipsItem(state, vm)
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_park_ride, state.parkRide.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }

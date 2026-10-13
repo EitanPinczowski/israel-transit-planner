@@ -469,14 +469,9 @@ internal fun ResultsPanel(
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             TransferWarningTick(state) // D11: a haptic tick when the selected option warns of a tight change
-            val showSort = !state.loading && state.error == null && state.chain == null && state.options.size > 1
-            // The Trip list carries the rain note and the sort chips as its first items (D11 designer
-            // review): on a 360 dp phone they would otherwise leave no room for a single card.
-            val tripList = state.mode == AppMode.TRIP && !state.loading && state.error == null
-            if (!tripList) {
-                RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
-                if (showSort) SortChips(state, vm) // D12: every tab
-            }
+            // Every results list carries the sort chips (and the Trip list the rain note) as its first
+            // items (D11 designer review): fixed above it, on a 360 dp phone they left no room for a card.
+            val showSort = state.showSortChips()
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)

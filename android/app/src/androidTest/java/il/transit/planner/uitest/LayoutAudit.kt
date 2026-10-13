@@ -36,7 +36,8 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  *  R6 rtl          in Hebrew, row labels sit on the right of their values
  *  R7 route        the drawn route lies in the map area the panels leave visible
  *  R8 thumb row    the selected option's action row (Start trip, Remind me, Send to driver):
- *                  every button at least 48 × 48 dp and inside the usable screen (Phase 10 D11)
+ *                  every button at least 48 × 48 dp and inside the usable screen, and the
+ *                  selected card on screen above it, at least its top 96 dp (Phase 10 D11)
  */
 class LayoutAudit(private val d: AppDriver) {
     private val density get() = d.activity.resources.displayMetrics.density
@@ -95,6 +96,18 @@ class LayoutAudit(private val d: AppDriver) {
                 val r = b.boundsInWindow
                 if (r.width < min || r.height < min) out += Violation("R8", label(b), "${dp(r.width)}×${dp(r.height)} dp, under 48 dp")
                 if (!safe.contains(r.toRect())) out += Violation("R8", label(b), "at ${r.toRect().toShortString()}, outside the usable screen ${safe.toShortString()}")
+            }
+            // The row acts on the selected option: its card must be on screen above it, at least
+            // its top 96 dp (or all of it, if shorter), not scrolled away or squeezed by banners.
+            val card = find(merged, UiTags.SELECTED)
+            if (card == null) {
+                out += Violation("R8", "selected card", "the action row shows but the selected card is not on screen")
+            } else {
+                val shown = card.boundsInWindow
+                val need = minOf(card.size.height.toFloat(), 96 * density) - 1f
+                if (shown.height < need || shown.bottom > row.boundsInWindow.top + 1f) {
+                    out += Violation("R8", "selected card", "only ${dp(shown.height.coerceAtLeast(0f))} of ${dp(card.size.height.toFloat())} dp shown above the action row")
+                }
             }
         }
 

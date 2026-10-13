@@ -46,7 +46,7 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
             LineLayer(OTHERS_LAYER, OTHERS_SRC).withProperties(
                 PropertyFactory.lineColor(Expression.toColor(Expression.get("color"))),
                 PropertyFactory.lineWidth(4f),
-                PropertyFactory.lineOpacity(0.55f),
+                PropertyFactory.lineOpacity(c.others),
                 PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
                 PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
             ),
@@ -206,9 +206,9 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         private const val STOPS_MIN_ZOOM = 15f
 
         /** Marker fill (stops, boarding points, saved-place ring), stop ring, walk line, ride halo. */
-        private class Palette(val fill: String, val stopStroke: String, val walk: String, val casing: String)
+        private class Palette(val fill: String, val stopStroke: String, val walk: String, val casing: String, val others: Float)
 
-        private val LIGHT = Palette(fill = "#FFFFFF", stopStroke = "#1E88E5", walk = "#6B6F76", casing = "#FFFFFF")
-        private val DARK = Palette(fill = "#1D2024", stopStroke = "#9ECAFF", walk = "#B4B8C0", casing = "#111418")
+        private val LIGHT = Palette(fill = "#FFFFFF", stopStroke = "#1E88E5", walk = "#6B6F76", casing = "#FFFFFF", others = 0.65f)
+        private val DARK = Palette(fill = "#1D2024", stopStroke = "#9ECAFF", walk = "#B4B8C0", casing = "#111418", others = 0.5f)
     }
 }

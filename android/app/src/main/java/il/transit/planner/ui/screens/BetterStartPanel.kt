@@ -162,7 +162,8 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainActions, modifier: Modifier) {
-    LazyColumn(modifier, state = rememberOptionsListState(state, before = 0)) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = state.sortItems(), fitSelected = true)) {
+        sortChipsItem(state, vm)
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }

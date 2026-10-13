@@ -164,7 +164,8 @@ import kotlin.math.roundToInt
 internal fun DropOffList(state: UiState, result: DropOffResult, vm: MainActions, modifier: Modifier) {
     // Items above the options: the drive time and the "no stop on the way" line (map ↔ list, D11).
     val before = (if (result.directDriveSec != null) 1 else 0) + (if (result.options.none { it.payload.kind == DropOffKind.STOP_ON_THE_WAY }) 1 else 0)
-    LazyColumn(modifier, state = rememberOptionsListState(state, before)) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before + state.sortItems(), fitSelected = true)) {
+        sortChipsItem(state, vm)
         result.directDriveSec?.let { sec ->
             item {
                 Text(
