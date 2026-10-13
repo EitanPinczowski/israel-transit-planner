@@ -4,28 +4,25 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-13, 12:40 Israel time)
-- **Released:** v0.8.6 (2026-10-12). **No release since; owner: no release after Wave 4** (ask before one).
-- **Phase 10 merged:** D1–D5 (#56–#59, #61), notes #60, D6 #62, D12 #65 (owner add-on: ≥ 1 min spare
-  at changes, sort chips in every tab, no-unreasonable-chains rule), D7 #67, D8 #68, CI stability #69,
-  D9 #70. Docs: #63, #64 (D12 brief), #66 (project tag).
-  Costs incl. Sonnet reviews: D6 $15.0, D12 $10.8, D7 $12.9, D8 ≈ $13, CI fix $2.3, D9 $15.4.
-- **Owner decisions this round** (in `phase10.md`): D12 chain window 10 min, also for the 5+ rule;
-  soldiers in mandatory service ride free (D8); Open-Meteo approved + rain rule as proposed (D9);
-  D10 as proposed (compileSdk 36, targetSdk 35).
-- **Running:** MapLibre crash fix (session `session_016PBLHLfh1htmWtic2DsW8L`, Opus, $5–10, branch
-  `claude/maplibre-crash-fix`). Root cause found by #69: a native SIGABRT
-  (`jni::PendingJavaException`) in libmaplibre.so = a Kotlin exception escaping a map callback; it is
-  the "Process crashed, 0 app crash logs" CI flake. It also removes #69's temporary MapLibre retry.
-  No review planned beyond the boss checking runs; ask the owner to merge.
-- **Next:** D10 Live Updates (owns `ui-tests.yml`; starts after the MapLibre fix merges), then D11.
+## State (2026-10-13, 19:15 Israel time)
+- **Phase 10 is complete.** All of D1–D12 merged, plus MapLibre crash fix #72, D10 #73, D11 #74.
+  Costs incl. Sonnet reviews: MapLibre fix $4.5, D10 $12.2, D11 $25.5 (over its $20 cap: a design
+  fix round plus a full golden re-record). Earlier: D6 $15.0, D12 $10.8, D7 $12.9, D8 ≈ $13, D9 $15.4.
+- **Release:** v0.9.0 notes in `docs/releases/v0.9.0.md` (fragments joined and removed). The owner
+  approved the release (2026-10-13: "do all, I will check after the release"); the Pixel check
+  of every Phase 10 feature comes after it.
+- **Owner decisions this round:** a trip or stop sheet open at process death reopens with its one
+  usual request (boss call, owner can overrule).
+- **Next:** Phase 11 planning (owner, 2026-10-13): researcher (Sonnet) → owner picks → planner (Opus).
 - **Merge approvals:** the owner OKs each feature merge; docs-only handoff PRs merge when green.
 - **Open owner to-dos:** uninstall the Gemini GitHub app; delete branches `claude/geocoder-check`,
   `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`
   (branch deletes are blocked from cloud sessions).
 - **Gotchas learned:** Maven Central often 429s cloud sessions (rely on green CI); `gh run download` is
   refused (blob store) — reviewers read goldens + the `ci-screens` branch; concurrent UI-tests runs can
-  race on the `ci-screens` push (harmless red "report → ci-screens").
+  race on the `ci-screens` push (harmless red "report → ci-screens"). Paparazzi 1.3.5 needs D10's
+  API 35 mockable-jar workaround while compileSdk is 36. Live Updates promote only on Android 16 QPR1
+  (36.1); the CI emulator is 36.0.
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
