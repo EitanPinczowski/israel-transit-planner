@@ -136,13 +136,14 @@ dependencies {
 tasks.withType<Test>().configureEach {
     val sdk35 = android.sdkDirectory.resolve("platforms/android-35/android.jar")
     if (sdk35.exists()) {
-        // AGP's mockable jar is an "android.jar" under its transforms cache; drop every platform jar
-        // but the API 35 one, at execution time so later classpath changes are covered too.
+        // AGP's mockable jar is an "android.jar" under its transforms cache; swap it for the API 35
+        // one at execution time, so later classpath changes are covered too.
         val platformJar = { f: File -> f != sdk35 && (f.name == "android.jar" || f.name.startsWith("mockable-android")) }
         doFirst {
             val before = classpath // the old collection, so the new one does not refer to itself
             logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $sdk35")
-            classpath = files(sdk35) + before.filter { !platformJar(it) }
+            // Same slot as the jar it replaces: after layoutlib, whose real framework classes must win.
+            classpath = files(before.files.map { if (platformJar(it)) sdk35 else it })
         }
     }
 }
