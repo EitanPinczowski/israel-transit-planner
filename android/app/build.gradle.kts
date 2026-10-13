@@ -127,3 +127,18 @@ dependencies {
     androidTestImplementation(libs.accessibility.test.framework)
     androidTestImplementation(libs.uiautomator)
 }
+
+// Paparazzi 1.3.5 (layoutlib Jellyfish, API 34) copies android.os.Build's inner classes from
+// its own copy and fails on API 36's new Build.VERSION_CODES_FULL (NoSuchElementException at
+// Renderer.kt, then every shot fails). compileSdk is 36 only for the Live Update APIs (D10), so the
+// screenshot tests keep rendering against the API 35 android.jar they used before: same goldens.
+// Remove this once Paparazzi is on a release that knows API 36.
+tasks.withType<Test>().configureEach {
+    val sdk35 = android.sdkDirectory.resolve("platforms/android-35/android.jar")
+    if (sdk35.exists()) {
+        val is36 = { f: File -> f.name.endsWith(".jar") && ("android-36" in f.path || f.name.startsWith("mockable-android-36")) }
+        val original = classpath
+        doFirst { logger.lifecycle("API 36 jars swapped for $sdk35: ${original.filter(is36).files.map { it.name }}") }
+        classpath = files(sdk35) + original.filter { !is36(it) }
+    }
+}
