@@ -1004,6 +1004,9 @@ rule
 
 Proposals in bold. The boss records the answers here, under a "Decided" line. Decisions 11, 17–19
 and 27 block Wave 1 (T1, T2); 3–4 block E1 (Wave 2); the rest can be answered before their wave.
+
+**Decided (owner, 2026-10-13, about 23:10 Israel time): all as proposed** (1–31, the proposals
+in bold below, including the full testing track at about $180–250).
 1. **Payment apps (E4):** list **Rav-Kav Online, Rav-Pass by HopOn, Moovit, ANY WAY**, in that
    order, with the user picking "my payment app" (default None). Package names: E4 confirms
    each from its Google Play page and writes the date checked (Moovit's is believed to be
