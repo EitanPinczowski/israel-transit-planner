@@ -1,0 +1,30 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+max_line_length = off
+ktlint_code_style = ktlint_official
+# Compose composables are PascalCase functions.
+ktlint_function_naming_ignore_when_annotated_with = Composable
+# The code is written in a compact style; these rules would only reformat it.
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_filename = disabled
+ktlint_standard_property-naming = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_class-signature = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+ktlint_standard_blank-line-before-declaration = disabled
+ktlint_standard_statement-wrapping = disabled
+ktlint_standard_if-else-wrapping = disabled
+ktlint_standard_try-catch-finally-spacing = disabled
+ktlint_standard_no-single-line-block-comment = disabled
+ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_comment-wrapping = disabled

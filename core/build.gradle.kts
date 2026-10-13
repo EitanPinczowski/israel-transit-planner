@@ -2,6 +2,7 @@ plugins {
     `java-library`
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktlint)
 }
 
 group = "il.transit"
@@ -62,4 +63,12 @@ tasks.test {
     // Unit tests must never reach the network; fixtures only (see .claude/skills/transitous-api).
     systemProperty("transit.offline", "true")
     testLogging { events("failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT }
+}
+
+// Style (Phase 11 T2): ktlint reports every finding, `tools/ktlint_gate.py` fails on those that sit
+// on lines a PR added or changed. Today's findings are frozen in tools/ktlint-baseline.json.
+ktlint {
+    version.set("1.5.0")
+    ignoreFailures.set(true)
+    reporters { reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE) }
 }

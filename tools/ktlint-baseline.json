@@ -1,0 +1,20 @@
+{
+ "core": {
+  "argument-list-wrapping": 86,
+  "chain-method-continuation": 228,
+  "condition-wrapping": 12,
+  "if-else-bracing": 3,
+  "import-ordering": 8,
+  "indent": 1,
+  "multiline-if-else": 19,
+  "multiline-loop": 3,
+  "no-blank-line-before-rbrace": 1,
+  "no-consecutive-comments": 4,
+  "no-unused-imports": 1,
+  "parameter-list-wrapping": 5,
+  "spacing-between-declarations-with-comments": 21,
+  "string-template": 2,
+  "trailing-comma-on-call-site": 6,
+  "wrapping": 32
+ }
+}
