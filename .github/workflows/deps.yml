@@ -39,7 +39,7 @@ jobs:
           # Exit 1 means "vulnerabilities found"; tools/deps_gate.py decides what fails.
           ./osv-scanner -L gradle.lockfile:core/build/deps/gradle.lockfile -L gradle.lockfile:android/app/build/deps/gradle.lockfile \
             --format json --output osv.json || test "$?" = 1
-          python3 tools/deps_gate.py osv osv.json
+          python3 tools/deps_gate.py osv osv.json android/app/build/deps core/build/deps
       - name: licences of the release APK's dependencies
         if: always()
         run: python3 tools/deps_gate.py licences android/app/build/deps core/build/deps

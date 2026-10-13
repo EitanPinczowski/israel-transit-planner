@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Dependency gate (Phase 11 T2, owner decision 27): vulnerabilities and licences.
 
-  python3 tools/deps_gate.py osv  osv.json        # OSV-scanner --format json output
+  python3 tools/deps_gate.py osv  osv.json [DIR..] # OSV-scanner --format json output; DIRs name the configurations
   python3 tools/deps_gate.py licences DIR [DIR..] # DIR = <project>/build/deps from deps-report.init.gradle
 
 osv: a HIGH or CRITICAL (CVSS >= 7.0) advisory that has a fixed version fails; the rest are listed.
@@ -39,12 +39,26 @@ def fixed_versions(vuln):
     return sorted(out)
 
 
-def osv(path):
+def configs_of(dirs):
+    """name:version -> the Gradle configurations that resolve it (from deps-report's lockfiles)."""
+    out = {}
+    for d in dirs:
+        lf = Path(d) / "gradle.lockfile"
+        if lf.exists():
+            for line in lf.read_text().splitlines():
+                coord, _, cfgs = line.partition("=")
+                out.setdefault(coord, set()).update(cfgs.split(","))
+    return out
+
+
+def osv(path, dirs=()):
+    cfg = configs_of(dirs)
     data = json.loads(Path(path).read_text())
     blocking, other = [], []
     for res in data.get("results", []):
         for pkg in res.get("packages", []):
-            p = pkg["package"]
+            p = dict(pkg["package"])
+            p["name"] = p["name"] + " [" + ",".join(sorted(cfg.get(p["name"] + ":" + p["version"], []))) + "]"
             vulns = {v["id"]: v for v in pkg.get("vulnerabilities", [])}
             for g in pkg.get("groups", []):
                 sev = severity(None, g)
@@ -137,7 +151,7 @@ def licences(dirs):
 
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "osv":
-        sys.exit(osv(sys.argv[2]))
+        sys.exit(osv(sys.argv[2], sys.argv[3:]))
     if len(sys.argv) >= 3 and sys.argv[1] == "licences":
         sys.exit(licences(sys.argv[2:]))
     sys.exit(__doc__)
