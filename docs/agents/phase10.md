@@ -788,6 +788,9 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
    number rests on the owner's decision.
 7. **Rain threshold (D9):** **≥ 60% probability or ≥ 0.5 mm in an hour that overlaps ≥ 5 min of
    walking**; on by default; the note only re-sorts on tap, never changes the plan.
+   **Decided (owner, 2026-10-13):** as proposed: ≥ 60% or ≥ 0.5 mm in an hour that overlaps
+   ≥ 5 min of walking, on by default, re-sort only on tap. Open-Meteo approved as a new outside
+   service and added to `CLAUDE.md`'s hard rules (D9).
 8. **Live Updates (D10):** **`compileSdk` 36, `targetSdk` stays 35**; on Android < 16 **today's
    notification with the compat progress bar**, no new UI.
 9. **Recording for the corpus (D2):** **≤ 60 new Transitous geocodes, ≥ 1 s apart**, once.

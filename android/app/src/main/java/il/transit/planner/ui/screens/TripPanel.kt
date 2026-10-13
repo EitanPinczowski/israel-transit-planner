@@ -468,6 +468,7 @@ internal fun ResultsPanel(
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
+            RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
             if (!state.loading && state.error == null && state.chain == null && state.options.size > 1) SortChips(state, vm) // D12: every tab
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }

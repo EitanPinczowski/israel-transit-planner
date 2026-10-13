@@ -260,6 +260,7 @@ internal fun SettingsContent(
             )
             Text(stringResource(R.string.traffic_factor_help), style = MaterialTheme.typography.bodySmall)
         }
+        item { RainSetting(s, ::set) } // Phase 10 D9
         item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
         item { NightRefreshSection(s, state.savedPlaces, ::set) }
         item { LastTripSetting(s, state.savedPlaces, ::set) }

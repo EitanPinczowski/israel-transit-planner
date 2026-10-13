@@ -30,6 +30,7 @@ Convert CI and tool timestamps (UTC) before writing them in messages, PRs or doc
     cache, ≤ 2 at once, one retry), our User-Agent, Israel bbox, credited under its answers; it
     gets the text and the approximate area (rounded ~10 km). Public fair use, no SLA: swappable.
     Never Nominatim's public server (its policy forbids autocomplete). See `transitous-api`.
+  - **Open-Meteo** (`api.open-meteo.com`, owner approved 2026-10-07/13) — rain on the walks: ≤ 1 per Trip search in the next 48 h, `GuardedWeather` (1 h per 0.1° cell, ≤ 2 at once, one retry, 3 s, silent failure); told only the rounded start; credited.
 - **Transitous usage policy is a project rule**: repo stays **public + open source**,
   non-commercial, every request sends `MotisClient.USER_AGENT` (repo URL = contact),
   a visible link to `https://transitous.org/sources/`, and traffic stays light.

@@ -341,6 +341,30 @@ the real chain against the LIVE services in `AddressCorpusTest`, on demand only
 table (source, ms, first answer, pass/fail) is in the run summary. A miss not listed as a known
 gap fails it.
 
+## Open-Meteo: rain on the walks (Phase 10 D9, owner approved 2026-10-07, threshold 2026-10-13)
+`core/weather/OpenMeteo.kt`: `GET https://api.open-meteo.com/v1/forecast?latitude=32.1&longitude=34.8&hourly=precipitation_probability,precipitation&timeformat=unixtime&forecast_hours=54`.
+- **Terms** (open-meteo.com/en/terms, read from its website repo 2026-10-13; the site itself is blocked
+  from cloud sessions, the API host is not): free, no key, non-commercial; "Less than 10'000 API calls per
+  day, 5'000 per hour and 600 per minute"; data CC BY 4.0 → "Weather: Open-Meteo" under the note.
+- **Budget: 1 request per Trip search**, only when the earliest option starts within 48 h
+  (`GuardedWeather.HORIZON`), after the plan answered (never for errands, other tabs or an offline copy);
+  cached **1 h per 0.1° cell** (`GuardedWeather.cell`, ~10 km: all it is told), ≤ 2 at once, one retry on
+  429/503, 3 s call timeout; any failure → no note, nothing cached. 0 Transitous requests; the plan request
+  is never changed. Pinned in `RainAdviceTest` (a second search in the same hour and cell sends 0) and
+  `OpenMeteoTest`. Off: Settings → Rain on the walks (`UserSettings.rainAware`, on by default).
+- **Hours:** each hourly value is for the **preceding** hour (the docs: "sum of the preceding hour",
+  probability "of the preceding hour"), so `parseOpenMeteo` moves it back one hour. `unixtime` = UTC seconds:
+  the clock change never shifts an hour; the note formats in `ISRAEL`.
+- **Rule** (`weather/RainAdvice`, owner decision 7): an hour is rainy at ≥ 60% or ≥ 0.5 mm, and counts when
+  it overlaps ≥ 5 min of walking (`WALK` legs, summed within that hour) in at least one option. The note
+  names the first rainy walk of any option and the option with the least walking (`walkSec`, ties → earlier).
+- **Recorded 2026-10-13** (1 look at the 16-day outlook + 3 fixtures): Tel Aviv's cell 16–17 Oct
+  (`openmeteo_rain_telaviv`: 0.5 mm 09:00–12:00 on the 16th, 60–63% early on the 17th), Be'er Sheva now
+  (`openmeteo_dry_beersheva`, 54 h, ≤ 3%), an error (`openmeteo_error`, HTTP 400 `{"error":true,"reason":…}`).
+  The API answers the snapped grid point (32.125, 34.8125), not the cell we sent.
+- **Fixtures:** `python tools/record_fixture.py --open-meteo <name> "/v1/forecast?…"` (`openmeteo_*`).
+- **Swappable:** `WeatherSource` interface; another Open-Meteo (it is open source) is a base-URL change.
+
 ## Fixtures
 Tests never hit the network. `python tools/record_fixture.py <name> "<url path+query>"`
 saves a real response into `core/src/test/resources/fixtures/` (needs network access to

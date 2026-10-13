@@ -31,6 +31,9 @@ class UiTestApp : TransitApp() {
     /** No outside geocoder in UI tests: they never touch the network. */
     override val backupGeocoder: BackupGeocoder? = null
 
+    /** No weather either (Phase 10 D9): the rain note is covered by its screenshot states. */
+    override val weather: il.transit.core.weather.GuardedWeather? = null
+
     override fun mapStyle(night: Boolean): String =
         if (night) "asset://uitest/blank-dark.json" else "asset://uitest/blank.json"
 
