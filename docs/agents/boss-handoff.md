@@ -4,25 +4,28 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-12, 18:25 Israel time)
-- **Released:** v0.8.5 (2026-10-11, search fix) and **v0.8.6** (2026-10-12: Phase 10 Waves 1–2: ride details +
-  transfer chip, search hardening, holidays + dates).
-- **Phase 10 merged:** #56 D1, #57 D2, #58 D3, #59 D4, #60 notes 0.8.6, #61 D5 (big-stop changes).
-  Costs incl. Sonnet reviews: D1 $13.3, D2 $12.9, D3 $12.0, D4 $2.0, D5 $20.4 (over its $18 cap).
-- **Owner decisions taken this round** (all recorded in `phase10.md` "Owner decisions"): transfer chip
-  < 2 min (< 4 with a train), "Tight" only < 0; two-town neighbourhoods list one row per town (B);
-  `HORIZON_DAYS = 8`, no extra calls; big-stop matching within 300 m with the walk counted (B).
-- **Running:** D6 ways in (session `session_01BwYkZZfGtRamoBJXHphBpo`, started 17:54), Opus, $12–18. It was
-  told #61 merged and to merge main in. Its review is the Sonnet logic pass from its "Reviewer checks".
-- **Next:** Wave 4 (D7 stop timetables, D8 fares + report), one Opus implementer at a time while the
-  7-day limit reads `allowed_warning` (resets about 2026-10-18 18:00 Israel time).
-- **Merge approvals:** the owner OKs each merge (sometimes ahead: "if clean then merge"). The owner
-  pre-approved releases at wave ends ("release without asking again", 2026-10-12, for 0.8.6).
-- **Open follow-ups:** the full CBS town list (data.gov.il blocked); Photon is blocked from cloud
-  sessions (JVM address corpus has known gaps); scratch branches `claude/geocoder-check`,
-  `corpus-run/search-fix`, `claude/a8-back-diag` and the Gemini GitHub app for the owner to remove.
-- **Gotcha learned:** Maven Central often answers 429 to cloud sessions; reviewers then rely on green CI.
-  Transitous trip ids expire with each feed update (noted in `transitous-api`).
+## State (2026-10-13, 12:40 Israel time)
+- **Released:** v0.8.6 (2026-10-12). **No release since; owner: no release after Wave 4** (ask before one).
+- **Phase 10 merged:** D1–D5 (#56–#59, #61), notes #60, D6 #62, D12 #65 (owner add-on: ≥ 1 min spare
+  at changes, sort chips in every tab, no-unreasonable-chains rule), D7 #67, D8 #68, CI stability #69,
+  D9 #70. Docs: #63, #64 (D12 brief), #66 (project tag).
+  Costs incl. Sonnet reviews: D6 $15.0, D12 $10.8, D7 $12.9, D8 ≈ $13, CI fix $2.3, D9 $15.4.
+- **Owner decisions this round** (in `phase10.md`): D12 chain window 10 min, also for the 5+ rule;
+  soldiers in mandatory service ride free (D8); Open-Meteo approved + rain rule as proposed (D9);
+  D10 as proposed (compileSdk 36, targetSdk 35).
+- **Running:** MapLibre crash fix (session `session_016PBLHLfh1htmWtic2DsW8L`, Opus, $5–10, branch
+  `claude/maplibre-crash-fix`). Root cause found by #69: a native SIGABRT
+  (`jni::PendingJavaException`) in libmaplibre.so = a Kotlin exception escaping a map callback; it is
+  the "Process crashed, 0 app crash logs" CI flake. It also removes #69's temporary MapLibre retry.
+  No review planned beyond the boss checking runs; ask the owner to merge.
+- **Next:** D10 Live Updates (owns `ui-tests.yml`; starts after the MapLibre fix merges), then D11.
+- **Merge approvals:** the owner OKs each feature merge; docs-only handoff PRs merge when green.
+- **Open owner to-dos:** uninstall the Gemini GitHub app; delete branches `claude/geocoder-check`,
+  `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`
+  (branch deletes are blocked from cloud sessions).
+- **Gotchas learned:** Maven Central often 429s cloud sessions (rely on green CI); `gh run download` is
+  refused (blob store) — reviewers read goldens + the `ci-screens` branch; concurrent UI-tests runs can
+  race on the `ci-screens` push (harmless red "report → ci-screens").
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
