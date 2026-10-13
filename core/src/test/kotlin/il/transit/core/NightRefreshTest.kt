@@ -1,6 +1,7 @@
 package il.transit.core
 
 import il.transit.core.api.PlanResponse
+import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.StreetModes
 import il.transit.core.features.ISRAEL
 import il.transit.core.geo.LatLon
@@ -202,6 +203,69 @@ class NightRefreshTest {
         assertNull(again)
         assertEquals(6, api.calls.size)
     }
+
+    // --- My lines' boards (Phase 10 D7) -----------------------------------------------------
+
+    private fun fav(stop: String, line: String = "5") = il.transit.core.user.FavoriteLine(stop, "Stop $stop", line, "Centre")
+
+    @Test fun `at most three stops of My lines, each once, in pinning order`() {
+        val favs = listOf(fav("a"), fav("a", "7"), fav("b"), fav("c"), fav("d"))
+        assertEquals(listOf("a", "b", "c"), NightRefresh.stops(favs))
+    }
+
+    @Test fun `boards go after the trips under their own budget of three, a second run sends none`() = runBlocking {
+        val api = FakeTransitApi().also(::answering)
+        api.onStopTimes = { c -> StopTimesResponse(listOf(departureAt(c.stopId, il("2026-10-05T07:30")))) }
+        val boards = mutableMapOf<String, StopTimesResponse>()
+        val first = NightRefresher(api).run(
+            { eightTrips() }, null, il("2026-10-05T02:14"), UserSettings(), "he",
+            stops = listOf("a", "b", "c", "d"), saveBoard = { id, b -> boards[id] = b },
+        ) { _, _ -> }!!
+        // Six plans spent the trips' budget; the boards still get theirs.
+        assertEquals(6, first.requests)
+        assertEquals(3, first.stopRequests)
+        assertEquals(3, first.boards)
+        assertEquals(listOf("plan", "plan", "plan", "plan", "plan", "plan", "stopTimes", "stopTimes", "stopTimes"), api.calls)
+        assertEquals(setOf("a", "b", "c"), boards.keys)
+        api.stopTimesRequests.forEach {
+            assertEquals(il("2026-10-05T04:00"), it.time) // tomorrow's whole day
+            assertEquals(NightRefresh.STOP_N, it.n)
+            assertNull(it.pageCursor)
+        }
+
+        val again = NightRefresher(api).run(
+            { eightTrips() }, first.day, il("2026-10-05T03:30"), UserSettings(), "he",
+            stops = listOf("a", "b", "c"), saveBoard = { _, _ -> error("no") },
+        ) { _, _ -> error("no") }
+        assertNull(again)
+        assertEquals(9, api.calls.size)
+    }
+
+    @Test fun `with no trips the boards still run, a failed or empty stop keeps its old board`() = runBlocking {
+        val api = FakeTransitApi()
+        api.onStopTimes = { c ->
+            when (c.stopId) {
+                "a" -> error("offline")
+                "b" -> StopTimesResponse()
+                else -> StopTimesResponse(listOf(departureAt(c.stopId, il("2026-10-05T07:30"))))
+            }
+        }
+        val saved = mutableListOf<String>()
+        val out = NightRefresher(api).run(
+            { emptyList() }, null, il("2026-10-05T01:00"), UserSettings(), "he",
+            stops = listOf("a", "b", "c"), saveBoard = { id, _ -> saved += id },
+        ) { _, _ -> }!!
+        assertEquals(listOf("c"), saved)
+        assertEquals(0, out.requests)
+        assertEquals(3, out.stopRequests)
+    }
+
+    private fun departureAt(stopId: String, at: Instant) = il.transit.core.api.StopTime(
+        place = place("S", LatLon(31.0, 34.8), stopId).copy(departure = at.toString(), scheduledDeparture = at.toString()),
+        mode = "BUS",
+        routeShortName = "5",
+        headsign = "Centre",
+    )
 
     @Test fun `outside the window nothing is sent`() = runBlocking {
         val api = FakeTransitApi().also(::answering)

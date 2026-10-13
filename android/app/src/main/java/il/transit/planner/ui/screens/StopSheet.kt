@@ -216,6 +216,12 @@ internal fun StopPanel(
     shape: Shape,
 ) {
     Sheet(modifier, shape) {
+        // Phase 10 D7: a tapped line's day timetable takes the departures' place.
+        sheet.timetable?.let { t ->
+            SheetHeader(collapsed, onCollapse) { TimetableHeader(sheet, t, vm) }
+            if (!collapsed) TimetableBody(t, vm)
+            return@Sheet
+        }
         SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
@@ -227,6 +233,7 @@ internal fun StopPanel(
             }
         }
         if (!collapsed) {
+            sheet.saved?.let { SavedNote(it.at, it.lastNight) }
             when {
                 sheet.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 sheet.failed -> Text(stringResource(R.string.err_network), Modifier.padding(vertical = 12.dp))
@@ -234,7 +241,12 @@ internal fun StopPanel(
                 else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) {
                     items(sheet.rows) { r ->
                         val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        val open = stringResource(R.string.timetable_open, r.line.ifBlank { kindName(r.kind) })
+                        // A tap anywhere on the row (≥ 48 dp tall) opens this line's day timetable at this stop.
+                        Row(
+                            Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClickLabel = open) { vm.timetable(TimetableAction.Open(r)) },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Box(Modifier.weight(1f)) { DepartureView(r) }
                             // ☆ pins this line in this direction at this stop ("My lines").
                             TextButton(onClick = { vm.toggleFavorite(sheet, r) }) {
@@ -266,7 +278,7 @@ private fun DepartureLine(r: DepartureRow) {
             Modifier.background(parseColor(r.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
         ) { Text(r.line.ifBlank { kindName(r.kind) }, style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(r.color))) }
         Spacer(Modifier.width(10.dp))
-        Text(r.headsign, Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(r.headsign, Modifier.weight(1f).padding(end = 8.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
         val status = when {
             r.cancelled -> stringResource(R.string.cancelled)
             r.delayMin == null -> ""

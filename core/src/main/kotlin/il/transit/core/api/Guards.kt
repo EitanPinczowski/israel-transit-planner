@@ -45,8 +45,8 @@ class GuardedTransitApi(
         cached("rgeo:$at:$language:$max", staticTtl) { inner.reverseGeocode(at, language, max) }
 
     // Real-time departures: never cached longer than the plan TTL.
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String) =
-        cached("st:$stopId:$time:$n:$language", Duration.ofSeconds(30)) { inner.stopTimes(stopId, time, n, language) }
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?) =
+        cached("st:$stopId:$time:$n:$language:$pageCursor", Duration.ofSeconds(30)) { inner.stopTimes(stopId, time, n, language, pageCursor) }
 
     // A trip's live times move; 30 s like departures.
     override suspend fun trip(tripId: String, language: String) =
@@ -127,8 +127,8 @@ class BudgetedTransitApi(private val inner: TransitApi, val budget: Int) : Trans
         take(); return inner.reverseGeocode(at, language, max)
     }
 
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
-        take(); return inner.stopTimes(stopId, time, n, language)
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
+        take(); return inner.stopTimes(stopId, time, n, language, pageCursor)
     }
 
     override suspend fun trip(tripId: String, language: String): Itinerary {

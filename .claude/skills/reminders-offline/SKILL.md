@@ -84,6 +84,15 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   saved board shows departures still ahead only, marked "Offline — timetable saved at HH:MM",
   never a delay or cancellation.
 
+- **Offline timetables for starred stops** (Phase 10 D7): the night refresh, after the trips, saves
+  tomorrow's board (one `stoptimes` page, `n = 100`, from 04:00) for at most 3 stops of My lines
+  (`NightRefresh.stops`, pinning order) under its own `BudgetedTransitApi(3)`; a failed or empty stop
+  keeps its old board. `data/TimetableStore` (`filesDir/timetables.json`, ≤ 6 stops, codec
+  `present/SavedBoardsJson`) keeps the last board per stop. With no signal the stop sheet and the day
+  timetable (`ui/DayTimetableUi`) show it, departures still ahead only, under "Offline · saved last
+  night at 02:14" (`SavedBoard.isLastNight`, < 18 h; older: "saved 12/10 at 02:14"). The worker is
+  enqueued when some night has a trip **or** My lines has a stop.
+
 - **Trip results**: `core/plan/PlanCache` (LRU, 16) + `TripCacheJson`, persisted by
   `data/PlanCacheStore` in `filesDir/trip_cache.json`. Key = tab + time mode + places rounded
   to 3 decimals (~110 m), so "my location" a few steps away still hits. On a NETWORK error
@@ -114,7 +123,8 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
     charging, battery not low. The worker returns without a request outside 22:00–06:00 or
     when the service day was already done (`filesDir/night_refresh_day.txt`), and never asks
     WorkManager to retry: a failed trip waits for the next night.
-  - **Worst case per day: 6 `plan`** (`BudgetedTransitApi(6)`), + 1 each on a 429/503 retry.
+  - **Worst case per day: 6 `plan`** (`BudgetedTransitApi(6)`) **+ 3 `stoptimes`** (My lines' boards,
+    own `BudgetedTransitApi(3)`), + 1 each on a 429/503 retry.
   - Enqueued only while the setting is on (default on, owner 2026-10-05) **and** some night
     of the coming week has a trip (`NightRefresh.anyJobs`); `TransitApp` re-checks on every
     change of settings, places, trips or history, and cancels the work otherwise.

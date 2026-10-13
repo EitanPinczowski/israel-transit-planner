@@ -53,13 +53,15 @@ open class TransitApp : Application() {
 
     /**
      * The night refresh is enqueued only while the setting is on and some night has a trip
-     * to plan; any change to settings, places, trips or history re-checks that.
+     * to plan or My lines has a stop; any change to settings, places, trips, history or My lines
+     * re-checks that.
      */
     private fun keepNightRefreshScheduled() {
         appScope.launch {
             history.load()
-            combine(store.settings, store.places, store.trips, history.records) { s, p, t, h ->
-                s.nightRefresh && NightRefresh.anyJobs(p, t, Home.of(s, p), h, java.time.Instant.now())
+            combine(store.settings, store.places, store.trips, history.records, store.favorites) { s, p, t, h, f ->
+                // Phase 10 D7: My lines' stops get tomorrow's board too, so a pinned line is reason enough.
+                s.nightRefresh && (NightRefresh.anyJobs(p, t, Home.of(s, p), h, java.time.Instant.now()) || f.isNotEmpty())
             }.distinctUntilChanged().collect { wanted -> NightRefreshWorker.sync(this@TransitApp, wanted) }
         }
     }
@@ -81,6 +83,10 @@ open class TransitApp : Application() {
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
     val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {
         il.transit.planner.data.DepartureCacheStore(File(filesDir, "departures_cache.json"))
+    }
+    /** Boards the night refresh saved for My lines' stops (Phase 10 D7). */
+    val timetables: il.transit.planner.data.TimetableStore by lazy {
+        il.transit.planner.data.TimetableStore(File(filesDir, "timetables.json"))
     }
     val stopsCache: StopsStore by lazy { StopsStore(File(filesDir, "stops_cache_$language.json")) }
 

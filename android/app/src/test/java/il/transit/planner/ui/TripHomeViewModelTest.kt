@@ -66,7 +66,7 @@ class TripHomeViewModelTest {
         override suspend fun oneToMany(one: LatLon, many: List<LatLon>, mode: String, maxSeconds: Int, arriveBy: Boolean): List<Int?> = error("oneToMany")
         override suspend fun stops(box: BBox, modes: Set<String>?, language: String): List<Place> = error("stops")
         override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> = error("reverseGeocode")
-        override suspend fun stopTimes(stopId: String, time: java.time.Instant?, n: Int, language: String): StopTimesResponse = error("stopTimes")
+        override suspend fun stopTimes(stopId: String, time: java.time.Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse = error("stopTimes")
         override suspend fun trip(tripId: String, language: String): Itinerary = error("trip")
         override suspend fun mapTrips(box: BBox, start: java.time.Instant, end: java.time.Instant, zoom: Double, language: String): List<TripSegment> = error("mapTrips")
     }

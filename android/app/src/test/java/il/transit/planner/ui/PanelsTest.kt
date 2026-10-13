@@ -316,7 +316,7 @@ class PanelsTest(private val v: Variant) {
         override suspend fun stops(box: BBox, modes: Set<String>?, language: String): List<Place> = error("not recorded")
         override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> = error("not recorded")
         override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<GeocodeMatch> = error("not recorded")
-        override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse = error("not recorded")
+        override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse = error("not recorded")
         override suspend fun trip(tripId: String, language: String): Itinerary = error("not recorded")
         override suspend fun mapTrips(box: BBox, start: Instant, end: Instant, zoom: Double, language: String): List<TripSegment> = error("not recorded")
     }

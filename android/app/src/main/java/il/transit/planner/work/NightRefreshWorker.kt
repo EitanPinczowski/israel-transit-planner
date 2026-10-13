@@ -19,9 +19,10 @@ import java.time.Instant
 import java.time.LocalDate
 
 /**
- * Plans tomorrow's usual trips into the Trip cache (core `NightRefresh`). At most
- * [NightRefresh.MAX_TRIPS] `plan` requests a night, under a budget; a failed trip waits for
- * the next night, so this never returns [Result.retry].
+ * Plans tomorrow's usual trips into the Trip cache (core `NightRefresh`), then saves tomorrow's
+ * board for My lines' stops. At most [NightRefresh.MAX_TRIPS] `plan` + [NightRefresh.MAX_STOPS]
+ * `stoptimes` a night, each under its own budget; a failure waits for the next night, so this
+ * never returns [Result.retry].
  */
 class NightRefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
@@ -42,6 +43,8 @@ class NightRefreshWorker(context: Context, params: WorkerParameters) : Coroutine
                 now = Instant.now(),
                 settings = settings,
                 language = app.language,
+                stops = NightRefresh.stops(app.store.favorites.first()),
+                saveBoard = { stopId, board -> app.timetables.put(stopId, board) },
                 save = app.planCache::putNight,
             )
             if (out != null) runCatching { dayFile.writeText(out.day.toString()) }

@@ -199,7 +199,7 @@ private abstract class TransitApiAdapter : il.transit.core.api.TransitApi {
     override suspend fun stops(box: il.transit.core.geo.BBox, modes: Set<String>?, language: String): List<il.transit.core.api.Place> = error("unexpected stops")
     override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<il.transit.core.api.GeocodeMatch> = error("unexpected geocode")
     override suspend fun reverseGeocode(at: LatLon, language: String, max: Int): List<il.transit.core.api.GeocodeMatch> = error("unexpected reverseGeocode")
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): il.transit.core.api.StopTimesResponse = error("unexpected stopTimes")
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): il.transit.core.api.StopTimesResponse = error("unexpected stopTimes")
     override suspend fun trip(tripId: String, language: String): Itinerary = error("unexpected trip")
     override suspend fun mapTrips(box: il.transit.core.geo.BBox, start: Instant, end: Instant, zoom: Double, language: String): List<il.transit.core.api.TripSegment> =
         error("unexpected mapTrips")

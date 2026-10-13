@@ -93,12 +93,13 @@ class MotisClient(
         }
     }
 
-    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String): StopTimesResponse {
+    override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
         val params = buildList {
             add("stopId" to stopId)
             time?.let { add("time" to it.toString()) }
             add("n" to n.toString())
             add("language" to language)
+            pageCursor?.let { add("pageCursor" to it) }
         }
         return get("api/v6/stoptimes", params) { MotisJson.decodeFromString(StopTimesResponse.serializer(), it) }
     }

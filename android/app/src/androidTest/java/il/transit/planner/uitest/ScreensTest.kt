@@ -3,6 +3,7 @@ package il.transit.planner.uitest
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
@@ -173,6 +174,16 @@ class ScreensTest {
     @Test fun s13_stop_departures() = screen("13-stop-departures") {
         onMain { it.openStop("il-Israel-MOT_37314", "באר שבע צפון") }
         compose.waitUntil(5_000) { vm.state.value.stopSheet?.loading == false }
+    }
+
+    /** Phase 10 D7: tap the first line on the stop's board → its day timetable. */
+    @Test fun s19_stop_timetable() = screen("19-stop-timetable") {
+        onMain { it.openStop("il-Israel-MOT_37314", "באר שבע צפון") }
+        compose.waitUntil(5_000) { vm.state.value.stopSheet?.loading == false }
+        val first = vm.state.value.stopSheet?.rows?.firstOrNull() ?: error("no departures to tap")
+        // The real tap: the whole departure row is the target (≥ 48 dp).
+        compose.onAllNodes(hasText(first.headsign, substring = true) and hasClickAction()).onFirst().performClick()
+        compose.waitUntil(10_000) { vm.state.value.stopSheet?.timetable?.loading == false }
     }
 
     @Test fun s14_settings_top() = screen("14-settings-top") {

@@ -129,6 +129,10 @@ data class StopSheet(
     val failed: Boolean,
     /** "Platform 12 · stop 47899" for the header, once the departures answer names the stop. */
     val platform: StopPlatform = StopPlatform(),
+    /** Phase 10 D7: no signal, the board the night refresh saved for this stop; null online. */
+    val saved: SavedDepartures? = null,
+    /** Phase 10 D7: the day timetable of one line, shown in place of the departures. */
+    val timetable: TimetableUi? = null,
 )
 
 data class UiState(
@@ -257,6 +261,8 @@ class MainViewModel(
     private val clock: Clock = Clock.systemUTC(),
     /** Asked only after a Transitous miss ([PlaceSearch]); null = Transitous alone. */
     private val backup: BackupGeocoder? = null,
+    /** Boards the night refresh saved for My lines' stops (Phase 10 D7). */
+    private val timetables: il.transit.planner.data.TimetableStore? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -975,15 +981,21 @@ class MainViewModel(
                 null
             }
             val rows = resp?.stopTimes?.map(::departureRow)
+            val saved = if (rows == null) dayTimetable.savedBoard(stopId) else null // D7: no signal
             _state.update { st ->
                 val sheet = st.stopSheet
                 if (sheet?.stopId != stopId) st
-                else st.copy(stopSheet = sheet.copy(loading = false, rows = rows.orEmpty(), failed = rows == null, platform = resp?.place?.let { p -> stopPlatform(p) } ?: StopPlatform()))
+                else st.copy(stopSheet = sheet.copy(loading = false, rows = rows ?: saved?.rows.orEmpty(), failed = rows == null && saved == null, platform = resp?.place?.let { p -> stopPlatform(p) } ?: StopPlatform(), saved = saved))
             }
         }
     }
 
     fun closeStop() = _state.update { it.copy(stopSheet = null) }
+
+    // Phase 10 D7: a line's day timetable at the open stop, 2 `stoptimes` on open, 1 per "More".
+    private val dayTimetable = DayTimetableHolder(viewModelScope, api, timetables, { language }, clock)
+
+    fun timetable(action: TimetableAction) = dayTimetable.handle(_state, action)
 
     // --- saved places, trips, settings ---------------------------------------------------
 
@@ -1193,7 +1205,7 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables)
             }
         }
     }
