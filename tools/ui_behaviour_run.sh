@@ -12,24 +12,21 @@ RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
 ACT=$PKG/il.transit.planner.MainActivity
 mkdir -p "$OUT"
 failed=0
-
-check() { # $1 = name of the step, $2 = output file
-  if grep -q "INSTRUMENTATION_STATUS_CODE: -2\|INSTRUMENTATION_FAILED\|Process crashed" "$2"; then
-    echo "::error::$1 failed on API $API"
-    failed=1
-  fi
-}
+# shellcheck source=ui_instrument.sh
+source "$(dirname "$0")/ui_instrument.sh"
 
 instrument() { # $1 = class(es), $2 = output name
   echo "::group::$1"
-  adb shell am instrument -w -r -e class "$1" -e profile "api$API" -e locale device -e theme light "$RUNNER" | tee "$OUT/instrument-$2.txt"
+  ui_instrument "$1" "$OUT/instrument-$2.txt" -e profile "api$API" -e locale device -e theme light
+  local status=$?
   echo "::endgroup::"
-  check "$1" "$OUT/instrument-$2.txt"
+  if [[ $status != 0 ]]; then echo "::error::$1 failed on API $API"; failed=1; fi
 }
 
 # Fresh install, no permissions granted: J1 first.
 adb install -r "$APKS"/app-uitest.apk
 adb install -r "$APKS"/app-uitest-androidTest.apk
+ui_prep_emulator
 adb shell settings put secure show_ime_with_hard_keyboard 1
 adb emu geo fix 34.8013 31.2622 >/dev/null
 # Android 8's SystemUI crashes ("System UI has stopped", NPE in

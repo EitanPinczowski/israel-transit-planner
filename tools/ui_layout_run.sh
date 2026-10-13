@@ -12,7 +12,10 @@ APKS=$2
 OUT=$3
 PKG=il.transit.planner.uitest
 RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
+API=35
 mkdir -p "$OUT"
+# shellcheck source=ui_instrument.sh
+source "$(dirname "$0")/ui_instrument.sh"
 
 #        id  size       dpi font nav     rotation cutout dark
 PROFILES=(
@@ -35,6 +38,7 @@ esac
 
 adb install -r -g "$APKS"/app-uitest.apk
 adb install -r "$APKS"/app-uitest-androidTest.apk
+ui_prep_emulator
 adb shell settings put secure show_ime_with_hard_keyboard 1
 adb shell settings put system accelerometer_rotation 0
 adb emu geo fix 34.8013 31.2622 >/dev/null
@@ -74,10 +78,11 @@ for line in "${PROFILES[@]}"; do
       adb shell cmd uimode night "$([[ $theme == dark ]] && echo yes || echo no)" >/dev/null
       sleep 2
       echo "::group::ScreensTest $run ($size @${dpi}dpi, font $font, $nav, rotation $rot, cutout $cutout)"
-      adb shell am instrument -w -r -e class il.transit.planner.uitest.ScreensTest \
-        -e profile "$id" -e locale "$locale" -e theme "$theme" "$RUNNER" | tee "$OUT/instrument-$run.txt"
+      ui_instrument il.transit.planner.uitest.ScreensTest "$OUT/instrument-$run.txt" \
+        -e profile "$id" -e locale "$locale" -e theme "$theme"
+      status=$?
       echo "::endgroup::"
-      if grep -q "INSTRUMENTATION_STATUS_CODE: -2\|INSTRUMENTATION_FAILED\|Process crashed" "$OUT/instrument-$run.txt"; then
+      if [[ $status != 0 ]]; then
         echo "::error::ScreensTest failed on $run"
         # Outside the folded group, so the rule findings show without opening it.
         grep -o "blocking layout findings on .*\|Process crashed.*" "$OUT/instrument-$run.txt" | sort -u | sed "s/^/  $run: /"
