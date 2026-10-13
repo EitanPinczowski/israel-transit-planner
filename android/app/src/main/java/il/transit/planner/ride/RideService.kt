@@ -138,7 +138,7 @@ class RideService : Service() {
         // The ongoing notification follows the ride: "Line 5 · 3 stops left · arrive 08:47", and
         // on Android 16 the Live Update's bar and chip ("3 stops"). Null p: every ride is done,
         // the bar follows the last walk under the last text.
-        val live = itinerary?.let { LiveProgress.ride(it, p, now) }
+        val live = itinerary?.let { LiveProgress.ride(it, p, tracker?.currentLeg ?: 0, now) }
         val nm = NotificationManagerCompat.from(this)
         if ((p != null || live != null) && nm.areNotificationsEnabled()) nm.notify(ID_ONGOING, ongoing(finalStop, lastProgress, live))
     }
@@ -196,16 +196,17 @@ class RideService : Service() {
         val stop = PendingIntent.getService(
             this, 0, Intent(this, RideService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE,
         )
+        val text = p?.let { rideProgressText(this, it) } ?: getString(R.string.ride_ongoing_text, finalStop)
         val b = NotificationCompat.Builder(this, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.brand))
             .setContentTitle(p?.let { rideProgressTitle(this, it) } ?: getString(R.string.ride_ongoing_title))
-            .setContentText(p?.let { rideProgressText(this, it) } ?: getString(R.string.ride_ongoing_text, finalStop))
+            .setContentText(text)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
-        return il.transit.planner.remind.Notifications.build(this, b, live)
+        return il.transit.planner.remind.Notifications.build(this, b, live, text)
     }
 
     @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS

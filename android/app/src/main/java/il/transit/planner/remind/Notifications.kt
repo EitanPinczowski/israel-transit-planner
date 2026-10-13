@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -168,7 +169,7 @@ object Notifications {
             .setAutoCancel(true)
             .setContentIntent(open)
         extra(b)
-        nm.notify(id, build(context, b, live))
+        nm.notify(id, build(context, b, live, text))
     }
 
     /**
@@ -176,20 +177,34 @@ object Notifications {
      * per leg in its [il.transit.core.present.LegPalette] colour, a point per boarding, promoted
      * to the status bar with [LiveProgress.chip] as its text. Below 16: the same notification
      * with a plain progress bar. Either way one notification, posted on the caller's id.
-     * The caller makes it ongoing with a title, which promotion needs.
+     * The caller makes it ongoing with a title, which promotion needs. [text] is the caller's
+     * content text: ProgressStyle replaces the BigTextStyle that showed it whole, so on 16+ its
+     * last " · " piece ("walk 6 min", "arrive 08:55") moves to the header's subtext.
      */
-    fun build(context: Context, b: NotificationCompat.Builder, live: LiveProgress?): Notification {
+    fun build(context: Context, b: NotificationCompat.Builder, live: LiveProgress?, text: String? = null): Notification {
         if (live == null) return b.build()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
             return b.setProgress(live.max, live.progress, false).build()
         }
-        val style = NotificationCompat.ProgressStyle()
-            .setProgressSegments(live.segments.map { NotificationCompat.ProgressStyle.Segment(it.length).setColor(Color.parseColor(it.color)) })
-            .setProgressPoints(live.points.map { NotificationCompat.ProgressStyle.Point(it) })
-            .setProgress(live.progress)
-        val n = b.setStyle(style).setRequestPromotedOngoing(true).build()
-        val chip = shortText(context, live.chip) ?: return n
-        return Notification.Builder.recoverBuilder(context, n).setShortCriticalText(chip).build()
+        return LiveUpdate.build(context, b, live, text, shortText(context, live.chip))
+    }
+
+    /** The Android 16 calls, apart so the rest of [Notifications] never refers to them below 36. */
+    @RequiresApi(Build.VERSION_CODES.BAKLAVA)
+    private object LiveUpdate {
+        fun build(context: Context, b: NotificationCompat.Builder, live: LiveProgress, text: String?, chip: String?): Notification {
+            val cut = text?.lastIndexOf(Countdown.SEP) ?: -1
+            if (text != null && cut > 0) {
+                b.setContentText(text.substring(0, cut)).setSubText(text.substring(cut + Countdown.SEP.length))
+            }
+            val style = NotificationCompat.ProgressStyle()
+                .setProgressSegments(live.segments.map { NotificationCompat.ProgressStyle.Segment(it.length).setColor(Color.parseColor(it.color)) })
+                .setProgressPoints(live.points.map { NotificationCompat.ProgressStyle.Point(it) })
+                .setProgress(live.progress)
+            val n = b.setStyle(style).setRequestPromotedOngoing(true).build()
+            if (chip == null) return n
+            return Notification.Builder.recoverBuilder(context, n).setShortCriticalText(chip).build()
+        }
     }
 
     /** The status-bar chip: "3 stops", "8 min" (short: the chip shows ~7 characters). */

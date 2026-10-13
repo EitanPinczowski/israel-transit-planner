@@ -55,28 +55,28 @@ class LiveProgressTest {
         val t = RideTracker(trip)
         val now = NOON.plusSeconds(900)
         t.update(b.latLon, NOON.plusSeconds(890).minusSeconds(1))
-        val onBus = LiveProgress.ride(trip, t.progress(at(31.2805), NOON.plusSeconds(890)), NOON.plusSeconds(890))!!
+        val onBus = LiveProgress.ride(trip, t.progress(at(31.2805), NOON.plusSeconds(890)), t.currentLeg, NOON.plusSeconds(890))!!
         assertEquals(LiveProgress.Chip.Stops(1), onBus.chip)
         // Off the bus at B at 12:15: the tracker now follows the train leg.
         t.update(b.latLon, now)
         val p = t.progress(b.latLon, now)!!
         assertEquals("406", p.line)
-        val live = LiveProgress.ride(trip, p, now)!!
+        val live = LiveProgress.ride(trip, p, t.currentLeg, now)!!
         assertTrue(live.progress in 900..1200) // between getting off and the train's point
         assertEquals(1200, live.points.last())
     }
 
     @Test fun `after the last stop - the tracker is at least at the end of the last ride`() {
-        val done = LiveProgress.ride(trip, null, NOON.plusSeconds(2400))!!
+        val done = LiveProgress.ride(trip, null, 2, NOON.plusSeconds(2400))!!
         assertEquals(2400, done.progress)
         // Off early (GPS says the ride is over before the timetable does): at the end of the train.
-        assertEquals(2400, LiveProgress.ride(trip, null, NOON.plusSeconds(2000))!!.progress)
+        assertEquals(2400, LiveProgress.ride(trip, null, 2, NOON.plusSeconds(2000))!!.progress)
         // With a walk after: it keeps moving with the clock, never past the end.
         val home2 = place("home2", LatLon(31.4010, 34.8000))
         val withWalk = itinerary(walk, bus, train, leg(StreetModes.WALK, c, home2, NOON.plusSeconds(2400), NOON.plusSeconds(2700)))
-        assertEquals(2400, LiveProgress.ride(withWalk, null, NOON.plusSeconds(2300))!!.progress)
-        assertEquals(2550, LiveProgress.ride(withWalk, null, NOON.plusSeconds(2550))!!.progress)
-        assertEquals(2700, LiveProgress.ride(withWalk, null, NOON.plusSeconds(9999))!!.progress)
+        assertEquals(2400, LiveProgress.ride(withWalk, null, 2, NOON.plusSeconds(2300))!!.progress)
+        assertEquals(2550, LiveProgress.ride(withWalk, null, 2, NOON.plusSeconds(2550))!!.progress)
+        assertEquals(2700, LiveProgress.ride(withWalk, null, 2, NOON.plusSeconds(9999))!!.progress)
     }
 
     @Test fun `a delay holds the tracker back and never past the bus being ridden`() {
@@ -86,12 +86,12 @@ class LiveProgressTest {
         t.update(s1.latLon, now)
         val p = t.progress(s1.latLon, now)!!
         assertTrue(p.delayMin >= 4)
-        val live = LiveProgress.ride(trip, p, now)!!
+        val live = LiveProgress.ride(trip, p, t.currentLeg, now)!!
         assertEquals(720 - 60 * p.delayMin, live.progress)
         assertEquals(LiveProgress.Chip.Stops(p.stopsLeft), live.chip)
         // Very late, still on the bus past its planned end: held at the end of the bus segment.
         val stuck = p.copy(delayMin = 0)
-        assertEquals(900, LiveProgress.ride(trip, stuck, NOON.plusSeconds(1100))!!.progress)
+        assertEquals(900, LiveProgress.ride(trip, stuck, 0, NOON.plusSeconds(1100))!!.progress)
     }
 
     @Test fun `a leg with no stops listed shows minutes to the stop`() {
@@ -99,8 +99,33 @@ class LiveProgressTest {
         val t = RideTracker(bare)
         val now = NOON.plusSeconds(400)
         t.update(s1.latLon, now)
-        val live = LiveProgress.ride(bare, t.progress(s1.latLon, now), now)!!
+        val live = LiveProgress.ride(bare, t.progress(s1.latLon, now), t.currentLeg, now)!!
         assertTrue(live.chip is LiveProgress.Chip.Minutes)
         assertTrue((live.chip as LiveProgress.Chip.Minutes).n > 0)
+    }
+
+    @Test fun `the chip never reads 0 min - at the stop it shows the icon only`() {
+        val bare = itinerary(walk, bus.copy(intermediateStops = emptyList()))
+        val t = RideTracker(bare)
+        val now = NOON.plusSeconds(400)
+        t.update(s1.latLon, now)
+        val p = t.progress(s1.latLon, now)!!
+        assertNull(LiveProgress.ride(bare, p.copy(arriveAt = now), t.currentLeg, now)!!.chip)
+        assertNull(LiveProgress.ride(bare, p.copy(arriveAt = now.minusSeconds(30)), t.currentLeg, now)!!.chip)
+        assertEquals(LiveProgress.Chip.Minutes(1), LiveProgress.ride(bare, p.copy(arriveAt = now.plusSeconds(10)), t.currentLeg, now)!!.chip)
+    }
+
+    @Test fun `the ridden leg is the tracker's own - the same line and stop twice`() {
+        // Bus 5 A → B, then bus 5 again B → A → B (a loop): names and line repeat.
+        val back = leg("BUS", b, a, NOON.plusSeconds(960), NOON.plusSeconds(1500)).copy(routeShortName = "5")
+        val again = leg("BUS", a, b, NOON.plusSeconds(1560), NOON.plusSeconds(2100)).copy(routeShortName = "5")
+        val loop = itinerary(walk, bus.copy(intermediateStops = emptyList()), back, again)
+        val t = RideTracker(loop)
+        val now = NOON.plusSeconds(600)
+        t.update(s1.latLon, now)
+        assertEquals(0, t.currentLeg)
+        val p = t.progress(s1.latLon, now)!!.copy(delayMin = 0)
+        // Late on the first bus: held at its end (900), not at the end of the third leg's B.
+        assertEquals(900, LiveProgress.ride(loop, p, t.currentLeg, NOON.plusSeconds(1700))!!.progress)
     }
 }

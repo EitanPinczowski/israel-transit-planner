@@ -107,9 +107,13 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - `core/remind/LiveProgress.kt` (pure, `LiveProgressTest`): the bar is the planned timeline in
   seconds, one segment per leg (leg start → next leg's start, so a wait rides with the walk
   before it) in `LegPalette` colours, a point at each boarding. Ride: the tracker is at
-  "now − delay" from `RideTracker.progress`, held at the end of the leg being ridden; after the
-  last ride it follows the clock. Chip: "3 stops", or "8 min" to the stop when the leg lists no
-  stops in between (`live_stops`, `live_min` in `strings_live.xml`).
+  "now − delay" from `RideTracker.progress`, held at the end of the leg being ridden (the
+  tracker's own `currentLeg`, never re-guessed by name); after the last ride it follows the
+  clock. Chip: "3 stops", or "8 min" to the stop when the leg lists no stops in between
+  (`live_stops`, `live_min` in `strings_live.xml`); never "0 min" (icon only at the stop).
+- ProgressStyle replaces the BigTextStyle, so on 16+ the text's last " · " piece ("walk 6 min",
+  "arrive 08:55") moves to the header subtext. The 16+ calls live in `Notifications.LiveUpdate`
+  (`@RequiresApi(36)`).
 - **Countdown chip:** no short text: the notification's own `setWhen` + chronometer countdown
   is what the chip shows, and stays right; the bar is drawn once at the leave alarm (the
   countdown is not re-posted every minute), with the tracker on the walk.

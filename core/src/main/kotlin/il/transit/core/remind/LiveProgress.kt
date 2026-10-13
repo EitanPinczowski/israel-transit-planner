@@ -4,7 +4,6 @@ import il.transit.core.api.Itinerary
 import il.transit.core.api.Leg
 import il.transit.core.api.parseTime
 import il.transit.core.present.LegPalette
-import il.transit.core.present.lineLabel
 import il.transit.core.ride.RideProgress
 import java.time.Duration
 import java.time.Instant
@@ -47,10 +46,12 @@ data class LiveProgress(
         /**
          * During a ride. [p] is [il.transit.core.ride.RideTracker.progress] for the same fix;
          * null once every transit leg is done (the last walk: the tracker follows the clock).
+         * [transitLeg] is [il.transit.core.ride.RideTracker.currentLeg]: the tracker's own index
+         * among the transit legs, never re-guessed from names and times.
          * The tracker sits where the schedule is "now minus the delay", and never past the end
          * of the leg still being ridden: a late bus keeps it on that bus's segment.
          */
-        fun ride(itinerary: Itinerary, p: RideProgress?, now: Instant): LiveProgress? {
+        fun ride(itinerary: Itinerary, p: RideProgress?, transitLeg: Int, now: Instant): LiveProgress? {
             val (segments, points) = bar(itinerary) ?: return null
             val max = segments.sumOf { it.length }
             val t0 = sched(itinerary.legs.first(), start = true)
@@ -60,11 +61,12 @@ data class LiveProgress(
             }
             // Early (or waiting for the next vehicle): the tracker follows the clock, never runs ahead of it.
             val planned = now.minusSeconds(60L * p.delayMin.coerceAtLeast(0))
-            val leg = rideLeg(itinerary, p)
+            val leg = itinerary.legs.filter { it.isTransit }.getOrNull(transitLeg)
             val ceiling = leg?.let { at(t0, sched(it, start = false)) } ?: max
             val progress = at(t0, planned).coerceIn(0, ceiling.coerceAtMost(max))
             val chip = if (leg != null && leg.intermediateStops.isEmpty()) {
-                Chip.Minutes(minutesUntil(now, p.arriveAt))
+                // Never "0 min": at (or past) the estimated arrival the chip shows just the icon.
+                minutesUntil(now, p.arriveAt).takeIf { it > 0 }?.let(Chip::Minutes)
             } else {
                 Chip.Stops(p.stopsLeft)
             }
@@ -103,14 +105,6 @@ data class LiveProgress(
             }
             if (segments.isEmpty()) return null
             return segments to points.distinct()
-        }
-
-        /** The transit leg [p] describes: the one getting off at its stop, closest in time. */
-        private fun rideLeg(itinerary: Itinerary, p: RideProgress): Leg? {
-            val legEnd = p.arriveAt.minusSeconds(60L * p.delayMin)
-            return itinerary.legs
-                .filter { it.isTransit && it.to.name == p.alightStop && (p.line == null || lineLabel(it) == p.line) }
-                .minByOrNull { Duration.between(sched(it, start = false), legEnd).abs() }
         }
 
         /** Scheduled times, as [il.transit.core.ride.RideTracker] measures delays against them. */
