@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Phase 10 D8: fare profiles (Settings → Fare) and the monthly travel report (History). -->
 <resources>
-    <string name="fare_profile_senior">אזרח ותיק (67+)</string>
+    <string name="fare_profile_senior">אזרח ותיק (מגיל 67)</string>
     <string name="fare_profile_student">סטודנט</string>
     <string name="fare_profile_youth">נוער (עד גיל 18)</string>
     <string name="fare_profile_soldier">חייל (בשירות חובה)</string>
