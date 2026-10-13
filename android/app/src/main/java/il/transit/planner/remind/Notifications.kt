@@ -1,17 +1,21 @@
 package il.transit.planner.remind
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import il.transit.core.plan.LastTripAlert
 import il.transit.core.plan.LastTripHome
 import il.transit.core.remind.Countdown
+import il.transit.core.remind.LiveProgress
 import il.transit.core.remind.Reminder
 import il.transit.planner.MainActivity
 import il.transit.planner.R
@@ -62,7 +66,9 @@ object Notifications {
         }
         val walk = c.walkMin?.let { context.resources.getQuantityString(R.plurals.countdown_walk, it, it) }
         val text = Countdown.text(line, context.getString(R.string.countdown_board, c.boardStop), walk)
-        post(context, ID_LEAVE, context.getString(R.string.notify_leave_title), text) { b ->
+        // Android 16+: a Live Update (the trip's legs as a bar, the chip counting down); below, a plain bar.
+        val live = r.itinerary?.let { LiveProgress.countdown(it, c.boardAt, now) }
+        post(context, ID_LEAVE, context.getString(R.string.notify_leave_title), text, live = live) { b ->
             b.setOngoing(true)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
@@ -139,6 +145,7 @@ object Notifications {
         title: String,
         text: String,
         channel: String = CHANNEL,
+        live: LiveProgress? = null,
         extra: (NotificationCompat.Builder) -> Unit = {},
     ) {
         ensureChannel(context)
@@ -161,6 +168,34 @@ object Notifications {
             .setAutoCancel(true)
             .setContentIntent(open)
         extra(b)
-        nm.notify(id, b.build())
+        nm.notify(id, build(context, b, live))
+    }
+
+    /**
+     * Phase 10 D10. With [live] on Android 16+: a Live Update, `ProgressStyle` with one segment
+     * per leg in its [il.transit.core.present.LegPalette] colour, a point per boarding, promoted
+     * to the status bar with [LiveProgress.chip] as its text. Below 16: the same notification
+     * with a plain progress bar. Either way one notification, posted on the caller's id.
+     * The caller makes it ongoing with a title, which promotion needs.
+     */
+    fun build(context: Context, b: NotificationCompat.Builder, live: LiveProgress?): Notification {
+        if (live == null) return b.build()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+            return b.setProgress(live.max, live.progress, false).build()
+        }
+        val style = NotificationCompat.ProgressStyle()
+            .setProgressSegments(live.segments.map { NotificationCompat.ProgressStyle.Segment(it.length).setColor(Color.parseColor(it.color)) })
+            .setProgressPoints(live.points.map { NotificationCompat.ProgressStyle.Point(it) })
+            .setProgress(live.progress)
+        val n = b.setStyle(style).setRequestPromotedOngoing(true).build()
+        val chip = shortText(context, live.chip) ?: return n
+        return Notification.Builder.recoverBuilder(context, n).setShortCriticalText(chip).build()
+    }
+
+    /** The status-bar chip: "3 stops", "8 min" (short: the chip shows ~7 characters). */
+    fun shortText(context: Context, s: LiveProgress.Chip?): String? = when (s) {
+        is LiveProgress.Chip.Stops -> context.resources.getQuantityString(R.plurals.live_stops, s.n, s.n)
+        is LiveProgress.Chip.Minutes -> context.resources.getQuantityString(R.plurals.live_min, s.n, s.n)
+        null -> null
     }
 }

@@ -17,6 +17,13 @@ Two Gradle builds share one wrapper and one version catalog (`gradle/libs.versio
 without the SDK, because the cloud sessions cannot download it (`dl.google.com` is blocked
 there) and that is where most of the logic is tested.
 
+**SDK levels** (Phase 10 D10): `compileSdk = 36` for the Android 16 Live Update APIs
+(`androidx.core` 1.17's `NotificationCompat.ProgressStyle`, which needs compileSdk 36 and
+AGP ≥ 8.9.1, so AGP is 8.9.1). **`targetSdk` stays 35** (owner decision 8): raising it opts
+the app into Android 16's behaviour changes (edge-to-edge without opt-out, predictive back,
+orientation/resizability ignored on large screens…), which want their own package and test
+round. Code for 36 checks `Build.VERSION.SDK_INT >= BAKLAVA` (36).
+
 ## Reading failures cheaply
 
 - Run with `-q`: only failures print. Never pipe Gradle into `tail`/`grep` — the pipe

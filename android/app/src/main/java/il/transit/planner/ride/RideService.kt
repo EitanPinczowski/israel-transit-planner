@@ -30,6 +30,7 @@ import il.transit.planner.TransitApp
 import il.transit.planner.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import il.transit.core.ride.RideProgress
+import il.transit.core.remind.LiveProgress
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -46,6 +47,10 @@ import java.time.Instant
  */
 class RideService : Service() {
     private var tracker: RideTracker? = null
+    private var itinerary: Itinerary? = null
+
+    /** The last progress shown: the text stays on it through the walk after the last ride. */
+    private var lastProgress: RideProgress? = null
     private var finalStop: String = ""
 
     /** Speaks the get-off alert when the user asked for it; null otherwise or until ready. */
@@ -78,7 +83,7 @@ class RideService : Service() {
         ServiceCompat.startForeground(
             this,
             ID_ONGOING,
-            ongoing(finalStop),
+            ongoing(finalStop, live = itinerary?.let(LiveProgress::start)),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0,
         )
         if (itinerary == null) {
@@ -87,6 +92,8 @@ class RideService : Service() {
             return START_NOT_STICKY
         }
         tracker = RideTracker(itinerary)
+        this.itinerary = itinerary
+        lastProgress = null
         // No location updates, no ride: never report active for a service that is stopping.
         if (!startLocation()) {
             stopSelf()
@@ -127,9 +134,13 @@ class RideService : Service() {
         }
         val p = tracker?.progress(pos, now)
         _progress.value = p
-        // The ongoing notification follows the ride: "Line 5 · 3 stops left · arrive 08:47".
+        if (p != null) lastProgress = p
+        // The ongoing notification follows the ride: "Line 5 · 3 stops left · arrive 08:47", and
+        // on Android 16 the Live Update's bar and chip ("3 stops"). Null p: every ride is done,
+        // the bar follows the last walk under the last text.
+        val live = itinerary?.let { LiveProgress.ride(it, p, now) }
         val nm = NotificationManagerCompat.from(this)
-        if (p != null && nm.areNotificationsEnabled()) nm.notify(ID_ONGOING, ongoing(finalStop, p))
+        if ((p != null || live != null) && nm.areNotificationsEnabled()) nm.notify(ID_ONGOING, ongoing(finalStop, lastProgress, live))
     }
 
     /** One TextToSpeech for the ride, in the phone's language, on the navigation audio stream. */
@@ -175,15 +186,17 @@ class RideService : Service() {
         locationManager?.removeUpdates(listener)
         _active.value = false
         _progress.value = null
+        // The ride is over: the (promoted) notification goes with the service, never left behind.
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         super.onDestroy()
     }
 
-    private fun ongoing(finalStop: String, p: RideProgress? = null): Notification {
+    private fun ongoing(finalStop: String, p: RideProgress? = null, live: LiveProgress? = null): Notification {
         ensureChannels(this)
         val stop = PendingIntent.getService(
             this, 0, Intent(this, RideService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE,
         )
-        return NotificationCompat.Builder(this, CHANNEL_ONGOING)
+        val b = NotificationCompat.Builder(this, CHANNEL_ONGOING)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.brand))
             .setContentTitle(p?.let { rideProgressTitle(this, it) } ?: getString(R.string.ride_ongoing_title))
@@ -192,7 +205,7 @@ class RideService : Service() {
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
-            .build()
+        return il.transit.planner.remind.Notifications.build(this, b, live)
     }
 
     @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS

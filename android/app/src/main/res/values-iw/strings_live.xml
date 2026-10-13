@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D10: הצ'יפ בשורת המצב מציג כ־7 תווים: קצר. -->
+<resources>
+    <plurals name="live_stops">
+        <item quantity="one">תחנה אחת</item>
+        <item quantity="two">⁨%d⁩ תחנות</item>
+        <item quantity="other">⁨%d⁩ תחנות</item>
+    </plurals>
+    <plurals name="live_min">
+        <item quantity="one">⁨%d⁩ דק׳</item>
+        <item quantity="two">⁨%d⁩ דק׳</item>
+        <item quantity="other">⁨%d⁩ דק׳</item>
+    </plurals>
+</resources>

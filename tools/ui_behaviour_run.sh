@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Behaviour on one Android version: first launch with location denied, the user journeys,
-# process death, and (API 35 only) a seeded monkey run. Called by ui-tests.yml:
+# Behaviour on one Android version: first launch with location denied, the user journeys
+# (API 36: the Live Update ones only), process death, and (API 35 only) a seeded monkey run. Called by ui-tests.yml:
 #   tools/ui_behaviour_run.sh <api level> <apk dir> <out dir>
 # Exit 1 on a failed test or any crash/ANR of the app.
 set -u
@@ -45,8 +45,14 @@ done
 adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 sleep 5
 adb logcat -c
-instrument il.transit.planner.uitest.FirstLaunchTest first-launch
-instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
+if [[ $API == 36 ]]; then
+  # Android 16 (Phase 10 D10): only the Live Update journeys, the ride and the leave countdown.
+  J=il.transit.planner.uitest.JourneysTest
+  instrument "$J#j12_ride_alert_fires_near_the_stop,$J#j14_leave_countdown_is_a_live_update" live-updates
+else
+  instrument il.transit.planner.uitest.FirstLaunchTest first-launch
+  instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
+fi
 
 # Process death: leave the app, let the system kill it, come back.
 echo "::group::process death"

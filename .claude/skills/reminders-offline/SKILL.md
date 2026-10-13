@@ -95,6 +95,30 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   older than a day are deleted at app start and before each new report. `TripRecord.lines`
   (since D8) fills the lines column; older records leave it empty.
 
+# Live Updates (Phase 10 D10, Android 16+, 0 requests)
+- "On the bus" (`RideService`, id 2001) and the leave-now countdown (`Notifications.countdown`,
+  `ID_LEAVE`) are built by `Notifications.build(context, builder, LiveProgress)`, on the same ids
+  as before: **never a second notification**. 16+: `NotificationCompat.ProgressStyle` +
+  `setRequestPromotedOngoing(true)` + the chip (`setShortCriticalText` via
+  `Notification.Builder.recoverBuilder`, so it does not depend on a compat setter). Below 16:
+  today's notification plus `setProgress(max, progress)`. Manifest: `POST_PROMOTED_NOTIFICATIONS`
+  (normal permission). Promotion rules: ongoing, a title, no custom view, not colorized, channel
+  not `IMPORTANCE_MIN` (ride's is LOW, reminders' HIGH); the user can turn it off per app.
+- `core/remind/LiveProgress.kt` (pure, `LiveProgressTest`): the bar is the planned timeline in
+  seconds, one segment per leg (leg start → next leg's start, so a wait rides with the walk
+  before it) in `LegPalette` colours, a point at each boarding. Ride: the tracker is at
+  "now − delay" from `RideTracker.progress`, held at the end of the leg being ridden; after the
+  last ride it follows the clock. Chip: "3 stops", or "8 min" to the stop when the leg lists no
+  stops in between (`live_stops`, `live_min` in `strings_live.xml`).
+- **Countdown chip:** no short text: the notification's own `setWhen` + chronometer countdown
+  is what the chip shows, and stays right; the bar is drawn once at the leave alarm (the
+  countdown is not re-posted every minute), with the tracker on the walk.
+- The ride's notification is removed in `onDestroy` (`STOP_FOREGROUND_REMOVE`).
+- Visible promotion (status-bar chip, lock screen) needs Android 16 QPR1 (API 36.1) on the
+  phone; on 36.0 the bar shows inside the notification. CI's API 36 row (`ui-tests.yml`) runs
+  J12 (ride) and J14 (countdown) only and checks the template, the promotion request and
+  `hasPromotableCharacteristics()`; below 36 they check the plain bar.
+
 # Offline
 - **My lines offline**: each successful board is saved per stop (`core/present/DepartureCache`,
   `data/DepartureCacheStore`, `filesDir/departures_cache.json`, 20 stops). With no signal the

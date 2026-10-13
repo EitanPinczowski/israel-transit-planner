@@ -26,7 +26,9 @@ plugins {
 
 android {
     namespace = "il.transit.planner"
-    compileSdk = 35
+    // 36 for the Android 16 Live Update APIs (Phase 10 D10). targetSdk stays 35 (owner decision 8):
+    // no Android 16 behaviour change rides along.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "il.transit.planner"

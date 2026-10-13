@@ -319,6 +319,8 @@ class JourneysTest {
                 seenByService += RideService.progress.value?.stopsLeft?.toString() ?: "-"
                 if (seen) break
             }
+            // Phase 10 D10: the ongoing ride notification is a Live Update on Android 16+, a plain bar below.
+            liveUpdateCheck("J12", nm.activeNotifications.firstOrNull { it.notification.channelId == "ride_ongoing" })
             if (!seen) {
                 val log = d.shell("logcat -d -s RideService LocationManagerService NotificationService").takeLast(3_000)
                 throw AssertionError(
@@ -329,6 +331,50 @@ class JourneysTest {
         } finally {
             d.onMain { it.stopRide() }
             runCatching { lm.removeTestProvider(gps) }
+        }
+    }
+
+    /**
+     * Phase 10 D10: the leave-now countdown posts on the reminder's id, as a Live Update on
+     * Android 16+ and with a plain progress bar below; cancelling it leaves nothing behind.
+     */
+    @Test fun j14_leave_countdown_is_a_live_update() = AppDriver(compose).launch().use { d ->
+        d.tripByTaps()
+        val i = d.selectTrain()
+        val itinerary = d.vm.state.value.options[i]
+        val r = il.transit.core.remind.Reminder.from(
+            itinerary,
+            itinerary.legs.first().from.latLon,
+            itinerary.legs.last().to.latLon,
+            il.transit.core.user.UserSettings(),
+        )!!
+        val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
+        try {
+            // The fixtures' times are in the past: count down as of the trip's start.
+            assertTrue(il.transit.planner.remind.Notifications.countdown(d.app, r, itinerary.start))
+            val until = SystemClock.uptimeMillis() + 3_000
+            fun posted() = nm.activeNotifications.filter { it.notification.channelId == "trip_reminders" }
+            while (posted().isEmpty() && SystemClock.uptimeMillis() < until) SystemClock.sleep(100)
+            val all = posted()
+            assertEquals("one countdown notification: ${all.map { it.id }}", 1, all.size)
+            assertEquals(1001, all.single().id) // ID_LEAVE, on every Android version
+            liveUpdateCheck("J14", all.single())
+        } finally {
+            il.transit.planner.remind.Notifications.cancelCountdown(d.app)
+        }
+    }
+
+    /** 16+: ProgressStyle, promotion asked and possible; below: the same notification with a bar. */
+    private fun liveUpdateCheck(journey: String, sbn: android.service.notification.StatusBarNotification?) {
+        assertTrue("$journey: no ongoing notification", sbn != null)
+        val n = sbn!!.notification
+        val template = n.extras.getString(android.app.Notification.EXTRA_TEMPLATE)
+        if (AppDriver.sdk >= 36) {
+            assertEquals("$journey: template", "android.app.Notification\$ProgressStyle", template)
+            assertTrue("$journey: promotion not requested", n.extras.getBoolean(android.app.Notification.EXTRA_REQUEST_PROMOTED_ONGOING))
+            assertTrue("$journey: not promotable", n.hasPromotableCharacteristics())
+        } else {
+            assertTrue("$journey: no progress bar", n.extras.getInt(android.app.Notification.EXTRA_PROGRESS_MAX) > 0)
         }
     }
 

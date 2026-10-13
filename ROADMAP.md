@@ -265,7 +265,7 @@ only where the plan says. Tick only your own package's lines.
 - [x] Open-Meteo added to CLAUDE.md's hard rules; "Rain likely around 08:10" note → least walking
 
 ### D10 — Live Updates (`claude/p10-live-updates`, 0 requests)
-- [ ] `compileSdk` 36; ride and leave countdown as Live Updates on Android 16, today's notification below
+- [x] `compileSdk` 36; ride and leave countdown as Live Updates on Android 16, today's notification below
 
 ### D11 — App polish (`claude/p10-polish`, 0 requests)
 - [ ] Search and chosen trip kept across process death
