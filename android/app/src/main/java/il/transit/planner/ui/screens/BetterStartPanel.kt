@@ -162,23 +162,14 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun BetterStartList(state: UiState, result: BetterStartResult, vm: MainActions, modifier: Modifier) {
-    val context = LocalContext.current
-    LazyColumn(modifier) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = 0)) {
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_better_start, state.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
         itemsIndexed(result.options) { i, option ->
             val row = remember(option, result.baseline, state.settings.fareProfile) { betterStartRow(option.payload, result.baseline, state.settings.fareProfile) }
-            val shareText = stringResource(
-                R.string.share_dropoff,
-                row.stop,
-                NavLinks.waze(option.payload.dropOffAt),
-                NavLinks.googleMaps(option.payload.dropOffAt),
-            )
-            BetterStartCard(row, selected = i == state.selected, onClick = { vm.select(i) }) {
-                val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, shareText)
-                context.startActivity(Intent.createChooser(send, null))
-            }
+            // "Send to driver" is in the sheet's bottom row (D11, ActionRow).
+            BetterStartCard(row, selected = i == state.selected, onClick = { vm.select(i) })
         }
         result.baseline?.let { b ->
             item {
@@ -194,7 +185,7 @@ internal fun BetterStartList(state: UiState, result: BetterStartResult, vm: Main
 }
 
 @Composable
-internal fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
+internal fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: () -> Unit) {
     Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.drive_to, row.driveMin, row.stop), style = MaterialTheme.typography.titleSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -209,6 +200,5 @@ internal fun BetterStartCard(row: BetterStartRow, selected: Boolean, onClick: ()
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) OptionActions(onSend)
     }
 }

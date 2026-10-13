@@ -35,6 +35,8 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  *  R5 a11y         Accessibility Test Framework findings (labels, contrast, …)
  *  R6 rtl          in Hebrew, row labels sit on the right of their values
  *  R7 route        the drawn route lies in the map area the panels leave visible
+ *  R8 thumb row    the selected option's action row (Start trip, Remind me, Send to driver):
+ *                  every button at least 48 × 48 dp and inside the usable screen (Phase 10 D11)
  */
 class LayoutAudit(private val d: AppDriver) {
     private val density get() = d.activity.resources.displayMetrics.density
@@ -53,7 +55,7 @@ class LayoutAudit(private val d: AppDriver) {
         return out
     }
 
-    /** R1–R4, R6, R7. Main thread only. */
+    /** R1–R4, R6–R8. Main thread only. */
     private fun analyze(merged: List<SemanticsNode>, unmerged: List<SemanticsNode>, out: MutableList<Violation>) {
         val decor = d.activity.window.decorView
         var safe = Rect()
@@ -76,6 +78,19 @@ class LayoutAudit(private val d: AppDriver) {
             val b = bottom.boundsInWindow
             val overlap = minOf(a.bottom, b.bottom) - maxOf(a.top, b.top)
             if (overlap > 1f) out += Violation("R1", "top/bottom", "search card and bottom panel overlap by ${dp(overlap)} dp")
+        }
+
+        // R8
+        find(merged, UiTags.ACTIONS)?.let { row ->
+            val buttons = mutableListOf<SemanticsNode>()
+            walk(row) { n, _ -> if (n !== row && SemanticsActions.OnClick in n.config) buttons += n }
+            if (buttons.isEmpty()) out += Violation("R8", "actions", "the action row shows no button")
+            val min = 48 * density - 1f
+            for (b in buttons) {
+                val r = b.boundsInWindow
+                if (r.width < min || r.height < min) out += Violation("R8", label(b), "${dp(r.width)}×${dp(r.height)} dp, under 48 dp")
+                if (!safe.contains(r.toRect())) out += Violation("R8", label(b), "at ${r.toRect().toShortString()}, outside the usable screen ${safe.toShortString()}")
+            }
         }
 
         val underKeyboard = mutableListOf<String>()
@@ -245,7 +260,7 @@ class LayoutAudit(private val d: AppDriver) {
 
     companion object {
         /** Rules whose findings are fixed: a new one fails the run. */
-        val BLOCKING = setOf("R1", "R7")
+        val BLOCKING = setOf("R1", "R7", "R8")
 
         /** Text that must never be truncated: clock times, shekels, minute counts. */
         private val IMPORTANT = Regex("""\d{1,2}:\d{2}|₪|\d+\s?(′|min|דק)""")

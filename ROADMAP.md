@@ -268,9 +268,9 @@ only where the plan says. Tick only your own package's lines.
 - [x] `compileSdk` 36; ride and leave countdown as Live Updates on Android 16, today's notification below
 
 ### D11 — App polish (`claude/p10-polish`, 0 requests)
-- [ ] Search and chosen trip kept across process death
-- [ ] Map ↔ list highlighting
-- [ ] Thumb-zone action row (≥ 48 dp) + haptics on pin drop
+- [x] Search and chosen trip kept across process death
+- [x] Map ↔ list highlighting
+- [x] Thumb-zone action row (≥ 48 dp) + haptics on pin drop
 
 ### Close-out (boss)
 - [ ] `docs/releases/v0.8.6.md` after Wave 2 (if the owner releases it)

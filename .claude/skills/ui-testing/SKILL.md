@@ -1,6 +1,6 @@
 ---
 name: ui-testing
-description: Testing the app's UI and UX on many phones - the uitest build, emulator profiles, the layout audit (R1-R7), journeys, the ci-screens report, Firebase Test Lab real phones. Use for "test the UI", "does it look right on small phones", a red UI tests run, reading screenshots, or adding a screen/journey to the tests.
+description: Testing the app's UI and UX on many phones - the uitest build, emulator profiles, the layout audit (R1-R8), journeys, the ci-screens report, Firebase Test Lab real phones. Use for "test the UI", "does it look right on small phones", a red UI tests run, reading screenshots, or adding a screen/journey to the tests.
 ---
 
 # UI testing
@@ -71,8 +71,18 @@ R1 search card and bottom panel overlap · R2 tappable outside the usable screen
 items = one finding per screen; behind an open dialog doesn't count) · R3 clipped/squeezed text, or a time/price/duration cut with …
 · R4 a target under 40 dp whose grown 48 dp tap area reaches another · R5 Accessibility Test Framework
 (contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
-not squeezed. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
+not squeezed · R8 the selected option's action row (`UiTags.ACTIONS`: Start trip, Remind me, Send to
+driver): every button ≥ 48 × 48 dp and inside the usable screen (D11). Blocking: R1, R7, R8. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
 closes what is open (one Back, even with the keyboard up), J10 Settings reachable with results open. Broken journeys and crashes fail the run; findings never do.
+
+**Process death** (`ui_behaviour_run.sh`, every API level, D11). An instrumented test dies with
+its process, so the shell drives it and the uitest-only `ProcessDeathProbe` (an
+`ActivityLifecycleCallbacks` in `UiTestApp`) does the taps: `am start -S --ez
+uitest_process_death_setup true` → BGU → Tel Aviv, second option, its first ride's trip sheet,
+log `ProcessDeath: ready mode=… selected=… option=… sheet=…`; Home, `am kill`, `am start` → the
+recreated Activity logs `restored …` plus the requests since the restart. The step fails unless both
+lines match (same tab, option and sheet). The options come from the Trip cache (`SavedUi`), never a
+new `plan`; the reopened trip sheet asks its one `trip` again.
 
 ## Adding to it
 

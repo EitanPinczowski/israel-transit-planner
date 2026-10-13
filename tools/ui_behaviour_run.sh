@@ -54,16 +54,37 @@ else
   instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
 fi
 
-# Process death: leave the app, let the system kill it, come back.
+# Process death: leave the app, let the system kill it, come back. The uitest build's
+# ProcessDeathProbe searches, picks the second option and opens its trip sheet ("ready …"),
+# then reports what the recreated Activity shows ("restored …"): the same option, the same
+# sheet, and no new search (Phase 10 D11).
 echo "::group::process death"
-adb shell am start -W -n "$ACT" >/dev/null
-sleep 4
+adb logcat -c
+adb shell am start -S -W -n "$ACT" --ez uitest_process_death_setup true >/dev/null
+ready=""
+for _ in $(seq 1 30); do
+  ready=$(adb logcat -d -s ProcessDeath:I | grep -o "ready .*" | tail -1)
+  [[ -n $ready ]] && break
+  sleep 1
+done
 adb shell input keyevent KEYCODE_HOME
-sleep 1
+sleep 2
 adb shell am kill "$PKG"
 adb shell am start -W -n "$ACT" >/dev/null
-sleep 4
+restored=""
+for _ in $(seq 1 30); do
+  restored=$(adb logcat -d -s ProcessDeath:I | grep -o "restored .*" | tail -1)
+  [[ -n $restored ]] && break
+  sleep 1
+done
+echo "before: $ready"
+echo "after:  $restored"
 adb shell pidof "$PKG" >/dev/null || { echo "::error::app not running after process death on API $API"; failed=1; }
+if [[ -z $ready ]]; then
+  echo "::error::process death: the probe never got the search ready on API $API"; failed=1
+elif [[ ${restored%% requests=*} != "restored ${ready#ready }" ]]; then
+  echo "::error::process death on API $API: '${ready#ready }' came back as '${restored#restored }'"; failed=1
+fi
 echo "::endgroup::"
 
 if [[ $API == 35 ]]; then

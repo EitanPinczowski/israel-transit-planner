@@ -289,15 +289,6 @@ internal fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
         .padding(10.dp)
 }
 
-/** The selected card's action chips: "send to driver" (car tabs) and [LocalTrackActions]. */
-@Composable
-internal fun OptionActions(onSend: (() -> Unit)?) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
-        if (onSend != null) ActionChip(R.string.send_to_driver, Icons.AutoMirrored.Filled.Send, onSend)
-        LocalTrackActions.current()
-    }
-}
-
 @Composable
 internal fun ActionChip(labelRes: Int, icon: ImageVector, onClick: () -> Unit) {
     AssistChip(

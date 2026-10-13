@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D11: the selected option's action row at the bottom of the results. -->
+<resources>
+    <string name="action_start_trip">Start trip</string>
+    <string name="action_remind">Remind me</string>
+</resources>

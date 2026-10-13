@@ -105,7 +105,7 @@ class JourneysTest {
     @Test fun j03_remind_me_arms_a_reminder() = AppDriver(compose).launch().use { d ->
         d.tripByTaps()
         d.selectTrain()
-        d.tapInResults(d.str(R.string.remind_me))
+        d.tapInResults(d.str(R.string.action_remind))
         compose.waitUntil(5_000) { d.vm.state.value.reminder != null }
         val r = d.vm.state.value.reminder!!
         if (r.leaveAt.toEpochMilli() > System.currentTimeMillis()) {
@@ -284,7 +284,7 @@ class JourneysTest {
         lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
         lm.setTestProviderEnabled(gps, true)
         try {
-            d.tapInResults(d.str(R.string.ride_start))
+            d.tapInResults(d.str(R.string.action_start_trip))
             val started = SystemClock.uptimeMillis() + 8_000
             while (!RideService.active.value && SystemClock.uptimeMillis() < started) SystemClock.sleep(200)
             if (!RideService.active.value) {
