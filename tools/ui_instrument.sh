@@ -6,13 +6,12 @@
 #                               runs `am instrument` and returns 0 only if every test passed
 #
 # Why: the instrumentation process sometimes dies ("Process crashed") with no Java FATAL in
-# logcat (see .claude/skills/ui-testing, "Flaky instrumentation deaths"). Two kinds are
-# retried ONCE PER TEST: a process killed with nothing in the crash buffer, and the known
-# MapLibre native abort (_ui_maplibre_abort). Any other crash of the app (FATAL EXCEPTION,
-# other native signal, ANR) is red at once. The retry runs only the test that was open and the
-# tests that never started; a test that dies twice and any failed assertion stay red. Every
-# retry is a ::warning:: and a block in the job summary naming its kind, and the evidence is
-# printed before the retry.
+# logcat (see .claude/skills/ui-testing, "Flaky instrumentation deaths"). One kind is
+# retried ONCE PER TEST: a process killed with nothing in the crash buffer. Any crash of the
+# app (FATAL EXCEPTION, native signal such as a MapLibre abort, ANR) is red at once. The
+# retry runs only the test that was open and the tests that never started; a test that dies
+# twice and any failed assertion stay red. Every retry is a ::warning:: and a block in the job
+# summary naming its kind, and the evidence is printed before the retry.
 
 ui_prep_emulator() {
   adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1 || true
@@ -51,8 +50,9 @@ _ui_dump_evidence() { # $1 = label
   echo "--- crash buffer"; adb logcat -d -b crash | tail -80
   echo "--- events: process deaths and kills"
   adb logcat -d -b events | grep -E "am_proc_died|am_kill|am_crash|am_anr|am_low_memory|am_drop_process" | tail -40
-  echo "--- main: the last MapLibre / exception lines (what the native abort was about)"
-  adb logcat -d -b main | grep -iE "maplibre|mbgl|PendingJava|Exception" | tail -40
+  echo "--- main: the last MapLibre / exception lines (what a native abort was about)"
+  # System.err carries the Java exception a native thread was holding when it aborted.
+  adb logcat -d -b main | grep -iE "maplibre|mbgl|PendingJava|Exception|System\.err" | tail -60
   echo "--- main/system: kills, memory, ANR, native"
   adb logcat -d -b main -b system | grep -iE "lowmemorykiller|lmkd|Killing|ANR in|has died|Fatal signal|tombstone|watchdog|OutOfMemory|Low on memory|crash" | tail -60
   echo "--- memory"
@@ -66,18 +66,6 @@ _ui_dump_evidence() { # $1 = label
 # The app (same process as the test) died for its own reasons: Java crash, ANR, or a native crash.
 _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"
-}
-
-# TEMPORARY: this MapLibre-abort retry comes out when the app fix for the abort lands (an app
-# package owns that fix; boss, 2026-10-13). Keep the evidence dump and the empty-crash-buffer retry.
-# Known intermittent app-side crash (seen 2026-10-13, twin run 38353197088): a MapLibre worker
-# thread aborts with jni::PendingJavaException, all frames in libmaplibre.so, no Java FATAL.
-# It is NOT an emulator fault and is NOT hidden: it is retried once, reported as a MapLibre
-# defect in the job summary, and a second one in the same test is red.
-_ui_maplibre_abort() {
-  local c; c=$(adb logcat -d -b crash)
-  grep -q "Abort message: 'terminating due to uncaught exception of type jni::PendingJavaException'" <<<"$c" \
-    && grep -q "libmaplibre.so" <<<"$c" && ! grep -q "FATAL EXCEPTION" <<<"$c"
 }
 
 ui_instrument() {
@@ -102,9 +90,7 @@ ui_instrument() {
     [[ -z $open_now ]] && open_now="(before the first test)"
     _ui_dump_evidence "process died during $open_now"
     local kind="the emulator killed the instrumentation process (no crash in logcat)"
-    if _ui_maplibre_abort; then
-      kind="KNOWN MAPLIBRE NATIVE ABORT (jni::PendingJavaException in libmaplibre.so): an app-side defect, not the emulator"
-    elif _ui_real_app_crash; then
+    if _ui_real_app_crash; then
       echo "::error::the app itself crashed during $open_now (see the crash buffer above): no retry"
       rc=1; break
     fi

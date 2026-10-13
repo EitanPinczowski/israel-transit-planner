@@ -105,14 +105,19 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         )
     }
 
-    fun setStops(geoJson: String) = source(STOPS_SRC)?.setGeoJson(geoJson)
+    fun setStops(geoJson: String) = setSource(STOPS_SRC, geoJson)
 
-    fun setRoute(geoJson: String) = source(ROUTE_SRC)?.setGeoJson(geoJson)
+    fun setRoute(geoJson: String) = setSource(ROUTE_SRC, geoJson)
 
-    fun setPlaces(geoJson: String) = source(PLACES_SRC)?.setGeoJson(geoJson)
+    fun setPlaces(geoJson: String) = setSource(PLACES_SRC, geoJson)
 
     /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
-    fun setVehicle(geoJson: String) = source(VEHICLE_SRC)?.setGeoJson(geoJson)
+    fun setVehicle(geoJson: String) = setSource(VEHICLE_SRC, geoJson)
+
+    /** A Compose effect can still hold this controller after a theme switch replaced [style]. */
+    private fun setSource(id: String, geoJson: String) {
+        MapGuard.run("set $id") { source(id)?.setGeoJson(geoJson) }
+    }
 
     /**
      * Fit the camera around [points] inside the part of the map our panels leave visible
@@ -121,6 +126,10 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
      * squeezed into nothing.
      */
     fun fit(points: List<LatLon>, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
+        MapGuard.run("fit") { fitNow(points, covered, marginPx, viewWidth, viewHeight) }
+    }
+
+    private fun fitNow(points: List<LatLon>, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
         val distinct = points.distinct()
         if (distinct.size < 2 || viewWidth <= 0 || viewHeight <= 0) return
         // Location tracking would pull the camera straight back to the user.
@@ -140,14 +149,17 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
     }
 
     /** The stop under a tap, as (stopId, name), or null. */
-    fun stopAt(tap: LatLng): Pair<String, String>? {
+    fun stopAt(tap: LatLng): Pair<String, String>? = MapGuard.run("stopAt") { stopAtNow(tap) }
+
+    private fun stopAtNow(tap: LatLng): Pair<String, String>? {
+        if (!style.isFullyLoaded) return null
         val screen = map.projection.toScreenLocation(tap)
         val feature = map.queryRenderedFeatures(screen, STOPS_LAYER).firstOrNull() ?: return null
         val id = feature.getStringProperty("stopId") ?: return null
         return id to (feature.getStringProperty("name") ?: "")
     }
 
-    private fun source(id: String): GeoJsonSource? = style.getSourceAs(id)
+    private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
 
     companion object {
         private const val STOPS_SRC = "app-stops"
