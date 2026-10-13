@@ -15,6 +15,47 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 MAX_CLAUDE_MD_LINES = 120
 
 
+# A request cap in core/src/main: BUDGET, MAX_TRIPS/STOPS/PLANS/PAGES/REQUESTS/CALLS, or *_PER_OPEN/SEARCH/TAP.
+REQUEST_CAP = re.compile(r"^\s*(?:private |internal )?const val (BUDGET|MAX_(?:TRIPS|STOPS|PLANS|PAGES|REQUESTS|CALLS)|[A-Z_]+_PER_(?:OPEN|SEARCH|TAP))\b")
+OWNER = re.compile(r"^\s*(?:[a-z]+ )*(?:class|object) (\w+)")
+
+
+def request_caps() -> list[str]:
+    """`Owner.NAME` of every request-cap constant in core/src/main (Phase 11 T1); owner = enclosing class/object."""
+    found = []
+    for path in sorted((ROOT / "core" / "src" / "main").rglob("*.kt")):
+        stack: list[tuple[int, str]] = []  # (indent, name) of the classes/objects around the current line
+        for line in path.read_text(encoding="utf-8").splitlines():
+            indent = len(line) - len(line.lstrip())
+            if line.lstrip().startswith("}"):
+                stack = [e for e in stack if e[0] < indent]  # the closing brace of a class
+            m = OWNER.match(line)
+            if m:
+                stack = [e for e in stack if e[0] < indent] + [(indent, m.group(1))]
+            c = REQUEST_CAP.match(line)
+            if c:
+                outer = [e for e in stack if e[0] < indent]
+                if outer:
+                    found.append(f"{outer[-1][1]}.{c.group(1)}")
+    return found
+
+
+def check_budgets() -> list[str]:
+    """Every request cap must be a row of BudgetInventoryTest and be named in the transitous-api skill."""
+    test = ROOT / "core" / "src" / "test" / "kotlin" / "il" / "transit" / "core" / "BudgetInventoryTest.kt"
+    skill = ROOT / ".claude" / "skills" / "transitous-api" / "SKILL.md"
+    if not test.exists() or not skill.exists():
+        return ["budget inventory: BudgetInventoryTest.kt or the transitous-api skill is missing"]
+    test_text, skill_text = test.read_text(encoding="utf-8"), skill.read_text(encoding="utf-8")
+    errors = []
+    for key in request_caps():
+        if f'"{key}"' not in test_text:
+            errors.append(f"request cap `{key}` has no row in BudgetInventoryTest (constant column)")
+        if f"`{key}`" not in skill_text:
+            errors.append(f"request cap `{key}` is not in the transitous-api skill's budget inventory")
+    return errors
+
+
 def main() -> int:
     text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     listed = set(re.findall(r"^\|\s*`([a-z0-9-]+)`\s*\|", text, flags=re.M))
@@ -29,6 +70,7 @@ def main() -> int:
         m = re.match(r"---\nname: ([^\n]+)\ndescription: ([^\n]+)\n---\n", head)
         if not m or m.group(1).strip() != name:
             errors.append(f"skill `{name}`: frontmatter must start with name: {name} and a description")
+    errors += check_budgets()
     lines = text.count("\n") + 1
     if lines > MAX_CLAUDE_MD_LINES:
         errors.append(f"CLAUDE.md is {lines} lines (max {MAX_CLAUDE_MD_LINES}); move detail into a skill")
