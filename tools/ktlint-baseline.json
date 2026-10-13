@@ -1,4 +1,22 @@
 {
+ "android": {
+  "argument-list-wrapping": 47,
+  "chain-method-continuation": 147,
+  "condition-wrapping": 1,
+  "function-expression-body": 1,
+  "import-ordering": 20,
+  "indent": 54,
+  "multiline-if-else": 29,
+  "multiline-loop": 3,
+  "no-blank-line-before-rbrace": 1,
+  "no-consecutive-blank-lines": 3,
+  "no-consecutive-comments": 1,
+  "no-empty-first-line-in-class-body": 19,
+  "no-unused-imports": 880,
+  "spacing-between-declarations-with-annotations": 6,
+  "spacing-between-declarations-with-comments": 11,
+  "wrapping": 14
+ },
  "core": {
   "argument-list-wrapping": 86,
   "chain-method-continuation": 228,
