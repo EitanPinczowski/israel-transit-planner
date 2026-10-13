@@ -273,6 +273,6 @@ only where the plan says. Tick only your own package's lines.
 - [x] Thumb-zone action row (≥ 48 dp) + haptics on pin drop
 
 ### Close-out (boss)
-- [ ] `docs/releases/v0.8.6.md` after Wave 2 (if the owner releases it)
-- [ ] `docs/releases/v0.9.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [x] `docs/releases/v0.8.6.md` after Wave 2 (released 2026-10-12)
+- [x] `docs/releases/v0.9.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 10 feature checked on the Pixel
