@@ -73,7 +73,7 @@ items = one finding per screen; behind an open dialog doesn't count) · R3 clipp
 (contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
 not squeezed · R8 the selected option's action row (`UiTags.ACTIONS`: Start trip, Remind me, Send to
 driver): every button ≥ 48 × 48 dp and inside the usable screen, and the selected card (`UiTags.SELECTED`)
-on screen above it, at least its top 80 dp (D11). The row never shows with the keyboard up: the sheet
+on screen above it, at least its first line, 32 dp (D11; the list is 76 dp in landscape, so a whole card can't be required). The row never shows with the keyboard up: the sheet
 is composed only while no field is edited. Blocking: R1, R7, R8. Journey findings: J1 first launch without location, J3 alarm armed, J4 Back
 closes what is open (one Back, even with the keyboard up), J10 Settings reachable with results open. Broken journeys and crashes fail the run; findings never do.
 
