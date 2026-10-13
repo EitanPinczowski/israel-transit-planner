@@ -276,3 +276,61 @@ only where the plan says. Tick only your own package's lines.
 - [x] `docs/releases/v0.8.6.md` after Wave 2 (released 2026-10-12)
 - [x] `docs/releases/v0.9.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 10 feature checked on the Pixel
+
+## Phase 11 — reliability, trust and rigorous tests
+The owner's Phase 11 list (2026-10-13) from `docs/research/phase11-ideas.md` and
+`phase11-ideas-2.md`, plus a testing track for the whole app. One cloud session per package;
+briefs, shared-file table, request budgets, CI time and owner decisions in
+`docs/agents/phase11.md`. One Opus implementer at a time while the 7-day limit warns, at most 2
+per wave: Wave 1 (T1 → E1) → Wave 2 (E2, T2) → Wave 3 (E3, T3) → **v0.9.1** → Wave 4 (E4, T4)
+→ Wave 5 (E5) → Wave 6 (E6, optional) → **v0.10.0**. A targeted Sonnet review only where the
+plan says. Tick only your own package's lines.
+
+### T1 — Core test foundation (`claude/p11-core-tests`, Sonnet, 0 requests)
+- [ ] Core coverage measured and gated (Kover; the gate only ratchets up)
+- [ ] Property tests: time and DST math, Pareto, fares, `LiveProgress`, `UserJson`, `SavedUi`
+- [ ] Parser fuzz over every fixture kind (MOTIS, Open-Meteo, Photon): no crash
+- [ ] Request-budget inventory test + a `check_docs` rule; saved-data samples per release
+
+### E1 — Reminder check + pass expiry (`claude/p11-reminder-check`, 0 requests)
+- [ ] "Check reminders": notifications, channels, exact alarms, battery, standby, location, each with its settings page
+- [ ] "Test reminder in 1 minute" through the real alarm path
+- [ ] Rav-Kav pass-expiry reminder from a typed date (3 days before and the last day)
+
+### E2 — I missed it (`claude/p11-missed-it`, 1 request per tap)
+- [ ] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet
+
+### T2 — Scheduled tests (`claude/p11-scheduled-tests`, Sonnet, ≤ 7 live requests a week)
+- [ ] Weekly mutation report (PIT) on the pure core packages
+- [ ] Weekly live contract check (≤ 5 Transitous + 1 Open-Meteo + 1 Photon), an issue on drift
+- [ ] Golden trips widened (+3) with the routing invariants applied to live answers
+
+### E3 — Leg labels (`claude/p11-leg-labels`, 0 requests, ≤ 10 recordings)
+- [ ] Train number and "Fewer stops" from `headsign`
+- [ ] Accessible-bus badge from `wheelchairAccessible` (buses only, after the ≤ 10-plan sample)
+
+### T3 — System journeys (`claude/p11-system-journeys`, Sonnet, 0 requests)
+- [ ] Emulator `system` job: Doze, app standby, reboot re-arm, time zone + DST, airplane mode
+- [ ] Process death in the Drop-off and Park & ride tabs; weekly long monkey
+- [ ] CI flake log issue (quarantine-free; two flakes in 14 days → a fix package)
+
+### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
+- [ ] "Pay with…" opens the user's payment app or its store page
+- [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
+
+### T4 — Release smoke, upgrade test, journey inventory (`claude/p11-release-upgrade`, Sonnet, 0 requests)
+- [ ] Release-APK smoke on the emulator (network off)
+- [ ] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
+- [ ] Feature × test inventory with gaps, checked by `check_docs`; 5 gap journeys
+
+### E5 — Accessibility (`claude/p11-accessibility`, 0 requests)
+- [ ] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)
+- [ ] Accessibility journey with blocking ATF checks (Hebrew + English) and font 2.0 goldens
+
+### E6 — NFC Rav-Kav spike (`claude/p11-nfc-spike`, optional, 0 requests)
+- [ ] Debug-only read of the owner's own card, clean room; owner's go/no-go
+
+### Close-out (boss)
+- [ ] `docs/releases/v0.9.1.md` after Wave 3 (if the owner releases it)
+- [ ] `docs/releases/v0.10.0.md` assembled from `docs/releases/next/*`; fragments removed
+- [ ] Owner: every Phase 11 feature checked on the Pixel, incl. the TalkBack checklist
