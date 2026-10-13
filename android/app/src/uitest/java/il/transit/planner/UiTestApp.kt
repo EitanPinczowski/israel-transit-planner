@@ -31,6 +31,21 @@ class UiTestApp : TransitApp() {
     /** No outside geocoder in UI tests: they never touch the network. */
     override val backupGeocoder: BackupGeocoder? = null
 
+    /**
+     * A wet morning, 0 requests (Phase 10 D9): 70% every hour around [NOW], so the rain note shows
+     * on the Trip results of every phone profile in ci-screens. Trips past 48 h get no note, as live.
+     */
+    override val weather: il.transit.core.weather.GuardedWeather by lazy {
+        il.transit.core.weather.GuardedWeather(
+            { _ ->
+                il.transit.core.weather.RainForecast(
+                    (-2L until 60L).map { h -> il.transit.core.weather.RainHour(NOW.plusSeconds(h * 3600), 70, 0.3) },
+                )
+            },
+            clock,
+        )
+    }
+
     override fun mapStyle(night: Boolean): String =
         if (night) "asset://uitest/blank-dark.json" else "asset://uitest/blank.json"
 

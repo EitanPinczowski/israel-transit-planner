@@ -212,6 +212,8 @@ data class UiState(
     val places: PlacesUi = PlacesUi(),
     /** "Safer change" for the opened option (Phase 10 D5). */
     val bigStop: BigStopUi = BigStopUi(),
+    /** Rain on the walking parts of the Trip options (Phase 10 D9). */
+    val rain: RainUi = RainUi(),
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -263,6 +265,8 @@ class MainViewModel(
     private val backup: BackupGeocoder? = null,
     /** Boards the night refresh saved for My lines' stops (Phase 10 D7). */
     private val timetables: il.transit.planner.data.TimetableStore? = null,
+    /** Rain on the walks (Phase 10 D9): Open-Meteo, guarded; null = no note. */
+    private val weather: il.transit.core.weather.GuardedWeather? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -591,6 +595,7 @@ class MainViewModel(
                             )
                         }
                         if (!empty) planCache?.put(cacheKey, r)
+                        if (!empty) rains.run(_state, from) // Phase 10 D9: 1 Open-Meteo forecast, cached 1 h per cell
                         r.itineraries.firstOrNull()?.let { first ->
                             if (!quiet && lastRideHint && LastRideFinder.worthAsking(first.start)) loadLastRide(from, to, first.start, back = false, asked = false)
                         }
@@ -883,6 +888,7 @@ class MainViewModel(
     }
 
     private val bigStops = BigStopCheck(viewModelScope, api) { language }
+    private val rains = RainCheck(viewModelScope, weather)
 
     /** "Use this change" / "Back to the original change" (Phase 10 D5). */
     fun useBigStop(use: Boolean) = _state.update { applyBigStop(it, use) }
@@ -1207,7 +1213,7 @@ class MainViewModel(
             initializer {
                 // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
                 Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather)
             }
         }
     }

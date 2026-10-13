@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D9: גשם בקטעי ההליכה. English in values/. -->
+<resources>
+    <string name="rain_likely_chance">צפוי גשם בסביבות ⁨%1$s⁩ (⁨%2$d%%⁩⁠).</string>
+    <string name="rain_likely_mm">צפוי גשם בסביבות ⁨%1$s⁩ (⁨%2$s⁩ מ״מ).</string>
+    <string name="rain_least_walking">הכי מעט הליכה: ⁨%1$d⁩ דק׳ (האפשרות של ⁨%2$s⁩⁠).</string>
+    <string name="rain_sort">מעט הליכה קודם</string>
+    <string name="rain_credit">מזג אוויר: Open-Meteo</string>
+    <string name="rain_setting_title">גשם בדרך</string>
+    <string name="rain_setting_toggle">להתריע כשצפוי גשם בזמן ההליכה</string>
+    <string name="rain_setting_help">שואל את Open-Meteo על התחזית ליד נקודת המוצא (מעוגלת לכ־10 ק״מ), לכל היותר פעם בשעה, לנסיעות ב־48 השעות הקרובות. המסלול שלך לא נשלח.</string>
+</resources>

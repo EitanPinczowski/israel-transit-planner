@@ -10,6 +10,8 @@ import il.transit.core.search.FallbackGeocoder
 import il.transit.planner.data.AndroidGeocoder
 import il.transit.core.search.GuardedGeocoder
 import il.transit.core.search.PhotonClient
+import il.transit.core.weather.GuardedWeather
+import il.transit.core.weather.OpenMeteoClient
 import il.transit.core.api.Itinerary
 import il.transit.core.plan.NightRefresh
 import il.transit.core.remind.Reminder
@@ -79,6 +81,8 @@ open class TransitApp : Application() {
         val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this)) else null
         FallbackGeocoder(device, GuardedGeocoder(PhotonClient()))
     }
+    /** Rain on the walks (Phase 10 D9): Open-Meteo, told only the rounded start. */
+    open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
     val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {

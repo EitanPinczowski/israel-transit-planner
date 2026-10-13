@@ -262,7 +262,7 @@ only where the plan says. Tick only your own package's lines.
 - [x] Monthly travel report as a shareable CSV + text
 
 ### D9 — Rain-aware walking (`claude/p10-rain`, 1 Open-Meteo request per search, cached 1 h)
-- [ ] Open-Meteo added to CLAUDE.md's hard rules; "Rain likely around 08:10" note → least walking
+- [x] Open-Meteo added to CLAUDE.md's hard rules; "Rain likely around 08:10" note → least walking
 
 ### D10 — Live Updates (`claude/p10-live-updates`, 0 requests)
 - [ ] `compileSdk` 36; ride and leave countdown as Live Updates on Android 16, today's notification below

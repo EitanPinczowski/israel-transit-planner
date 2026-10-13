@@ -124,6 +124,8 @@ data class UserSettings(
      *  MOTIS's own minimum. Never below 1 (D12): a saved `null` (the old "Off") loads as 1.
      *  Sent as `additionalTransferTime`, so it is part of the cache key. */
     val transferBufferMin: Int = MIN_TRANSFER_BUFFER_MIN,
+    /** A note when rain is likely on the walks, from Open-Meteo (Phase 10 D9; owner, 2026-10-13: on). */
+    val rainAware: Boolean = true,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

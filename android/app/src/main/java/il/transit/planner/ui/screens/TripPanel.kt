@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -43,7 +42,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
@@ -468,6 +466,7 @@ internal fun ResultsPanel(
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
+            RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
             if (!state.loading && state.error == null && state.chain == null && state.options.size > 1) SortChips(state, vm) // D12: every tab
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -714,7 +713,8 @@ internal fun WayBackRow(vm: MainActions, labelRes: Int = R.string.way_back_after
 /** Fastest · Fewest transfers · Least walking: the same answers, re-ordered. */
 @Composable
 internal fun SortChips(state: UiState, vm: MainActions) {
-    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    // Wraps to a second line on narrow phones and large text, never clipped (designer review, D9).
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         TripSort.entries.forEach { s ->
             val label = when (s) {
                 TripSort.FASTEST -> R.string.sort_fastest
