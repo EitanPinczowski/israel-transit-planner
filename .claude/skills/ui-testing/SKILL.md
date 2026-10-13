@@ -79,9 +79,10 @@ closes what is open (one Back, even with the keyboard up), J10 Settings reachabl
 its process, so the shell drives it and the uitest-only `ProcessDeathProbe` (an
 `ActivityLifecycleCallbacks` in `UiTestApp`) does the taps: `am start -S --ez
 uitest_process_death_setup true` → BGU → Tel Aviv, second option, its first ride's trip sheet,
-log `ProcessDeath: ready mode=… selected=… option=… sheet=…`; Home, `am kill`, `am start` → the
-recreated Activity logs `restored …` plus the requests since the restart. The step fails unless both
-lines match (same tab, option and sheet). The options come from the Trip cache (`SavedUi`), never a
+log `ProcessDeath: ready mode=… selected=… option=… sheet=…`; Home, `am kill` (a SIGKILL through
+`run-as` when Android won't), `am start` → the recreated Activity logs `restored saved=true …` plus
+the requests since the restart. The step fails unless the pid changed, the Activity came back from
+its saved state and both lines match (same tab, option and sheet). The options come from the Trip cache (`SavedUi`), never a
 new `plan`; the reopened trip sheet asks its one `trip` again.
 
 ## Adding to it

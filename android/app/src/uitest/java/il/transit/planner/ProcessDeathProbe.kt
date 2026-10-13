@@ -30,22 +30,23 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     const val EXTRA = "uitest_process_death_setup"
     const val TAG = "ProcessDeath"
 
-    /** What onResume should do for the Activity created last: set up, report, or nothing. */
+    /** What onResume should do for the Activity created last: set up, or report what it shows. */
     private var pending: String? = null
+
+    /** The Activity created last came from a saved state (recreated after the kill). */
+    private var fromSaved = false
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         if (activity !is MainActivity) return
-        pending = when {
-            savedInstanceState != null -> "report"
-            activity.intent.getBooleanExtra(EXTRA, false) -> "setup"
-            else -> null
-        }
+        fromSaved = savedInstanceState != null
+        pending = if (!fromSaved && activity.intent.getBooleanExtra(EXTRA, false)) "setup" else "report"
     }
 
     override fun onActivityResumed(activity: Activity) {
         val main = activity as? MainActivity ?: return
         val what = pending ?: return
         pending = null
+        val saved = fromSaved
         val app = main.application as UiTestApp
         main.lifecycleScope.launch {
             // This runs inside super.onResume(), before MainActivity creates its trip-sheet
@@ -71,7 +72,8 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 val before = app.replay.calls.get()
                 withTimeoutOrNull(10_000) { vm.state.first { it.results != null } }
                 delay(2_000) // the trip sheet reopens once its option is back
-                Log.i(TAG, "restored ${line(vm.state.value, trip)} requests=${app.replay.calls.get() - before}")
+                // saved=false: this Activity did not come back from a saved state (the script says why).
+                Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip)} requests=${app.replay.calls.get() - before}")
             }
         }
     }

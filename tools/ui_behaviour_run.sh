@@ -67,9 +67,21 @@ for _ in $(seq 1 30); do
   [[ -n $ready ]] && break
   sleep 1
 done
+# Android 8's SystemUI crash dialog can hold the key focus, and Home would go to it: close it first.
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb shell input keyevent KEYCODE_HOME
 sleep 2
+pid_before=$(adb shell pidof "$PKG" | tr -d '\r')
 adb shell am kill "$PKG"
+sleep 1
+# am kill only kills a process Android considers safe to kill; the uitest build is debuggable,
+# so its own uid can SIGKILL it (what the low-memory killer does), keeping the saved state.
+if [[ -n $pid_before ]] && adb shell pidof "$PKG" >/dev/null; then
+  echo "am kill left pid $pid_before running; SIGKILL through run-as"
+  adb shell run-as "$PKG" kill -9 "$pid_before" || true
+  sleep 1
+fi
+adb logcat -c
 adb shell am start -W -n "$ACT" >/dev/null
 restored=""
 for _ in $(seq 1 30); do
@@ -77,13 +89,22 @@ for _ in $(seq 1 30); do
   [[ -n $restored ]] && break
   sleep 1
 done
-echo "before: $ready"
-echo "after:  $restored"
-adb shell pidof "$PKG" >/dev/null || { echo "::error::app not running after process death on API $API"; failed=1; }
+pid_after=$(adb shell pidof "$PKG" | tr -d '\r')
+echo "before: $ready (pid $pid_before)"
+echo "after:  $restored (pid $pid_after)"
+echo "focus:  $(adb shell dumpsys window | grep -m1 mCurrentFocus)"
+[[ -n $pid_after ]] || { echo "::error::app not running after process death on API $API"; failed=1; }
 if [[ -z $ready ]]; then
   echo "::error::process death: the probe never got the search ready on API $API"; failed=1
-elif [[ ${restored%% requests=*} != "restored ${ready#ready }" ]]; then
-  echo "::error::process death on API $API: '${ready#ready }' came back as '${restored#restored }'"; failed=1
+elif [[ $pid_before == "$pid_after" ]]; then
+  echo "::error::process death on API $API: the process was never killed (pid $pid_before)"; failed=1
+elif [[ $restored != "restored saved=true "* ]]; then
+  echo "::error::process death on API $API: the Activity did not come back from its saved state: '$restored'"; failed=1
+else
+  got=${restored#restored saved=true }
+  if [[ ${got%% requests=*} != "${ready#ready }" ]]; then
+    echo "::error::process death on API $API: '${ready#ready }' came back as '$got'"; failed=1
+  fi
 fi
 echo "::endgroup::"
 
