@@ -1,7 +1,9 @@
 package il.transit.planner.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import il.transit.core.api.BudgetedTransitApi
@@ -214,6 +216,8 @@ data class UiState(
     val bigStop: BigStopUi = BigStopUi(),
     /** Rain on the walking parts of the Trip options (Phase 10 D9). */
     val rain: RainUi = RainUi(),
+    /** Bumped when a route is tapped on the map (D11): the results list scrolls to its card. */
+    val mapPick: Int = 0,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -267,6 +271,8 @@ class MainViewModel(
     private val timetables: il.transit.planner.data.TimetableStore? = null,
     /** Rain on the walks (Phase 10 D9): Open-Meteo, guarded; null = no note. */
     private val weather: il.transit.core.weather.GuardedWeather? = null,
+    /** The search and the chosen option across process death (D11, [SavedUi]); null = not kept. */
+    private val saved: SavedStateHandle? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -595,6 +601,8 @@ class MainViewModel(
                             )
                         }
                         if (!empty) planCache?.put(cacheKey, r)
+                        shownKey = cacheKey.takeIf { !empty }
+                        persist()
                         if (!empty) rains.run(_state, from) // Phase 10 D9: 1 Open-Meteo forecast, cached 1 h per cell
                         r.itineraries.firstOrNull()?.let { first ->
                             if (!quiet && lastRideHint && LastRideFinder.worthAsking(first.start)) loadLastRide(from, to, first.start, back = false, asked = false)
@@ -659,6 +667,7 @@ class MainViewModel(
                 // No signal: show what this trip looked like last time, clearly marked.
                 // (An errand chain is not cached: its saved copy would be another trip.)
                 val cached = if (s.mode == AppMode.TRIP && s.chainStops.isEmpty()) planCache?.get(cacheKey) else null
+                shownKey = cacheKey.takeIf { cached != null }
                 _state.update {
                     if (cached != null) {
                         it.copy(loading = false, results = cached.value, offlineSince = cached.savedAt, offlineNight = cached.isLastNight(clock.instant()), resultsAt = cached.savedAt)
@@ -684,7 +693,8 @@ class MainViewModel(
     private fun loadPage(direction: TripPages.Direction) {
         val s = _state.value
         val current = s.results ?: return
-        val q = tripQuery ?: return
+        // Options restored after process death (D11) have no query yet: the same search, rebuilt.
+        val q = tripQuery ?: restoredQuery(s) ?: return
         if (s.mode != AppMode.TRIP || s.chain != null || s.loading || s.pages.loading != null) return
         _state.update { it.copy(pages = TripPagesUi(loading = direction)) }
         viewModelScope.launch {
@@ -708,6 +718,12 @@ class MainViewModel(
                 }
             }
         }
+    }
+
+    private fun restoredQuery(s: UiState): TripQuery? {
+        val from = resolve(s.from) ?: return null
+        val to = s.to?.let(::resolve) ?: return null
+        return TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language).also { tripQuery = it }
     }
 
     // --- "time to leave" reminder ----------------------------------------------------------
@@ -885,6 +901,13 @@ class MainViewModel(
     fun select(index: Int) {
         _state.update { it.copy(selected = index) }
         bigStops.run(_state) // Phase 10 D5: 0 requests, or 2 `trip` for a change at a small stop
+    }
+
+    /** A route tapped on the map (D11): its card is selected and the list scrolls to it. */
+    fun selectFromMap(index: Int) {
+        if (index !in _state.value.options.indices || index == _state.value.selected) return
+        _state.update { it.copy(mapPick = it.mapPick + 1) }
+        select(index)
     }
 
     private val bigStops = BigStopCheck(viewModelScope, api) { language }
@@ -1203,17 +1226,98 @@ class MainViewModel(
         return Suggestion(m.name, geocodeDetail(m), LatLon(m.lat, m.lon), saved = false, isStop = m.type == "STOP", stopId = m.id.takeIf { m.category == StopCode.CATEGORY })
     }
 
+    // --- process death (Phase 10 D11) -----------------------------------------------------------
+
+    /** The Trip cache entry the shown options were saved under; restoring reads it, 0 requests. */
+    private var shownKey: String? = null
+
+    /** The open trip sheet's leg in the selected option (the Activity tells, [rideSheet]). */
+    private var rideLeg: Int? = null
+
+    /** A trip sheet that was open before the process died, waiting for its option to come back. */
+    private var restoreRide: Int? = null
+
+    /** While the saved search is being restored, the half-restored state is not saved over it. */
+    private var restoring = false
+    private var lastSaved: SavedUi? = null
+
+    /** The Activity reports the open trip sheet: its leg index in the selected option, or null. */
+    fun rideSheet(legIndex: Int?) {
+        if (legIndex == rideLeg) return
+        rideLeg = legIndex
+        if (legIndex != null) restoreRide = null
+        persist()
+    }
+
+    /** The trip sheet to open again after a restore, once (null = none). */
+    fun takeRestoredRide(): Int? = restoreRide.also { if (_state.value.selectedItinerary != null) restoreRide = null }
+
+    private fun persist() {
+        val h = saved ?: return
+        if (restoring) return
+        val now = SavedUi.of(_state.value, shownKey, rideLeg ?: restoreRide, optionId(_state.value.selectedItinerary))
+        if (now == lastSaved) return
+        lastSaved = now
+        now.write { k, v -> h[k] = v }
+    }
+
+    /**
+     * Back from process death: the search fields at once; the options from the Trip cache (never a
+     * new search), the chosen one found again by its times; the open sheet after them.
+     */
+    private fun restore(r: SavedUi) {
+        restoring = true
+        _state.update { it.copy(mode = r.mode, from = r.from, to = r.to, driverTo = r.driverTo, timeMode = r.timeMode, time = r.time) }
+        (r.sheet as? SavedUi.Sheet.Stop)?.let { openStop(it.stopId, it.name) }
+        restoreRide = (r.sheet as? SavedUi.Sheet.Ride)?.legIndex
+        val key = r.cacheKey
+        if (key == null || planCache == null) {
+            restoreRide = null
+            restoring = false
+            persist()
+            return
+        }
+        viewModelScope.launch {
+            val entry = try { planCache.get(key, clock.instant()) } catch (e: CancellationException) { throw e } catch (e: Exception) { null }
+            // The sort order is a setting: wait for the stored one before finding the option again.
+            val loaded = _state.first { it.settingsLoaded }
+            if (entry != null && loaded.results == null && !loaded.loading && loaded.to == r.to) {
+                shownKey = key
+                _state.update {
+                    val sorted = sortOptions(entry.value, it.settings.tripSort, it.timeMode == TimeMode.ARRIVE_BY)
+                    val pick = sorted.indexOfFirst { o -> optionId(o) == r.optionId }.takeIf { i -> i >= 0 }
+                        ?: r.selected.coerceAtMost((sorted.size - 1).coerceAtLeast(0))
+                    it.copy(results = entry.value, resultsAt = entry.savedAt, selected = pick)
+                }
+            } else {
+                restoreRide = null
+            }
+            restoring = false
+            persist()
+        }
+    }
+
+    init {
+        // Last in the class: openStop and the checks it uses must be initialised first.
+        saved?.let { h -> SavedUi.read { k -> h.get<Any?>(k) } }?.let(::restore)
+        if (saved != null) viewModelScope.launch { _state.collect { persist() } }
+    }
+
     companion object {
         private const val REFRESH_MS = 120_000L
+
+        /** The selected option, recognised again in a re-read list: its times and leg count. */
+        internal fun optionId(it: Itinerary?): String? = it?.let { o -> "${o.start.epochSecond}-${o.end.epochSecond}-${o.legs.size}" }
 
         /** How long [openTripHome] waits for a first fix (a cold start loads the map first) before using the cached origin. */
         private const val FIX_WAIT_MS = 5_000L
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
+                val saved = createSavedStateHandle()
                 // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
                 Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved)
             }
         }
     }

@@ -162,8 +162,10 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun DropOffList(state: UiState, result: DropOffResult, vm: MainActions, modifier: Modifier) {
-    val context = LocalContext.current
-    LazyColumn(modifier) {
+    // Items above the options: the drive time and the "no stop on the way" line (map ↔ list, D11).
+    val before = (if (result.directDriveSec != null) 1 else 0) + (if (result.options.none { it.payload.kind == DropOffKind.STOP_ON_THE_WAY }) 1 else 0)
+    LazyColumn(modifier, state = rememberOptionsListState(state, before + state.sortItems(), fitSelected = true)) {
+        sortChipsItem(state, vm)
         result.directDriveSec?.let { sec ->
             item {
                 Text(
@@ -178,26 +180,14 @@ internal fun DropOffList(state: UiState, result: DropOffResult, vm: MainActions,
         }
         itemsIndexed(result.options) { i, option ->
             val row = remember(option, state.settings.fareProfile) { dropOffRow(option.payload, state.settings.fareProfile) }
-            // Locals, not row.stop/row.stopAt: no smart casts across modules.
-            val stop = row.stop
-            val at = row.stopAt
-            val shareText = if (stop != null && at != null) {
-                stringResource(R.string.share_dropoff, stop, NavLinks.waze(at), NavLinks.googleMaps(at))
-            } else {
-                null
-            }
-            DropOffCard(row, selected = i == state.selected, onClick = { vm.select(i) }, onSend = shareText?.let { text ->
-                {
-                    val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
-                    context.startActivity(Intent.createChooser(send, null))
-                }
-            })
+            // "Send to driver" is in the sheet's bottom row (D11, ActionRow).
+            DropOffCard(row, selected = i == state.selected, onClick = { vm.select(i) })
         }
     }
 }
 
 @Composable
-internal fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit, onSend: (() -> Unit)?) {
+internal fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit) {
     Column(Modifier.option(selected, onClick)) {
         val title = when (row.kind) {
             DropOffKind.STOP_ON_THE_WAY -> stringResource(R.string.get_out_at, row.stop.orEmpty(), row.detourMin)
@@ -214,6 +204,5 @@ internal fun DropOffCard(row: DropOffRow, selected: Boolean, onClick: () -> Unit
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) OptionActions(onSend)
     }
 }

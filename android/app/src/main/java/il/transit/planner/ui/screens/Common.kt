@@ -102,6 +102,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -285,17 +286,9 @@ internal fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
         .clip(shape)
         .background(if (selected) c.primaryContainer else Color.Transparent)
         .border(1.dp, if (selected) c.primary.copy(alpha = 0.6f) else Color.Transparent, shape)
+        .then(if (selected) Modifier.testTag(il.transit.planner.ui.UiTags.SELECTED) else Modifier)
         .clickable(onClick = onClick)
         .padding(10.dp)
-}
-
-/** The selected card's action chips: "send to driver" (car tabs) and [LocalTrackActions]. */
-@Composable
-internal fun OptionActions(onSend: (() -> Unit)?) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
-        if (onSend != null) ActionChip(R.string.send_to_driver, Icons.AutoMirrored.Filled.Send, onSend)
-        LocalTrackActions.current()
-    }
 }
 
 @Composable

@@ -448,6 +448,9 @@ internal fun ResultsPanel(
             }
         }
         if (!collapsed) {
+            // Everything between the header and the action row shrinks first (the list, then the
+            // banners): the row keeps its full 48 dp even on a 320 dp phone at a large font (D11, R8).
+            Column(Modifier.fillMaxWidth().weight(1f, fill = false)) {
             state.offlineSince?.let { since ->
                 // A warning, not an error: the answers are still useful, just maybe stale.
                 Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
@@ -465,9 +468,10 @@ internal fun ResultsPanel(
             DayNoticeBanner(state, vm) // Phase 10 D3: holiday / no service / timetable horizon, above the options
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
-            CompositionLocalProvider(LocalTrackActions provides { TrackChips(state, actions) }) {
-            RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
-            if (!state.loading && state.error == null && state.chain == null && state.options.size > 1) SortChips(state, vm) // D12: every tab
+            TransferWarningTick(state) // D11: a haptic tick when the selected option warns of a tight change
+            // Every results list carries the sort chips (and the Trip list the rain note) as its first
+            // items (D11 designer review): fixed above it, on a 360 dp phone they left no room for a card.
+            val showSort = state.showSortChips()
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -475,7 +479,9 @@ internal fun ResultsPanel(
                 state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm, list)
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, list)
                 state.mode == AppMode.PARK_RIDE && state.parkRide.result != null -> ParkRideList(state, state.parkRide.result, vm, list)
-                else -> LazyColumn(list) {
+                else -> LazyColumn(list, state = rememberOptionsListState(state, before = 1 + (if (showSort) 1 else 0) + (if (state.chain != null) 1 else 0), fitSelected = true)) {
+                    item { RainNoteRow(state, vm) } // Phase 10 D9: rain on the walks, above the options
+                    if (showSort) item { SortChips(state, vm) } // D12: every tab
                     state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
                         if (state.chain != null) {
@@ -498,6 +504,8 @@ internal fun ResultsPanel(
                 }
             }
             }
+            // D11: Start trip, Remind me, Send to driver: below the list, in thumb reach.
+            ActionRow(state, actions)
         }
     }
 }
@@ -534,22 +542,6 @@ internal fun RideRow(state: UiState, vm: MainActions) {
         }
         TextButton(onClick = vm::stopRide) { Text(stringResource(R.string.ride_stop)) }
     }
-}
-
-/**
- * The chips that act on the selected option: leave reminder (Trip tab) and the get-off
- * alert. Provided by the results sheet, drawn by whichever card is selected, so they sit
- * next to the trip they act on instead of taking two rows above the list.
- */
-internal val LocalTrackActions = compositionLocalOf<@Composable () -> Unit> { {} }
-
-@Composable
-internal fun TrackChips(state: UiState, actions: ScreenActions) {
-    val canTrack = state.selectedItinerary?.firstTransitLeg != null && state.offlineSince == null
-    if (state.mode == AppMode.TRIP && state.reminder == null && canTrack) {
-        ActionChip(R.string.remind_me, Icons.Default.Notifications, actions.remind)
-    }
-    if (!state.riding && canTrack) ActionChip(R.string.ride_start, Icons.Default.PlayArrow, actions.startRide)
 }
 
 @Composable
@@ -619,10 +611,7 @@ internal fun ItineraryCard(
         Text("$transfers · $walk", style = MaterialTheme.typography.bodySmall)
         RideDetailsLines(itin, selected)
         if (selected) extra?.invoke()
-        if (selected) {
-            WalkDirections(itin)
-            OptionActions(onSend = null)
-        }
+        if (selected) WalkDirections(itin)
     }
 }
 

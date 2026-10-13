@@ -33,6 +33,8 @@ import androidx.core.content.ContextCompat
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
+import il.transit.core.geo.OptionsMap
+import il.transit.planner.ui.screens.Haptics
 import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
 import il.transit.planner.ui.screens.CalendarChip
@@ -221,6 +223,9 @@ class MainActivity : ComponentActivity() {
                     val c = ctl ?: return@LaunchedEffect
                     c.setRoute(if (selected == null) MapData.EMPTY else MapData.itinerary(selected, carPath))
                 }
+                // D11: the other options thin and faded under the selected one; a tap on one selects its card.
+                val options = state.options
+                LaunchedEffect(ctl, options, state.selected) { ctl?.setOthers(OptionsMap.others(options, state.selected)) }
                 // Re-fit when the panels change size too (sheet folded, search card unfolded):
                 // the route always sits in the part of the map that is actually visible.
                 LaunchedEffect(ctl, selected, carPath, pad) {
@@ -240,6 +245,15 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(selected) {
                     val open = tripVm.sheet.value ?: return@LaunchedEffect
                     if (selected?.legs?.contains(open.leg) != true) tripVm.close()
+                }
+                // D11: the open trip sheet is kept across process death, and reopened once its option is back.
+                LaunchedEffect(tripSheet?.leg, selected) {
+                    vm.rideSheet(tripSheet?.leg?.let { leg -> selected?.legs?.indexOf(leg) }?.takeIf { it >= 0 })
+                }
+                LaunchedEffect(selected) {
+                    val itin = selected ?: return@LaunchedEffect
+                    val leg = vm.takeRestoredRide()?.let { itin.legs.getOrNull(it) } ?: return@LaunchedEffect
+                    tripVm.open(leg, LegPalette.colorOf(itin.legs, leg))
                 }
 
                 val actions = ScreenActions(
@@ -335,11 +349,17 @@ class MainActivity : ComponentActivity() {
         loadMapStyle(m)
         // MapLibre calls these from its native loop: nothing may throw out of them (MapGuard).
         m.addOnMapLongClickListener { p ->
-            MapGuard.run("long press") { vm.onMapLongPress(LatLon(p.latitude, p.longitude)) } != null
+            MapGuard.run("long press") {
+                Haptics.pin(mapView) // D11: a tick as the pin drops
+                vm.onMapLongPress(LatLon(p.latitude, p.longitude))
+            } != null
         }
         m.addOnMapClickListener { p ->
-            val hit = controller.value?.stopAt(p) ?: return@addOnMapClickListener false
-            MapGuard.run("stop tap") { vm.openStop(hit.first, hit.second) } != null
+            val c = controller.value ?: return@addOnMapClickListener false
+            c.stopAt(p)?.let { hit -> return@addOnMapClickListener MapGuard.run("stop tap") { vm.openStop(hit.first, hit.second) } != null }
+            // D11: a faded route selects its option; the results list scrolls to the card.
+            val option = c.optionAt(p) ?: return@addOnMapClickListener false
+            MapGuard.run("route tap") { vm.selectFromMap(option) } != null
         }
         m.addOnCameraIdleListener {
             MapGuard.run("camera idle") {

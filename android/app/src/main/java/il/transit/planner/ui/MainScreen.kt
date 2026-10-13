@@ -172,6 +172,10 @@ object UiTags {
     /** The results sheet with the attribution chip above it (phones only). */
     const val BOTTOM = "bottom"
     const val SUGGESTIONS = "suggestions"
+    /** The selected option's action row at the bottom of the results (D11): the audit checks its targets (R8). */
+    const val ACTIONS = "actions"
+    /** The selected option's card: R8 wants it on screen above the action row. */
+    const val SELECTED = "selected-option"
 }
 
 /** What only the Activity can do: permissions, the map camera, the offline store. */

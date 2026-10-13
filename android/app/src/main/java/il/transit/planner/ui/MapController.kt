@@ -26,6 +26,7 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
 
     init {
         style.addSource(GeoJsonSource(STOPS_SRC, MapData.EMPTY))
+        style.addSource(GeoJsonSource(OTHERS_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(ROUTE_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(PLACES_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(VEHICLE_SRC, MapData.EMPTY))
@@ -39,6 +40,16 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
                 PropertyFactory.circleStrokeColor(c.stopStroke),
                 PropertyFactory.circleStrokeWidth(2f),
             ).apply { setMinZoom(STOPS_MIN_ZOOM) },
+        )
+        // The options not selected (D11): thin and faded, under the selected route; a tap selects one.
+        style.addLayer(
+            LineLayer(OTHERS_LAYER, OTHERS_SRC).withProperties(
+                PropertyFactory.lineColor(Expression.toColor(Expression.get("color"))),
+                PropertyFactory.lineWidth(4f),
+                PropertyFactory.lineOpacity(c.others),
+                PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+                PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+            ),
         )
         style.addLayer(
             LineLayer(ROUTE_WALK_LAYER, ROUTE_SRC)
@@ -109,6 +120,9 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
 
     fun setRoute(geoJson: String) = setSource(ROUTE_SRC, geoJson)
 
+    /** The other options (`OptionsMap.others`), drawn faded under [setRoute]'s. */
+    fun setOthers(geoJson: String) = setSource(OTHERS_SRC, geoJson)
+
     fun setPlaces(geoJson: String) = setSource(PLACES_SRC, geoJson)
 
     /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
@@ -159,12 +173,28 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         return id to (feature.getStringProperty("name") ?: "")
     }
 
+    /** The option whose faded line is under a tap (a finger's width around it), or null. */
+    fun optionAt(tap: LatLng): Int? = MapGuard.run("optionAt") { optionAtNow(tap) }
+
+    private fun optionAtNow(tap: LatLng): Int? {
+        if (!style.isFullyLoaded) return null
+        val p = map.projection.toScreenLocation(tap)
+        val r = TAP_SLOP_DP * android.content.res.Resources.getSystem().displayMetrics.density
+        val box = android.graphics.RectF(p.x - r, p.y - r, p.x + r, p.y + r)
+        return map.queryRenderedFeatures(box, OTHERS_LAYER).firstNotNullOfOrNull { f -> f.getNumberProperty("option")?.toInt() }
+    }
+
     private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
 
     companion object {
         private const val STOPS_SRC = "app-stops"
         private const val ROUTE_SRC = "app-route"
         private const val PLACES_SRC = "app-places"
+        private const val OTHERS_SRC = "app-others"
+        private const val OTHERS_LAYER = "app-others-layer"
+
+        /** Half the 48 dp touch target: a thin line is hard to hit exactly. */
+        private const val TAP_SLOP_DP = 24f
         const val STOPS_LAYER = "app-stops-layer"
         private const val ROUTE_LAYER = "app-route-layer"
         private const val ROUTE_CASING_LAYER = "app-route-casing-layer"
@@ -176,9 +206,9 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         private const val STOPS_MIN_ZOOM = 15f
 
         /** Marker fill (stops, boarding points, saved-place ring), stop ring, walk line, ride halo. */
-        private class Palette(val fill: String, val stopStroke: String, val walk: String, val casing: String)
+        private class Palette(val fill: String, val stopStroke: String, val walk: String, val casing: String, val others: Float)
 
-        private val LIGHT = Palette(fill = "#FFFFFF", stopStroke = "#1E88E5", walk = "#6B6F76", casing = "#FFFFFF")
-        private val DARK = Palette(fill = "#1D2024", stopStroke = "#9ECAFF", walk = "#B4B8C0", casing = "#111418")
+        private val LIGHT = Palette(fill = "#FFFFFF", stopStroke = "#1E88E5", walk = "#6B6F76", casing = "#FFFFFF", others = 0.65f)
+        private val DARK = Palette(fill = "#1D2024", stopStroke = "#9ECAFF", walk = "#B4B8C0", casing = "#111418", others = 0.5f)
     }
 }

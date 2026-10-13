@@ -23,6 +23,11 @@ import java.time.ZoneOffset
 class UiTestApp : TransitApp() {
     override val clock: Clock = Clock.fixed(NOW, ZoneOffset.UTC)
 
+    override fun onCreate() {
+        super.onCreate()
+        registerActivityLifecycleCallbacks(ProcessDeathProbe) // the process-death journey (D11)
+    }
+
     val replay: ReplayTransitApi by lazy {
         ReplayTransitApi(clock) { name -> assets.open("fixtures/$name.json").bufferedReader().use { it.readText() } }
     }

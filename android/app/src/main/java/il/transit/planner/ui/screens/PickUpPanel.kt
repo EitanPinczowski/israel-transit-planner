@@ -162,25 +162,15 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun PickUpList(state: UiState, result: PickUpResult, vm: MainActions, modifier: Modifier) {
-    val context = LocalContext.current
-    LazyColumn(modifier) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = state.sortItems(), fitSelected = true)) {
+        sortChipsItem(state, vm)
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_pick_up, state.maxPickUpDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
         itemsIndexed(result.options) { i, option ->
             val row = remember(option, result.baseline, state.settings.fareProfile) { pickUpRow(option, result.baseline, state.settings.fareProfile) }
-            val shareText = stringResource(
-                R.string.share_pickup,
-                row.stop,
-                row.pickUpTime,
-                row.driverLeaves,
-                NavLinks.waze(row.stopAt),
-                NavLinks.googleMaps(row.stopAt),
-            )
-            PickUpCard(row, selected = i == state.selected, onClick = { vm.select(i) }) {
-                val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, shareText)
-                context.startActivity(Intent.createChooser(send, null))
-            }
+            // "Send to driver" is in the sheet's bottom row (D11, ActionRow).
+            PickUpCard(row, selected = i == state.selected, onClick = { vm.select(i) })
         }
         result.baseline?.let { b ->
             item {
@@ -196,7 +186,7 @@ internal fun PickUpList(state: UiState, result: PickUpResult, vm: MainActions, m
 }
 
 @Composable
-internal fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, onSend: () -> Unit) {
+internal fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit) {
     Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.picked_up_at, row.stop, row.pickUpTime), style = MaterialTheme.typography.titleSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -216,6 +206,5 @@ internal fun PickUpCard(row: PickUpRow, selected: Boolean, onClick: () -> Unit, 
             row.summary.chips.forEach { LegChipView(it) }
             FareText(row.summary.fare)
         }
-        if (selected) OptionActions(onSend)
     }
 }

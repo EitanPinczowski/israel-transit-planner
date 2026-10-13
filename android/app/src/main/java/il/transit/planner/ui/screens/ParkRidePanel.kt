@@ -40,7 +40,8 @@ import il.transit.planner.ui.UiState
 @Composable
 internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainActions, modifier: Modifier) {
     val context = LocalContext.current
-    LazyColumn(modifier) {
+    LazyColumn(modifier, state = rememberOptionsListState(state, before = state.sortItems() + (if (result.options.isEmpty()) 1 else 0), fitSelected = true)) {
+        sortChipsItem(state, vm)
         if (result.options.isEmpty()) {
             item { Text(stringResource(R.string.no_park_ride, state.parkRide.maxDriveMin), Modifier.padding(vertical = 8.dp)) }
         }
@@ -92,10 +93,8 @@ private fun ParkRideCard(row: ParkRideRow, selected: Boolean, onClick: () -> Uni
             FareText(row.summary.fare)
         }
         if (selected) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 2.dp)) {
-                ActionChip(R.string.navigate_to_station, Icons.Default.Place, onNavigate)
-                LocalTrackActions.current()
-            }
+            // Start trip is in the sheet's bottom row (D11, ActionRow); driving there stays with the station.
+            ActionChip(R.string.navigate_to_station, Icons.Default.Place, onNavigate)
         }
     }
 }

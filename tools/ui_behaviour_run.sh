@@ -54,16 +54,58 @@ else
   instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
 fi
 
-# Process death: leave the app, let the system kill it, come back.
+# Process death: leave the app, let the system kill it, come back. The uitest build's
+# ProcessDeathProbe searches, picks the second option and opens its trip sheet ("ready …"),
+# then reports what the recreated Activity shows ("restored …"): the same option, the same
+# sheet, and no new search (Phase 10 D11).
 echo "::group::process death"
-adb shell am start -W -n "$ACT" >/dev/null
-sleep 4
+adb logcat -c
+adb shell am start -S -W -n "$ACT" --ez uitest_process_death_setup true >/dev/null
+ready=""
+for _ in $(seq 1 30); do
+  ready=$(adb logcat -d -s ProcessDeath:I | grep -o "ready .*" | tail -1)
+  [[ -n $ready ]] && break
+  sleep 1
+done
+# Android 8's SystemUI crash dialog can hold the key focus, and Home would go to it: close it first.
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 adb shell input keyevent KEYCODE_HOME
-sleep 1
+sleep 2
+pid_before=$(adb shell pidof "$PKG" | tr -d '\r')
 adb shell am kill "$PKG"
+sleep 1
+# am kill only kills a process Android considers safe to kill; the uitest build is debuggable,
+# so its own uid can SIGKILL it (what the low-memory killer does), keeping the saved state.
+if [[ -n $pid_before ]] && adb shell pidof "$PKG" >/dev/null; then
+  echo "am kill left pid $pid_before running; SIGKILL through run-as"
+  adb shell run-as "$PKG" kill -9 "$pid_before" || true
+  sleep 1
+fi
+adb logcat -c
 adb shell am start -W -n "$ACT" >/dev/null
-sleep 4
-adb shell pidof "$PKG" >/dev/null || { echo "::error::app not running after process death on API $API"; failed=1; }
+restored=""
+for _ in $(seq 1 30); do
+  restored=$(adb logcat -d -s ProcessDeath:I | grep -o "restored .*" | tail -1)
+  [[ -n $restored ]] && break
+  sleep 1
+done
+pid_after=$(adb shell pidof "$PKG" | tr -d '\r')
+echo "before: $ready (pid $pid_before)"
+echo "after:  $restored (pid $pid_after)"
+echo "focus:  $(adb shell dumpsys window | grep -m1 mCurrentFocus)"
+[[ -n $pid_after ]] || { echo "::error::app not running after process death on API $API"; failed=1; }
+if [[ -z $ready ]]; then
+  echo "::error::process death: the probe never got the search ready on API $API"; failed=1
+elif [[ $pid_before == "$pid_after" ]]; then
+  echo "::error::process death on API $API: the process was never killed (pid $pid_before)"; failed=1
+elif [[ $restored != "restored saved=true "* ]]; then
+  echo "::error::process death on API $API: the Activity did not come back from its saved state: '$restored'"; failed=1
+else
+  got=${restored#restored saved=true }
+  if [[ ${got%% requests=*} != "${ready#ready }" ]]; then
+    echo "::error::process death on API $API: '${ready#ready }' came back as '$got'"; failed=1
+  fi
+fi
 echo "::endgroup::"
 
 if [[ $API == 35 ]]; then

@@ -35,6 +35,9 @@ data class Violation(val rule: String, val where: String, val detail: String) {
  *  R5 a11y         Accessibility Test Framework findings (labels, contrast, …)
  *  R6 rtl          in Hebrew, row labels sit on the right of their values
  *  R7 route        the drawn route lies in the map area the panels leave visible
+ *  R8 thumb row    the selected option's action row (Start trip, Remind me, Send to driver):
+ *                  every button at least 48 × 48 dp and inside the usable screen, and the
+ *                  selected card on screen above it, at least its first line (Phase 10 D11)
  */
 class LayoutAudit(private val d: AppDriver) {
     private val density get() = d.activity.resources.displayMetrics.density
@@ -53,7 +56,7 @@ class LayoutAudit(private val d: AppDriver) {
         return out
     }
 
-    /** R1–R4, R6, R7. Main thread only. */
+    /** R1–R4, R6–R8. Main thread only. */
     private fun analyze(merged: List<SemanticsNode>, unmerged: List<SemanticsNode>, out: MutableList<Violation>) {
         val decor = d.activity.window.decorView
         var safe = Rect()
@@ -83,6 +86,33 @@ class LayoutAudit(private val d: AppDriver) {
             root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
         // With a dialog up, only the dialog is reachable; what lies behind it is not a finding.
         val dialogOpen = merged.any { !isMain(it) }
+        // R8 (behind an open dialog it is not reachable anyway, as for R2)
+        if (!dialogOpen) find(merged, UiTags.ACTIONS)?.let { row ->
+            val buttons = mutableListOf<SemanticsNode>()
+            walk(row) { n, _ -> if (n !== row && SemanticsActions.OnClick in n.config) buttons += n }
+            if (buttons.isEmpty()) out += Violation("R8", "actions", "the action row shows no button")
+            val min = 48 * density - 1f
+            for (b in buttons) {
+                val r = b.boundsInWindow
+                if (r.width < min || r.height < min) out += Violation("R8", label(b), "${dp(r.width)}×${dp(r.height)} dp, under 48 dp")
+                if (!safe.contains(r.toRect())) out += Violation("R8", label(b), "at ${r.toRect().toShortString()}, outside the usable screen ${safe.toShortString()}")
+            }
+            // The row acts on the selected option: its card must be on screen above it, at least its
+            // first line (32 dp: the times), not scrolled away or squeezed out. A whole card can't
+            // always fit: the list has 93 dp at 360x640 font x1.3, 76 dp in landscape (P8) and
+            // 38 dp in the tablet column under the update banner (P9).
+            val card = find(merged, UiTags.SELECTED)
+            if (card == null) {
+                out += Violation("R8", "selected card", "the action row shows but the selected card is not on screen")
+            } else {
+                val shown = card.boundsInWindow
+                val need = minOf(card.size.height.toFloat(), 32 * density) - 1f
+                if (shown.height < need || shown.bottom > row.boundsInWindow.top + 1f) {
+                    out += Violation("R8", "selected card", "only ${dp(shown.height.coerceAtLeast(0f))} of ${dp(card.size.height.toFloat())} dp shown above the action row")
+                }
+            }
+        }
+
         for (root in merged) {
             val isMain = isMain(root)
             if (isMain && dialogOpen) continue
@@ -245,7 +275,7 @@ class LayoutAudit(private val d: AppDriver) {
 
     companion object {
         /** Rules whose findings are fixed: a new one fails the run. */
-        val BLOCKING = setOf("R1", "R7")
+        val BLOCKING = setOf("R1", "R7", "R8")
 
         /** Text that must never be truncated: clock times, shekels, minute counts. */
         private val IMPORTANT = Regex("""\d{1,2}:\d{2}|₪|\d+\s?(′|min|דק)""")
