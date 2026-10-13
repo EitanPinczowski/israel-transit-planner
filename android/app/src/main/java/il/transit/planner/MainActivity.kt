@@ -42,6 +42,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import il.transit.planner.ui.MapPadding
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.MapController
+import il.transit.planner.ui.MapGuard
 import il.transit.planner.ui.OfflineMapManager
 import il.transit.planner.ui.ScreenActions
 import il.transit.planner.ui.screens.CrashLogUi
@@ -66,6 +67,7 @@ import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.LocationComponentConstants
 import org.maplibre.android.location.modes.CameraMode
 import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
@@ -331,22 +333,35 @@ class MainActivity : ComponentActivity() {
         }
         placeMapChrome(mapPadding.value)
         loadMapStyle(m)
+        // MapLibre calls these from its native loop: nothing may throw out of them (MapGuard).
         m.addOnMapLongClickListener { p ->
-            vm.onMapLongPress(LatLon(p.latitude, p.longitude))
-            true
+            MapGuard.run("long press") { vm.onMapLongPress(LatLon(p.latitude, p.longitude)) } != null
         }
         m.addOnMapClickListener { p ->
             val hit = controller.value?.stopAt(p) ?: return@addOnMapClickListener false
-            vm.openStop(hit.first, hit.second)
-            true
+            MapGuard.run("stop tap") { vm.openStop(hit.first, hit.second) } != null
         }
         m.addOnCameraIdleListener {
-            val b = m.projection.visibleRegion.latLngBounds
-            vm.onViewport(
-                BBox(LatLon(b.latitudeSouth, b.longitudeWest), LatLon(b.latitudeNorth, b.longitudeEast)),
-                m.cameraPosition.zoom,
-            )
+            MapGuard.run("camera idle") {
+                val b = m.projection.visibleRegion.latLngBounds
+                vm.onViewport(
+                    BBox(LatLon(b.latitudeSouth, b.longitudeWest), LatLon(b.latitudeNorth, b.longitudeEast)),
+                    m.cameraPosition.zoom,
+                )
+            }
         }
+    }
+
+    /**
+     * Whether the location dot is drawn from MapLibre's GeoJSON location source (the renderer
+     * that aborted the process); null until the location component is active. UI tests pin false.
+     */
+    @VisibleForTesting
+    fun locationFromGeoJson(): Boolean? {
+        val m = map ?: return null
+        val s = style ?: return null
+        if (!m.locationComponent.isLocationComponentActivated) return null
+        return s.getSource(LocationComponentConstants.LOCATION_SOURCE) != null
     }
 
     /**
@@ -380,10 +395,12 @@ class MainActivity : ComponentActivity() {
         controller.value = null
         style = null
         m.setStyle(Style.Builder().fromUri(styleUrl)) { s ->
-            if (mapDark != night) return@setStyle // switched again while loading
-            style = s
-            controller.value = MapController(m, s, night)
-            enableLocationIfAllowed()
+            if (mapDark != night || isDestroyed) return@setStyle // switched again while loading, or gone
+            MapGuard.run("style loaded") {
+                style = s
+                controller.value = MapController(m, s, night)
+                enableLocationIfAllowed()
+            }
         }
     }
 
@@ -441,7 +458,16 @@ class MainActivity : ComponentActivity() {
         val s = style ?: return
         if (!hasLocationPermission() || m.locationComponent.isLocationComponentActivated) return
         m.locationComponent.apply {
-            activateLocationComponent(LocationComponentActivationOptions.builder(this@MainActivity, s).build())
+            // The specialized layer is the native LocationIndicatorLayer. The default symbol
+            // renderer hands MapLibre ONE mutable Feature on every compass tick and keeps adding
+            // properties to it on the main thread while a MapLibre worker is still converting the
+            // previous hand-off through JNI: a ConcurrentModificationException on that worker
+            // becomes jni::PendingJavaException and aborts the process (UI tests run 38361200196,
+            // "Worker 3"; still so in MapLibre 12.3.1). The indicator layer has no GeoJSON at all.
+            val options = LocationComponentActivationOptions.builder(this@MainActivity, s)
+                .useSpecializedLocationLayer(true)
+                .build()
+            activateLocationComponent(options)
             isLocationComponentEnabled = true
             cameraMode = CameraMode.TRACKING
             renderMode = RenderMode.COMPASS

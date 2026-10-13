@@ -10,6 +10,8 @@ import il.transit.planner.UiTestApp
 import il.transit.planner.ui.UiTags
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,5 +36,23 @@ class SmokeTest {
         }
         // The replay is the only TransitApi in this build; nothing was searched yet.
         assertEquals(calls, app.replay.calls.get())
+    }
+
+    /**
+     * MapLibre's default location renderer (a GeoJSON source fed one mutable Feature) aborted the
+     * process with jni::PendingJavaException; the app draws the dot with the native indicator
+     * layer instead. Needs the OpenFreeMap style, so it waits for the location component.
+     */
+    @Test fun location_dot_is_not_drawn_from_geojson() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            var fromGeoJson: Boolean? = null
+            val deadline = System.currentTimeMillis() + 30_000
+            while (fromGeoJson == null && System.currentTimeMillis() < deadline) {
+                scenario.onActivity { fromGeoJson = it.locationFromGeoJson() }
+                if (fromGeoJson == null) Thread.sleep(250)
+            }
+            assumeTrue("map style never loaded (no network to OpenFreeMap)", fromGeoJson != null)
+            assertFalse(fromGeoJson!!)
+        }
     }
 }

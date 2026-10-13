@@ -105,23 +105,28 @@ Then Actions → "Real phones (Test Lab)" → Run. Results: the `ci-devices` bra
 each time, with no `FATAL EXCEPTION` from `il.transit.planner` in logcat; a re-run passed (PRs
 #62, #65, #67, #68). The test process is the app's process.
 
-**Root cause (from the evidence dump, run 38353197088, P2-he-light s11):** not the emulator and
-not memory (2 GB free of 4 GB, disk 19%). A **MapLibre native abort**: a worker thread in
-`libmaplibre.so` calls `abort()` on `jni::PendingJavaException`, so the crash buffer holds
-`Fatal signal 6` + a tombstone and no Java stack. It is an app-side intermittent defect (a Java
-exception thrown inside a native callback); a MapLibre bump or a guard in the map code is the real
-fix and is an app change, outside the CI package.
+**Root cause (fixed, `claude/maplibre-crash-fix`):** not the emulator and not memory. A
+**MapLibre native abort**: `Fatal signal 6` in a `Worker N` thread of `libmaplibre.so`,
+`jni::PendingJavaException`, a tombstone, no Java stack. The pending exception (run 38361200196,
+`W System.err` on the same tid) was a `ConcurrentModificationException`: MapLibre's default
+location renderer (`SymbolLocationLayerRenderer`, still so in 12.3.1) passes ONE mutable `Feature`
+to `GeoJsonSource.setGeoJson` on every compass tick (`RenderMode.COMPASS`) and keeps adding
+properties to it on the main thread while a worker converts the last one through JNI. Location
+is granted in the UI tests, so any screen could hit it, and so could a real phone.
+Fix: `useSpecializedLocationLayer(true)` (native `LocationIndicatorLayer`, no GeoJSON), pinned by
+`SmokeTest.location_dot_is_not_drawn_from_geojson`. Map callbacks and style access go through
+`ui/MapGuard` (logged under tag `MapGuard`, never rethrown into native code).
 
 **What CI does now** (`tools/ui_instrument.sh`, sourced by both run scripts):
 - every death prints evidence first: crash buffer, `am_proc_died`/`am_crash` events, MapLibre and
   exception lines, lmkd/ANR lines, meminfo, df, dmesg;
-- retried **once per test** (the open test + the tests that never started): a process killed with
-  an empty crash buffer, and the MapLibre abort above. The retry is a `::warning::` naming its kind
-  and a "Retry" block in the job summary, so it is never silent;
-- red at once: any other app crash (FATAL EXCEPTION, other native signal, ANR), any failed
-  assertion, and any test that dies twice. Nothing is skipped or quarantined;
+- retried **once per test** (the open test + the tests that never started): only a process killed
+  with an empty crash buffer. The retry is a `::warning::` naming its kind and a "Retry" block in
+  the job summary, so it is never silent;
+- red at once: any app crash (FATAL EXCEPTION, any native signal including a MapLibre abort, ANR),
+  any failed assertion, and any test that dies twice. Nothing is skipped or quarantined;
 - `-no-snapshot`, system image cached per API level, ANR dialogs / package verifier / animations off.
   The AVD keeps its default RAM: memory was not the cause, and a 4 GB AVD may have starved the
   runner ("lost communication", run 38355318297).
-- **The MapLibre-abort retry is temporary**: it comes out of `ui_instrument.sh` when the app fix lands.
-- When a Retry block shows up, count them: a MapLibre abort on every run means the app fix is due.
+- A new native abort: read the `System.err` / exception lines of the evidence dump for the pending
+  Java exception, then find which MapLibre callback (or MapLibre-internal Java) threw it.
