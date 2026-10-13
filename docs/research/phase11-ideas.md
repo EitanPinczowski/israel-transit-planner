@@ -246,7 +246,7 @@ release.
 - **2 — Share this trip.** The cheapest family feature, asked for in two research rounds, 0
   requests, S. It also gives Phase 11 an easy first release note.
 - **3 — "I missed it".** Fixes the worst moment of a daily commute with 1 request on tap. It
-  shares `remind/` and `ride/` files with D10, so it shares files with D10 (merged since).
+  shares `remind/` and `ride/` files with D10, which has merged, so it is not blocked.
 - **4 — Backup and restore** after those, because it protects everything the other features
   save (places, routines, My lines), and makes setting up a parent's phone a one-file job.
 
