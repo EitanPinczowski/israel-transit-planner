@@ -46,11 +46,13 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
         val main = activity as? MainActivity ?: return
         val what = pending ?: return
         pending = null
-        // The Activity created both ViewModels in onCreate; these find the same ones.
-        val vm = ViewModelProvider(main)[MainViewModel::class.java]
-        val trip = ViewModelProvider(main)[TripDetailsViewModel::class.java]
         val app = main.application as UiTestApp
         main.lifecycleScope.launch {
+            // This runs inside super.onResume(), before MainActivity creates its trip-sheet
+            // ViewModel with its own factory: look both up once onResume has finished.
+            delay(500)
+            val vm = ViewModelProvider(main)[MainViewModel::class.java]
+            val trip = ViewModelProvider(main)[TripDetailsViewModel::class.java]
             if (what == "setup") {
                 val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
                 vm.startEditing(Field.FROM)
