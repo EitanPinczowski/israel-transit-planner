@@ -51,7 +51,25 @@ def configs_of(dirs):
     return out
 
 
+SHIPS = {"releaseRuntimeClasspath", "runtimeClasspath"}
+
+
+def load_ignores():
+    """tools/osv_ignore.txt: `ID  YYYY-MM-DD  reason`. Only for packages that are NOT in the release APK."""
+    import datetime
+    out = {}
+    f = ROOT / "tools" / "osv_ignore.txt"
+    if f.exists():
+        for line in f.read_text().splitlines():
+            if line.strip() and not line.startswith("#"):
+                i, until, *why = line.split(None, 2)
+                if datetime.date.fromisoformat(until) >= datetime.date.today():
+                    out[i] = (until, " ".join(why))
+    return out
+
+
 def osv(path, dirs=()):
+    ignores = load_ignores()
     cfg = configs_of(dirs)
     data = json.loads(Path(path).read_text())
     blocking, other = [], []
@@ -65,6 +83,11 @@ def osv(path, dirs=()):
                 ids = g.get("ids", [])
                 fixes = sorted({f for i in ids if i in vulns for f in fixed_versions(vulns[i])})
                 row = (p["name"], p["version"], ids[0] if ids else "?", sev, fixes)
+                coord = p["name"].split(" [")[0] + ":" + p["version"]
+                test_only = bool(cfg.get(coord)) and not (cfg[coord] & SHIPS)
+                if test_only and any(i in ignores for i in ids):
+                    other.append(row[:2] + (row[2] + " (ignored, test-only: tools/osv_ignore.txt)",) + row[3:])
+                    continue
                 (blocking if sev >= 7.0 and fixes else other).append(row)
     say("### Dependency vulnerabilities (OSV)")
     for title, rows in (("Blocking (HIGH/CRITICAL, a fixed version exists)", blocking), ("Listed, not blocking", other)):
