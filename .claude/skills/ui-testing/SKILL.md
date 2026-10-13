@@ -98,3 +98,21 @@ closes what is open (one Back, even with the keyboard up), J10 Settings reachabl
 5. Repo → Settings → Variables: `GCP_PROJECT`, `WIF_PROVIDER`
    (`projects/<num>/locations/global/workloadIdentityPools/<pool>/providers/<provider>`), `SA_EMAIL`.
 Then Actions → "Real phones (Test Lab)" → Run. Results: the `ci-devices` branch, same layout.
+
+## Flaky instrumentation deaths (CI emulator stability, 2026-10-13)
+
+**Symptom:** a screens shard (or journey) ends `Process crashed` on a different screen and profile
+each time, with no `FATAL EXCEPTION` from `il.transit.planner` in logcat; a re-run passed (PRs
+#62, #65, #67, #68). The test process is the app's process, so the emulator killed it, not the app.
+
+**What CI does now** (`tools/ui_instrument.sh`, sourced by both run scripts):
+- the AVD gets 4 GB RAM / 576 MB heap / 6 GB disk (the default 2 GB is thin for a 2400x2400
+  swiftshader screen), `-no-snapshot`, and the system image is cached per API level;
+- ANR/crash dialogs, package verifier and animations are off before the first test;
+- a death with **no app crash in the crash buffer** is retried **once per test**: only the open test and
+  the tests that never started run again. The job log prints the evidence first (crash buffer,
+  `am_proc_died`/`am_kill` events, lmkd lines, meminfo, df, dmesg) and the job summary gets
+  an "Infrastructure retry" block. A test that dies twice, a failed assertion, and any real app
+  crash (FATAL EXCEPTION, native signal, ANR of the app) stay red. Nothing is skipped.
+- When a retry shows up in a summary, read the evidence block: it is the data for the next fix.
+

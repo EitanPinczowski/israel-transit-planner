@@ -67,14 +67,26 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # The system image comes from Google's servers; a broken download once failed a whole
+      # job. Cached per API level, so most runs never download it.
+      - name: Cache the emulator system image
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/system-images/android-35
+          key: sysimg-35-google_apis-x86_64-v1
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
+          # The default AVD (2 GB RAM) is too small for a 2400x2400 swiftshader screen on API 35:
+          # the instrumentation process gets killed with no app crash. See ui-testing skill.
+          ram-size: 4096M
+          heap-size: 576M
+          disk-size: 6G
           disable-animations: true
           # A screen big enough for every profile: wm size only shrinks it (tools/ui_layout_run.sh).
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 2400x2400
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -skin 2400x2400
           script: bash tools/ui_layout_run.sh ${{ matrix.shard }} apks out/layout-${{ matrix.shard }}
       - if: always()
         uses: actions/upload-artifact@v4
@@ -110,13 +122,21 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Cache the emulator system image
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/system-images/android-${{ matrix.api }}
+          key: sysimg-${{ matrix.api }}-${{ matrix.target }}-x86_64-v1
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api }}
           target: ${{ matrix.target }}
           arch: x86_64
+          ram-size: 4096M
+          heap-size: 576M
+          disk-size: 6G
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none
           script: bash tools/ui_behaviour_run.sh ${{ matrix.api }} apks out/behaviour-${{ matrix.api }}
       - if: always()
         uses: actions/upload-artifact@v4
