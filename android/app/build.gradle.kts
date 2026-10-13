@@ -133,17 +133,26 @@ dependencies {
 // Renderer.kt, then every shot fails). compileSdk is 36 only for the Live Update APIs (D10), so the
 // screenshot tests keep rendering against the API 35 android.jar they used before: same goldens.
 // Remove this once Paparazzi is on a release that knows API 36.
-tasks.withType<Test>().configureEach {
+// AGP's mockable jar (an "android.jar" under its transforms cache) is rebuilt from the API 35
+// platform with AGP's own generator, and takes the same classpath slot.
+val mockable35 = layout.buildDirectory.file("mockable/mockable-android-35.jar")
+val mockableAndroid35 by tasks.registering {
     val sdk35 = android.sdkDirectory.resolve("platforms/android-35/android.jar")
-    if (sdk35.exists()) {
-        // AGP's mockable jar is an "android.jar" under its transforms cache; swap it for the API 35
-        // one at execution time, so later classpath changes are covered too.
-        val platformJar = { f: File -> f != sdk35 && (f.name == "android.jar" || f.name.startsWith("mockable-android")) }
-        doFirst {
-            val before = classpath // the old collection, so the new one does not refer to itself
-            logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $sdk35")
-            // Same slot as the jar it replaces: after layoutlib, whose real framework classes must win.
-            classpath = files(before.files.map { if (platformJar(it)) sdk35 else it })
-        }
+    inputs.file(sdk35)
+    outputs.file(mockable35)
+    doLast {
+        val out = mockable35.get().asFile
+        out.parentFile.mkdirs()
+        com.android.builder.testing.MockableJarGenerator(false).createMockableJar(sdk35, out)
+    }
+}
+tasks.withType<Test>().configureEach {
+    dependsOn(mockableAndroid35)
+    val platformJar = { f: File -> f.name == "android.jar" || (f.name.startsWith("mockable-android") && "35" !in f.name) }
+    doFirst {
+        val jar = mockable35.get().asFile
+        val before = classpath // the old collection, so the new one does not refer to itself
+        logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $jar")
+        classpath = files(before.files.map { if (platformJar(it)) jar else it })
     }
 }
