@@ -36,6 +36,7 @@ dependencies {
     api(libs.kotlinx.serialization.json)
     api(libs.okhttp)
     testImplementation(libs.junit)
+    testImplementation("org.apache.logging.log4j:log4j-core:2.14.1")
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
 }
