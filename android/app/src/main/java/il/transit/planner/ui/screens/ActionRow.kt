@@ -5,6 +5,9 @@ import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.first
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -83,12 +88,13 @@ internal fun ActionRow(state: UiState, actions: ScreenActions) {
         }
     }
     if (items.isEmpty()) return
+    // IntrinsicSize.Min: a label that wraps to two lines (font ×2) makes both buttons taller, never one.
     Row(
-        Modifier.fillMaxWidth().padding(top = 8.dp, end = 8.dp).testTag(UiTags.ACTIONS),
+        Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(top = 8.dp, end = 8.dp).testTag(UiTags.ACTIONS),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         for (a in items) {
-            val m = Modifier.weight(1f).heightIn(min = ACTION_MIN)
+            val m = Modifier.weight(1f).fillMaxHeight().heightIn(min = ACTION_MIN)
             val pad = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
             val content: @Composable () -> Unit = {
                 Icon(a.icon, null, Modifier.size(18.dp))
@@ -143,11 +149,23 @@ internal fun TransferWarningTick(state: UiState) {
 /**
  * The list state of a results list, scrolled to the selected card when its route is tapped on the
  * map (D11, [UiState.mapPick]). [before]: how many items the list shows above its options.
+ * [fitSelected]: when new results show and the items above leave no room for the whole selected
+ * card (a 360 dp phone), the list starts at that card; the items above are one scroll up.
  */
 @Composable
-internal fun rememberOptionsListState(state: UiState, before: Int): LazyListState {
+internal fun rememberOptionsListState(state: UiState, before: Int, fitSelected: Boolean = false): LazyListState {
     val list = rememberLazyListState()
     LaunchedEffect(state.mapPick) { if (state.mapPick > 0) list.animateScrollToItem(before + state.selected) }
+    if (fitSelected) {
+        // Once per search (a quiet refresh keeps loading false), not on every 2-minute refresh.
+        LaunchedEffect(state.loading, state.results != null || state.chain != null) {
+            if (state.loading || (state.results == null && state.chain == null)) return@LaunchedEffect
+            val target = before + state.selected
+            val info = snapshotFlow { list.layoutInfo }.first { it.totalItemsCount > target && it.viewportEndOffset > 0 }
+            val card = info.visibleItemsInfo.firstOrNull { it.index == target }
+            if (card == null || card.offset + card.size > info.viewportEndOffset) list.scrollToItem(target)
+        }
+    }
     return list
 }
 

@@ -63,12 +63,14 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
 - **Action row** (Phase 10 D11, `screens/ActionRow.kt`): the selected option's main actions sit in
   one row under the results list, not in the card: Remind me (Trip) or Send to driver (car tabs),
   then Start trip as the filled button. Each `weight(1f)`, ≥ 48 dp high (`ACTION_MIN`, audit R8),
-  labels up to 2 lines; never more than two buttons, so 320 dp at font ×1.3 still fits. The Row
+  labels up to 2 lines, both buttons the same height (`IntrinsicSize.Min`); never more than two
+  buttons, so 320 dp at font ×1.3 still fits. The Trip list carries the rain note and sort chips
+  as its first items, and starts at the selected card when they leave no room for it (360×640). The Row
   mirrors in Hebrew: Start trip ends up at the far left, the reading end. Park & ride keeps
   "Navigate to the station" in its card. Haptics (`Haptics`): pin drop, Start trip, a transfer
   warning on the selected option, through `View.performHapticFeedback`, which honours the phone's
   touch-feedback switch.
-- **Map ↔ list** (D11): the other options are drawn thin (3 px) at 45% under the selected route,
+- **Map ↔ list** (D11): the other options are drawn thin (4 px) at 55% under the selected route,
   each ride in its `LegPalette` colour (`OptionsMap.others`); tapping one selects its card and the
   list scrolls to it (`UiState.mapPick`, `rememberOptionsListState`). Long-press still drops a pin.
 - Map layers (`MapController`) take `dark` and use their own `Palette`; a new layer needs

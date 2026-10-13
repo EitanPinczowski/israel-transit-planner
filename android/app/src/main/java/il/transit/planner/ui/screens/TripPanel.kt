@@ -469,8 +469,14 @@ internal fun ResultsPanel(
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
             TransferWarningTick(state) // D11: a haptic tick when the selected option warns of a tight change
-            RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
-            if (!state.loading && state.error == null && state.chain == null && state.options.size > 1) SortChips(state, vm) // D12: every tab
+            val showSort = !state.loading && state.error == null && state.chain == null && state.options.size > 1
+            // The Trip list carries the rain note and the sort chips as its first items (D11 designer
+            // review): on a 360 dp phone they would otherwise leave no room for a single card.
+            val tripList = state.mode == AppMode.TRIP && !state.loading && state.error == null
+            if (!tripList) {
+                RainNoteRow(state, vm) // Phase 10 D9: rain on the walks, above the options
+                if (showSort) SortChips(state, vm) // D12: every tab
+            }
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -478,7 +484,9 @@ internal fun ResultsPanel(
                 state.mode == AppMode.DROP_OFF && state.dropOff != null -> DropOffList(state, state.dropOff, vm, list)
                 state.mode == AppMode.PICK_UP && state.pickUp != null -> PickUpList(state, state.pickUp, vm, list)
                 state.mode == AppMode.PARK_RIDE && state.parkRide.result != null -> ParkRideList(state, state.parkRide.result, vm, list)
-                else -> LazyColumn(list, state = rememberOptionsListState(state, before = if (state.chain != null) 1 else 0)) {
+                else -> LazyColumn(list, state = rememberOptionsListState(state, before = 1 + (if (showSort) 1 else 0) + (if (state.chain != null) 1 else 0), fitSelected = true)) {
+                    item { RainNoteRow(state, vm) } // Phase 10 D9: rain on the walks, above the options
+                    if (showSort) item { SortChips(state, vm) } // D12: every tab
                     state.chain?.let { c -> item { ChainSummary(state, c) } }
                     itemsIndexed(state.options) { i, itin ->
                         if (state.chain != null) {

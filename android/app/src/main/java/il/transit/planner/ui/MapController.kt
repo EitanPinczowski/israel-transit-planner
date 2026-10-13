@@ -45,8 +45,8 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         style.addLayer(
             LineLayer(OTHERS_LAYER, OTHERS_SRC).withProperties(
                 PropertyFactory.lineColor(Expression.toColor(Expression.get("color"))),
-                PropertyFactory.lineWidth(3f),
-                PropertyFactory.lineOpacity(0.45f),
+                PropertyFactory.lineWidth(4f),
+                PropertyFactory.lineOpacity(0.55f),
                 PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
                 PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
             ),
