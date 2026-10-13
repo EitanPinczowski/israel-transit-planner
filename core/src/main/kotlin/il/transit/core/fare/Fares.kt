@@ -93,10 +93,9 @@ enum class FareKind { BUS, LIGHT_RAIL, TRAIN }
  *   monthly pass is full price.
  * - [YOUTH]: "נוער" (under 18, or up to 19 in year 12): 50% off single and monthly. The price
  *   list's own example agrees: ₪4 instead of ₪8, the national pass ₪157.5 instead of ₪315.
- * - [SOLDIER]: soldiers in mandatory service ride buses, light rail and trains free. That page
- *   covers only discharged soldiers (100% for a year after discharge); the conscript exemption
- *   is the IDF's arrangement (the ZUZU app), described on Kol Zchut. No gov.il or operator page
- *   with it was reachable on [CHECKED], so the owner confirms this one.
+ * - [SOLDIER]: owner decision 2026-10-13: soldiers in mandatory service ride free (buses, light
+ *   rail and trains; the IDF's arrangement through the ZUZU app). The profiles page covers only
+ *   discharged soldiers (100% for a year after discharge), which is [FREE].
  * - [HALF] ("50%, other": disability, National Insurance, women 62–66) and [FREE] ("free, other":
  *   discharged soldiers, blind, past and present MKs): the page's other 50% and 100% rows.
  *

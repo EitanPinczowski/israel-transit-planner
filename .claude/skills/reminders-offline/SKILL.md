@@ -87,7 +87,9 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   RFC 4180 quoting, formula-looking cells prefixed with `'`) and the summary as text.
   `history/Report.kt` is pure: calendar month of the start in Israel time, one row per trip
   (date, start, end, from, to, lines, minutes, fare after the single-ride share, profile), then
-  total trips, the column's sum (no caps, so it adds up) and "not a receipt". The file goes
+  total trips, the column's sum (no caps, so it adds up) and "not a receipt". The message adds that prices use
+  the current profile (a mid-month change re-prices the whole month). Times are Israel's: a
+  ride across the October clock change shows its real minutes (`ReportTest`). The file goes
   to `cacheDir/reports/` (`ui/screens/ReportExport.kt` `ReportFiles`), shared through the
   existing FileProvider (`res/xml/update_paths.xml`, authority `<package>.updates`); files
   older than a day are deleted at app start and before each new report. `TripRecord.lines`

@@ -39,5 +39,6 @@
     <string name="report_total_trips">Total trips</string>
     <string name="report_total_estimate">Total estimate (₪)</string>
     <string name="report_note">Estimate from trips started in the app; not a receipt.</string>
+    <string name="report_profile_note">Prices use your current fare profile, so changing it mid-month recomputes the whole month.</string>
     <string name="report_summary">%1$s: %2$d trips, about ₪%3$s (%4$s).</string>
 </resources>

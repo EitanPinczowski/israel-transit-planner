@@ -19,6 +19,8 @@ data class ReportLabels(
     val totalEstimate: String,
     /** "Estimate from trips started in the app; not a receipt." */
     val note: String,
+    /** "Prices use your current fare profile, so changing it mid-month recomputes the whole month." */
+    val profileNote: String,
     /** The message body: %1$s month name and year, %2$d trips, %3$s shekels, %4$s profile. */
     val summary: String,
     /** "September 2026". */
@@ -90,11 +92,11 @@ object Report {
         return sb.toString()
     }
 
-    /** The share message: "September 2026: 23 trips, about ₪184 (Student)." and the note. */
+    /** The share message: "September 2026: 23 trips, about ₪184 (Student).", the profile note and the note. */
     fun text(records: List<TripRecord>, month: YearMonth, profile: FareProfile, labels: ReportLabels): String {
         val trips = trips(records, month)
         val total = shekels(totalAgorot(trips, profile))
-        return String.format(Locale.US, labels.summary, labels.monthName, trips.size, total, labels.profile) + "\n" + labels.note
+        return String.format(Locale.US, labels.summary, labels.monthName, trips.size, total, labels.profile) + "\n" + labels.profileNote + "\n" + labels.note
     }
 
     /** "5.36": two decimals and a dot, which Sheets and Excel read as a number in any locale. */

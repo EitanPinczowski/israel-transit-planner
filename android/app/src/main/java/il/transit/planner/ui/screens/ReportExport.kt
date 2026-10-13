@@ -98,8 +98,9 @@ private fun reportLabels(profile: FareProfile): (String) -> ReportLabels {
     val totalTrips = stringResource(R.string.report_total_trips)
     val totalEstimate = stringResource(R.string.report_total_estimate)
     val note = stringResource(R.string.report_note)
+    val profileNote = stringResource(R.string.report_profile_note)
     val summary = stringResource(R.string.report_summary)
-    return { month -> ReportLabels(header, myLocation, profileName, totalTrips, totalEstimate, note, summary, month) }
+    return { month -> ReportLabels(header, myLocation, profileName, totalTrips, totalEstimate, note, profileNote, summary, month) }
 }
 
 private fun share(context: Context, history: List<TripRecord>, month: YearMonth, profile: FareProfile, labels: ReportLabels) {

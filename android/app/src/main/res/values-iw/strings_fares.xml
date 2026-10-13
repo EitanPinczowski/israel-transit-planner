@@ -40,5 +40,6 @@
     <string name="report_total_trips">סה״כ נסיעות</string>
     <string name="report_total_estimate">סה״כ הערכה (₪)</string>
     <string name="report_note">הערכה לפי נסיעות שהתחילו באפליקציה; זו אינה קבלה.</string>
+    <string name="report_profile_note">המחירים לפי פרופיל התעריף הנוכחי שלכם, כך ששינוי הפרופיל באמצע החודש מחשב מחדש את כל החודש.</string>
     <string name="report_summary">%1$s: ⁨%2$d⁩ נסיעות, בערך ₪⁨%3$s⁩ (%4$s).</string>
 </resources>

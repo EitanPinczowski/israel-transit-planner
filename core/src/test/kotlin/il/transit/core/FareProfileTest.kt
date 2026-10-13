@@ -36,7 +36,7 @@ class FareProfileTest {
         assertEquals(Triple(0, 0, 0), shares(FareProfile.SENIOR)) // 67+: 100% off everything
         assertEquals(Triple(67, 67, 100), shares(FareProfile.STUDENT)) // 33% off single, no monthly discount
         assertEquals(Triple(50, 50, 50), shares(FareProfile.YOUTH)) // 50% single and monthly
-        assertEquals(Triple(0, 0, 0), shares(FareProfile.SOLDIER)) // mandatory service: free (owner confirms)
+        assertEquals(Triple(0, 0, 0), shares(FareProfile.SOLDIER)) // owner decision 2026-10-13: soldiers in mandatory service ride free
         assertEquals(Triple(50, 50, 50), shares(FareProfile.HALF))
         assertEquals(Triple(0, 0, 0), shares(FareProfile.FREE))
         assertEquals(
