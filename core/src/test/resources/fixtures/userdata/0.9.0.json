@@ -1,0 +1,165 @@
+{
+ "version": "0.9.0",
+ "settings": {
+  "maxTransfers": 2,
+  "maxWalkMin": 20,
+  "modeFilter": "NO_BUSES",
+  "walkSpeed": "SLOW",
+  "peakFactor": 1.5,
+  "fareProfile": "HALF",
+  "accessible": true,
+  "speakAlerts": false,
+  "tripSort": "FEWEST_TRANSFERS",
+  "calendarBufferMin": 20,
+  "homePlace": "Home",
+  "homeOffered": true,
+  "nightRefresh": false,
+  "lastTripAlert": true,
+  "language": "he",
+  "theme": "DARK",
+  "tourSeen": true,
+  "transferBufferMin": 5,
+  "rainAware": false
+ },
+ "places": [
+  {
+   "name": "Home",
+   "lat": 31.2437,
+   "lon": 34.7976,
+   "routine": null
+  },
+  {
+   "name": "עבודה",
+   "lat": 31.2622,
+   "lon": 34.8013,
+   "routine": {
+    "days": [
+     7,
+     1,
+     2,
+     3,
+     4
+    ],
+    "fromMin": 420,
+    "toMin": 600
+   }
+  },
+  {
+   "name": "BGU \"main gate\"",
+   "lat": 31.2621,
+   "lon": 34.8009,
+   "routine": {
+    "days": [
+     7,
+     2
+    ],
+    "fromMin": 1320,
+    "toMin": 120
+   }
+  }
+ ],
+ "trips": [
+  {
+   "name": "To work",
+   "from": {
+    "name": "Home",
+    "lat": 31.2437,
+    "lon": 34.7976,
+    "routine": null
+   },
+   "to": {
+    "name": "עבודה",
+    "lat": 31.2622,
+    "lon": 34.8013,
+    "routine": {
+     "days": [
+      7,
+      1,
+      2,
+      3,
+      4
+     ],
+     "fromMin": 420,
+     "toMin": 600
+    }
+   }
+  },
+  {
+   "name": "Back",
+   "from": null,
+   "to": {
+    "name": "Home",
+    "lat": 31.2437,
+    "lon": 34.7976,
+    "routine": null
+   }
+  }
+ ],
+ "favorites": [
+  {
+   "stopId": "il-Israel-MOT_37314",
+   "stopName": "Rager/Oren",
+   "line": "470",
+   "headsign": "Tel Aviv"
+  },
+  {
+   "stopId": "il-Israel-MOT_26760",
+   "stopName": "עומר/מרכז",
+   "line": "369",
+   "headsign": "באר שבע"
+  }
+ ],
+ "history": [
+  {
+   "startedAtEpoch": 1791000000,
+   "from": "Home",
+   "to": "עבודה",
+   "mode": "TRIP",
+   "transitMin": 42,
+   "walkMin": 9,
+   "transfers": 1,
+   "savedMin": null,
+   "totalMin": 55,
+   "fareAgorot": 1450,
+   "fareBand": 1,
+   "withTrain": false,
+   "fromCell": "31.244,34.798",
+   "toCell": "31.262,34.801",
+   "lines": "470 · 5"
+  },
+  {
+   "startedAtEpoch": 1791100000,
+   "from": "מיתר",
+   "to": "Tel Aviv",
+   "mode": "PARK_RIDE",
+   "transitMin": 70,
+   "walkMin": 4,
+   "transfers": 0,
+   "savedMin": 18,
+   "totalMin": 95,
+   "fareAgorot": 2100,
+   "fareBand": 1,
+   "withTrain": true,
+   "fromCell": null,
+   "toCell": null,
+   "lines": null
+  },
+  {
+   "startedAtEpoch": 1791200000,
+   "from": "A",
+   "to": "B",
+   "mode": "DROP_OFF",
+   "transitMin": 10,
+   "walkMin": 0,
+   "transfers": 0,
+   "savedMin": null,
+   "totalMin": null,
+   "fareAgorot": null,
+   "fareBand": null,
+   "withTrain": null,
+   "fromCell": null,
+   "toCell": null,
+   "lines": null
+  }
+ ]
+}

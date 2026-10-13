@@ -67,6 +67,11 @@ keytool -genkeypair -v -keystore transit-release.jks -alias transit -keyalg RSA 
 ```
 
 ## Checks
+- **Add the release's saved-data sample** (Phase 11 T1): `tools/gen_userdata_sample.sh vX.Y.Z` writes
+  `core/src/test/resources/fixtures/userdata/X.Y.Z.json` from that tag's own codec (never by hand), and
+  `UserDataMigrationTest` then checks today's code still reads it. If the release added a setting or a stored
+  field, add it to `tools/userdata_gen/UserDataSampleGen.kt` with a `//@since X.Y.Z` marker and to the test's
+  expected values. If the tag does not build in your session, run the script in a CI `workflow_dispatch` job.
 - `ci.yml` builds `assembleRelease` unsigned on every push, so release-only breaks show up
   before tagging.
 - After a release: the Releases page has the APK; a phone on the previous version shows the
