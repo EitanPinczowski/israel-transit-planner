@@ -448,6 +448,9 @@ internal fun ResultsPanel(
             }
         }
         if (!collapsed) {
+            // Everything between the header and the action row shrinks first (the list, then the
+            // banners): the row keeps its full 48 dp even on a 320 dp phone at a large font (D11, R8).
+            Column(Modifier.fillMaxWidth().weight(1f, fill = false)) {
             state.offlineSince?.let { since ->
                 // A warning, not an error: the answers are still useful, just maybe stale.
                 Surface(color = MaterialTheme.colorScheme.tertiaryContainer, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth().padding(end = 8.dp)) {
@@ -496,6 +499,7 @@ internal fun ResultsPanel(
                     if (state.mode == AppMode.TRIP) parkedCarFor(state)?.let { p -> item { DriveHomeRow(state, p) } }
                     if (state.options.isNotEmpty()) item { FareNote() }
                 }
+            }
             }
             // D11: Start trip, Remind me, Send to driver: below the list, in thumb reach.
             ActionRow(state, actions)

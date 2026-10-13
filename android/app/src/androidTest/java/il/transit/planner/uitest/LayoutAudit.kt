@@ -80,8 +80,13 @@ class LayoutAudit(private val d: AppDriver) {
             if (overlap > 1f) out += Violation("R1", "top/bottom", "search card and bottom panel overlap by ${dp(overlap)} dp")
         }
 
-        // R8
-        find(merged, UiTags.ACTIONS)?.let { row ->
+        val underKeyboard = mutableListOf<String>()
+        fun isMain(root: SemanticsNode) =
+            root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
+        // With a dialog up, only the dialog is reachable; what lies behind it is not a finding.
+        val dialogOpen = merged.any { !isMain(it) }
+        // R8 (behind an open dialog it is not reachable anyway, as for R2)
+        if (!dialogOpen) find(merged, UiTags.ACTIONS)?.let { row ->
             val buttons = mutableListOf<SemanticsNode>()
             walk(row) { n, _ -> if (n !== row && SemanticsActions.OnClick in n.config) buttons += n }
             if (buttons.isEmpty()) out += Violation("R8", "actions", "the action row shows no button")
@@ -93,11 +98,6 @@ class LayoutAudit(private val d: AppDriver) {
             }
         }
 
-        val underKeyboard = mutableListOf<String>()
-        fun isMain(root: SemanticsNode) =
-            root.boundsInWindow.width.toInt() >= mainSize.first - 2 && root.boundsInWindow.height.toInt() >= mainSize.second - 2
-        // With a dialog up, only the dialog is reachable; what lies behind it is not a finding.
-        val dialogOpen = merged.any { !isMain(it) }
         for (root in merged) {
             val isMain = isMain(root)
             if (isMain && dialogOpen) continue
