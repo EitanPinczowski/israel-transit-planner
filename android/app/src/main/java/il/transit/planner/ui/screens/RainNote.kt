@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -14,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import il.transit.core.plan.TripSort
@@ -44,17 +47,18 @@ internal fun RainNoteRow(state: UiState, vm: MainActions) {
             note.leastWalking?.let { o ->
                 Text(stringResource(R.string.rain_least_walking, note.leastWalkMin, hhmm(o.start)), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 6.dp))
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.rain_credit),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.weight(1f).padding(bottom = 8.dp),
-                )
-                if (note.leastWalking != null && state.settings.tripSort != TripSort.LEAST_WALKING) {
+            if (note.leastWalking != null && state.settings.tripSort != TripSort.LEAST_WALKING) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = { vm.setTripSort(TripSort.LEAST_WALKING) }) { Text(stringResource(R.string.rain_sort)) }
                 }
             }
+            // Its own full-width line, so it never wraps beside the button (designer review).
+            Text(
+                stringResource(R.string.rain_credit),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp, end = 6.dp, bottom = 8.dp),
+            )
         }
     }
 }
@@ -64,9 +68,14 @@ internal fun RainNoteRow(state: UiState, vm: MainActions) {
 internal fun RainSetting(s: UserSettings, set: (UserSettings) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(stringResource(R.string.rain_setting_title), style = MaterialTheme.typography.labelLarge)
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // The whole row is the switch: one TalkBack control, a target of at least 48 dp.
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .toggleable(value = s.rainAware, role = Role.Switch, onValueChange = { set(s.copy(rainAware = it)) }),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(stringResource(R.string.rain_setting_toggle), Modifier.weight(1f))
-            Switch(checked = s.rainAware, onCheckedChange = { set(s.copy(rainAware = it)) })
+            Switch(checked = s.rainAware, onCheckedChange = null)
         }
         Text(stringResource(R.string.rain_setting_help), style = MaterialTheme.typography.bodySmall)
     }
