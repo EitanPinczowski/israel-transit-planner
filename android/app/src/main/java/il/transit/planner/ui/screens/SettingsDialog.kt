@@ -115,7 +115,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import il.transit.core.api.Itinerary
 import il.transit.core.fare.FareEstimate
-import il.transit.core.fare.FareProfile
 import il.transit.core.fare.FareTable
 import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
@@ -239,18 +238,7 @@ internal fun SettingsContent(
                 }
             }
         }
-        item {
-            Section(R.string.fare_profile) {
-                FareProfile.entries.forEach { f ->
-                    val label = when (f) {
-                        FareProfile.REGULAR -> R.string.fare_regular
-                        FareProfile.HALF -> R.string.fare_half
-                        FareProfile.FREE -> R.string.fare_free
-                    }
-                    FilterChip(s.fareProfile == f, { set(s.copy(fareProfile = f)) }, label = { Text(stringResource(label)) })
-                }
-            }
-        }
+        item { FareSection(s, ::set) }
         item {
             Section(R.string.ride_alerts) {
                 FilterChip(s.speakAlerts, { set(s.copy(speakAlerts = !s.speakAlerts)) }, label = { Text(stringResource(R.string.speak_alerts)) })
@@ -330,6 +318,7 @@ internal fun HistoryContent(state: UiState, vm: MainActions, now: Instant = Inst
                 }
             }
             passAdviceItem(state.history, state.settings.fareProfile, now)
+            item { MonthlyReportButton(state.history, state.settings.fareProfile, now) }
             st.topDestination?.takeIf { it.isNotBlank() }?.let { top ->
                 item { Text(stringResource(R.string.stat_top_destination, top), style = MaterialTheme.typography.bodySmall) }
             }

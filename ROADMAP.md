@@ -258,8 +258,8 @@ only where the plan says. Tick only your own package's lines.
 - [x] Offline timetables for starred stops, saved by the night refresh
 
 ### D8 — Fares + report (`claude/p10-fares-report`, 0 requests)
-- [ ] Fare profiles: senior / student / youth / soldier, each number with its source
-- [ ] Monthly travel report as a shareable CSV + text
+- [x] Fare profiles: senior / student / youth / soldier, each number with its source
+- [x] Monthly travel report as a shareable CSV + text
 
 ### D9 — Rain-aware walking (`claude/p10-rain`, 1 Open-Meteo request per search, cached 1 h)
 - [ ] Open-Meteo added to CLAUDE.md's hard rules; "Rain likely around 08:10" note → least walking

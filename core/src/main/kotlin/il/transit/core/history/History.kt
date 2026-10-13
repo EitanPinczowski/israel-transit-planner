@@ -4,6 +4,7 @@ import il.transit.core.api.Itinerary
 import il.transit.core.api.StreetModes
 import il.transit.core.fare.FareEstimator
 import il.transit.core.geo.LatLon
+import il.transit.core.present.lineLabel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -34,6 +35,9 @@ data class TripRecord(
     /** Start and end rounded to [CELL_DECIMALS] decimals ("31.262,34.801"), about 100 m. */
     val fromCell: String? = null,
     val toCell: String? = null,
+    // Since Phase 10 D8, for the monthly report; null on older records.
+    /** The lines ridden, in order: "480 · R1 · 1". */
+    val lines: String? = null,
 ) {
     val startedAt: Instant get() = Instant.ofEpochSecond(startedAtEpoch)
 
@@ -57,6 +61,9 @@ data class TripRecord(
                 withTrain = fare?.hasTrain,
                 fromCell = it.legs.firstOrNull()?.from?.latLon?.let(::cellOf),
                 toCell = it.legs.lastOrNull()?.to?.latLon?.let(::cellOf),
+                lines = it.legs.filter { l -> l.isTransit }.mapNotNull { l -> lineLabel(l) }
+                    .fold(emptyList<String>()) { acc, l -> if (acc.lastOrNull() == l) acc else acc + l }
+                    .joinToString(" · ").ifEmpty { null },
             )
         }
 

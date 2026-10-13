@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The downloaded update APK (ApkInstaller.DIR), shared only with Android's installer. -->
+<!-- The downloaded update APK (ApkInstaller.DIR), shared only with Android's installer.
+     The monthly report CSV (ReportFiles.DIR), shared only when the user taps it (Phase 10 D8). -->
 <paths>
     <cache-path name="updates" path="updates/" />
+    <cache-path name="reports" path="reports/" />
 </paths>
