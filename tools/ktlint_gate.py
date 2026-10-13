@@ -68,8 +68,10 @@ def main():
         sys.exit("no ktlint reports found: run ktlintCheck first")
     c = counts(fs)
     if a.write_baseline:
-        BASELINE.write_text(json.dumps(c, indent=1, sort_keys=True) + "\n")
-        print(f"baseline written: {sum(sum(r.values()) for r in c.values())} findings")
+        old = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
+        old.update(c)  # a run that only saw one module keeps the others
+        BASELINE.write_text(json.dumps(old, indent=1, sort_keys=True) + "\n")
+        print(f"baseline written: {sum(sum(r.values()) for r in old.values())} findings")
         return
     changed = changed_lines(a.base)
     bad = [f for f in fs if f[2] in changed.get(f[1], ())]
