@@ -103,16 +103,23 @@ Then Actions → "Real phones (Test Lab)" → Run. Results: the `ci-devices` bra
 
 **Symptom:** a screens shard (or journey) ends `Process crashed` on a different screen and profile
 each time, with no `FATAL EXCEPTION` from `il.transit.planner` in logcat; a re-run passed (PRs
-#62, #65, #67, #68). The test process is the app's process, so the emulator killed it, not the app.
+#62, #65, #67, #68). The test process is the app's process.
+
+**Root cause (from the evidence dump, run 38353197088, P2-he-light s11):** not the emulator and
+not memory (2 GB free of 4 GB, disk 19%). A **MapLibre native abort**: a worker thread in
+`libmaplibre.so` calls `abort()` on `jni::PendingJavaException`, so the crash buffer holds
+`Fatal signal 6` + a tombstone and no Java stack. It is an app-side intermittent defect (a Java
+exception thrown inside a native callback); a MapLibre bump or a guard in the map code is the real
+fix and is an app change, outside the CI package.
 
 **What CI does now** (`tools/ui_instrument.sh`, sourced by both run scripts):
-- the AVD gets 4 GB RAM / 576 MB heap / 6 GB disk (the default 2 GB is thin for a 2400x2400
-  swiftshader screen), `-no-snapshot`, and the system image is cached per API level;
-- ANR/crash dialogs, package verifier and animations are off before the first test;
-- a death with **no app crash in the crash buffer** is retried **once per test**: only the open test and
-  the tests that never started run again. The job log prints the evidence first (crash buffer,
-  `am_proc_died`/`am_kill` events, lmkd lines, meminfo, df, dmesg) and the job summary gets
-  an "Infrastructure retry" block. A test that dies twice, a failed assertion, and any real app
-  crash (FATAL EXCEPTION, native signal, ANR of the app) stay red. Nothing is skipped.
-- When a retry shows up in a summary, read the evidence block: it is the data for the next fix.
-
+- every death prints evidence first: crash buffer, `am_proc_died`/`am_crash` events, MapLibre and
+  exception lines, lmkd/ANR lines, meminfo, df, dmesg;
+- retried **once per test** (the open test + the tests that never started): a process killed with
+  an empty crash buffer, and the MapLibre abort above. The retry is a `::warning::` naming its kind
+  and a "Retry" block in the job summary, so it is never silent;
+- red at once: any other app crash (FATAL EXCEPTION, other native signal, ANR), any failed
+  assertion, and any test that dies twice. Nothing is skipped or quarantined;
+- AVD 4 GB RAM / 576 MB heap / 6 GB disk, `-no-snapshot`, system image cached per API level, ANR
+  dialogs / package verifier / animations off (headroom; not the cause of this flake).
+- When a Retry block shows up, count them: a MapLibre abort on every run means the app fix is due.

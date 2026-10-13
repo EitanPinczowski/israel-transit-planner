@@ -5,13 +5,14 @@
 #   ui_instrument CLASSES OUT_FILE [-e k v ...]
 #                               runs `am instrument` and returns 0 only if every test passed
 #
-# Why: the CI emulator sometimes kills the instrumentation process ("Process crashed") with no
-# app crash in logcat (see .claude/skills/ui-testing, "Flaky instrumentation deaths"). A death
-# like that is retried ONCE PER TEST, only when the crash buffer holds no sign of the app
-# itself dying (FATAL EXCEPTION / native signal / ANR of the app). The retry runs only the
-# test that was open and the tests that never started; a test that dies twice, any failed
-# assertion, and any real app crash stay red. Every retry is a ::warning:: and a block in the
-# job summary, and the evidence (events/system log, memory) is printed before the retry.
+# Why: the instrumentation process sometimes dies ("Process crashed") with no Java FATAL in
+# logcat (see .claude/skills/ui-testing, "Flaky instrumentation deaths"). Two kinds are
+# retried ONCE PER TEST: a process killed with nothing in the crash buffer, and the known
+# MapLibre native abort (_ui_maplibre_abort). Any other crash of the app (FATAL EXCEPTION,
+# other native signal, ANR) is red at once. The retry runs only the test that was open and the
+# tests that never started; a test that dies twice and any failed assertion stay red. Every
+# retry is a ::warning:: and a block in the job summary naming its kind, and the evidence is
+# printed before the retry.
 
 ui_prep_emulator() {
   adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1 || true
@@ -50,6 +51,8 @@ _ui_dump_evidence() { # $1 = label
   echo "--- crash buffer"; adb logcat -d -b crash | tail -80
   echo "--- events: process deaths and kills"
   adb logcat -d -b events | grep -E "am_proc_died|am_kill|am_crash|am_anr|am_low_memory|am_drop_process" | tail -40
+  echo "--- main: the last MapLibre / exception lines (what the native abort was about)"
+  adb logcat -d -b main | grep -iE "maplibre|mbgl|PendingJava|Exception" | tail -40
   echo "--- main/system: kills, memory, ANR, native"
   adb logcat -d -b main -b system | grep -iE "lowmemorykiller|lmkd|Killing|ANR in|has died|Fatal signal|tombstone|watchdog|OutOfMemory|Low on memory|crash" | tail -60
   echo "--- memory"
@@ -60,8 +63,19 @@ _ui_dump_evidence() { # $1 = label
   echo "::endgroup::"
 }
 
-_ui_real_app_crash() { # the app (same process as the test) died for its own reasons
+# The app (same process as the test) died for its own reasons: Java crash, ANR, or a native crash.
+_ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"
+}
+
+# Known intermittent app-side crash (seen 2026-10-13, twin run 38353197088): a MapLibre worker
+# thread aborts with jni::PendingJavaException, all frames in libmaplibre.so, no Java FATAL.
+# It is NOT an emulator fault and is NOT hidden: it is retried once, reported as a MapLibre
+# defect in the job summary, and a second one in the same test is red.
+_ui_maplibre_abort() {
+  local c; c=$(adb logcat -d -b crash)
+  grep -q "Abort message: 'terminating due to uncaught exception of type jni::PendingJavaException'" <<<"$c" \
+    && grep -q "libmaplibre.so" <<<"$c" && ! grep -q "FATAL EXCEPTION" <<<"$c"
 }
 
 ui_instrument() {
@@ -85,7 +99,10 @@ ui_instrument() {
     open_now=$(sed -n 's/^OPEN //p' <<<"$parsed")
     [[ -z $open_now ]] && open_now="(before the first test)"
     _ui_dump_evidence "process died during $open_now"
-    if _ui_real_app_crash; then
+    local kind="the emulator killed the instrumentation process (no crash in logcat)"
+    if _ui_maplibre_abort; then
+      kind="KNOWN MAPLIBRE NATIVE ABORT (jni::PendingJavaException in libmaplibre.so): an app-side defect, not the emulator"
+    elif _ui_real_app_crash; then
       echo "::error::the app itself crashed during $open_now (see the crash buffer above): no retry"
       rc=1; break
     fi
@@ -94,14 +111,14 @@ ui_instrument() {
       rc=1; break
     fi
     retried="$retried $open_now"
-    echo "::warning::INFRASTRUCTURE RETRY: the emulator killed the instrumentation process during $open_now (no app crash in logcat). Re-running it once, with the tests that had not started."
+    echo "::warning::RETRY (once): $kind, during $open_now. Re-running it with the tests that had not started."
     {
-      echo "### ⚠️ Infrastructure retry — API ${API:-?} — $(basename "$outfile")"
-      echo "The instrumentation process died during \`$open_now\` and the app did not crash."
+      echo "### ⚠️ Retry — API ${API:-?} — $(basename "$outfile")"
+      echo "During \`$open_now\`: $kind."
       echo "That test and the ones after it were run once more; a second death or a failed assertion is red."
       echo
     } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
-    sed -i 's/Process crashed/died-and-retried (infrastructure, see job summary)/' "$outfile"
+    sed -i 's/Process crashed/died-and-retried (see job summary)/' "$outfile"
     [[ -n $done_now ]] && notclass="${notclass:+$notclass,}$done_now"
     round=$((round + 1))
     sleep 5
