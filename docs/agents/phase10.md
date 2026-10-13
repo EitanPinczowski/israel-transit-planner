@@ -783,6 +783,9 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
 6. **Fare profiles (D8):** **from MOT's Rav-Kav profile page (gov.il) or the operator page
    `FareTable` already cites; any number without a reachable source stops the package**.
    Soldier = **conscripts, free on bus and train**.
+   **Decided (owner, 2026-10-13, D8):** soldiers in mandatory service ride free. The Rav-Pass
+   profiles page lists only discharged soldiers, and no gov.il page was reachable, so this
+   number rests on the owner's decision.
 7. **Rain threshold (D9):** **≥ 60% probability or ≥ 0.5 mm in an hour that overlaps ≥ 5 min of
    walking**; on by default; the note only re-sorts on tap, never changes the plan.
 8. **Live Updates (D10):** **`compileSdk` 36, `targetSdk` stays 35**; on Android < 16 **today's

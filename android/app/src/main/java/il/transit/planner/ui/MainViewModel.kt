@@ -1205,6 +1205,8 @@ class MainViewModel(
 
         fun factory(app: TransitApp) = viewModelFactory {
             initializer {
+                // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
+                Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
                 MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables)
             }
         }

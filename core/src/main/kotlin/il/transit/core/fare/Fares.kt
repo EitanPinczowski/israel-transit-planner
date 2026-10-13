@@ -30,7 +30,8 @@ import java.time.Duration
  *   (₪315 nationwide up to purple) or, with any train, [MONTHLY_WITH_TRAIN] by band. The
  *   page's cheaper zone-1 periphery (₪139) and Eilat passes are left out: the app can't tell
  *   the zone, so the advice may miss a cheaper local pass.
- * - Discounts apply the same percentage to single fares, caps and passes.
+ * - Discounts are per [FareProfile]: one percentage for single fares and the daily cap, one for
+ *   the monthly cap / pass (see the profile note there).
  *
  * When prices change: update the columns and [CHECKED]; `FareTest` pins the table.
  */
@@ -76,9 +77,52 @@ object FareTable {
 
 enum class FareKind { BUS, LIGHT_RAIL, TRAIN }
 
-/** Who is paying; the percentage applies to single fares and caps alike. */
+/**
+ * Who is paying: the share of the full price paid (100 = no discount) on single rides and the
+ * daily cap, and on the monthly cap / pass ("חופשי חודשי").
+ *
+ * Source for every number: the Rav-Pass discount profiles page, [PROFILES_URL], which
+ * [FareTable.SOURCE_URL] links to ("מידע נוסף על אחוזי הנחה לזכאים"), checked on [CHECKED]
+ * (its Last-Modified was 2025-05-12). The price list itself says the single fare, the daily cap
+ * and the monthly cap are all computed with the profile's percentage, so where the profiles page
+ * gives no daily figure the single-ride one is used for the daily cap.
+ *
+ * - [SENIOR]: "אזרחים ותיקים בגילאי 67 ומעלה (זהב-קו)": 100% off single, daily and monthly.
+ *   Women aged 62 to 66 get 50% off everything, which is [HALF].
+ * - [STUDENT]: "סטודנטים": 33% off a single ride; the page lists no monthly discount, so the
+ *   monthly pass is full price.
+ * - [YOUTH]: "נוער" (under 18, or up to 19 in year 12): 50% off single and monthly. The price
+ *   list's own example agrees: ₪4 instead of ₪8, the national pass ₪157.5 instead of ₪315.
+ * - [SOLDIER]: owner decision 2026-10-13: soldiers in mandatory service ride free (buses, light
+ *   rail and trains; the IDF's arrangement through the ZUZU app). The profiles page covers only
+ *   discharged soldiers (100% for a year after discharge), which is [FREE].
+ * - [HALF] ("50%, other": disability, National Insurance, women 62–66) and [FREE] ("free, other":
+ *   discharged soldiers, blind, past and present MKs): the page's other 50% and 100% rows.
+ *
+ * Settings stored before Phase 10 hold REGULAR, HALF or FREE; those names and prices are kept.
+ */
 @Serializable
-enum class FareProfile(val percentPaid: Int) { REGULAR(100), HALF(50), FREE(0) }
+enum class FareProfile(val singlePaid: Int, val dailyPaid: Int, val monthlyPaid: Int) {
+    REGULAR(100, 100, 100),
+    SENIOR(0, 0, 0),
+    STUDENT(67, 67, 100),
+    YOUTH(50, 50, 50),
+    SOLDIER(0, 0, 0),
+    HALF(50, 50, 50),
+    FREE(0, 0, 0),
+    ;
+
+    /** Nothing to pay at all: no prices worth showing as savings and no pass advice. */
+    val free: Boolean get() = singlePaid == 0 && dailyPaid == 0 && monthlyPaid == 0
+
+    companion object {
+        const val PROFILES_URL = "https://s3-eu-west-1.amazonaws.com/static.hopon.co.il/mot/profiles.html"
+        const val CHECKED = "2026-10-13"
+
+        /** [agorot] × [percent] / 100, rounded to the nearest agora. */
+        fun share(agorot: Int, percent: Int): Int = (agorot * percent + 50) / 100
+    }
+}
 
 data class FareEstimate(
     val agorot: Int,
@@ -117,11 +161,12 @@ object FareEstimator {
                 else -> { windowStart = start; windowPaid = price; sum += price }
             }
         }
-        val cap = FareTable.dailyCap(maxBand, hasTrain)
-        val total = minOf(sum, cap)
+        // In hundredths of an agora, so the cap compares before rounding.
+        val single = sum * profile.singlePaid
+        val cap = FareTable.dailyCap(maxBand, hasTrain) * profile.dailyPaid
         return FareEstimate(
-            agorot = (total * profile.percentPaid + 50) / 100,
-            capped = sum > cap,
+            agorot = (minOf(single, cap) + 50) / 100,
+            capped = single > cap,
             hasTrain = hasTrain,
             maxBand = maxBand,
         )

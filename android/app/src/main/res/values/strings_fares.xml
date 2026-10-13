@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D8: fare profiles (Settings → Fare) and the monthly travel report (History). -->
+<resources>
+    <string name="fare_profile_senior">Senior (67+)</string>
+    <string name="fare_profile_student">Student</string>
+    <string name="fare_profile_youth">Youth (under 18)</string>
+    <string name="fare_profile_soldier">Soldier (in mandatory service)</string>
+    <string name="fare_profile_half" formatted="false">50% (other)</string>
+    <string name="fare_profile_free">Free (other)</string>
+
+    <string name="fare_help_regular">Full price.</string>
+    <string name="fare_help_senior">Free on buses, light rail and trains from age 67.</string>
+    <string name="fare_help_student" formatted="false">33% off each ride; the monthly pass is full price.</string>
+    <string name="fare_help_youth" formatted="false">50% off each ride and the monthly pass.</string>
+    <string name="fare_help_soldier">Free on buses, light rail and trains during mandatory service.</string>
+    <string name="fare_help_half" formatted="false">50% off rides and passes: disability, National Insurance, women aged 62–66.</string>
+    <string name="fare_help_free">Free: discharged soldiers for a year, blind riders, and the rest of the Rav-Pass list.</string>
+    <string name="fare_help_source">Discounts from the Rav-Pass profiles page. The app only estimates; it never checks who you are.</string>
+
+    <string name="report_button">Monthly report</string>
+    <string name="report_pick">Which month?</string>
+    <plurals name="report_month_trips">
+        <item quantity="one">%1$s · %2$d trip</item>
+        <item quantity="other">%1$s · %2$d trips</item>
+    </plurals>
+    <string name="report_share">Share the monthly report</string>
+    <string name="report_subject">Travel report, %1$s</string>
+    <string name="report_failed">Couldn\'t create the report file.</string>
+
+    <string name="report_col_date">Date</string>
+    <string name="report_col_start">Start</string>
+    <string name="report_col_end">End</string>
+    <string name="report_col_from">From</string>
+    <string name="report_col_to">To</string>
+    <string name="report_col_lines">Lines</string>
+    <string name="report_col_minutes">Minutes</string>
+    <string name="report_col_fare">Fare estimate (₪)</string>
+    <string name="report_col_profile">Profile</string>
+    <string name="report_total_trips">Total trips</string>
+    <string name="report_total_estimate">Total estimate (₪)</string>
+    <string name="report_note">Estimate from trips started in the app; not a receipt.</string>
+    <string name="report_profile_note">Prices use your current fare profile, so changing it mid-month recomputes the whole month.</string>
+    <string name="report_summary">%1$s: %2$d trips, about ₪%3$s (%4$s).</string>
+</resources>

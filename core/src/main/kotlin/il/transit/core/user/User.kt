@@ -96,7 +96,7 @@ data class UserSettings(
     val walkSpeed: WalkSpeed = WalkSpeed.NORMAL,
     /** Rush-hour multiplier for drive times; see [TrafficProfile]. */
     val peakFactor: Double = 1.3,
-    /** Which fare the estimate shows (regular, 50% discount, free). */
+    /** Whose fare the estimates and the pass advice use (Settings → Fare); see [FareProfile]. */
     val fareProfile: FareProfile = FareProfile.REGULAR,
     /** Wheelchair / stroller: step-free walking parts. */
     val accessible: Boolean = false,

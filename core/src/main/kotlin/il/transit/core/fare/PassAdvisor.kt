@@ -11,7 +11,7 @@ data class PassAdvice(
     val month: YearMonth,
     /** Trips started in the app with a fare, the "based on N trips" count. */
     val trips: Int,
-    /** Single fares, each day capped at its daily cap, after the profile's discount. */
+    /** Single fares, each day capped at its daily cap, after the profile's discounts. */
     val singleAgorot: Int,
     val passAgorot: Int,
     val withTrain: Boolean,
@@ -35,28 +35,28 @@ object PassAdvisor {
     /** The service day starts at 04:00. */
     private const val DAY_START_H = 4L
 
-    /** Advice for the last finished month before [now], or null (too few trips, FREE profile). */
+    /** Advice for the last finished month before [now], or null (too few trips, a free profile). */
     fun advise(records: List<TripRecord>, profile: FareProfile, now: Instant): PassAdvice? {
-        if (profile == FareProfile.FREE) return null
+        if (profile.free) return null
         val month = YearMonth.from(serviceDay(now)).minusMonths(1)
         return forMonth(records, profile, month)
     }
 
     fun forMonth(records: List<TripRecord>, profile: FareProfile, month: YearMonth): PassAdvice? {
-        if (profile == FareProfile.FREE) return null
+        if (profile.free) return null
         val rides = records.filter { it.fareAgorot != null && YearMonth.from(serviceDay(it.startedAt)) == month }
         if (rides.size < MIN_TRIPS) return null
 
+        // In hundredths of an agora: each day's discounted singles against its discounted cap.
         val single = rides.groupBy { serviceDay(it.startedAt) }.values.sumOf { day ->
             val train = day.any { it.withTrain == true }
-            minOf(day.sumOf { it.fareAgorot!! }, FareTable.dailyCap(day.maxOf { it.fareBand ?: FareTable.YELLOW }, train))
+            val cap = FareTable.dailyCap(day.maxOf { it.fareBand ?: FareTable.YELLOW }, train)
+            minOf(day.sumOf { it.fareAgorot!! } * profile.singlePaid, cap * profile.dailyPaid)
         }
         val train = rides.any { it.withTrain == true }
         val pass = FareTable.monthlyPass(rides.maxOf { it.fareBand ?: FareTable.YELLOW }, train)
-        return PassAdvice(month, rides.size, discount(single, profile), discount(pass, profile), train)
+        return PassAdvice(month, rides.size, (single + 50) / 100, FareProfile.share(pass, profile.monthlyPaid), train)
     }
 
     fun serviceDay(t: Instant): LocalDate = t.atZone(ISRAEL).minusHours(DAY_START_H).toLocalDate()
-
-    private fun discount(agorot: Int, profile: FareProfile) = (agorot * profile.percentPaid + 50) / 100
 }

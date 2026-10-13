@@ -76,7 +76,24 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   time (median per 15-min slot on the routine's days, ≥ 2 records per slot). `fare/PassAdvisor`:
   the last finished month (service days, 04:00 boundary) priced per ride with daily caps
   against the cheapest monthly pass covering its bands; ≥ 10 trips with a fare, none for the
-  FREE profile, today's profile for the whole month. Medians, never means.
+  free profiles (Senior, Soldier, Free), today's profile for the whole month, single and
+  daily shares for rides, the monthly share for the pass. Medians, never means.
+- **Fare profiles** (Phase 10 D8, `fare/Fares.kt` `FareProfile`): each has a share paid on
+  single rides + daily cap and on the monthly pass, every number from the Rav-Pass profiles
+  page (`FareProfile.PROFILES_URL`, pinned in `FareProfileTest`). Old settings (`REGULAR`,
+  `HALF`, `FREE`) keep their names and prices; never rename an entry.
+- **Monthly report** (Phase 10 D8): History → "Monthly report" (shown once a calendar month
+  has finished) → a month → the share sheet with `transit-2026-09.csv` (UTF-8 with BOM, CRLF,
+  RFC 4180 quoting, formula-looking cells prefixed with `'`) and the summary as text.
+  `history/Report.kt` is pure: calendar month of the start in Israel time, one row per trip
+  (date, start, end, from, to, lines, minutes, fare after the single-ride share, profile), then
+  total trips, the column's sum (no caps, so it adds up) and "not a receipt". The message adds that prices use
+  the current profile (a mid-month change re-prices the whole month). Times are Israel's: a
+  ride across the October clock change shows its real minutes (`ReportTest`). The file goes
+  to `cacheDir/reports/` (`ui/screens/ReportExport.kt` `ReportFiles`), shared through the
+  existing FileProvider (`res/xml/update_paths.xml`, authority `<package>.updates`); files
+  older than a day are deleted at app start and before each new report. `TripRecord.lines`
+  (since D8) fills the lines column; older records leave it empty.
 
 # Offline
 - **My lines offline**: each successful board is saved per stop (`core/present/DepartureCache`,

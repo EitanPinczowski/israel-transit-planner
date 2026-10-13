@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 10 D8: fare profiles (Settings → Fare) and the monthly travel report (History). -->
+<resources>
+    <string name="fare_profile_senior">אזרח ותיק (מגיל 67)</string>
+    <string name="fare_profile_student">סטודנט</string>
+    <string name="fare_profile_youth">נוער (עד גיל 18)</string>
+    <string name="fare_profile_soldier">חייל (בשירות חובה)</string>
+    <string name="fare_profile_half" formatted="false">50% (אחר)</string>
+    <string name="fare_profile_free">חינם (אחר)</string>
+
+    <string name="fare_help_regular">מחיר מלא.</string>
+    <string name="fare_help_senior">חינם באוטובוסים, ברכבת הקלה וברכבת מגיל 67.</string>
+    <string name="fare_help_student" formatted="false">33% הנחה על כל נסיעה; החופשי החודשי במחיר מלא.</string>
+    <string name="fare_help_youth" formatted="false">50% הנחה על כל נסיעה ועל החופשי החודשי.</string>
+    <string name="fare_help_soldier">חינם באוטובוסים, ברכבת הקלה וברכבת בזמן שירות החובה.</string>
+    <string name="fare_help_half" formatted="false">50% הנחה על נסיעות ומנויים: נכים, זכאי ביטוח לאומי, נשים בגילאי 62–66.</string>
+    <string name="fare_help_free">חינם: חיילים משוחררים בשנה הראשונה, עיוורים ושאר הזכאים ברשימת רב-פס.</string>
+    <string name="fare_help_source">ההנחות לפי דף הפרופילים של רב-פס. האפליקציה רק מעריכה, ולא בודקת זכאות.</string>
+
+    <string name="report_button">דוח חודשי</string>
+    <string name="report_pick">איזה חודש?</string>
+    <plurals name="report_month_trips">
+        <item quantity="one">%1$s · נסיעה אחת</item>
+        <item quantity="two">%1$s · ⁨%2$d⁩ נסיעות</item>
+        <item quantity="other">%1$s · ⁨%2$d⁩ נסיעות</item>
+    </plurals>
+    <string name="report_share">שיתוף הדוח החודשי</string>
+    <string name="report_subject">דוח נסיעות, %1$s</string>
+    <string name="report_failed">לא הצלחנו ליצור את קובץ הדוח.</string>
+
+    <string name="report_col_date">תאריך</string>
+    <string name="report_col_start">יציאה</string>
+    <string name="report_col_end">הגעה</string>
+    <string name="report_col_from">מוצא</string>
+    <string name="report_col_to">יעד</string>
+    <string name="report_col_lines">קווים</string>
+    <string name="report_col_minutes">דקות</string>
+    <string name="report_col_fare">הערכת מחיר (₪)</string>
+    <string name="report_col_profile">פרופיל</string>
+    <string name="report_total_trips">סה״כ נסיעות</string>
+    <string name="report_total_estimate">סה״כ הערכה (₪)</string>
+    <string name="report_note">הערכה לפי נסיעות שהתחילו באפליקציה; זו אינה קבלה.</string>
+    <string name="report_profile_note">המחירים לפי פרופיל התעריף הנוכחי שלכם, כך ששינוי הפרופיל באמצע החודש מחשב מחדש את כל החודש.</string>
+    <string name="report_summary">%1$s: ⁨%2$d⁩ נסיעות, בערך ₪⁨%3$s⁩ (%4$s).</string>
+</resources>
