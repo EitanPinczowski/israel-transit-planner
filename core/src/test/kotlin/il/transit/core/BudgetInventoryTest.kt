@@ -233,8 +233,12 @@ class BudgetInventoryTest {
             record("Rain on the walks (Open-Meteo, two searches in one cell)", "GuardedWeather.cell", 1, weather.get())
         }
 
+        // ---- reminders (Phase 11 E1): the test alarm and the pass expiry never plan ----
+        record("Test reminder (Settings: Check reminders)", "-", 0, il.transit.core.remind.AlarmKind.TEST.requests)
+        record("Rav-Kav pass expiry", "-", 0, il.transit.core.remind.AlarmKind.PASS.requests)
+
         println("Request-budget inventory (${rows.size} rows):\n" + rows.joinToString("\n") { "  %-62s %-32s sent %2d / cap %2d".format(it.feature, it.constant, it.sent, it.cap) })
-        assertEquals("every row ran", 21, rows.size)
+        assertEquals("every row ran", 23, rows.size)
     }
 
     /** The caps are policy: this fails when one moves, so the change is a reviewed edit (skill `transitous-api`). */

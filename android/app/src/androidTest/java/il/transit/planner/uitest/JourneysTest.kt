@@ -381,6 +381,43 @@ class JourneysTest {
         }
     }
 
+    /**
+     * Phase 11 E1: Settings → Check reminders → Test reminder in 1 minute → the real exact alarm
+     * fires, the receiver posts "Test: your reminders work" on the reminders' channel within 90 s,
+     * and the check says it rang. The test never looks at a trip: 0 requests.
+     */
+    @Test fun j15_test_reminder_rings() = AppDriver(compose).launch().use { d ->
+        val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
+        nm.cancel(TEST_NOTIFICATION)
+        val before = d.app.replay.calls.get()
+        d.tapMenuItem(R.string.settings)
+        compose.waitUntil(5_000) { d.vm.state.value.showSettings }
+        val list = hasScrollAction() and hasAnyAncestor(isDialog())
+        val row = hasTestTag("check_reminders")
+        repeat(12) {
+            if (compose.onAllNodes(row).fetchSemanticsNodes().isNotEmpty()) return@repeat
+            d.awaitNode(list)
+            compose.onAllNodes(list).onFirst().performTouchInput { swipeUp() }
+            compose.waitForIdle()
+        }
+        d.awaitNode(row)
+        compose.onNode(row).performSemanticsAction(SemanticsActions.OnClick)
+        d.awaitNode(hasTestTag("check_test"))
+        compose.onNode(hasTestTag("check_test")).performSemanticsAction(SemanticsActions.OnClick)
+        try {
+            val until = SystemClock.uptimeMillis() + 90_000
+            fun posted() = nm.activeNotifications.filter { it.id == TEST_NOTIFICATION }
+            while (posted().isEmpty() && SystemClock.uptimeMillis() < until) SystemClock.sleep(500)
+            val n = posted()
+            assertEquals("J15: the test reminder was not posted within 90 s", 1, n.size)
+            assertEquals("trip_reminders", n.single().notification.channelId)
+            d.awaitNode(hasTestTag("check_test_rang"), 10_000) // the check re-reads every 3 s
+            assertEquals("J15: the test reminder sent requests", before, d.app.replay.calls.get())
+        } finally {
+            nm.cancel(TEST_NOTIFICATION)
+        }
+    }
+
     @Test fun j13_update_banner_shows_and_dismisses() {
         val d = AppDriver(compose)
         d.app.latestRelease = LatestRelease("9.9.9", "https://example.invalid/release", null)
@@ -401,5 +438,10 @@ class JourneysTest {
         accuracy = 5f
         time = System.currentTimeMillis()
         elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+    }
+
+    private companion object {
+        /** `Notifications.ID_TEST`. */
+        const val TEST_NOTIFICATION = 1005
     }
 }

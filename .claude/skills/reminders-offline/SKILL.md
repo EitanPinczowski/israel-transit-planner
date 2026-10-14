@@ -49,6 +49,36 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `Reminder` stores the itinerary and the planned names since C5 (null on older reminders:
   no "Start trip", no walk).
 
+# "Will my reminder ring?" and the Rav-Kav pass (Phase 11 E1, 0 requests)
+- **The check** (Settings → Check reminders; also offered once, as a dialog, after the first
+  reminder is set: `UserSettings.reminderCheckHintShown`, `MainViewModel.remindSelected`).
+  `core/remind/ReminderHealth.kt` is pure: `PhoneState` (notifications on, `POST_NOTIFICATIONS`
+  on 33+, each channel's importance, exact alarms, battery optimisation, background restriction
+  28+, standby bucket 28+, location, `Build.MANUFACTURER`, pass set, last trip on) → problems,
+  worst first (`Severity`: WONT_RING, MAY_FAIL, OTHER_ALERT, TIP), each with the one page that fixes
+  it (`FixPage`; android `remind/ReminderCheck.open`): app notifications, the channel, the exact
+  alarm switch (31–32 only; 33+ has `USE_EXACT_ALARM`, so the app's page), the battery-optimisation
+  list (no `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission), the app's details page. Battery
+  optimisation is a TIP on stock Android (exact alarms still ring) and MAY_FAIL on a known maker.
+  A maker line (generic text + the name, owner decision 3) for Samsung, Xiaomi/Redmi/POCO, Huawei,
+  Honor, OnePlus, Oppo, Realme. The screen re-reads the phone every 3 s while open.
+- **Test reminder in 1 minute:** `ReminderScheduler.scheduleTest` arms the same exact alarm type
+  (`ACTION_TEST`, system clock); the receiver handles it before it reads any reminder, posts
+  "Test: your reminders work" on `trip_reminders` (id 1005) and stores the time
+  (`ReminderCheck.rang`, SharedPreferences `reminder_check`) only when it really posted. The screen
+  shows "rings at", "Last test rang at 10:42", or 3 min after the due time "did not ring" with the
+  first problem as the likeliest reason. A WONT_RING problem disables the button and says why.
+  `AlarmKind.TEST.requests == 0` (`ReminderHealthTest`, `BudgetInventoryTest`). Boot re-arms a test
+  still ahead (T7's Doze/reboot seam). Journey `j15_test_reminder_rings`.
+- **Rav-Kav pass** (`UserSettings.passEndsOn`, ISO date or null = Off; `core/remind/PassExpiry.kt`):
+  notices 3 days before and on the last day at 09:00 Israel time (owner decision 4, Shabbat too),
+  on the "Rav-Kav pass" channel (`rav_kav_pass`, default importance, id 1004). One inexact alarm
+  (`ReminderScheduler.syncPass`, `ACTION_PASS`) for `PassExpiry.next`; the receiver posts
+  `PassExpiry.due` (a Doze-late alarm the same day still posts) and arms the next. A date in the
+  past or > 400 days ahead is refused; a passed date goes back to Off (receiver and Settings row).
+  `BootReceiver` re-arms it on boot and on `TIMEZONE_CHANGED`. A tap opens Settings
+  (`Notifications.EXTRA_OPEN_SETTINGS`); E4 points it at the payment app. No prices.
+
 # "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)
 
 - Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`

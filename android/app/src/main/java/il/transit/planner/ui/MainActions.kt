@@ -44,6 +44,8 @@ interface MainActions {
     fun checkLastRideBack()
     fun closeStop()
     fun showSettings(show: Boolean)
+    /** Phase 11 E1: the reminder check, or its one-time hint. */
+    fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView)
     fun showHistory(show: Boolean)
     fun updateSettings(s: UserSettings)
     fun runTrip(t: SavedTrip)
@@ -118,6 +120,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun checkLastRideBack() { vm.checkLastRideBack() }
     override fun closeStop() { vm.closeStop() }
     override fun showSettings(show: Boolean) { vm.showSettings(show) }
+    override fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView) { vm.reminderCheck(view) }
     override fun showHistory(show: Boolean) { vm.showHistory(show) }
     override fun updateSettings(s: UserSettings) { vm.updateSettings(s) }
     override fun runTrip(t: SavedTrip) { vm.runTrip(t) }
@@ -176,6 +179,7 @@ object NoActions : MainActions {
     override fun checkLastRideBack() = Unit
     override fun closeStop() = Unit
     override fun showSettings(show: Boolean) = Unit
+    override fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView) = Unit
     override fun showHistory(show: Boolean) = Unit
     override fun updateSettings(s: UserSettings) = Unit
     override fun runTrip(t: SavedTrip) = Unit
