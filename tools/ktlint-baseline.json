@@ -18,21 +18,22 @@
   "wrapping": 14
  },
  "core": {
-  "argument-list-wrapping": 86,
-  "chain-method-continuation": 228,
-  "condition-wrapping": 12,
-  "if-else-bracing": 3,
-  "import-ordering": 8,
+  "argument-list-wrapping": 106,
+  "chain-method-continuation": 239,
+  "condition-wrapping": 13,
+  "if-else-bracing": 6,
+  "import-ordering": 13,
   "indent": 1,
-  "multiline-if-else": 19,
+  "multiline-if-else": 25,
   "multiline-loop": 3,
   "no-blank-line-before-rbrace": 1,
   "no-consecutive-comments": 4,
-  "no-unused-imports": 1,
+  "no-multi-spaces": 3,
+  "no-unused-imports": 2,
   "parameter-list-wrapping": 5,
   "spacing-between-declarations-with-comments": 21,
   "string-template": 2,
   "trailing-comma-on-call-site": 6,
-  "wrapping": 32
+  "wrapping": 65
  }
 }
