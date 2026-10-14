@@ -18,6 +18,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.hasScrollAction
@@ -394,10 +395,13 @@ class JourneysTest {
         compose.waitUntil(5_000) { d.vm.state.value.showSettings }
         val list = hasScrollAction() and hasAnyAncestor(isDialog())
         val row = hasTestTag("check_reminders")
-        repeat(12) {
+        // The row is in the middle of the list: slow, short drags (a fling would pass it by).
+        repeat(30) {
             if (compose.onAllNodes(row).fetchSemanticsNodes().isNotEmpty()) return@repeat
             d.awaitNode(list)
-            compose.onAllNodes(list).onFirst().performTouchInput { swipeUp() }
+            compose.onAllNodes(list).onFirst().performTouchInput {
+                swipe(androidx.compose.ui.geometry.Offset(centerX, centerY + height / 6f), androidx.compose.ui.geometry.Offset(centerX, centerY - height / 6f), 600)
+            }
             compose.waitForIdle()
         }
         d.awaitNode(row)
