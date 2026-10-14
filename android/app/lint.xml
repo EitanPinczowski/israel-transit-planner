@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Android Lint gate (Phase 11 T2, owner decision 18). Errors always fail. These warning ids are
+     raised to fatal, so a NEW one fails the build; today's are frozen in lint-baseline.xml.
+     Everything else stays a warning and is only reported. -->
+<lint>
+    <issue id="NewApi" severity="fatal" />
+    <issue id="InlinedApi" severity="fatal" />
+    <issue id="MissingPermission" severity="fatal" />
+    <issue id="UnspecifiedImmutableFlag" severity="fatal" />
+    <issue id="ExportedReceiver" severity="fatal" />
+    <issue id="ExportedService" severity="fatal" />
+    <issue id="UnsafeIntentLaunch" severity="fatal" />
+    <issue id="HardcodedText" severity="fatal" />
+    <issue id="RtlHardcoded" severity="fatal" />
+    <issue id="RtlEnabled" severity="fatal" />
+    <issue id="MissingTranslation" severity="fatal" />
+    <!-- Report only: the map and fixtures keep resources the code reaches by name. -->
+    <issue id="UnusedResources" severity="warning" />
+</lint>

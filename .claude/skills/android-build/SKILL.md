@@ -76,6 +76,22 @@ read `https://raw.githubusercontent.com/EitanPinczowski/israel-transit-planner/s
 list a folder through `api.github.com/repos/.../contents/<folder>?ref=screenshots`.
 Check that `INFO.txt` names your commit before judging a picture.
 
+## Static gates (Phase 11 T2)
+Each gate starts from a baseline of the code as it was, so only NEW problems fail. Nobody
+reformats or fixes old code to get green. Reports land in the job summary.
+
+| gate | where | fails when | read it | update it honestly |
+|---|---|---|---|---|
+| Android Lint | `android` job, `:app:lintDebug` | any error, or a new `NewApi`, `InlinedApi`, `MissingPermission`, `UnspecifiedImmutableFlag`, `ExportedReceiver`, `ExportedService`, `UnsafeIntentLaunch`, `HardcodedText`, `RtlHardcoded`, `RtlEnabled`, `MissingTranslation` (raised to fatal in `android/app/lint.xml`) | job summary "Lint"; artifact `lint-report` (`lint-results-debug.html`) | fix the code. Only a finding that is truly intended: `./gradlew -p android :app:updateLintBaseline` on a machine with the SDK, commit `lint-baseline.xml`, say why in the PR body. Never loosen `lint.xml` |
+| ktlint | `core` job (`ktlintCheck`) and `android` job (`:app:ktlintCheck`), then `python3 tools/ktlint_gate.py` | a finding sits on a line the PR added or changed (git diff against the merge-base with `main`) | the `::error file=…,line=…` lines; counts per module in the summary | fix the line (`./gradlew -p core ktlintFormat` also works on a file you are already editing). Rules are tuned in `.editorconfig`. `tools/ktlint-baseline.json` is only today's counts (for the drift line); refresh it with `tools/ktlint_gate.py --write-baseline` after `ktlintCheck`, never to hide a new finding |
+| APK size | `android` job, `tools/apk_size.py` on the unsigned release APK | more than +2 % or +1 MB over `apk-size.json` | the folder table (`lib/`, `res/`, `classes*.dex`, `assets/`) in the summary | a PR that grows the app on purpose runs `python3 tools/apk_size.py <apk> --write` and says why in its body; the owner accepts it. Shrinks: store the smaller value too |
+| Dependencies | `deps.yml`: weekly, on demand, and PRs/pushes touching Gradle files | a HIGH/CRITICAL (CVSS ≥ 7) advisory with a fixed version (OSV-scanner), or a release-APK dependency whose licence is not in `tools/licence_allowlist.txt` (Apache-2.0, MIT, BSD, ISC; GPL/AGPL/none never) | the run summary; artifact `deps-report` | upgrade the library. A licence exception is an owner decision: an `exception group:artifact reason` line in the allowlist |
+
+`tools/gradle/deps-report.init.gradle` (`./gradlew -p android -I $PWD/tools/gradle/deps-report.init.gradle :app:depsReport`)
+writes the resolved list `build/deps/gradle.lockfile` and each runtime dependency's POM, which the gate reads.
+Cloud sessions have no Android SDK: the Lint and APK gates can only be proven by a CI run
+(a scratch branch). `ktlintCheck` and the deps report for `core` run locally.
+
 ## Core coverage (Kover) and property tests (Phase 11 T1)
 - **Command:** `./gradlew -p core test koverXmlReport koverVerify` (CI's `core` job runs the last two after the
   tests, then `python3 tools/kover_summary.py` puts line coverage per package in the job summary). The XML is

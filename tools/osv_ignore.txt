@@ -1,0 +1,9 @@
+# Advisories that OSV reports for the build's TEST tooling only (Paparazzi's layoutlib pulls old
+# protobuf-java / BouncyCastle onto debugUnitTestRuntimeClasspath). They are not in the APK and we
+# cannot upgrade them without upgrading Paparazzi. tools/deps_gate.py honours a line only while its
+# date has not passed AND the package is on no release-runtime classpath; then it fails again, so
+# the entry gets looked at. Format: ID  expires(YYYY-MM-DD)  reason
+GHSA-735f-pc8j-v9w8 2027-01-13 protobuf-java 3.22.3 via Paparazzi/layoutlib (unit-test classpath only)
+GHSA-574f-3g2m-x479 2027-01-13 bcprov 1.77 via Paparazzi/layoutlib (unit-test classpath only)
+GHSA-9pwp-9qqc-pr26 2027-01-13 bcprov 1.77 via Paparazzi/layoutlib (unit-test classpath only)
+GHSA-qp49-qgx5-5m26 2027-01-13 bcprov 1.77 via Paparazzi/layoutlib (unit-test classpath only)

@@ -294,10 +294,10 @@ package. Tick only your own package's lines.
 - [x] Request-budget inventory test + a `check_docs` rule; saved-data samples per release
 
 ### T2 — Static gates + bug intake (`claude/p11-static-gates`, Sonnet, 0 requests)
-- [ ] Android Lint and ktlint as gates, each with a baseline
-- [ ] APK-size gate
-- [ ] OSV-scanner + licence check on dependencies
-- [ ] GitHub bug-report issue form for friends
+- [x] Android Lint and ktlint as gates, each with a baseline
+- [x] APK-size gate
+- [x] OSV-scanner + licence check on dependencies
+- [x] GitHub bug-report issue form for friends
 
 ### E1 — Reminder check + pass expiry (`claude/p11-reminder-check`, 0 requests)
 - [x] "Check reminders": notifications, channels, exact alarms, battery, standby, location, each with its settings page
