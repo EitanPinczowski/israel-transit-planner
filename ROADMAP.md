@@ -288,10 +288,10 @@ warns, at most 2 per wave: Wave 1 (T1, T2) → Wave 2 (E1, T3) → Wave 3 (E2, T
 package. Tick only your own package's lines.
 
 ### T1 — Core test foundation (`claude/p11-core-tests`, Sonnet, 0 requests)
-- [ ] Core coverage measured and gated (Kover; the gate only ratchets up)
-- [ ] Property tests: time and DST math, Pareto, fares, `LiveProgress`, `UserJson`, `SavedUi`
-- [ ] Parser fuzz over every fixture kind (MOTIS, Open-Meteo, Photon): no crash
-- [ ] Request-budget inventory test + a `check_docs` rule; saved-data samples per release
+- [x] Core coverage measured and gated (Kover; the gate only ratchets up)
+- [x] Property tests: time and DST math, Pareto, fares, `LiveProgress`, `UserJson`, `SavedUi`
+- [x] Parser fuzz over every fixture kind (MOTIS, Open-Meteo, Photon): no crash
+- [x] Request-budget inventory test + a `check_docs` rule; saved-data samples per release
 
 ### T2 — Static gates + bug intake (`claude/p11-static-gates`, Sonnet, 0 requests)
 - [x] Android Lint and ktlint as gates, each with a baseline

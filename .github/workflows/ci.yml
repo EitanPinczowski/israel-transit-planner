@@ -15,6 +15,11 @@ jobs:
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew -p core test
+      # Phase 11 T1: line coverage of core, gated (the value is in core/build.gradle.kts; it only ratchets up).
+      - run: ./gradlew -p core koverXmlReport koverVerify
+      - name: coverage per package
+        if: always()
+        run: python3 tools/kover_summary.py >> "$GITHUB_STEP_SUMMARY"
       - run: python3 tools/check_docs.py
       - run: python3 tools/check_strings.py
       # Phase 11 T2: style. ktlint lists every finding; the gate fails on lines this change added or edited.

@@ -69,6 +69,10 @@ class LastRideFinder(private val api: TransitApi) {
         }
 
         /** The service day a departure belongs to (before 04:00 counts as the previous day). */
-        fun serviceDay(t: Instant): LocalDate = t.atZone(ISRAEL).minusHours(DAY_STARTS.hour.toLong()).toLocalDate()
+        fun serviceDay(t: Instant): LocalDate {
+            // By the wall clock: subtracting 4 elapsed hours moved the boundary to 03:00 / 05:00 on the two clock-change days.
+            val z = t.atZone(ISRAEL)
+            return if (z.toLocalTime() < DAY_STARTS) z.toLocalDate().minusDays(1) else z.toLocalDate()
+        }
     }
 }

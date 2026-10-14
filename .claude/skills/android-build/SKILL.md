@@ -92,6 +92,22 @@ writes the resolved list `build/deps/gradle.lockfile` and each runtime dependenc
 Cloud sessions have no Android SDK: the Lint and APK gates can only be proven by a CI run
 (a scratch branch). `ktlintCheck` and the deps report for `core` run locally.
 
+## Core coverage (Kover) and property tests (Phase 11 T1)
+- **Command:** `./gradlew -p core test koverXmlReport koverVerify` (CI's `core` job runs the last two after the
+  tests, then `python3 tools/kover_summary.py` puts line coverage per package in the job summary). The XML is
+  `core/build/reports/kover/report.xml`. Excluded as generated data: `RailStationsData`, `HolidaysData`,
+  `TownsData`, `NeighbourhoodsData` (and the `golden` source set).
+- **Gate:** line coverage of `core` main ≥ **98 %** (`minValue` in `core/build.gradle.kts`). Measured on `main`
+  at 2026-10-13: **98.14 %** (3,767 lines), rounded down to 98 (owner decision 11); with T1's tests 98.22 %.
+  **It only ratchets up:** a PR may raise `minValue` (after a coverage-raising change), never lower it; one
+  that must says why in its body for the owner to accept.
+- **Property-test seed rule:** tests in `core/src/test/.../prop/` use kotest-property standalone from JUnit 4
+  (`cfg()` in `PropSupport.kt`): a FIXED seed (`SEED`) and a fixed number of cases, so CI is deterministic;
+  kotest prints the failing case and its seed. To explore, change `SEED` locally and run; to replay a failure,
+  keep its seed. `ParserFuzzTest` / `Fuzz` do the same with `Fuzz(seed).mutants(text, n)[i]`. When a run finds a
+  real bug, fix it (small, in core) and keep the case as a plain test, so it does not depend on the seed.
+- The Android JVM tests have no kotest dependency: `SavedUiPropertyTest` uses a seeded `java.util.Random`.
+
 ## Emulator / device
 
 - The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled

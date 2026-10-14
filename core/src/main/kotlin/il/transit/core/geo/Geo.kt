@@ -39,8 +39,9 @@ object Geo {
         var lat = 0L
         var lon = 0L
         while (index < encoded.length) {
-            val (dLat, next1) = decodeValue(encoded, index)
-            val (dLon, next2) = decodeValue(encoded, next1)
+            // A cut-off polyline (a dropped connection, a bad answer) ends here: keep the points before it.
+            val (dLat, next1) = decodeValue(encoded, index) ?: break
+            val (dLon, next2) = decodeValue(encoded, next1) ?: break
             index = next2
             lat += dLat
             lon += dLon
@@ -49,11 +50,12 @@ object Geo {
         return out
     }
 
-    private fun decodeValue(s: String, start: Int): Pair<Long, Int> {
+    private fun decodeValue(s: String, start: Int): Pair<Long, Int>? {
         var result = 0L
         var shift = 0
         var i = start
         while (true) {
+            if (i >= s.length) return null
             val b = s[i++].code - 63
             result = result or ((b and 0x1f).toLong() shl shift)
             shift += 5
