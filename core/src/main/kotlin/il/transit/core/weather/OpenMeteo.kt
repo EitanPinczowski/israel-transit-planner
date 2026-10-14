@@ -123,11 +123,15 @@ fun parseOpenMeteo(body: String): RainForecast {
     val r = OpenMeteoJson.decodeFromString(OpenMeteoResponse.serializer(), body)
     if (r.error) throw IllegalStateException("Open-Meteo: ${r.reason}")
     val h = r.hourly ?: return RainForecast(emptyList())
-    return RainForecast(
-        h.time.mapIndexed { i, t ->
-            RainHour(Instant.ofEpochSecond(t - 3600), h.precipitation_probability.getOrNull(i), h.precipitation.getOrNull(i))
-        },
-    )
+    return try {
+        RainForecast(
+            h.time.mapIndexed { i, t ->
+                RainHour(Instant.ofEpochSecond(t - 3600), h.precipitation_probability.getOrNull(i), h.precipitation.getOrNull(i))
+            },
+        )
+    } catch (e: java.time.DateTimeException) {
+        throw IllegalStateException("Open-Meteo: a time out of range", e)
+    }
 }
 
 /**

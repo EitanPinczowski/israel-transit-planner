@@ -2,6 +2,7 @@ plugins {
     `java-library`
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kover)
 }
 
 group = "il.transit"
@@ -35,6 +36,7 @@ dependencies {
     api(libs.kotlinx.serialization.json)
     api(libs.okhttp)
     testImplementation(libs.junit)
+    testImplementation(libs.kotest.property)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
 }
@@ -62,4 +64,27 @@ tasks.test {
     // Unit tests must never reach the network; fixtures only (see .claude/skills/transitous-api).
     systemProperty("transit.offline", "true")
     testLogging { events("failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT }
+}
+
+// Line coverage of core's main code (Phase 11 T1). Generated data is not code under test.
+// The gate only ratchets up: a PR may raise `minValue`, never lower it (android-build skill).
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "il.transit.core.geo.RailStationsData*",
+                    "il.transit.core.calendar.HolidaysData*",
+                    "il.transit.core.search.TownsData*",
+                    "il.transit.core.search.NeighbourhoodsData*",
+                    "il.transit.core.golden.*",
+                )
+            }
+        }
+        verify {
+            rule("core line coverage") {
+                bound { minValue.set(98) }
+            }
+        }
+    }
 }

@@ -153,6 +153,25 @@ All in `present/TripStops.kt`; the request pattern is pinned in `TripDetailsTest
 departures and `trip` 30 s, `mapTrips` 20 s), ≤ 2 concurrent, one retry on 429/503. Each special feature runs in a
 `BudgetedTransitApi`; `DropOffPlanner.BUDGET = 10` and `ParkRidePlanner.BUDGET = 5` are pinned by tests. Raising a budget
 is a policy decision, not a code tweak — say so in the PR.
+### Request-budget inventory (Phase 11 T1, `BudgetInventoryTest`)
+One row per entry point, run over its fixtures through a counting `TransitApi`, asserting requests ≤ cap. `python tools/check_docs.py`
+fails CI when a request-cap constant in `core/src/main` (`BUDGET`, `MAX_TRIPS` / `MAX_STOPS` / `MAX_PLANS` / `MAX_PAGES`, `*_PER_OPEN` / `_PER_SEARCH` / `_PER_TAP`)
+is missing from the test's "constant" column or from this table. **A package that adds a request adds its row to both.**
+
+| entry point | cap | constant |
+|---|---|---|
+| Trip plan; Earlier / Later (per tap) | 1 | – |
+| Better start · Let me off on the way · Best pick-up point · Park & ride | 5 · 10 · 4 · 5 | `BetterStartPlanner.BUDGET` · `DropOffPlanner.BUDGET` · `PickUpPlanner.BUDGET` · `ParkRidePlanner.BUDGET` |
+| Errands: a plan per leg; more than the limit refused (0) | 4 | `ChainPlanner.BUDGET`, `ChainPlanner.MAX_STOPS` (3) |
+| Car comparison | 1 | `CarCompare.BUDGET` |
+| Last trip home / last ride | 3 | `LastRideFinder.BUDGET` |
+| Night refresh: trips, then boards (own budget) | 6 + 3 | `NightRefresh.MAX_TRIPS`, `NightRefresh.MAX_STOPS` |
+| Big-stop change on opening an option | 2 | `BigStopChanges.BUDGET` |
+| Day timetable: open, then each More | 2, 1 | `DayTimetable.PAGES_PER_OPEN` |
+| Typing search: Transitous geocode; phone Geocoder + Photon | 1; 1 | `PlaceSearch.BACKUP_PER_SEARCH` |
+| Stop code · pin name (twice at a point) | 0 · 1 | – |
+| Rain on the walks (Open-Meteo, not Transitous): per 0.1° cell per hour | 1 | `GuardedWeather.cell` |
+
 ### What the guards do when the network misbehaves (pinned by `NetworkFaultTest`, Phase 10 D4)
 | fault | `GuardedTransitApi` / `GuardedGeocoder` | against the budget |
 |---|---|---|
