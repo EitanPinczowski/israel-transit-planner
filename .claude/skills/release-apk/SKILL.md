@@ -83,3 +83,10 @@ keytool -genkeypair -v -keystore transit-release.jks -alias transit -keyalg RSA 
   to rise in January 2027: before a release after that, re-read the source URL in its KDoc,
   update the columns + `CHECKED`, and fix the pinned test in `FareTest`.
 - No Play Store: paid account, and USE_EXACT_ALARM would not pass Play review for this app.
+
+## Bug reports from friends (Phase 11 T2)
+Friends with a GitHub account use the issue form (`.github/ISSUE_TEMPLATE/bug.yml`: app version,
+Android version and phone, what they did, expected, happened, screenshot, optional crash log, and a
+checkbox that the report has no home address or personal places). Blank issues are off.
+Friends without an account use Settings → Crash log → "Share crash log" over WhatsApp (owner
+decision 28). Before a release, read the open `bug` issues and say in the notes which are fixed.

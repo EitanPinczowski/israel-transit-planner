@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: No GitHub account?
+    url: https://github.com/EitanPinczowski/israel-transit-planner#readme
+    about: In the app, open the crash log (Settings) and tap "Share crash log", then send it to Eitan on WhatsApp.

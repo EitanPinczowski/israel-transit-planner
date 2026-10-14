@@ -1,0 +1,39 @@
+{
+ "android": {
+  "argument-list-wrapping": 47,
+  "chain-method-continuation": 147,
+  "condition-wrapping": 1,
+  "function-expression-body": 1,
+  "import-ordering": 20,
+  "indent": 54,
+  "multiline-if-else": 29,
+  "multiline-loop": 3,
+  "no-blank-line-before-rbrace": 1,
+  "no-consecutive-blank-lines": 3,
+  "no-consecutive-comments": 1,
+  "no-empty-first-line-in-class-body": 19,
+  "no-unused-imports": 880,
+  "spacing-between-declarations-with-annotations": 6,
+  "spacing-between-declarations-with-comments": 11,
+  "wrapping": 14
+ },
+ "core": {
+  "argument-list-wrapping": 106,
+  "chain-method-continuation": 239,
+  "condition-wrapping": 13,
+  "if-else-bracing": 6,
+  "import-ordering": 13,
+  "indent": 1,
+  "multiline-if-else": 25,
+  "multiline-loop": 3,
+  "no-blank-line-before-rbrace": 1,
+  "no-consecutive-comments": 4,
+  "no-multi-spaces": 3,
+  "no-unused-imports": 2,
+  "parameter-list-wrapping": 5,
+  "spacing-between-declarations-with-comments": 21,
+  "string-template": 2,
+  "trailing-comma-on-call-site": 6,
+  "wrapping": 65
+ }
+}

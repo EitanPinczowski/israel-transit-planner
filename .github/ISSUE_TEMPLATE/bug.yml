@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in the app did not work
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! No GitHub account? In the app, open the crash log and tap **Share crash log**, then send it on WhatsApp.
+  - type: input
+    id: app_version
+    attributes:
+      label: App version
+      description: Shown in the app under Settings
+      placeholder: "0.9.0"
+    validations: { required: true }
+  - type: input
+    id: android
+    attributes:
+      label: Android version and phone
+      placeholder: "Android 14, Samsung Galaxy A54"
+    validations: { required: true }
+  - type: textarea
+    id: did
+    attributes:
+      label: What did you do?
+      description: Step by step, from opening the app.
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations: { required: true }
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened instead?
+    validations: { required: true }
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag a picture into this box. Hide anything personal first.
+  - type: textarea
+    id: crashlog
+    attributes:
+      label: Crash log (optional)
+      description: In the app, Settings → Crash log → Share, then paste the text here.
+      render: text
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This report has no home address and no personal places (saved places, work, family).
+          required: true

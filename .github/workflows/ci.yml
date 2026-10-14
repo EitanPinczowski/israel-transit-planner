@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }   # ktlint_gate.py diffs against the merge-base with main
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
@@ -21,6 +22,10 @@ jobs:
         run: python3 tools/kover_summary.py >> "$GITHUB_STEP_SUMMARY"
       - run: python3 tools/check_docs.py
       - run: python3 tools/check_strings.py
+      # Phase 11 T2: style. ktlint lists every finding; the gate fails on lines this change added or edited.
+      - run: ./gradlew -p core ktlintCheck
+      - name: ktlint on changed lines
+        run: python3 tools/ktlint_gate.py | tee -a "$GITHUB_STEP_SUMMARY"; test "${PIPESTATUS[0]}" = 0
 
   android:
     name: build debug APK
@@ -28,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
@@ -36,6 +42,25 @@ jobs:
       - run: ./gradlew -p android :app:assembleUitest :app:assembleUitestAndroidTest
       # Unsigned here (no secrets in CI): only proves the release build compiles.
       - run: ./gradlew -p android :app:assembleRelease
+      # Phase 11 T2 gates (android-build skill): Lint, ktlint on changed lines, APK size.
+      - name: Android Lint
+        run: ./gradlew -p android :app:lintDebug
+      - name: Lint counts
+        if: always()
+        run: python3 tools/lint_summary.py android/app/build/reports/lint-results-debug.xml >> "$GITHUB_STEP_SUMMARY"
+      - run: ./gradlew -p android :app:ktlintCheck
+      - name: ktlint on changed lines
+        run: python3 tools/ktlint_gate.py | tee -a "$GITHUB_STEP_SUMMARY"; test "${PIPESTATUS[0]}" = 0
+      - name: APK size
+        run: python3 tools/apk_size.py android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-report
+          path: |
+            android/app/build/reports/lint-results-debug.html
+            android/app/build/reports/lint-results-debug.xml
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug

@@ -1,0 +1,14 @@
+{
+ "bytes": 29068102,
+ "entries_bytes": 28999807,
+ "folders": {
+  "META-INF/": 754,
+  "assets/": 8329,
+  "classes*.dex": 8491259,
+  "kotlin/": 10114,
+  "lib/": 19631264,
+  "other": 724830,
+  "res/": 133257
+ },
+ "commit": "ab4e2f4c4f07912d29a8880d8d5db2f51cf90c19"
+}

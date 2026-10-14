@@ -1,0 +1,15 @@
+# Licences allowed for dependencies that ship in the release APK (Phase 11 T2, owner decision 27).
+# tools/deps_gate.py reads each runtime dependency's POM <licenses> and matches the name or url,
+# lower-cased, against the aliases below. A dependency with no licence, or one not listed, fails.
+# GPL / AGPL are never listed. A single-artifact exception (with the reason) goes in the
+# `exception` lines at the end; adding one is an owner decision.
+#
+# SPDX id : alias | alias | ...   (substring match)
+Apache-2.0: apache-2.0 | apache license | apache software license | apache.org/licenses/license-2.0 | the apache | apache 2
+MIT: mit license | the mit | opensource.org/licenses/mit | mit-0
+BSD-2-Clause: bsd-2 | bsd 2 | 2-clause bsd | simplified bsd | bsd-2-clause
+BSD-3-Clause: bsd-3 | bsd 3 | 3-clause bsd | new bsd | revised bsd | the bsd license | bsd license | bsd-3-clause
+ISC: isc license | isc
+# Test-only libraries (junit, mockwebserver deps...) are not in the release APK and are not checked.
+# EPL is allowed only for those; it is listed here so a release dependency under EPL still fails:
+# (no EPL line on purpose)

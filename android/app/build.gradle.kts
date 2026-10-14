@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.paparazzi)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -84,6 +85,17 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    // Android Lint is a gate (Phase 11 T2): errors fail, lint.xml raises a fixed list of warning ids to
+    // fatal, and `lint-baseline.xml` freezes today's findings so only new ones fail (android-build skill).
+    lint {
+        lintConfig = file("lint.xml")
+        baseline = file("lint-baseline.xml")
+        abortOnError = true
+        checkReleaseBuilds = false
+        htmlReport = true
+        xmlReport = true
+        textReport = false
     }
     buildFeatures {
         compose = true
@@ -155,4 +167,13 @@ tasks.withType<Test>().configureEach {
         logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $jar")
         classpath = files(before.files.map { if (platformJar(it)) jar else it })
     }
+}
+
+// Style (Phase 11 T2): ktlint reports every finding, `tools/ktlint_gate.py` fails on those that sit
+// on lines a PR added or changed. Today's findings are frozen in tools/ktlint-baseline.json.
+ktlint {
+    version.set("1.5.0")
+    android.set(true)
+    ignoreFailures.set(true)
+    reporters { reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE) }
 }

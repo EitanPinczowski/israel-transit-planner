@@ -1,0 +1,54 @@
+name: Dependencies
+
+# Phase 11 T2: known vulnerabilities (OSV-scanner, free, no account) and licences of what ships.
+# Weekly, on demand, and on any PR or push that touches the Gradle files (about 3 runner-minutes).
+on:
+  schedule:
+    - cron: "17 5 * * 0"
+  workflow_dispatch:
+  pull_request:
+    paths: ["gradle/**", "**/*.gradle.kts", "tools/gradle/**", "tools/deps_gate.py", "tools/licence_allowlist.txt", "tools/osv_ignore.txt", ".github/workflows/deps.yml"]
+  push:
+    paths: ["gradle/**", "**/*.gradle.kts", "tools/gradle/**", "tools/deps_gate.py", "tools/licence_allowlist.txt", "tools/osv_ignore.txt", ".github/workflows/deps.yml"]
+
+concurrency:
+  group: deps-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: OSV + licences
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      # The resolved dependency lists (no APK is built): the release APK's runtime, core's, and the tests'.
+      - name: list resolved dependencies
+        run: |
+          ./gradlew -p core -I "$PWD/tools/gradle/deps-report.init.gradle" depsReport -q
+          ./gradlew -p android -I "$PWD/tools/gradle/deps-report.init.gradle" :app:depsReport -q
+      - name: install OSV-scanner 1.9.2
+        run: |
+          curl -sSLo osv-scanner https://github.com/google/osv-scanner/releases/download/v1.9.2/osv-scanner_linux_amd64
+          echo "d6af4b67fa5de658598bd2d445efb99e90d1734b3146962418719c4350ecb74b  osv-scanner" | sha256sum -c -
+          chmod +x osv-scanner
+      - name: OSV-scanner
+        run: |
+          # Exit 1 means "vulnerabilities found"; tools/deps_gate.py decides what fails.
+          ./osv-scanner -L gradle.lockfile:core/build/deps/gradle.lockfile -L gradle.lockfile:android/app/build/deps/gradle.lockfile \
+            --format json --output osv.json || test "$?" = 1
+          python3 tools/deps_gate.py osv osv.json android/app/build/deps core/build/deps
+      - name: licences of the release APK's dependencies
+        if: always()
+        run: python3 tools/deps_gate.py licences android/app/build/deps core/build/deps
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deps-report
+          path: |
+            osv.json
+            core/build/deps/
+            android/app/build/deps/
+          retention-days: 14
