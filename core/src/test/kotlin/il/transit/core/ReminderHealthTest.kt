@@ -136,13 +136,22 @@ class ReminderHealthTest {
 
     @Test fun `worst first`() {
         val bad = fine.copy(
-            sdk = 33, notificationsEnabled = false, postNotificationsGranted = false, locationGranted = false,
-            ignoringBatteryOptimizations = false, exactAlarms = false, backgroundRestricted = true, manufacturer = "Xiaomi",
+            sdk = 33,
+            notificationsEnabled = false,
+            postNotificationsGranted = false,
+            locationGranted = false,
+            ignoringBatteryOptimizations = false,
+            exactAlarms = false,
+            backgroundRestricted = true,
+            manufacturer = "Xiaomi",
         )
         assertEquals(
             listOf(
-                ProblemKind.NOTIFICATIONS_PERMISSION, ProblemKind.BACKGROUND_RESTRICTED,
-                ProblemKind.EXACT_ALARMS_OFF, ProblemKind.BATTERY_OPTIMIZED, ProblemKind.LOCATION_OFF,
+                ProblemKind.NOTIFICATIONS_PERMISSION,
+                ProblemKind.BACKGROUND_RESTRICTED,
+                ProblemKind.EXACT_ALARMS_OFF,
+                ProblemKind.BATTERY_OPTIMIZED,
+                ProblemKind.LOCATION_OFF,
             ),
             kinds(bad),
         )
@@ -150,9 +159,16 @@ class ReminderHealthTest {
 
     @Test fun `each maker line`() {
         val cases = mapOf(
-            "samsung" to Maker.SAMSUNG, "Xiaomi" to Maker.XIAOMI, "Redmi" to Maker.XIAOMI, "POCO" to Maker.XIAOMI,
-            "HUAWEI" to Maker.HUAWEI, "HONOR" to Maker.HONOR, "OnePlus" to Maker.ONEPLUS, "OPPO" to Maker.OPPO,
-            "realme" to Maker.REALME, " Samsung Electronics" to Maker.SAMSUNG,
+            "samsung" to Maker.SAMSUNG,
+            "Xiaomi" to Maker.XIAOMI,
+            "Redmi" to Maker.XIAOMI,
+            "POCO" to Maker.XIAOMI,
+            "HUAWEI" to Maker.HUAWEI,
+            "HONOR" to Maker.HONOR,
+            "OnePlus" to Maker.ONEPLUS,
+            "OPPO" to Maker.OPPO,
+            "realme" to Maker.REALME,
+            " Samsung Electronics" to Maker.SAMSUNG,
         )
         for ((m, want) in cases) assertEquals(m, want, ReminderHealth.maker(fine.copy(manufacturer = m)))
         for (m in listOf("Google", "motorola", "Nothing", "", "samsungish")) assertNull(m, Maker.of(m))

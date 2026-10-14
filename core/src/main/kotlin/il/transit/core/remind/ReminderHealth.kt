@@ -39,10 +39,13 @@ data class PhoneState(
 enum class Severity {
     /** Reminders will not show at all. */
     WONT_RING,
+
     /** Reminders may come late, or without sound. */
     MAY_FAIL,
+
     /** Another alert (pass, last trip, get-off) will not show. */
     OTHER_ALERT,
+
     /** Worth a look; stock Android rings anyway. */
     TIP,
 }
@@ -51,12 +54,16 @@ enum class Severity {
 enum class FixPage {
     /** `Settings.ACTION_APP_NOTIFICATION_SETTINGS`. */
     APP_NOTIFICATIONS,
+
     /** `Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS` for [ReminderProblem.channel]. */
     CHANNEL,
+
     /** `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` (31–32, where the app may ask). */
     EXACT_ALARMS,
+
     /** `Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS`: the list, so no new permission. */
     BATTERY_LIST,
+
     /** The app's details page ("Battery → Unrestricted", permissions). */
     APP_DETAILS,
 }
@@ -110,8 +117,10 @@ enum class AlarmKind(val requests: Int) {
     LEAVE(0),
     END(0),
     DISMISS(0),
+
     /** "Test reminder in 1 minute": posts and stores the time; never looks at a trip. */
     TEST(0),
+
     /** Rav-Kav pass expiry. */
     PASS(0),
 }
@@ -121,6 +130,7 @@ sealed interface TestResult {
     data object None : TestResult
     data class Waiting(val dueAt: Instant) : TestResult
     data class Rang(val at: Instant) : TestResult
+
     /** [ReminderHealth.MISSED_AFTER] past the due time with no delivery stored. */
     data class Missed(val dueAt: Instant) : TestResult
 }
