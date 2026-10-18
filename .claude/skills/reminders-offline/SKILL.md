@@ -68,15 +68,20 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   (`ReminderCheck.rang`, SharedPreferences `reminder_check`) only when it really posted. The screen
   shows "rings at", "Last test rang at 10:42", or 3 min after the due time "did not ring" with the
   first problem as the likeliest reason. A WONT_RING problem disables the button and says why.
-  `AlarmKind.TEST.requests == 0` (`ReminderHealthTest`, `BudgetInventoryTest`). Boot re-arms a test
-  still ahead (T7's Doze/reboot seam). Journey `j15_test_reminder_rings`.
+  Each alarm's action string lives in core `AlarmKind`; the receiver dispatches on `AlarmKind.of` and
+  handles every kind that does not `readsTrip` (TEST, PASS: 0 requests) before it reads the reminder
+  (`ReminderHealthTest`). Boot, an app update and a time-zone change re-arm a test still ahead (T7's
+  Doze/reboot seam). Journey `j15_test_reminder_rings` runs with an active reminder and asserts it is
+  untouched and 0 requests are sent.
 - **Rav-Kav pass** (`UserSettings.passEndsOn`, ISO date or null = Off; `core/remind/PassExpiry.kt`):
   notices 3 days before and on the last day at 09:00 Israel time (owner decision 4, Shabbat too),
   on the "Rav-Kav pass" channel (`rav_kav_pass`, default importance, id 1004). One inexact alarm
-  (`ReminderScheduler.syncPass`, `ACTION_PASS`) for `PassExpiry.next`; the receiver posts
-  `PassExpiry.due` (a Doze-late alarm the same day still posts) and arms the next. A date in the
-  past or > 400 days ahead is refused; a passed date goes back to Off (receiver and Settings row).
-  `BootReceiver` re-arms it on boot and on `TIMEZONE_CHANGED`. A tap opens Settings
+  (`ReminderScheduler.syncPass` / `armPass`, `ACTION_PASS`) for `PassExpiry.next`. The receiver
+  follows `PassExpiry.step`: post what is due (a Doze-late alarm the same day still posts), arm the
+  next, clear the date after the last day's notice. A date in the past or > 400 days ahead is
+  refused; a passed date goes back to Off (receiver and Settings row). `BootReceiver` re-arms it on
+  boot (posting a notice the phone slept through that day), `TIMEZONE_CHANGED` and
+  `MY_PACKAGE_REPLACED`, after the trip reminder and on its own, so a failure cannot cost the trip. A tap opens Settings
   (`Notifications.EXTRA_OPEN_SETTINGS`); E4 points it at the payment app. No prices.
 
 # "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)
