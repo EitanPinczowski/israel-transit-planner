@@ -42,6 +42,8 @@
     <string name="pass_ends_on">מנוי הרב־קו שלכם מסתיים ב־⁨%1$s⁩</string>
     <string name="pass_ends_today">מנוי הרב־קו שלכם מסתיים היום, ⁨%1$s⁩</string>
     <string name="pass_row">מנוי רב־קו מסתיים ב־</string>
+    <!-- The date, isolated so Hebrew keeps "Sun 1 Nov" in one piece. -->
+    <string name="pass_date">⁨%1$s⁩</string>
     <string name="pass_off">כבוי</string>
     <string name="pass_set">בחירת תאריך</string>
     <string name="pass_change">שינוי</string>

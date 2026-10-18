@@ -84,7 +84,7 @@ internal fun PassExpirySection(endsOn: LocalDate?, refused: PassExpiry.Validity?
         Text(stringResource(R.string.pass_row), style = MaterialTheme.typography.labelLarge)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                endsOn?.let { "⁨" + PassExpiry.dateLabel(it, locale) + "⁩" } ?: stringResource(R.string.pass_off),
+                endsOn?.let { stringResource(R.string.pass_date, PassExpiry.dateLabel(it, locale)) } ?: stringResource(R.string.pass_off),
                 Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyLarge,
             )

@@ -19,6 +19,7 @@ import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.hasScrollAction
@@ -390,7 +391,8 @@ class JourneysTest {
     @Test fun j15_test_reminder_rings() = AppDriver(compose).launch().use { d ->
         val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
         nm.cancel(TEST_NOTIFICATION)
-        val before = d.app.replay.calls.get()
+        val calls = d.app.replay.calls
+        val before = calls.get()
         d.tapMenuItem(R.string.settings)
         compose.waitUntil(5_000) { d.vm.state.value.showSettings }
         val list = hasScrollAction() and hasAnyAncestor(isDialog())
@@ -400,7 +402,8 @@ class JourneysTest {
             if (compose.onAllNodes(row).fetchSemanticsNodes().isNotEmpty()) return@repeat
             d.awaitNode(list)
             compose.onAllNodes(list).onFirst().performTouchInput {
-                swipe(androidx.compose.ui.geometry.Offset(centerX, centerY + height / 6f), androidx.compose.ui.geometry.Offset(centerX, centerY - height / 6f), 600)
+                val step = height / 6f
+                swipe(Offset(centerX, centerY + step), Offset(centerX, centerY - step), 600)
             }
             compose.waitForIdle()
         }
@@ -416,7 +419,7 @@ class JourneysTest {
             assertEquals("J15: the test reminder was not posted within 90 s", 1, n.size)
             assertEquals("trip_reminders", n.single().notification.channelId)
             d.awaitNode(hasTestTag("check_test_rang"), 10_000) // the check re-reads every 3 s
-            assertEquals("J15: the test reminder sent requests", before, d.app.replay.calls.get())
+            assertEquals("J15: the test reminder sent requests", before, calls.get())
         } finally {
             nm.cancel(TEST_NOTIFICATION)
         }

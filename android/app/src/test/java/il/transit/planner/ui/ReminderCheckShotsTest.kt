@@ -1,9 +1,13 @@
 package il.transit.planner.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -13,14 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.fillMaxSize
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.resources.LayoutDirection
 import com.android.resources.NightMode
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import il.transit.core.remind.PassExpiry
 import il.transit.core.remind.PhoneState
 import il.transit.core.remind.ReminderHealth
@@ -28,12 +28,12 @@ import il.transit.core.remind.TestResult
 import il.transit.planner.ui.screens.PassExpirySection
 import il.transit.planner.ui.screens.ReminderCheckContent
 import il.transit.planner.ui.screens.ReminderCheckRow
-import java.time.Instant
-import java.time.LocalDate
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.time.Instant
+import java.time.LocalDate
 
 /**
  * Phase 11 E1: "Will my reminder ring?" with 0, 1 and 3 problems (and the test's waiting, rang and
@@ -43,7 +43,6 @@ import org.junit.runners.Parameterized
  */
 @RunWith(Parameterized::class)
 class ReminderCheckShotsTest(private val v: Variant) {
-
     class Variant(val name: String, val device: DeviceConfig, val dark: Boolean, val rtl: Boolean) {
         override fun toString() = name
     }
@@ -52,8 +51,11 @@ class ReminderCheckShotsTest(private val v: Variant) {
     val paparazzi = Paparazzi(deviceConfig = v.device, maxPercentDifference = 0.1)
 
     private val pixel = PhoneState(
-        sdk = 35, notificationsEnabled = true, channels = mapOf(ReminderHealth.CHANNEL_REMINDERS to 4),
-        ignoringBatteryOptimizations = true, manufacturer = "Google",
+        sdk = 35,
+        notificationsEnabled = true,
+        channels = mapOf(ReminderHealth.CHANNEL_REMINDERS to 4),
+        ignoringBatteryOptimizations = true,
+        manufacturer = "Google",
     )
     private val due = Instant.parse("2026-10-14T07:42:00Z") // 10:42 Israel
 

@@ -44,6 +44,7 @@ interface MainActions {
     fun checkLastRideBack()
     fun closeStop()
     fun showSettings(show: Boolean)
+
     /** Phase 11 E1: the reminder check, or its one-time hint. */
     fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView)
     fun showHistory(show: Boolean)

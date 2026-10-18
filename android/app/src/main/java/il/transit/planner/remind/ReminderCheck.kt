@@ -36,7 +36,8 @@ object ReminderCheck {
         Notifications.ensureChannel(context) // a channel not created yet would read as "fine" anyway; this makes it real
         val nm = context.getSystemService(NotificationManager::class.java)
         val channels = listOf(ReminderHealth.CHANNEL_REMINDERS, ReminderHealth.CHANNEL_PASS, ReminderHealth.CHANNEL_LAST_TRIP)
-            .mapNotNull { id -> nm.getNotificationChannel(id)?.let { id to it.importance } }.toMap()
+            .mapNotNull { id -> nm.getNotificationChannel(id)?.let { id to it.importance } }
+            .toMap()
         val sdk = Build.VERSION.SDK_INT
         val am = context.getSystemService(AlarmManager::class.java)
         val pm = context.getSystemService(PowerManager::class.java)
@@ -87,7 +88,11 @@ object ReminderCheck {
     /** Arms the test reminder [ReminderHealth.TEST_DELAY] from now; forgets the last delivery. */
     fun startTest(context: Context, now: Instant = Instant.now()): Instant {
         val due = now.plus(ReminderHealth.TEST_DELAY)
-        prefs(context).edit().putLong(DUE, due.toEpochMilli()).remove(RANG).apply()
+        prefs(context)
+            .edit()
+            .putLong(DUE, due.toEpochMilli())
+            .remove(RANG)
+            .apply()
         ReminderScheduler.scheduleTest(context, due)
         return due
     }
