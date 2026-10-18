@@ -81,7 +81,10 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   next, clear the date after the last day's notice. A date in the past or > 400 days ahead is
   refused; a passed date goes back to Off (receiver and Settings row). `BootReceiver` re-arms it on
   boot (posting a notice the phone slept through that day), `TIMEZONE_CHANGED` and
-  `MY_PACKAGE_REPLACED`, after the trip reminder and on its own, so a failure cannot cost the trip. A tap opens Settings
+  `MY_PACKAGE_REPLACED`, after the trip reminder and on its own, so a failure cannot cost the trip.
+  What each cause re-arms is core `Rearm` (tested): a reboot and an app update (which clears alarms
+  and sends no boot broadcast) re-arm the trip reminder, the last-trip check, the test and the pass;
+  a time-zone change only the test and the pass. A tap opens Settings
   (`Notifications.EXTRA_OPEN_SETTINGS`); E4 points it at the payment app. No prices.
 
 # "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)

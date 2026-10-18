@@ -134,6 +134,23 @@ enum class AlarmKind(val action: String, val requests: Int, val readsTrip: Boole
     }
 }
 
+/**
+ * Why `BootReceiver` runs, and what it re-arms. Alarms are gone after a reboot and after an app
+ * update (which sends no boot broadcast), so both re-arm everything; a time-zone change keeps the
+ * alarms (they are UTC instants) and only re-arms the pass notice, whose 09:00 is Israel's.
+ * Only a boot posts a pass notice the phone slept through that day.
+ */
+enum class Rearm(val action: String, val trip: Boolean, val postMissedPass: Boolean) {
+    BOOT("android.intent.action.BOOT_COMPLETED", trip = true, postMissedPass = true),
+    APP_UPDATE("android.intent.action.MY_PACKAGE_REPLACED", trip = true, postMissedPass = false),
+    TIME_ZONE("android.intent.action.TIMEZONE_CHANGED", trip = false, postMissedPass = false),
+    ;
+
+    companion object {
+        fun of(action: String?): Rearm? = entries.firstOrNull { it.action == action }
+    }
+}
+
 /** Where the test reminder stands on the check screen. */
 sealed interface TestResult {
     data object None : TestResult

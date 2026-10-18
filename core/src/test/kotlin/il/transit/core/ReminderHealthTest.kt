@@ -5,6 +5,7 @@ import il.transit.core.remind.FixPage
 import il.transit.core.remind.Maker
 import il.transit.core.remind.PhoneState
 import il.transit.core.remind.ProblemKind
+import il.transit.core.remind.Rearm
 import il.transit.core.remind.ReminderHealth
 import il.transit.core.remind.ReminderHealth.CHANNEL_LAST_TRIP
 import il.transit.core.remind.ReminderHealth.CHANNEL_PASS
@@ -189,6 +190,20 @@ class ReminderHealthTest {
         assertNull(AlarmKind.of(null))
         val actions = AlarmKind.entries.map { it.action }
         assertEquals(actions.size, actions.toSet().size)
+    }
+
+    @Test fun `a reboot and an app update re-arm everything, a time-zone change only the pass notice`() {
+        assertEquals(Rearm.BOOT, Rearm.of("android.intent.action.BOOT_COMPLETED"))
+        assertEquals(Rearm.APP_UPDATE, Rearm.of("android.intent.action.MY_PACKAGE_REPLACED"))
+        assertEquals(Rearm.TIME_ZONE, Rearm.of("android.intent.action.TIMEZONE_CHANGED"))
+        assertNull(Rearm.of("android.intent.action.LOCKED_BOOT_COMPLETED"))
+        assertNull(Rearm.of(null))
+        // The update clears alarms like a reboot: the trip reminder and the last-trip check come back.
+        assertTrue(Rearm.APP_UPDATE.trip)
+        assertTrue(Rearm.BOOT.trip)
+        assertFalse(Rearm.TIME_ZONE.trip)
+        // Only a boot posts a pass notice the phone slept through that day.
+        assertEquals(listOf(Rearm.BOOT), Rearm.entries.filter { it.postMissedPass })
     }
 
     @Test fun `API 28 is where background restriction and standby buckets start`() {

@@ -10,6 +10,7 @@ import il.transit.core.plan.TripQuery
 import il.transit.core.remind.AlarmKind
 import il.transit.core.remind.Countdown
 import il.transit.core.remind.PassExpiry
+import il.transit.core.remind.Rearm
 import il.transit.core.remind.Reminder
 import il.transit.core.remind.ReminderLogic
 import il.transit.core.remind.ReminderUpdate
@@ -147,19 +148,19 @@ class ReminderReceiver : BroadcastReceiver() {
 /**
  * Alarms do not survive a reboot; re-arm the active reminder, bring back its countdown while
  * boarding is still ahead, or drop it if it has passed. The "last trip home" check is re-armed
- * too (and runs at once when the phone was off at check time). Phase 11 E1: the Rav-Kav pass
- * notice (posted if the phone slept through it that day) and a pending test reminder come back
- * too; a time-zone change or an app update re-arms the pass notice and the test.
+ * too (and runs at once when the phone was off at check time). An app update clears alarms too
+ * and sends no boot broadcast, so it re-arms the same. Phase 11 E1: the Rav-Kav pass notice
+ * (posted if the phone slept through it that day) and a pending test reminder come back too; a
+ * time-zone change re-arms those two. What each cause re-arms is core's [Rearm].
  */
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val boot = intent.action == Intent.ACTION_BOOT_COMPLETED
-        if (!boot && intent.action != Intent.ACTION_TIMEZONE_CHANGED && intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
+        val cause = Rearm.of(intent.action) ?: return
         val app = context.applicationContext as TransitApp
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (boot) {
+                if (cause.trip) {
                     val settings = app.store.settings.first()
                     LastTripReceiver.sync(app, settings.lastTripAlert)
                     val r = app.store.reminder.first()
@@ -173,7 +174,7 @@ class BootReceiver : BroadcastReceiver() {
             // Phase 11 E1, after the trip reminder and on their own, so a failure here cannot cost it:
             // a test still ahead, and the pass notice (09:00 Israel time, whatever the phone's zone).
             runCatching { ReminderCheck.rearmTest(app) }
-            runCatching { ReminderReceiver.passAlarm(app, post = boot) }
+            runCatching { ReminderReceiver.passAlarm(app, post = cause.postMissedPass) }
             pending.finish()
         }
     }
