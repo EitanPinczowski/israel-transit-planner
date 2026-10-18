@@ -767,6 +767,8 @@ Wave 1 (only 1–2 block Wave 1; the rest can be answered before their wave).
    out of date" line in Settings from 2031, and the boss re-runs the tool then**.
    **Timetable horizon (D3), decided (owner, 2026-10-12):** no extra calls; keep
    `DayNotice.HORIZON_DAYS = 8` (measured: +8 days answered, +30/+60/+90 empty).
+   **Superseded (owner, 2026-10-18): 21 days** (tester measured full results at +14 and +23 days;
+   Phase 11 E7).
 3. **"Big stop" (D5):** **a rail or light-rail station, a stop named תחנה מרכזית / מסוף /
    Central Station / Terminal, or a stop with platforms in its description**; offered only when
    it gives **≥ 3 min more slack** and the same arrival.

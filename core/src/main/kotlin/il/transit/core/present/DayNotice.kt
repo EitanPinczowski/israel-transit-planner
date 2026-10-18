@@ -24,10 +24,11 @@ object DayNotice {
     /**
      * How far ahead Transitous's MOT timetable reaches, in days. Measured 2026-10-12 (3 live
      * `plan` calls, fixtures `plan_horizon_*`): +30, +60 and +90 days answer nothing; plans 8 days
-     * ahead answered (fixtures `plan_pages_*`, recorded 2026-10-05 for 2026-10-13). So the
-     * timetable reaches at least 8 and under 30 days; we say "may not reach" only past 8.
+     * ahead answered (fixtures `plan_pages_*`, recorded 2026-10-05 for 2026-10-13). Measured again
+     * 2026-10-18 (tester): +14 and +23 days gave full results. Owner, 2026-10-18: 21 (was 8), so
+     * "may not reach" shows only past 21 days.
      */
-    const val HORIZON_DAYS = 8L
+    const val HORIZON_DAYS = 21L
 
     /** When service is offered again after Shabbat or a holiday (owner: "offer Saturday 20:00"). */
     val RESUME: LocalTime = LocalTime.of(20, 0)

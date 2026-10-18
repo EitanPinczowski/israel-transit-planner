@@ -88,21 +88,22 @@ class DayNoticeTest {
     }
 
     @Test fun `beyond the horizon - the same weekday and time within it`() {
-        val now = t("2026-10-12T07:00:00Z") // Mon 12 Oct 10:00
+        val now = t("2026-09-28T07:00:00Z") // Mon 28 Sep 10:00; the horizon (21 days) ends Mon 19 Oct
         // Thu 12 Nov 08:00 (UTC+2) → Thu 15 Oct 08:00 (UTC+3): the local time is kept across the clock change.
         assertEquals(
             Notice.BeyondHorizon(LocalDate.of(2026, 11, 12), t("2026-10-15T05:00:00Z")),
             DayNotice.forEmpty(t("2026-11-12T06:00:00Z"), now),
         )
         // A date in the horizon that still has 0 options: the usual text.
-        assertNull(DayNotice.forEmpty(t("2026-10-13T05:00:00Z"), now))
-        assertNull(DayNotice.forEmpty(t("2026-10-20T05:00:00Z"), now)) // the last day of the horizon
+        assertNull(DayNotice.forEmpty(t("2026-09-29T05:00:00Z"), now))
+        assertNull(DayNotice.forEmpty(t("2026-10-19T05:00:00Z"), now)) // the last day of the horizon
+        assertTrue(DayNotice.forEmpty(t("2026-10-20T05:00:00Z"), now) is Notice.BeyondHorizon) // the day after
         // A holiday beyond the horizon says "no service" (the calendar is sure), not "may not reach".
         assertTrue(DayNotice.forEmpty(t("2027-04-22T07:00:00Z"), now) is Notice.NoService)
-        // The same weekday that lands on a holiday goes back one more week: Thu 6 May → 29 Apr → 22 Apr (Pesach) → 15 Apr.
+        // The same weekday that lands on a holiday goes back one more week: Thu 13 May → 6 May → 29 Apr → 22 Apr (Pesach) → 15 Apr.
         assertEquals(
-            Notice.BeyondHorizon(LocalDate.of(2027, 5, 6), t("2027-04-15T05:00:00Z")),
-            DayNotice.forEmpty(t("2027-05-06T05:00:00Z"), t("2027-04-15T03:00:00Z")),
+            Notice.BeyondHorizon(LocalDate.of(2027, 5, 13), t("2027-04-15T05:00:00Z")),
+            DayNotice.forEmpty(t("2027-05-13T05:00:00Z"), t("2027-04-01T03:00:00Z")),
         )
     }
 
@@ -110,8 +111,8 @@ class DayNoticeTest {
         fun plan(name: String) = MotisJson.decodeFromString(PlanResponse.serializer(), javaClass.getResource("/fixtures/$name.json")!!.readText())
         // Recorded 2026-10-12, Be'er Sheva → Tel Aviv at 08:00: +30, +60, +90 days answer nothing.
         for (d in listOf("20261111", "20261210", "20270110")) assertTrue(d, plan("plan_horizon_$d").itineraries.isEmpty())
-        // Recorded 2026-10-05 for Tue 13 Oct (+8 days): answered.
+        // Recorded 2026-10-05 for Tue 13 Oct (+8 days): answered. Measured live 2026-10-18: +14 and +23 days answered.
         assertTrue(plan("plan_pages_first").itineraries.isNotEmpty())
-        assertEquals(8L, DayNotice.HORIZON_DAYS)
+        assertEquals(21L, DayNotice.HORIZON_DAYS)
     }
 }

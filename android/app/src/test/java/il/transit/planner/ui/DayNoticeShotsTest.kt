@@ -62,7 +62,7 @@ class DayNoticeShotsTest(private val v: Variant) {
     /** Friday evening, 0 options: "Shabbat: no service that evening", "Plan for Sat 20:00". */
     @Test fun shabbatNone() = results("day_shabbat_none", none(t("2026-10-16T15:00:00Z")))
 
-    /** A month ahead, 0 options: "The timetable may not reach Thu 12 Nov yet", "Plan for Thu 15 Oct 08:00". */
+    /** A month ahead, 0 options: "The timetable may not reach Thu 12 Nov yet", "Plan for Thu 29 Oct 08:00" (horizon 21 days, owner 2026-10-18). */
     @Test fun beyondHorizon() = results("day_beyond", none(t("2026-11-12T06:00:00Z"), now = t("2026-10-12T07:00:00Z")))
 
     /** Settings, from 2031: the holiday table needs an app update. */
