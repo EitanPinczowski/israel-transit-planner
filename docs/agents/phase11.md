@@ -33,6 +33,7 @@ E1, system and chaos journeys with E2, routing with E3, the network-fault matrix
 | T1 Core test foundation | Kover gate on core; property tests; parser fuzz; request-budget inventory; saved-data samples | 1 | 0 | none (boss checks CI) | $8–12 (Sonnet) |
 | T2 Static gates + bug intake | Android Lint gate (baseline); ktlint (baseline); APK-size gate; OSV-scanner + licence check; GitHub bug-report issue form | 1 | 0 | none | $8–12 (Sonnet) |
 | E1 Reminder check + pass expiry | 1 "will my reminder ring?" + test alarm; 7 Rav-Kav pass-expiry reminder | 2 | 0 | Sonnet logic + tester | $12–18 |
+| E7 Pick a day (owner, 2026-10-18) | choose the day of a search (Today, Tomorrow, a date up to the timetable horizon and beyond with the existing notice) in every tab; the day shown on the time chip | 2 | 0 | Sonnet designer + tester | $8–12 |
 | T3 ViewModel + state tests | every UI state transition, cancel / retry / error per tab, on the JVM with a fake `TransitApi`; Kover on the Android JVM tests, ratcheted | 2 | 0 | none | $12–18 (Sonnet) |
 | E2 I missed it | 2 "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet | 3 | 1 `plan` per tap | Sonnet logic + tester | $12–16 |
 | T7 System + chaos journeys | Doze, standby, reboot, TZ/DST, airplane, process death in every tab; rotation / theme / language mid-flow, permission revoked mid-ride, low storage, clock skew, split screen, pseudolocales; long monkey; flake log | 3 | 0 | none | $15–20 (Sonnet; Opus if stuck) |
@@ -58,7 +59,7 @@ Sonnet test package). After that, two per wave as usual. The second package of a
 when the first one's PR is green.
 
 - **Wave 1:** T1 and T2 (both Sonnet, no app behaviour). Every later PR runs under their gates.
-- **Wave 2:** E1 and T3. T3's ViewModel tests cover the hook E1 adds and every tab before E2
+- **Wave 2:** E1 and E7 (owner, 2026-10-18; both Opus, the 7-day limit has reset), then T3 once one of them is green. T3's ViewModel tests cover the hook E1 adds and every tab before E2
   touches the ViewModel.
 - **Wave 3:** E2 and T7. T7's Doze, reboot and standby steps drive E1's test reminder; its
   "permission revoked mid-ride" step covers the ride path E2 changes.
@@ -93,11 +94,11 @@ These would conflict if two packages edited them at once, so each has one editor
 | `ride/RideService.kt` | | | E2 (one action) | | E4 (one GPS-minutes call) | | | |
 | `ui/screens/SettingsDialog.kt` | | E1 (two rows) | | | E4 (two sections) | | E5 (semantics) | E6 (one debug-only row) |
 | `ui/screens/TripDetailsSheet.kt` | | | E2 (one button) | E3 (labels) | E4 (one button) | | E5 | |
-| `ui/screens/TripPanel.kt`, `ui/screens/RideDetails.kt`, `present/RideDetails.kt` | | | | E3 | | | E5 | |
+| `ui/screens/TripPanel.kt`, `ui/screens/RideDetails.kt`, `present/RideDetails.kt` | | E7 (`TimeRow` only) | | E3 | | | E5 | |
 | other `ui/screens/*`, `ui/MainScreen.kt`, `ui/MapController.kt` | | | | | E4 (stops-layer zoom, one line) | | E5 | |
 | `AndroidManifest.xml` | | E1 (nothing expected) | | | E4 (`<queries>` packages) | | | E6 (NFC, not required) |
 | `MainActivity.kt` | | | E2 (the missed-it extra) | | | | | |
-| `ui/MainViewModel.kt`, `ui/MainActions.kt` | | E1: one hook | E2: one entry point | E3: none expected | E4: one hook | | E5: none expected | |
+| `ui/MainViewModel.kt`, `ui/MainActions.kt` | | E1: one hook; E7: none expected (`setTime` already takes an `Instant`) | E2: one entry point | E3: none expected | E4: one hook | | E5: none expected | |
 | `android/.../uitest/JourneysTest.kt`, `AppDriver.kt` | | E1 (one journey) | E2 (one journey) | | | | E5 (checks after every step) | |
 | `UiTestApp.kt`, `ProcessDeathProbe.kt` | | | T7 (tabs, chaos probes) | | T4 (mock-server mode) | T8 (`UpgradeProbe`) | | |
 | `.claude/skills/transitous-api` | T1 (budget note) | | E2 (budget row) | E3, T5 | E4, T4 | | | |
@@ -120,6 +121,7 @@ that adds it. From Wave 5, T4's emulator matrix also asserts every feature's cou
 | E3 | `plan` recordings for the `wheelchairAccessible` sample | recording only | ≤ 10, once | the sample fixtures |
 | T5 | weekly live goldens: ~25 trips through the app's own planners | Tuesdays 03:47 Israel, scheduled CI | ≤ 60 a week, ≥ 1 s apart | the runner counts and stops at the cap |
 | T5 | weekly contract: `plan`, `trip`, `stoptimes`, `geocode`, `reverse-geocode` on Transitous; 1 Open-Meteo; 1 Photon | same night | ≤ 5 + 1 + 1 | `tools/contract_check.py` stops at the cap |
+| E7 | none new: a chosen day changes the existing `plan`'s time only | search | 0 extra | `DayPickTest`: picking a day sends nothing; the search sends its usual count |
 | E4 | none; low-data mode only removes requests | | 0 | `LowDataTest` |
 | T1–T4, T6–T8, E5, E6 | none to the internet (T4, T6: a local mock server only) | | 0 | |
 
@@ -447,6 +449,47 @@ android `remind/ReminderCheck.kt` (new: gathers the phone's state), `remind/Noti
 >
 > **Docs:** `reminders-offline` (the check, the test alarm, pass expiry); a release fragment
 > `docs/releases/next/e1-reminder-check.md`; tick ROADMAP E1.
+
+## E7: Pick a day (owner, 2026-10-18)
+**Branch:** `claude/p11-pick-day`
+**Skills:** `i18n-rtl`, `ui-testing`, `add-feature`
+**Needs:** nothing (starts from `main`; runs beside E1)
+**Owns:** `TimeRow` / `timeLabel` in `ui/screens/TripPanel.kt` and the time rows of the car panels
+(`ui/screens/Common.kt` and the four car panels, time row only), `present/DayPick.kt` (core, new),
+`strings_day.xml` (new), one journey in `JourneysTest.kt`
+**Shared-file hooks:** none in `MainViewModel` expected (`setTime(mode, Instant)` already takes any
+instant; `SavedUi` already saves it)
+
+> **0 new requests.** Owner, 2026-10-18: "when searching you need to be able to search a ride for
+> next day (or more)". Today the time chips open a clock only; a time more than an hour in the past
+> silently becomes tomorrow, and the chip shows "08:15" with no day.
+> - **Choose the day** in every tab that has a time row (Trip, Better start, Drop-off, Pick-up,
+>   Park & ride): after Depart at / Arrive by, a day step: chips **Today**, **Tomorrow**, and the next
+>   5 weekdays by name ("Sun 20"), plus **Other date…** (Material date picker, from today to 60 days
+>   ahead). Then the clock. Dates past `DayNotice.HORIZON_DAYS` are allowed; the existing D3 notice
+>   ("The timetable may not reach …" + the nearest day with service) handles them.
+> - **The chip shows the day** whenever it is not today: "Depart tomorrow 08:15", "Arrive by Thu 23
+>   Oct 17:30" (Hebrew: "יציאה מחר 08:15", "הגעה עד יום ה׳ 23 באוק׳ 17:30"). Remove the silent
+>   "an hour in the past means tomorrow" rule: a past time today asks "Tomorrow at 06:10?" with Yes /
+>   Change, never guesses.
+> - **Day logic in core** (`present/DayPick.kt`, pure, tested): the chip label, the list of days,
+>   the 04:00 service-day edge (a 01:30 departure picked "Tomorrow" late at night is the calendar
+>   date the user means, labelled clearly), both DST changes, Friday/Shabbat/holiday days marked with
+>   the D3 holiday names in the day list.
+> - Reminders, "save trip", Earlier/Later, the rain note (only within 48 h) and the process-death
+>   restore keep working with a future day.
+>
+> **Tests:** `DayPickTest` (core: labels in he/en, the 04:00 edge, DST, holiday marks, 60-day cap,
+> 0 requests); a property test in T1's style (any picked day + time round-trips through `SavedUi`);
+> Paparazzi states for the day step and the chips (he/en, light/dark, small phone, font ×1.3); one
+> journey: pick Tomorrow 08:00 → search → the result times are tomorrow → Earlier/Later stay on that day.
+>
+> **Reviewer checks (Sonnet designer + tester):** RTL order of the day chips; the small phone with
+> the longest Hebrew label; the date picker in dark mode; the journey asserts the searched date, not
+> just that results appeared.
+>
+> **Docs:** `i18n-rtl` (day labels and formats); `ui-testing` (the journey); a release fragment
+> `docs/releases/next/e7-pick-day.md`; tick ROADMAP E7.
 
 ## T3: ViewModel + state tests
 **Branch:** `claude/p11-viewmodel-tests`
