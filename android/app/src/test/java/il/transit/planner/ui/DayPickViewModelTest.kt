@@ -100,8 +100,11 @@ class DayPickViewModelTest {
         Thread.sleep(300) // a second request would show by now
     }
 
-    private fun days(vm: MainViewModel): Set<LocalDate> =
-        vm.state.value.results!!.itineraries.map { it.start.atZone(ISRAEL).toLocalDate() }.toSet()
+    private fun days(vm: MainViewModel): Set<LocalDate> {
+        val results = vm.state.value.results!!
+        val options = results.itineraries
+        return options.mapTo(HashSet()) { DayPick.today(it.start) }
+    }
 
     @Test fun `tomorrow 08 00 - picking sends nothing, the search one plan at that day, Earlier and Later stay on it`() = runBlocking {
         val api = PagesApi()

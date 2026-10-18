@@ -123,7 +123,12 @@ internal fun TimeSteps(step: TimeStep?, state: UiState, onStep: (TimeStep?) -> U
             initial = (picked ?: now).atZone(ISRAEL).toLocalTime(),
             onTime = { t ->
                 val at = DayPick.at(step.date, t)
-                if (DayPick.past(at, now)) onStep(TimeStep.Past(step.mode, at)) else { onStep(null); onSet(step.mode, at) }
+                if (DayPick.past(at, now)) {
+                    onStep(TimeStep.Past(step.mode, at))
+                } else {
+                    onStep(null)
+                    onSet(step.mode, at)
+                }
             },
             onBack = { onStep(TimeStep.Day(step.mode)) },
         )

@@ -43,7 +43,6 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 /**
  * Pick a day (Phase 11 E7): the day step, the date picker, the clock, the "Tomorrow at …?"
@@ -53,7 +52,6 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @RunWith(Parameterized::class)
 class DayPickShotsTest(private val v: Variant) {
-
     class Variant(val name: String, val device: DeviceConfig, val dark: Boolean, val rtl: Boolean) {
         override fun toString() = name
     }
@@ -179,7 +177,7 @@ class DayPickShotsTest(private val v: Variant) {
     companion object {
         private fun il(s: String): Instant = LocalDateTime.parse(s).atZone(ISRAEL).toInstant()
         private val sukkotWeek = il("2026-09-22T10:00")
-        private val monday = LocalDate.of(2026, 10, 19).atTime(LocalTime.of(10, 0)).atZone(ISRAEL).toInstant()
+        private val monday = il("2026-10-19T10:00")
 
         private val phone = DeviceConfig.PIXEL_5
         private val hebrew = phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL)
