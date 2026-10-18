@@ -89,6 +89,16 @@ jobs:
         run: ./gradlew -p android :app:verifyPaparazziDebug
       # Fresh pictures for looking at (and for re-recording): light/dark, he/en, every shape.
       - run: ./gradlew -p android :app:recordPaparazziDebug
+      # Phase 11 T3: the ViewModel / state tests (ui/vm/ and the other plain-JVM ones) under Kover; line coverage
+      # of ui/ without the Compose screens is gated (minValue in android/app/build.gradle.kts; it only ratchets up).
+      - name: ViewModel tests + Android coverage
+        run: >
+          ./gradlew -p android :app:testDebugUnitTest
+          --tests 'il.transit.planner.ui.vm.*' --tests '*ViewModelTest' --tests '*SavedUi*Test'
+          :app:koverXmlReportDebug :app:koverVerifyDebug
+      - name: Android coverage per package
+        if: always()
+        run: python3 tools/kover_summary.py android/app/build/reports/kover/reportDebug.xml "app ui/ line coverage (Kover)" il/transit/planner/ >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
