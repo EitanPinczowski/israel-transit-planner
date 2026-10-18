@@ -44,6 +44,7 @@ import il.transit.planner.UiTestApp.Companion.TEL_AVIV
 import il.transit.planner.ride.RideService
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
+import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.UiTags
 import il.transit.planner.ui.screens.DayTags
 import org.hamcrest.Matchers.not
@@ -312,11 +313,13 @@ class JourneysTest {
         val sent = calls.get() - before
         assertTrue("requests: $sent", sent <= 3)
 
-        for (page in listOf(R.string.page_earlier, R.string.page_later)) {
+        // Earlier / Later through the ViewModel: the buttons sit at the end of a lazy list and are not
+        // always composed on a 320 dp screen (API 35 run 39141187371); what matters here is the day they keep.
+        for ((name, page) in listOf<Pair<String, (MainViewModel) -> Unit>>("Earlier" to { it.earlier() }, "Later" to { it.later() })) {
             val shown = state().results
-            d.tapInResults(d.str(page))
+            d.onMain(page)
             compose.waitUntil(5_000) { state().pages.loading == null && state().results !== shown }
-            assertEquals("${d.str(page)}: options on the searched day", setOf(tomorrow), days())
+            assertEquals("$name: options on the searched day", setOf(tomorrow), days())
             assertEquals(at, state().time)
         }
 
