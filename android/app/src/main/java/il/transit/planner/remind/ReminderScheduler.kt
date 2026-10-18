@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import il.transit.core.remind.AlarmKind
 import il.transit.core.remind.PassExpiry
 import il.transit.core.remind.Reminder
 import il.transit.core.remind.ReminderLogic
@@ -24,12 +25,13 @@ import java.time.LocalDate
  * inexact: 09:00 give or take a few minutes is fine).
  */
 object ReminderScheduler {
-    const val ACTION_RECHECK = "il.transit.planner.action.RECHECK"
-    const val ACTION_LEAVE = "il.transit.planner.action.LEAVE"
-    const val ACTION_END = "il.transit.planner.action.COUNTDOWN_END"
-    const val ACTION_DISMISS = "il.transit.planner.action.COUNTDOWN_DISMISS"
-    const val ACTION_TEST = "il.transit.planner.action.TEST_REMINDER"
-    const val ACTION_PASS = "il.transit.planner.action.PASS_EXPIRY"
+    // The action strings live in core's AlarmKind, which says what each alarm may do (Phase 11 E1).
+    val ACTION_RECHECK = AlarmKind.RECHECK.action
+    val ACTION_LEAVE = AlarmKind.LEAVE.action
+    val ACTION_END = AlarmKind.END.action
+    val ACTION_DISMISS = AlarmKind.DISMISS.action
+    val ACTION_TEST = AlarmKind.TEST.action
+    val ACTION_PASS = AlarmKind.PASS.action
 
     fun schedule(context: Context, r: Reminder, now: Instant = Instant.now()) {
         ReminderLogic.nextRecheck(r, now)?.let { set(context, it, ACTION_RECHECK) }
@@ -55,12 +57,15 @@ object ReminderScheduler {
     fun scheduleTest(context: Context, at: Instant) = set(context, at, ACTION_TEST)
 
     /** Arms the pass's next notice, or cancels when the date is Off or both notices have gone. */
-    fun syncPass(context: Context, endsOn: LocalDate?, now: Instant = Instant.now()) {
-        val next = endsOn?.let { PassExpiry.next(it, now) }
-        if (next == null) {
+    fun syncPass(context: Context, endsOn: LocalDate?, now: Instant = Instant.now()) =
+        armPass(context, endsOn?.let { PassExpiry.next(it, now) }?.at)
+
+    /** The pass alarm at [at], or none. */
+    fun armPass(context: Context, at: Instant?) {
+        if (at == null) {
             context.getSystemService(AlarmManager::class.java).cancel(pending(context, ACTION_PASS))
         } else {
-            setAlarm(context, next.at, pending(context, ACTION_PASS), exact = false)
+            setAlarm(context, at, pending(context, ACTION_PASS), exact = false)
         }
     }
 

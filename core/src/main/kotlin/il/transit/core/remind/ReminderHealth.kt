@@ -110,19 +110,28 @@ enum class Maker(val label: String, private val names: List<String>) {
     }
 }
 
-/** What a reminder alarm does, and how many Transitous requests it may send. */
-enum class AlarmKind(val requests: Int) {
+/**
+ * What a reminder alarm does, and how many Transitous requests it may send. [action] is the
+ * broadcast's action string (`ReminderScheduler` sets it, `ReminderReceiver` dispatches on [of]).
+ * Only kinds that [readsTrip] look at the stored reminder; the others are handled before it is read.
+ */
+enum class AlarmKind(val action: String, val requests: Int, val readsTrip: Boolean) {
     /** A real-time re-check of the reminder's trip: one `plan`. */
-    RECHECK(1),
-    LEAVE(0),
-    END(0),
-    DISMISS(0),
+    RECHECK("il.transit.planner.action.RECHECK", 1, true),
+    LEAVE("il.transit.planner.action.LEAVE", 0, true),
+    END("il.transit.planner.action.COUNTDOWN_END", 0, true),
+    DISMISS("il.transit.planner.action.COUNTDOWN_DISMISS", 0, true),
 
     /** "Test reminder in 1 minute": posts and stores the time; never looks at a trip. */
-    TEST(0),
+    TEST("il.transit.planner.action.TEST_REMINDER", 0, false),
 
     /** Rav-Kav pass expiry. */
-    PASS(0),
+    PASS("il.transit.planner.action.PASS_EXPIRY", 0, false),
+    ;
+
+    companion object {
+        fun of(action: String?): AlarmKind? = entries.firstOrNull { it.action == action }
+    }
 }
 
 /** Where the test reminder stands on the check screen. */
@@ -158,7 +167,8 @@ object ReminderHealth {
     fun check(s: PhoneState): List<ReminderProblem> {
         val out = ArrayList<ReminderProblem>()
         val maker = Maker.of(s.manufacturer)
-        val notifications = s.notificationsEnabled && s.postNotificationsGranted
+        // The permission only exists from 33; below, a false value means nothing.
+        val notifications = s.notificationsEnabled && (s.sdk < 33 || s.postNotificationsGranted)
         when {
             s.sdk >= 33 && !s.postNotificationsGranted ->
                 out += ReminderProblem(ProblemKind.NOTIFICATIONS_PERMISSION, Severity.WONT_RING, FixPage.APP_NOTIFICATIONS)

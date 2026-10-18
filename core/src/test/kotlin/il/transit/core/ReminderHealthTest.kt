@@ -175,11 +175,41 @@ class ReminderHealthTest {
         assertEquals(listOf("Samsung", "Xiaomi", "Huawei", "Honor", "OnePlus", "Oppo", "Realme"), Maker.entries.map { it.label })
     }
 
-    @Test fun `the test alarm sends 0 requests, only the re-check plans`() {
-        assertEquals(0, AlarmKind.TEST.requests)
-        assertEquals(0, AlarmKind.PASS.requests)
+    @Test fun `the test alarm and the pass alarm never read the trip, so they send 0 requests`() {
+        // The receiver dispatches on AlarmKind.of(action) and handles every !readsTrip kind before it reads the reminder.
+        assertEquals(listOf(AlarmKind.TEST, AlarmKind.PASS), AlarmKind.entries.filter { !it.readsTrip })
+        assertTrue(AlarmKind.entries.filter { !it.readsTrip }.all { it.requests == 0 })
         assertEquals(listOf(AlarmKind.RECHECK), AlarmKind.entries.filter { it.requests > 0 })
         assertEquals(1, AlarmKind.RECHECK.requests)
+        // Each action string maps back to its own kind; unknown actions (and null) to none.
+        for (k in AlarmKind.entries) assertEquals(k, AlarmKind.of(k.action))
+        assertEquals(AlarmKind.TEST, AlarmKind.of("il.transit.planner.action.TEST_REMINDER"))
+        assertEquals(AlarmKind.PASS, AlarmKind.of("il.transit.planner.action.PASS_EXPIRY"))
+        assertNull(AlarmKind.of("il.transit.planner.action.SOMETHING_ELSE"))
+        assertNull(AlarmKind.of(null))
+        val actions = AlarmKind.entries.map { it.action }
+        assertEquals(actions.size, actions.toSet().size)
+    }
+
+    @Test fun `API 28 is where background restriction and standby buckets start`() {
+        assertEquals(ProblemKind.BACKGROUND_RESTRICTED, only(fine.copy(sdk = 28, backgroundRestricted = true)).kind)
+        assertEquals(ProblemKind.STANDBY_RESTRICTED, only(fine.copy(sdk = 28, standbyBucket = 40)).kind)
+        assertEquals(emptyList<Any>(), kinds(fine.copy(sdk = 27, backgroundRestricted = true, standbyBucket = 45)))
+    }
+
+    @Test fun `below 33 the notifications permission does not exist, so a false value changes nothing`() {
+        val p = fine.copy(sdk = 32, postNotificationsGranted = false, channels = mapOf(CHANNEL_REMINDERS to 0))
+        assertEquals(listOf(ProblemKind.REMINDER_CHANNEL_OFF), kinds(p)) // the channel is still checked
+        assertEquals(emptyList<Any>(), kinds(fine.copy(sdk = 26, postNotificationsGranted = false)))
+    }
+
+    @Test fun `within one severity the order is the kind's order`() {
+        val p = fine.copy(sdk = 34, exactAlarms = false, standbyBucket = 45, channels = mapOf(CHANNEL_REMINDERS to 2))
+        assertEquals(
+            listOf(ProblemKind.REMINDER_CHANNEL_QUIET, ProblemKind.EXACT_ALARMS_OFF, ProblemKind.STANDBY_RESTRICTED),
+            kinds(p),
+        )
+        assertTrue(ReminderHealth.check(p).all { it.severity == Severity.MAY_FAIL })
     }
 
     @Test fun `the test result - waiting, rang, missed 3 min after the due time`() {

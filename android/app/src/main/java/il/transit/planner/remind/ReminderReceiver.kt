@@ -7,6 +7,7 @@ import il.transit.core.api.Endpoint
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
+import il.transit.core.remind.AlarmKind
 import il.transit.core.remind.Countdown
 import il.transit.core.remind.PassExpiry
 import il.transit.core.remind.Reminder
@@ -43,15 +44,14 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private suspend fun handle(app: TransitApp, action: String?) {
         // Phase 11 E1: neither looks at the reminder's trip, so neither can send a request.
-        when (action) {
-            ReminderScheduler.ACTION_TEST -> {
-                if (Notifications.test(app)) ReminderCheck.rang(app, java.time.Instant.now())
-                return
+        val kind = AlarmKind.of(action) ?: return
+        if (!kind.readsTrip) {
+            when (kind) {
+                AlarmKind.TEST -> if (Notifications.test(app)) ReminderCheck.rang(app, java.time.Instant.now())
+                AlarmKind.PASS -> passAlarm(app)
+                else -> Unit
             }
-            ReminderScheduler.ACTION_PASS -> {
-                passAlarm(app)
-                return
-            }
+            return
         }
         val r = app.store.reminder.first()
         if (r == null) {
@@ -117,18 +117,16 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        /** Posts the pass notice that is due (if any), arms the next, and clears a date that has passed. */
+        /**
+         * Posts the pass notice that is due (if [post]), arms the next, and clears the date once it
+         * has passed or its last notice has gone ([PassExpiry.step]).
+         */
         internal suspend fun passAlarm(app: TransitApp, post: Boolean = true) {
-            val now = java.time.Instant.now()
             val s = app.store.settings.first()
-            val end = PassExpiry.parse(s.passEndsOn)
-            if (end == null || PassExpiry.isPast(end, now)) {
-                if (s.passEndsOn != null) app.store.setSettings(s.copy(passEndsOn = null))
-                ReminderScheduler.syncPass(app, null)
-                return
-            }
-            if (post) PassExpiry.due(end, now)?.let { Notifications.pass(app, it) }
-            ReminderScheduler.syncPass(app, end, now)
+            val step = PassExpiry.step(s.passEndsOn, java.time.Instant.now(), post)
+            step.post?.let { Notifications.pass(app, it) }
+            ReminderScheduler.armPass(app, step.armAt)
+            if (step.clear) app.store.setSettings(s.copy(passEndsOn = null))
         }
 
         /** Posts the countdown and keeps the reminder until it ends; past its end, drops it. */
@@ -150,28 +148,33 @@ class ReminderReceiver : BroadcastReceiver() {
  * Alarms do not survive a reboot; re-arm the active reminder, bring back its countdown while
  * boarding is still ahead, or drop it if it has passed. The "last trip home" check is re-armed
  * too (and runs at once when the phone was off at check time). Phase 11 E1: the Rav-Kav pass
- * notice and a pending test reminder come back too; a time-zone change re-arms the pass notice.
+ * notice (posted if the phone slept through it that day) and a pending test reminder come back
+ * too; a time-zone change or an app update re-arms the pass notice and the test.
  */
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val zone = intent.action == Intent.ACTION_TIMEZONE_CHANGED
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED && !zone) return
+        val boot = intent.action == Intent.ACTION_BOOT_COMPLETED
+        if (!boot && intent.action != Intent.ACTION_TIMEZONE_CHANGED && intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
         val app = context.applicationContext as TransitApp
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Phase 11 E1: the pass notice (09:00 Israel time, whatever the phone's zone) and a test still ahead.
-                ReminderReceiver.passAlarm(app, post = false)
-                if (zone) return@launch
-                ReminderCheck.rearmTest(app)
-                LastTripReceiver.sync(app, app.store.settings.first().lastTripAlert)
-                val r = app.store.reminder.first() ?: return@launch
-                if (!r.counting && r.leaveAt.isAfter(java.time.Instant.now())) ReminderScheduler.schedule(app, r) else ReminderReceiver.startCountdown(app, r)
+                if (boot) {
+                    val settings = app.store.settings.first()
+                    LastTripReceiver.sync(app, settings.lastTripAlert)
+                    val r = app.store.reminder.first()
+                    if (r != null) {
+                        if (!r.counting && r.leaveAt.isAfter(java.time.Instant.now())) ReminderScheduler.schedule(app, r) else ReminderReceiver.startCountdown(app, r)
+                    }
+                }
             } catch (e: Exception) {
                 // Nothing to re-arm.
-            } finally {
-                pending.finish()
             }
+            // Phase 11 E1, after the trip reminder and on their own, so a failure here cannot cost it:
+            // a test still ahead, and the pass notice (09:00 Israel time, whatever the phone's zone).
+            runCatching { ReminderCheck.rearmTest(app) }
+            runCatching { ReminderReceiver.passAlarm(app, post = boot) }
+            pending.finish()
         }
     }
 }

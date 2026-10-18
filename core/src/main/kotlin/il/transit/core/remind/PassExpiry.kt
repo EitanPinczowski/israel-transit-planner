@@ -57,6 +57,21 @@ object PassExpiry {
     fun due(endsOn: LocalDate, now: Instant): Notice? =
         notices(endsOn).lastOrNull { !it.at.isAfter(now) }?.takeIf { today(it.at) == today(now) }
 
+    /**
+     * What a pass alarm, a boot or a time-zone change does with the stored date [raw] at [now]:
+     * the notice to post (only when [post]; a boot posts one it slept through that same day),
+     * when to arm the next alarm (null: cancel), and whether to clear the date (it has passed, it is
+     * unreadable, or the last day's notice has gone).
+     */
+    data class Step(val post: Notice?, val armAt: Instant?, val clear: Boolean)
+
+    fun step(raw: String?, now: Instant, post: Boolean): Step {
+        val end = parse(raw) ?: return Step(null, null, clear = raw != null)
+        if (isPast(end, now)) return Step(null, null, clear = true)
+        val next = next(end, now)
+        return Step(if (post) due(end, now) else null, next?.at, clear = next == null)
+    }
+
     /** "Sun 1 Nov" (English), the same pattern in the app's language. */
     fun dateLabel(date: LocalDate, locale: Locale): String = DateTimeFormatter.ofPattern("EEE d MMM", locale).format(date)
 

@@ -98,4 +98,57 @@ class PassExpiryTest {
         assertEquals("Sun 1 Nov", PassExpiry.dateLabel(d("2026-11-01"), Locale.ENGLISH))
         assertEquals(d("2026-10-14"), PassExpiry.today(i("2026-10-13T21:30:00Z"))) // 00:30 Israel
     }
+
+    @Test fun `the day boundary follows Israel's clock in summer too`() {
+        assertEquals(d("2026-07-10"), PassExpiry.today(i("2026-07-10T20:59:00Z"))) // 23:59 IDT
+        assertEquals(d("2026-07-11"), PassExpiry.today(i("2026-07-10T21:00:00Z"))) // 00:00 IDT
+        assertFalse(PassExpiry.isPast(d("2026-07-10"), i("2026-07-10T20:59:00Z")))
+        assertTrue(PassExpiry.isPast(d("2026-07-10"), i("2026-07-10T21:00:00Z")))
+    }
+
+    @Test fun `due across the October change - a summer notice, a winter last day`() {
+        val end = d("2026-10-27") // notices Sat 24 Oct 09:00 IDT and Tue 27 Oct 09:00 IST
+        assertEquals(Kind.SOON, PassExpiry.due(end, i("2026-10-24T20:59:00Z"))!!.kind) // 23:59 IDT, same day
+        assertNull(PassExpiry.due(end, i("2026-10-24T21:00:00Z"))) // 00:00 Sun: the next day
+        assertNull(PassExpiry.due(end, i("2026-10-26T12:00:00Z")))
+        assertNull(PassExpiry.due(end, i("2026-10-27T06:59:00Z"))) // 08:59 IST
+        assertEquals(Kind.LAST_DAY, PassExpiry.due(end, i("2026-10-27T07:00:00Z"))!!.kind)
+    }
+
+    @Test fun `step - an alarm posts what is due, arms the next, and clears after the last day`() {
+        val end = "2026-11-01"
+        // The first notice fires: post it, arm the last day.
+        val first = PassExpiry.step(end, i("2026-10-29T07:00:05Z"), post = true)
+        assertEquals(Kind.SOON, first.post!!.kind)
+        assertEquals(i("2026-11-01T07:00:00Z"), first.armAt)
+        assertFalse(first.clear)
+        // The last day's fires: post it, nothing more to arm, the date goes back to Off.
+        val last = PassExpiry.step(end, i("2026-11-01T07:00:05Z"), post = true)
+        assertEquals(Kind.LAST_DAY, last.post!!.kind)
+        assertNull(last.armAt)
+        assertTrue(last.clear)
+    }
+
+    @Test fun `step - a boot posts a notice it slept through that day, a time-zone change or update only re-arms`() {
+        val end = "2026-11-01"
+        val bootLate = PassExpiry.step(end, i("2026-10-29T07:30:00Z"), post = true) // booted 09:30 on the first notice's day
+        assertEquals(Kind.SOON, bootLate.post!!.kind)
+        assertEquals(i("2026-11-01T07:00:00Z"), bootLate.armAt)
+        val zone = PassExpiry.step(end, i("2026-10-29T07:30:00Z"), post = false)
+        assertNull(zone.post)
+        assertEquals(i("2026-11-01T07:00:00Z"), zone.armAt)
+        assertFalse(zone.clear)
+        // Before any notice: nothing to post, the first one armed (a reboot re-arms it).
+        val early = PassExpiry.step(end, i("2026-10-20T10:00:00Z"), post = true)
+        assertNull(early.post)
+        assertEquals(i("2026-10-29T07:00:00Z"), early.armAt)
+        // A boot the day after the first notice posts nothing (too late to say "3 days").
+        assertNull(PassExpiry.step(end, i("2026-10-30T07:30:00Z"), post = true).post)
+    }
+
+    @Test fun `step - Off, a passed date and a broken value`() {
+        assertEquals(PassExpiry.Step(null, null, clear = false), PassExpiry.step(null, i("2026-10-20T10:00:00Z"), post = true))
+        assertEquals(PassExpiry.Step(null, null, clear = true), PassExpiry.step("2026-10-01", i("2026-10-20T10:00:00Z"), post = true))
+        assertEquals(PassExpiry.Step(null, null, clear = true), PassExpiry.step("1 Nov", i("2026-10-20T10:00:00Z"), post = true))
+    }
 }
