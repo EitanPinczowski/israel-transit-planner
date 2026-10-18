@@ -24,6 +24,7 @@ import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.lifecycle.Lifecycle
@@ -31,6 +32,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import il.transit.core.features.BetterStartPlanner
+import il.transit.core.features.ISRAEL
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.update.LatestRelease
@@ -43,6 +45,7 @@ import il.transit.planner.ride.RideService
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.UiTags
+import il.transit.planner.ui.screens.DayTags
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -270,6 +273,51 @@ class JourneysTest {
     }
 
     /** Walks a fake GPS along the train ride; the "get off" alert must fire before the stop. */
+    /**
+     * E7 pick a day: Depart → Tomorrow → 08:00 (typed) before the places, then the trip by taps. Picking
+     * sends nothing; the search is one plan, for tomorrow 08:00, every option is on that day, Earlier and
+     * Later stay on it, and the chip says "Depart tomorrow 08:00".
+     */
+    @Test fun j15_pick_tomorrow_searches_that_day() = AppDriver(compose).launch().use { d ->
+        val tomorrow = d.app.clock.instant().atZone(ISRAEL).toLocalDate().plusDays(1)
+        val at = tomorrow.atTime(8, 0).atZone(ISRAEL).toInstant()
+        val before = d.app.replay.calls.get()
+        compose.onNode(hasText(d.str(R.string.depart_at)) and hasClickAction()).performClick()
+        d.awaitNode(hasTestTag(DayTags.day(1)))
+        compose.onNode(hasTestTag(DayTags.day(1))).performClick()
+        d.awaitNode(hasTestTag(DayTags.CLOCK_TYPE))
+        compose.onNode(hasTestTag(DayTags.CLOCK_TYPE)).performClick()
+        val fields = hasSetTextAction() and hasAnyAncestor(hasTestTag(DayTags.CLOCK))
+        compose.waitUntil(5_000) { compose.onAllNodes(fields).fetchSemanticsNodes().size == 2 }
+        compose.onAllNodes(fields)[0].performTextReplacement("08")
+        compose.onAllNodes(fields)[1].performTextReplacement("00")
+        compose.onNode(hasTestTag(DayTags.CLOCK_OK)).performClick()
+        compose.waitUntil(5_000) { d.vm.state.value.time != null }
+        assertEquals("the picked time", at, d.vm.state.value.time)
+        assertEquals("picking a day sent a request", before, d.app.replay.calls.get())
+
+        d.tripByTaps()
+        val s = d.vm.state.value
+        assertEquals(null, s.error)
+        assertTrue("no options", s.options.isNotEmpty())
+        fun days() = d.vm.state.value.options.map { it.start.atZone(ISRAEL).toLocalDate() }.toSet()
+        assertEquals("options on the searched day", setOf(tomorrow), days())
+        assertTrue("an option leaves before 08:00", s.options.minOf { it.start } >= at)
+        // One plan, plus the geocoding of what was typed (as j02).
+        assertTrue("requests: ${d.app.replay.calls.get() - before}", d.app.replay.calls.get() - before <= 3)
+
+        for (page in listOf(R.string.page_earlier, R.string.page_later)) {
+            val shown = d.vm.state.value.results
+            d.tapInResults(d.str(page))
+            compose.waitUntil(5_000) { d.vm.state.value.pages.loading == null && d.vm.state.value.results !== shown }
+            assertEquals("${d.str(page)}: options on the searched day", setOf(tomorrow), days())
+            assertEquals(at, d.vm.state.value.time)
+        }
+
+        d.unfoldSearch()
+        d.awaitNode(hasText(d.str(R.string.depart_tomorrow, "08:00")))
+    }
+
     @Test fun j12_ride_alert_fires_near_the_stop() = AppDriver(compose).launch().use { d ->
         d.place(Field.FROM, BGU)
         d.place(Field.TO, TEL_AVIV)
