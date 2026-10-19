@@ -1,9 +1,11 @@
 package il.transit.planner.ui
 
+import androidx.compose.ui.unit.dp
 import il.transit.core.features.ISRAEL
 import il.transit.core.plan.TimeMode
 import il.transit.planner.ui.screens.TimeFlow
 import il.transit.planner.ui.screens.TimeStep
+import il.transit.planner.ui.screens.dateDialogMargin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -61,5 +63,13 @@ class TimeFlowTest {
         val sat = LocalDate.parse("2026-10-24")
         val asked = TimeFlow.clock(TimeStep.Clock(TimeMode.DEPART_AT, sat), LocalTime.of(8, 0), il("2026-10-24T09:00")).step as TimeStep.Past
         assertEquals(TimeMode.DEPART_AT to il("2026-10-25T08:00"), TimeFlow.yes(asked).set) // 25 h later in UTC
+    }
+
+    @Test fun `the date dialog keeps the picker's 360 dp - no side margin on a 360 dp phone, up to 16 dp on wider ones`() {
+        assertEquals(0.dp, dateDialogMargin(360))
+        assertEquals(0.dp, dateDialogMargin(320))
+        assertEquals(10.dp, dateDialogMargin(380))
+        assertEquals(16.dp, dateDialogMargin(411))
+        assertEquals(16.dp, dateDialogMargin(914))
     }
 }

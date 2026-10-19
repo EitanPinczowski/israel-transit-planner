@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import il.transit.core.calendar.DayKind
@@ -223,15 +224,14 @@ private fun markText(m: DayPick.Mark, locale: Locale): String? = when (m) {
 
 /**
  * Other date…: Material's picker, from today to [DayPick.MAX_DAYS] ahead. Past the timetable's reach
- * the D3 notice speaks. Our own dialog, 16 dp from the screen's sides (Material's `DatePickerDialog`
- * is a fixed 360 dp and touches both edges of a 360 dp phone); the grid fits in what is left.
+ * the D3 notice speaks. Our own dialog, up to 16 dp from the screen's sides ([dateDialogMargin]).
  */
 @Composable
 internal fun DateStepDialog(now: Instant, selected: LocalDate?, onDate: (LocalDate) -> Unit, onDismiss: () -> Unit) {
     val picker = rememberDayPickerState(now, selected)
     BasicAlertDialog(
         onDismissRequest = onDismiss,
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = dateDialogMargin(LocalConfiguration.current.screenWidthDp)),
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh, tonalElevation = 6.dp) {
@@ -239,6 +239,13 @@ internal fun DateStepDialog(now: Instant, selected: LocalDate?, onDate: (LocalDa
         }
     }
 }
+
+/**
+ * The date dialog's side margin: 16 dp where the screen has room, less down to none on a 360 dp
+ * phone. The picker's 7-column grid needs its 360 dp there: at font ×1.3 a 328 dp dialog cut the
+ * Saturday column.
+ */
+internal fun dateDialogMargin(screenWidthDp: Int): Dp = ((screenWidthDp - 360) / 2).coerceIn(0, 16).dp
 
 /** The picker, then Cancel and OK at the end. */
 @Composable

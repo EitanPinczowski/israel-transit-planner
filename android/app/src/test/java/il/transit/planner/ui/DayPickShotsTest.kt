@@ -19,6 +19,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import il.transit.planner.ui.screens.DateStepContent
 import il.transit.planner.ui.screens.DayStepContent
 import il.transit.planner.ui.screens.LocalDayClock
 import il.transit.planner.ui.screens.TimeRow
+import il.transit.planner.ui.screens.dateDialogMargin
 import il.transit.planner.ui.screens.pastAskText
 import il.transit.planner.ui.screens.rememberDayPickerState
 import org.junit.Rule
@@ -88,8 +90,9 @@ class DayPickShotsTest(private val v: Variant) {
      */
     @Test fun datePicker() = paparazzi.snapshot("day_date_picker") {
         Frame {
-            // As DateStepDialog draws it: 16 dp from the sides, the picker, then Cancel and OK.
-            Box(Modifier.fillMaxSize().background(scrim()).padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
+            // As DateStepDialog draws it: its side margin for this screen, the picker, then Cancel and OK.
+            val margin = dateDialogMargin(LocalConfiguration.current.screenWidthDp)
+            Box(Modifier.fillMaxSize().background(scrim()).padding(horizontal = margin), contentAlignment = Alignment.Center) {
                 Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                     DateStepContent(rememberDayPickerState(il("2026-01-10T09:00"), LocalDate.of(2026, 1, 14)), {}, {})
                 }
