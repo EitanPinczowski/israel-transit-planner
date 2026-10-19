@@ -28,10 +28,13 @@ class MissedItStateTest : VmTest() {
     private val toSavidor = MissedIt.Target("Savidor", SAVIDOR)
 
     @Test fun `a tap - searching, then options from here, leaving now, with the banner`() {
-        val api = ScriptedApi(replay())
+        val api = ScriptedApi(replay()).also { it.hold = true }
         val vm = newVm(api)
         val phases = phasesOf(vm)
         vm.missedIt(toSavidor) { here }
+        assertEquals(listOf("idle", "searching"), phases)
+        assertEquals(1, api.pendingPlans)
+        api.release()
         assertEquals(listOf("idle", "searching", "results"), phases)
         assertEquals(1, api.count("plan"))
         val s = vm.state.value
