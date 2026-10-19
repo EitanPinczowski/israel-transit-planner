@@ -125,7 +125,7 @@ class TripStateTest : VmTest() {
         val bgu = planFixture("plan_bgu_telaviv")
         val api = heldApi()
         api.planAnswer = { req -> if ((req.to as Endpoint.Coord).at == HAIFA) bgu else tlv }
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         val phases = phasesOf(vm)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         vm.choose(Field.TO, "Haifa", HAIFA)
@@ -320,7 +320,7 @@ class TripStateTest : VmTest() {
 
     @Test fun `Later adds a page, one request, and the opened option stays opened`() {
         val api = pagedApi()
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         val before = vm.state.value.options.size
         assertTrue(before >= 2)
@@ -339,7 +339,7 @@ class TripStateTest : VmTest() {
 
     @Test fun `Earlier adds a page the same way`() {
         val api = pagedApi()
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         val before = vm.state.value.options.size
         vm.earlier()
@@ -350,7 +350,7 @@ class TripStateTest : VmTest() {
 
     @Test fun `a failed page keeps the list and says so, and tapping again retries`() {
         val api = pagedApi()
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         val shown = vm.state.value.results
         api.fault = { kind, n -> if (kind == "plan" && n == 2) IOException("no signal") else null }
@@ -367,7 +367,7 @@ class TripStateTest : VmTest() {
 
     @Test fun `a page that answers after a new search began is dropped`() {
         val api = pagedApi()
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         val before = vm.state.value.options.size
         api.hold = true

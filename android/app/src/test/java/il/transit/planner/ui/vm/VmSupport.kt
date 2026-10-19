@@ -232,6 +232,13 @@ abstract class VmTest {
         val NOW: Instant = Instant.parse("2026-10-18T05:00:00Z")
         val CLOCK: Clock = Clock.fixed(NOW, ZoneOffset.UTC)
 
+        /**
+         * Thursday 2026-09-24 08:00 in Israel, before every recorded plan (the earliest boards on 3 Oct):
+         * for the tests that answer with a recording as it is. At [CLOCK] those trips have already left,
+         * and the live Trip search drops what already left (Phase 11 E7).
+         */
+        val RECORDED_CLOCK: Clock = Clock.fixed(Instant.parse("2026-09-24T05:00:00Z"), ZoneOffset.UTC)
+
         val BGU = LatLon(31.262, 34.801)
         val SAVIDOR = LatLon(32.08, 34.79)
         val HAIFA = LatLon(32.794, 34.989)

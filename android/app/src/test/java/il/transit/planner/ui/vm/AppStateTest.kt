@@ -366,7 +366,7 @@ class AppStateTest : VmTest() {
         }
         val api = ScriptedApi(book)
         api.planAnswer = { recorded }
-        val vm = newVm(api)
+        val vm = newVm(api, RECORDED_CLOCK)
         vm.choose(Field.TO, "Savidor", SAVIDOR)
         val lines = listOf("370", "171")
         val at = vm.state.value.options
