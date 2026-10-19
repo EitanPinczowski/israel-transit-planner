@@ -92,6 +92,7 @@ jobs:
       # Phase 11 T3: the ViewModel / state tests (ui/vm/ and the other plain-JVM ones) under Kover; line coverage
       # of ui/ without the Compose screens is gated (minValue in android/app/build.gradle.kts; it only ratchets up).
       - name: ViewModel tests + Android coverage
+        if: always()
         run: >
           ./gradlew -p android :app:testDebugUnitTest
           --tests 'il.transit.planner.ui.vm.*' --tests '*ViewModelTest' --tests '*SavedUi*Test'

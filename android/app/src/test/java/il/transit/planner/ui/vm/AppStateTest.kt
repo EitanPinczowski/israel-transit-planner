@@ -34,6 +34,7 @@ import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.PlaceRef
 import il.transit.planner.ui.SavedUi
 import il.transit.planner.ui.rainNoteFor
+import il.transit.planner.ui.screens.ReminderCheckView
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -238,6 +239,29 @@ class AppStateTest : VmTest() {
         assertNotNull(vm.state.value.reminder)
         vm.cancelReminder()
         assertNull(vm.state.value.reminder)
+    }
+
+    @Test fun `reminder check - the hint shows once after the first reminder, never again`() {
+        val (vm, _) = trip()
+        assertEquals(ReminderCheckView.NONE, vm.state.value.reminderCheck)
+        assertFalse(vm.state.value.settings.reminderCheckHintShown)
+        assertTrue(vm.remindSelected())
+        assertEquals(ReminderCheckView.HINT, vm.state.value.reminderCheck)
+        assertTrue(vm.state.value.settings.reminderCheckHintShown)
+        vm.reminderCheck(ReminderCheckView.NONE) // dismissed
+        vm.cancelReminder()
+        assertTrue(vm.remindSelected())
+        assertEquals(ReminderCheckView.NONE, vm.state.value.reminderCheck)
+    }
+
+    @Test fun `reminder check - the check opens and closes from Settings, with no request`() {
+        val (vm, api) = trip()
+        val sent = api.total
+        vm.reminderCheck(ReminderCheckView.OPEN)
+        assertEquals(ReminderCheckView.OPEN, vm.state.value.reminderCheck)
+        vm.reminderCheck(ReminderCheckView.NONE)
+        assertEquals(ReminderCheckView.NONE, vm.state.value.reminderCheck)
+        assertEquals(sent, api.total)
     }
 
     @Test fun `ride - starting needs an option with a ride in it`() {
