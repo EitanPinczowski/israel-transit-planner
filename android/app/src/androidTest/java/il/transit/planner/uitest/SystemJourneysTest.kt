@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.api.ReplayTransitApi
-import il.transit.core.remind.Reminder
 import il.transit.core.present.LegPalette
+import il.transit.core.remind.Reminder
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
 import il.transit.planner.UiTestApp
@@ -47,6 +47,7 @@ import java.time.ZoneId
 @RunWith(AndroidJUnit4::class)
 class SystemJourneysTest {
     @get:Rule val compose = createEmptyComposeRule()
+
     @get:Rule val permissions = Permissions.grantAll()
 
     private fun say(msg: String) = Log.i(TAG, msg)
@@ -134,9 +135,17 @@ class SystemJourneysTest {
 
     private enum class Switch { ROTATION, THEME, LANGUAGE }
 
-    @Test fun mid_flow_rotation() = midFlow(Switch.ROTATION)
-    @Test fun mid_flow_theme() = midFlow(Switch.THEME)
-    @Test fun mid_flow_language() = midFlow(Switch.LANGUAGE)
+    @Test fun mid_flow_rotation() {
+        midFlow(Switch.ROTATION)
+    }
+
+    @Test fun mid_flow_theme() {
+        midFlow(Switch.THEME)
+    }
+
+    @Test fun mid_flow_language() {
+        midFlow(Switch.LANGUAGE)
+    }
 
     private fun AppDriver.flip(sw: Switch, back: Boolean) {
         when (sw) {
@@ -156,7 +165,7 @@ class SystemJourneysTest {
      * countdown is up. Promise each time: the same options and the same selected one afterwards,
      * and no request the plain flow did not already make.
      */
-    private fun midFlow(sw: Switch) = AppDriver(compose).launch().use { d ->
+    private fun midFlow(sw: Switch): Unit = AppDriver(compose).launch().use { d ->
         try {
             // The plain search, once: its request count is what any later search may cost.
             val c0 = d.app.replay.calls.get()

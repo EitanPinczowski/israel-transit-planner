@@ -31,6 +31,7 @@ class UiTestApp : TransitApp() {
     val replay: ReplayTransitApi by lazy {
         ReplayTransitApi(clock) { name -> assets.open("fixtures/$name.json").bufferedReader().use { it.readText() } }
     }
+
     /** Holds every `plan` this long before answering, so a search can be caught while it loads (Phase 11 T7); 0 = off. */
     @Volatile var planDelayMs: Long = 0
 

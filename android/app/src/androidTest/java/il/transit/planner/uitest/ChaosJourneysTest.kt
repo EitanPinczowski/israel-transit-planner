@@ -27,6 +27,7 @@ import java.time.Instant
 @RunWith(AndroidJUnit4::class)
 class ChaosJourneysTest {
     @get:Rule val compose = createEmptyComposeRule()
+
     @get:Rule val permissions = Permissions.grantAll()
 
     private fun say(msg: String) = Log.i(TAG, msg)

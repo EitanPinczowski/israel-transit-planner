@@ -2,12 +2,12 @@ package il.transit.planner
 
 import android.app.Activity
 import android.app.Application
-import android.os.Bundle
-import android.util.Log
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
+import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import il.transit.core.present.LegPalette
@@ -75,6 +75,9 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             delay(500)
             val vm = ViewModelProvider(main)[MainViewModel::class.java]
             val trip = ViewModelProvider(main)[TripDetailsViewModel::class.java]
+            // The tab survives the kill as a marker file, so the restart reports in the same format.
+            val marker = java.io.File(main.filesDir, "uitest_death_tab")
+            if (what == "setup") { if (tab != null) marker.writeText(tab!!) else marker.delete() }
             if (what == "setup" && ride) {
                 rideSetup(main, vm)
             } else if (what == "setup" && tab != null) {
@@ -92,14 +95,14 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 val leg = itin.legs.first { it.isTransit }
                 trip.open(leg, LegPalette.colorOf(itin.legs, leg))
                 delay(2_000) // the Activity reports the open sheet to the ViewModel, which saves it
-                Log.i(TAG, "ready ${line(vm.state.value, trip)}")
+                Log.i(TAG, "ready ${line(vm.state.value, trip, marker.exists())}")
             } else {
                 val before = app.replay.calls.get()
-                val tabbed = vm.state.value.let { it.mode != AppMode.TRIP || it.chainStops.isNotEmpty() }
+                val tabbed = marker.exists()
                 if (tabbed) delay(4_000) else withTimeoutOrNull(10_000) { vm.state.first { it.results != null } }
                 delay(2_000) // the trip sheet reopens once its option is back
                 // saved=false: this Activity did not come back from a saved state (the script says why).
-                Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip)} requests=${app.replay.calls.get() - before}")
+                Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip, marker.exists())} requests=${app.replay.calls.get() - before}")
                 rideAfter(main)
             }
         }
@@ -178,8 +181,8 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     private fun tabLine(s: UiState): String =
         "mode=${s.mode} from=${s.from} to=${s.to} driverTo=${s.driverTo} | stops=${s.chainStops.size} results=${s.hasResults}"
 
-    private fun line(s: UiState, trip: TripDetailsViewModel): String {
-        if (s.mode != AppMode.TRIP || s.chainStops.isNotEmpty()) return tabLine(s)
+    private fun line(s: UiState, trip: TripDetailsViewModel, tabbed: Boolean): String {
+        if (tabbed) return tabLine(s)
         val itin = s.selectedItinerary
         val leg = trip.sheet.value?.leg?.let { l -> itin?.legs?.indexOf(l) }
         return "mode=${s.mode} selected=${s.selected} option=${MainViewModel.optionId(itin)} sheet=$leg"
