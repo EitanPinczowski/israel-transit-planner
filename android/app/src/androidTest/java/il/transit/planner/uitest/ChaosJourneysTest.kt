@@ -55,7 +55,11 @@ class ChaosJourneysTest {
         d.place(Field.FROM, BGU)
         d.place(Field.TO, TEL_AVIV)
         d.awaitSearch()
-        assertTrue("no results under a skewed clock", d.vm.state.value.options.isNotEmpty())
+        assertTrue(
+            "no results under a skewed clock",
+            d.vm.state.value.options
+                .isNotEmpty(),
+        )
         var armed = false
         d.onMain { armed = it.remindSelected() }
         val r = d.vm.state.value.reminder
@@ -72,15 +76,25 @@ class ChaosJourneysTest {
      * with the places it had before.
      */
     @Test fun low_storage() = AppDriver(compose).launch().use { d ->
-        val before = runBlocking { d.app.store.places.first() }
+        val before = runBlocking {
+            d.app.store.places
+                .first()
+        }
         d.place(Field.FROM, BGU)
         d.place(Field.TO, TEL_AVIV)
         d.awaitSearch()
-        assertTrue("no results with a full disk", d.vm.state.value.options.isNotEmpty())
+        assertTrue(
+            "no results with a full disk",
+            d.vm.state.value.options
+                .isNotEmpty(),
+        )
         d.onMain { it.savePlace("Chaos", TEL_AVIV.latLon) }
         android.os.SystemClock.sleep(3_000)
         compose.waitForIdle()
-        val after = runBlocking { d.app.store.places.first() }
+        val after = runBlocking {
+            d.app.store.places
+                .first()
+        }
         say("storage: places before=${before.size} after=${after.size}")
         assertTrue("the old places no longer decode: $before -> $after", before.all { b -> after.any { it.name == b.name } })
         assertEquals("a half-written file", true, after.isNotEmpty())

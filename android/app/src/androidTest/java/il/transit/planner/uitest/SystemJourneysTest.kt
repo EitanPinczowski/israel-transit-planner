@@ -125,7 +125,11 @@ class SystemJourneysTest {
             d.app.replay.failing = false
             compose.onNode(hasContentDescription(d.str(R.string.refresh))).performClick()
             compose.waitUntil(10_000) { d.vm.state.value.offlineSince == null && !d.vm.state.value.loading }
-            assertTrue("refresh after airplane off brought nothing", d.vm.state.value.options.isNotEmpty())
+            assertTrue(
+                "refresh after airplane off brought nothing",
+                d.vm.state.value.options
+                    .isNotEmpty(),
+            )
         } finally {
             d.shell("cmd connectivity airplane-mode disable")
         }
@@ -168,27 +172,37 @@ class SystemJourneysTest {
     private fun midFlow(sw: Switch): Unit = AppDriver(compose).launch().use { d ->
         try {
             // The plain search, once: its request count is what any later search may cost.
-            val c0 = d.app.replay.calls.get()
+            val c0 = d.app.replay.calls
+                .get()
             d.place(Field.FROM, BGU)
             d.place(Field.TO, TEL_AVIV)
             d.awaitSearch()
-            val plain = d.app.replay.calls.get() - c0
-            val ids = d.vm.state.value.options.map { it.start }
+            val plain = d.app.replay.calls
+                .get() - c0
+            val ids = d.vm.state.value.options
+                .map { it.start }
             assertTrue("no results to start from", ids.isNotEmpty())
             say("$sw: a plain search costs $plain requests, ${ids.size} options")
 
             // (1) loading: a search held for 4 s; the switch lands in the middle of it.
             d.onMain { it.clearResults() }
             d.app.planDelayMs = 4_000
-            val c1 = d.app.replay.calls.get()
+            val c1 = d.app.replay.calls
+                .get()
             d.onMain { it.plan() }
             SystemClock.sleep(1_000)
             assertTrue("the search was not loading", d.vm.state.value.loading)
             d.flip(sw, back = false)
             d.app.planDelayMs = 0
             d.awaitSearch(timeoutMs = 20_000)
-            val loadingCost = d.app.replay.calls.get() - c1
-            assertEquals("$sw while loading: other options", ids, d.vm.state.value.options.map { it.start })
+            val loadingCost = d.app.replay.calls
+                .get() - c1
+            assertEquals(
+                "$sw while loading: other options",
+                ids,
+                d.vm.state.value.options
+                    .map { it.start },
+            )
             assertTrue("$sw while loading: $loadingCost requests, one search is $plain", loadingCost <= plain)
             say("$sw while loading: same ${ids.size} options, $loadingCost requests")
 
@@ -201,33 +215,59 @@ class SystemJourneysTest {
             val trip = ViewModelProvider(d.activity)[TripDetailsViewModel::class.java]
             d.inst.runOnMainSync { trip.open(leg, LegPalette.colorOf(itin.legs, leg)) }
             SystemClock.sleep(2_000)
-            val c2 = d.app.replay.calls.get()
+            val c2 = d.app.replay.calls
+                .get()
             d.flip(sw, back = true)
             SystemClock.sleep(2_000)
             assertEquals("$sw with the sheet open: other option", selected, d.vm.state.value.selected)
-            assertEquals("$sw with the sheet open: other options", ids, d.vm.state.value.options.map { it.start })
+            assertEquals(
+                "$sw with the sheet open: other options",
+                ids,
+                d.vm.state.value.options
+                    .map { it.start },
+            )
             val sheetOpen = ViewModelProvider(d.activity)[TripDetailsViewModel::class.java].sheet.value != null
-            val sheetCost = d.app.replay.calls.get() - c2
+            val sheetCost = d.app.replay.calls
+                .get() - c2
             say("$sw with the sheet open: option $selected kept, sheet open=$sheetOpen, $sheetCost requests")
             assertTrue("$sw with the sheet open: the sheet closed", sheetOpen)
             assertEquals("$sw with the sheet open: second request", 0, sheetCost)
 
             // (3) a leave countdown up (as J14 posts it).
             val moved = ReplayTransitApi.moved(d.vm.state.value.selectedItinerary!!, Instant.now())
-            val reminder = Reminder.from(moved, moved.legs.first().from.latLon, moved.legs.last().to.latLon, UserSettings())!!
+            val reminder = Reminder.from(
+                moved,
+                moved.legs
+                    .first()
+                    .from.latLon,
+                moved.legs
+                    .last()
+                    .to.latLon,
+                UserSettings(),
+            )!!
             val nm = d.app.getSystemService(NotificationManager::class.java)
             try {
-                assertTrue(il.transit.planner.remind.Notifications.countdown(d.app, reminder, moved.start))
-                val c3 = d.app.replay.calls.get()
+                assertTrue(
+                    il.transit.planner.remind.Notifications
+                        .countdown(d.app, reminder, moved.start),
+                )
+                val c3 = d.app.replay.calls
+                    .get()
                 d.flip(sw, back = false)
                 SystemClock.sleep(1_500)
                 val n = nm.activeNotifications.count { it.id == COUNTDOWN_NOTIFICATION }
                 assertEquals("$sw during a countdown: other option", selected, d.vm.state.value.selected)
                 assertEquals("$sw during a countdown: countdown notifications", 1, n)
-                assertEquals("$sw during a countdown: second request", 0, d.app.replay.calls.get() - c3)
+                assertEquals(
+                    "$sw during a countdown: second request",
+                    0,
+                    d.app.replay.calls
+                        .get() - c3,
+                )
                 say("$sw during a countdown: option $selected kept, 1 notification, 0 requests")
             } finally {
-                il.transit.planner.remind.Notifications.cancelCountdown(d.app)
+                il.transit.planner.remind.Notifications
+                    .cancelCountdown(d.app)
             }
         } finally {
             d.app.planDelayMs = 0

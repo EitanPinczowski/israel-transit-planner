@@ -154,7 +154,10 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
         lm.addTestProvider(gps, false, false, false, false, true, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_FINE)
         lm.setTestProviderEnabled(gps, true)
         val started = vm.startRide()
-        val from = s.options[i].legs.first { it.isTransit }.from.latLon
+        val from = s.options[i]
+            .legs
+            .first { it.isTransit }
+            .from.latLon
         lm.setTestProviderLocation(
             gps,
             Location(gps).apply {
@@ -174,7 +177,12 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     private fun rideAfter(main: MainActivity) {
         val nm = main.getSystemService(android.app.NotificationManager::class.java)
         val ongoing = nm.activeNotifications.filter { it.notification.channelId == "ride_ongoing" }
-        val text = ongoing.joinToString(" / ") { it.notification.extras.getCharSequence("android.title")?.toString().orEmpty() }
+        val text = ongoing.joinToString(" / ") {
+            it.notification.extras
+                .getCharSequence("android.title")
+                ?.toString()
+                .orEmpty()
+        }
         Log.i(SYSTEM_TAG, "ride-after active=${RideService.active.value} ongoing=${ongoing.size} title=$text")
     }
 
@@ -184,7 +192,9 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     private fun line(s: UiState, trip: TripDetailsViewModel, tabbed: Boolean): String {
         if (tabbed) return tabLine(s)
         val itin = s.selectedItinerary
-        val leg = trip.sheet.value?.leg?.let { l -> itin?.legs?.indexOf(l) }
+        val leg = trip.sheet.value
+            ?.leg
+            ?.let { l -> itin?.legs?.indexOf(l) }
         return "mode=${s.mode} selected=${s.selected} option=${MainViewModel.optionId(itin)} sheet=$leg"
     }
 

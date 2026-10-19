@@ -56,7 +56,10 @@ class UiTestApp : TransitApp() {
         il.transit.core.weather.GuardedWeather(
             { _ ->
                 il.transit.core.weather.RainForecast(
-                    (-2L until 60L).map { h -> il.transit.core.weather.RainHour(NOW.plusSeconds(h * 3600), 70, 0.3) },
+                    (-2L until 60L).map { h ->
+                        il.transit.core.weather
+                            .RainHour(NOW.plusSeconds(h * 3600), 70, 0.3)
+                    },
                 )
             },
             clock,
