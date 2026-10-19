@@ -436,6 +436,7 @@ internal fun ResultsPanel(
             }
         }
         if (!collapsed) {
+            MissedItBanner(state) // Phase 11 E2: "From your location at 07:46"
             // Everything between the header and the action row shrinks first (the list, then the
             // banners): the row keeps its full 48 dp even on a 320 dp phone at a large font (D11, R8).
             Column(Modifier.fillMaxWidth().weight(1f, fill = false)) {
@@ -453,7 +454,6 @@ internal fun ResultsPanel(
                 AssistChip(onClick = vm::dismissRoutine, label = { Text(stringResource(R.string.routine_chip, name)) })
             }
             if (state.mode == AppMode.TRIP && !state.loading) ReminderRow(state, vm)
-                MissedItBanner(state) // Phase 11 E2: "From your location at 07:46"
             DayNoticeBanner(state, vm) // Phase 10 D3: holiday / no service / timetable horizon, above the options
             if (!state.loading) RideRow(state, vm)
             val list = Modifier.weight(1f, fill = false).padding(end = 8.dp)
