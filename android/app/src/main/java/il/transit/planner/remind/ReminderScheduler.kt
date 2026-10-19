@@ -6,9 +6,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import il.transit.core.remind.AlarmKind
+import il.transit.core.remind.PassExpiry
 import il.transit.core.remind.Reminder
 import il.transit.core.remind.ReminderLogic
 import java.time.Instant
+import java.time.LocalDate
 
 /**
  * Two exact alarms per reminder: the next real-time re-check (leave − [Reminder.RECHECKS]),
@@ -16,12 +19,19 @@ import java.time.Instant
  * Android 13+; if exact alarms are ever refused, an inexact alarm is still better than none.
  * Once the leave alarm has fired, a third one ([ACTION_END]) lets go of the reminder when
  * its countdown ends (2 min after boarding).
+ *
+ * Phase 11 E1 adds two more, apart from any reminder: the test reminder ([ACTION_TEST], the
+ * same exact alarm type, on the system clock) and the Rav-Kav pass expiry ([ACTION_PASS],
+ * inexact: 09:00 give or take a few minutes is fine).
  */
 object ReminderScheduler {
-    const val ACTION_RECHECK = "il.transit.planner.action.RECHECK"
-    const val ACTION_LEAVE = "il.transit.planner.action.LEAVE"
-    const val ACTION_END = "il.transit.planner.action.COUNTDOWN_END"
-    const val ACTION_DISMISS = "il.transit.planner.action.COUNTDOWN_DISMISS"
+    // The action strings live in core's AlarmKind, which says what each alarm may do (Phase 11 E1).
+    val ACTION_RECHECK = AlarmKind.RECHECK.action
+    val ACTION_LEAVE = AlarmKind.LEAVE.action
+    val ACTION_END = AlarmKind.END.action
+    val ACTION_DISMISS = AlarmKind.DISMISS.action
+    val ACTION_TEST = AlarmKind.TEST.action
+    val ACTION_PASS = AlarmKind.PASS.action
 
     fun schedule(context: Context, r: Reminder, now: Instant = Instant.now()) {
         ReminderLogic.nextRecheck(r, now)?.let { set(context, it, ACTION_RECHECK) }
@@ -41,6 +51,22 @@ object ReminderScheduler {
         am.cancel(pending(context, ACTION_LEAVE))
         am.cancel(pending(context, ACTION_END))
         Notifications.cancelCountdown(context)
+    }
+
+    /** "Test reminder in 1 minute": the same exact alarm a reminder uses, so it fails where they would. */
+    fun scheduleTest(context: Context, at: Instant) = set(context, at, ACTION_TEST)
+
+    /** Arms the pass's next notice, or cancels when the date is Off or both notices have gone. */
+    fun syncPass(context: Context, endsOn: LocalDate?, now: Instant = Instant.now()) =
+        armPass(context, endsOn?.let { PassExpiry.next(it, now) }?.at)
+
+    /** The pass alarm at [at], or none. */
+    fun armPass(context: Context, at: Instant?) {
+        if (at == null) {
+            context.getSystemService(AlarmManager::class.java).cancel(pending(context, ACTION_PASS))
+        } else {
+            setAlarm(context, at, pending(context, ACTION_PASS), exact = false)
+        }
     }
 
     /** "Dismiss" on the countdown. */

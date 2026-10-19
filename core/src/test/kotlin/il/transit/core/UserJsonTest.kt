@@ -29,4 +29,17 @@ class UserJsonTest {
     fun `a buffer below 1 in a hand-edited file still sends 1`() {
         assertEquals(60, UserJson.decodeSettings("""{"transferBufferMin":0}""").preferences().additionalTransferSec)
     }
+
+    @Test
+    fun `the pass date and the reminder-check hint round-trip, and older files load them as Off and not shown`() {
+        val s = UserSettings(passEndsOn = "2026-11-01", reminderCheckHintShown = true)
+        val json = UserJson.encodeSettings(s)
+        assert("\"passEndsOn\":\"2026-11-01\"" in json) { json }
+        assert("\"reminderCheckHintShown\":true" in json) { json }
+        assertEquals(s, UserJson.decodeSettings(json))
+        val old = UserJson.decodeSettings("""{"maxWalkMin":20,"rainAware":false}""")
+        assertEquals(null, old.passEndsOn)
+        assertEquals(false, old.reminderCheckHintShown)
+        assertEquals(20, old.maxWalkMin)
+    }
 }

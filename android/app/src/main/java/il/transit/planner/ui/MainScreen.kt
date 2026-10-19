@@ -373,6 +373,7 @@ fun MainScreen(
     UpdateLaunchers(state.updateState, vm) // Android's install prompt / permission screen, banner or not
     if (state.showSettings) SettingsDialog(state, vm, actions, onShowTour = { tourLater = false })
     if (state.showHistory) HistoryDialog(state, vm)
+    ReminderCheckHost(state, vm) // Phase 11 E1: after Settings, so it opens on top of it
     if (state.showFavorites) FavoritesDialog(state, vm)
     savingPlace?.let { at ->
         NameDialog(R.string.save_place, onDismiss = { savingPlace = null }) { name -> vm.savePlace(name, at); savingPlace = null }

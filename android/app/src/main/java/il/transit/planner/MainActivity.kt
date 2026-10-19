@@ -110,6 +110,7 @@ class MainActivity : ComponentActivity() {
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         if (intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
+        if (intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true) // Phase 11 E1: the pass notice
         openShared(intent)
     }
 
@@ -174,6 +175,7 @@ class MainActivity : ComponentActivity() {
         if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         // "Start trip" on the leave-now countdown (C5).
         if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
+        if (fresh && intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
