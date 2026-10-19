@@ -38,6 +38,7 @@ import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.present.DayPick
+import il.transit.core.present.hhmm
 import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateState
 import il.transit.core.user.UserSettings
@@ -408,7 +409,8 @@ class JourneysTest {
         d.place(Field.TO, TEL_AVIV)
         d.awaitSearch()
         val i = d.selectTrain()
-        val leg = d.vm.state.value.options[i].legs.first { it.isTransit }
+        val options = d.vm.state.value.options
+        val leg = options[i].legs.first { it.isTransit }
         val pkg = d.app.packageName
         d.shell("appops set $pkg android:mock_location allow")
         val lm = d.app.getSystemService(LocationManager::class.java)
@@ -426,23 +428,28 @@ class JourneysTest {
             lm.setTestProviderLocation(gps, fix(gps, here))
             val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
             val label = d.str(R.string.missed_it_action)
-            fun action() = nm.activeNotifications.firstOrNull { it.notification.channelId == "ride_ongoing" }
-                ?.notification?.actions?.firstOrNull { it.title?.toString() == label }
+            fun action(): android.app.Notification.Action? {
+                val ride = nm.activeNotifications.firstOrNull { it.notification.channelId == "ride_ongoing" } ?: return null
+                val actions = ride.notification.actions ?: return null
+                return actions.firstOrNull { "${it.title}" == label }
+            }
             val until = SystemClock.uptimeMillis() + 5_000
             while (action() == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
             val tap = action() ?: throw AssertionError("J16: no \"$label\" on the ride notification: ${nm.activeNotifications.map { it.notification.channelId }}")
-            val before = d.app.replay.calls.get()
+            val calls = d.app.replay.calls
+            val before = calls.get()
             tap.actionIntent.send()
             compose.waitUntil(15_000) {
                 val s = d.vm.state.value
                 s.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.PLANNED && !s.loading && s.options.isNotEmpty()
             }
-            assertEquals("one plan for the tap", 1, d.app.replay.calls.get() - before)
+            assertEquals("one plan for the tap", 1, calls.get() - before)
             val s = d.vm.state.value
             assertEquals(il.transit.planner.ui.PlaceRef.MyLocation, s.from)
             assertEquals(il.transit.core.plan.TimeMode.NOW, s.timeMode)
             compose.waitUntil(5_000) { !RideService.active.value } // the old ride's alerts stop
-            d.awaitNode(hasText(d.str(R.string.missed_it_from, il.transit.core.present.hhmm(s.missedIt!!.at!!))))
+            val at = hhmm(s.missedIt!!.at!!)
+            d.awaitNode(hasText(d.str(R.string.missed_it_from, at)))
         } finally {
             d.onMain { it.stopRide() }
             runCatching { lm.removeTestProvider(gps) }
