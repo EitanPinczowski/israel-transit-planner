@@ -33,6 +33,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import il.transit.core.api.ReplayTransitApi
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
@@ -58,6 +59,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -403,7 +405,10 @@ class JourneysTest {
     @Test fun j14_leave_countdown_is_a_live_update() = AppDriver(compose).launch().use { d ->
         d.tripByTaps()
         val i = d.selectTrain()
-        val itinerary = d.vm.state.value.options[i]
+        // The replay is dated at the uitest clock (2026-10-05); Android 16 drops a notification whose
+        // `when` (here: boarding) is over 14 days older than the phone's clock, so move it to today.
+        val chosen = d.vm.state.value.options[i]
+        val itinerary = ReplayTransitApi.moved(chosen, Instant.now())
         val r = il.transit.core.remind.Reminder.from(
             itinerary,
             itinerary.legs.first().from.latLon,
@@ -412,7 +417,7 @@ class JourneysTest {
         )!!
         val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
         try {
-            // The fixtures' times are in the past: count down as of the trip's start.
+            // Count down as of the trip's start.
             assertTrue(il.transit.planner.remind.Notifications.countdown(d.app, r, itinerary.start))
             val until = SystemClock.uptimeMillis() + 3_000
             fun posted() = nm.activeNotifications.filter { it.notification.channelId == "trip_reminders" }
