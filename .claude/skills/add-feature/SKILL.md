@@ -24,6 +24,10 @@ description: Recipe for adding any user-visible feature end to end - core logic,
      dialog) are in `ui/screens/Common.kt` — reuse them; keep helpers `private` unless
      another file uses them, then `internal`;
    - network via one app-wide `GuardedTransitApi(MotisClient())`.
+   - **a state test** (Phase 11 T3): a feature that adds a state transition or a request path adds
+     its case to `android/app/src/test/.../ui/vm/` (`VmTest`, `ScriptedApi`; see `android-build`):
+     the `UiState` sequence from idle to the end, the cancel / retry / error paths, and the
+     request count against the feature's budget. It runs on the JVM, no emulator.
 5. **Strings**: the feature's own `res/values/strings_<feature>.xml` (English) AND
    `res/values-iw/strings_<feature>.xml` (Hebrew), same keys in both. Don't append to the
    shared `strings.xml`: two PRs that both append to it conflict. Load `i18n-rtl`.

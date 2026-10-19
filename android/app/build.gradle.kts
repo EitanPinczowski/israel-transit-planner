@@ -23,6 +23,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.paparazzi)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -166,6 +167,36 @@ tasks.withType<Test>().configureEach {
         val before = classpath // the old collection, so the new one does not refer to itself
         logger.lifecycle("Paparazzi: ${before.filter(platformJar).files.map { it.path }} -> $jar")
         classpath = files(before.files.map { if (platformJar(it)) jar else it })
+    }
+}
+
+// Line coverage of the app's ViewModel and state code from the JVM tests (Phase 11 T3, owner decision 21):
+// `ui/` without the Compose screens (Paparazzi covers those) and without the classes that only exist to
+// talk to Compose, the map and Android (MainScreen, Theme, MapController, ...). The gate only ratchets up
+// (android-build skill): a PR may raise `minValue`, never lower it.
+kover {
+    reports {
+        filters {
+            includes { classes("il.transit.planner.ui.*") }
+            excludes {
+                classes(
+                    "il.transit.planner.ui.screens.*",
+                    "il.transit.planner.ui.MainScreen*",
+                    "il.transit.planner.ui.ComposableSingletons*",
+                    "il.transit.planner.ui.Theme*",
+                    "il.transit.planner.ui.MapController*",
+                    "il.transit.planner.ui.OfflineMap*",
+                    "il.transit.planner.ui.VoiceSearch*",
+                    "il.transit.planner.ui.Shortcuts*",
+                    "il.transit.planner.ui.AppLocale*",
+                )
+            }
+        }
+        verify {
+            rule("ui line coverage") {
+                bound { minValue.set(69) }
+            }
+        }
     }
 }
 
