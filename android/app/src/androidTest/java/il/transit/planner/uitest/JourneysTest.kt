@@ -44,6 +44,12 @@ import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateState
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import il.transit.planner.ui.PlaceRef
+import il.transit.planner.remind.Notifications
+import il.transit.planner.remind.MissedItAction
+import il.transit.planner.MainActivity
+import il.transit.core.plan.MissedIt
+import android.os.ParcelFileDescriptor
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.MEITAR
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
@@ -465,15 +471,15 @@ class JourneysTest {
      */
     @Test fun j17_missed_it_from_a_killed_app() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val target = il.transit.core.plan.MissedIt.Target("Tel Aviv", LatLon(TEL_AVIV.lat, TEL_AVIV.lon), arriveBy = true)
-        val good = il.transit.planner.remind.MissedItAction.intent(ctx, target)
-        assertEquals(target, il.transit.planner.remind.MissedItAction.target(good))
-        assertEquals(null, il.transit.planner.remind.MissedItAction.target(Intent(good).putExtra("missed_it_lat", Double.NaN)))
-        assertEquals(null, il.transit.planner.remind.MissedItAction.target(Intent(good).apply { removeExtra("missed_it_lon") }))
-        assertEquals(null, il.transit.planner.remind.MissedItAction.target(Intent(good).putExtra("missed_it", false)))
-        assertEquals(null, il.transit.planner.remind.MissedItAction.target(Intent(ctx, il.transit.planner.MainActivity::class.java)))
-        assertEquals(null, il.transit.planner.remind.MissedItAction.target(null))
-        val other = il.transit.planner.remind.MissedItAction.intent(ctx, target.copy(at = LatLon(BGU.lat, BGU.lon)))
+        val target = MissedIt.Target("Tel Aviv", LatLon(TEL_AVIV.lat, TEL_AVIV.lon), arriveBy = true)
+        val good = MissedItAction.intent(ctx, target)
+        assertEquals(target, MissedItAction.target(good))
+        assertEquals(null, MissedItAction.target(Intent(good).putExtra("missed_it_lat", Double.NaN)))
+        assertEquals(null, MissedItAction.target(Intent(good).apply { removeExtra("missed_it_lon") }))
+        assertEquals(null, MissedItAction.target(Intent(good).putExtra("missed_it", false)))
+        assertEquals(null, MissedItAction.target(Intent(ctx, MainActivity::class.java)))
+        assertEquals(null, MissedItAction.target(null))
+        val other = MissedItAction.intent(ctx, target.copy(at = LatLon(BGU.lat, BGU.lon)))
         assertTrue("each destination its own PendingIntent", !good.filterEquals(other))
 
         val pkg = ctx.packageName
@@ -481,7 +487,8 @@ class JourneysTest {
         val gps = LocationManager.GPS_PROVIDER
         val shell = InstrumentationRegistry.getInstrumentation().uiAutomation
         // Read to the end: the command runs only as its output is drained (AppDriver.shell does the same).
-        android.os.ParcelFileDescriptor.AutoCloseInputStream(shell.executeShellCommand("appops set $pkg android:mock_location allow")).use { it.readBytes() }
+        val appops = shell.executeShellCommand("appops set $pkg android:mock_location allow")
+        ParcelFileDescriptor.AutoCloseInputStream(appops).use { it.readBytes() }
         @Suppress("DEPRECATION")
         lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
         lm.setTestProviderEnabled(gps, true)
@@ -498,7 +505,7 @@ class JourneysTest {
                 val s = d.vm.state.value
                 assertEquals(AppMode.TRIP, s.mode)
                 assertEquals(il.transit.planner.ui.PlaceRef.MyLocation, s.from)
-                assertEquals(il.transit.planner.ui.PlaceRef.Point("Tel Aviv", target.at), s.to)
+                assertEquals(PlaceRef.Point("Tel Aviv", target.at), s.to)
                 assertTrue("arrive-by reached the banner", s.missedIt!!.wasArriveBy)
                 d.awaitNode(hasText(d.str(R.string.missed_it_from, hhmm(s.missedIt!!.at!!))))
                 d.awaitNode(hasText(d.str(R.string.missed_it_arrive_by)))
@@ -538,9 +545,12 @@ class JourneysTest {
             liveUpdateCheck("J14", all.single())
             // Phase 11 E2: the countdown and "your trip changed" both offer "Missed it? Plan from here".
             val label = d.str(R.string.missed_it_action)
-            fun hasMissedIt(id: Int) = nm.activeNotifications.firstOrNull { it.id == id }?.notification?.actions.orEmpty().any { "${it.title}" == label }
+            fun hasMissedIt(id: Int): Boolean {
+                val n = nm.activeNotifications.firstOrNull { it.id == id } ?: return false
+                return n.notification.actions.orEmpty().any { "${it.title}" == label }
+            }
             assertTrue("J14: no \"$label\" on the countdown", hasMissedIt(1001))
-            il.transit.planner.remind.Notifications.changed(d.app, r)
+            Notifications.changed(d.app, r)
             val changedBy = SystemClock.uptimeMillis() + 3_000
             val changedId = { nm.activeNotifications.firstOrNull { it.id != 1001 && it.notification.channelId == "trip_reminders" }?.id }
             while (changedId() == null && SystemClock.uptimeMillis() < changedBy) SystemClock.sleep(100)

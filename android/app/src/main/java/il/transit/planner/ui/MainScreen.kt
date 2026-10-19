@@ -201,17 +201,17 @@ data class MapPadding(val left: Int = 0, val top: Int = 0, val right: Int = 0, v
 internal val barsAndCutout: WindowInsets
     @Composable get() = WindowInsets.systemBars.union(WindowInsets.displayCutout)
 
-/**
- * The whole screen over the map. Phones: search card on top, results as a bottom sheet.
- * Wide windows: both in one side column at the start edge. Every edge respects the status
- * and navigation bars, the camera cutout (which is on a side in landscape) and the keyboard.
- */
 /** "You're already there" (Phase 11 E2) keeps the panel open only while the Trip tab still shows that destination. */
 private fun alreadyThere(s: UiState): Boolean {
     val m = s.missedIt ?: return false
     return m.kind == MissedItUi.Kind.ALREADY_THERE && s.mode == AppMode.TRIP && (s.to as? PlaceRef.Point)?.at == m.to
 }
 
+/**
+ * The whole screen over the map. Phones: search card on top, results as a bottom sheet.
+ * Wide windows: both in one side column at the start edge. Every edge respects the status
+ * and navigation bars, the camera cutout (which is on a side in landscape) and the keyboard.
+ */
 @Composable
 fun MainScreen(
     state: UiState,

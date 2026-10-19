@@ -132,7 +132,8 @@ class MissedItStateTest : VmTest() {
         assertEquals(0, api.total)
         gate.complete(here.copy(ageSec = 0))
         assertEquals(1, api.count("plan"))
-        assertEquals(MissedItUi.Kind.PLANNED, vm.state.value.missedIt?.kind)
+        val s = vm.state.value
+        assertEquals(MissedItUi.Kind.PLANNED, s.missedIt?.kind)
     }
 
     @Test fun `a usable last fix asks for no new one`() {
@@ -225,8 +226,9 @@ class MissedItStateTest : VmTest() {
         vm.choose(Field.STOP, "Soroka", MEITAR)
         assertEquals(1, vm.state.value.chainStops.size)
         vm.missedIt(toSavidor, at(here))
-        assertTrue(vm.state.value.chainStops.isEmpty())
-        assertNull(vm.state.value.chain)
+        val after = vm.state.value
+        assertTrue(after.chainStops.isEmpty())
+        assertNull(after.chain)
     }
 
     @Test fun `no name in the tap - the saved place there, else the place on screen, else none`() = runBlocking {
@@ -258,7 +260,8 @@ class MissedItStateTest : VmTest() {
         val trip = ScriptedApi(replay())
         TripPlanner(trip).plan(MissedIt.query(toSavidor, BGU, mine, "en"), NOW)
         assertEquals(trip.planRequests.single(), api.planRequests.single())
-        val transfers = vm.state.value.options.map { it.transfers }
+        val options = vm.state.value.options
+        val transfers = options.map { it.transfers }
         assertTrue(transfers.size > 1)
         assertEquals(transfers.sorted(), transfers)
     }
@@ -269,7 +272,8 @@ class MissedItStateTest : VmTest() {
         val vm = newVm(ScriptedApi(replay()), store = store, rides = rides)
         vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
         vm.setTime(TimeMode.ARRIVE_BY, NOW.plusSeconds(7_200))
-        assertTrue(vm.state.value.options.isNotEmpty())
+        val found = vm.state.value.options
+        assertTrue(found.isNotEmpty())
         assertTrue(vm.startRide())
         assertEquals(listOf(true), rides.started)
         assertTrue(vm.remindSelected())
@@ -280,7 +284,8 @@ class MissedItStateTest : VmTest() {
         assertEquals(listOf(true, true), rides.started)
         // Its notifications hand MissedIt.Target(r.toName, r.to, r.arriveBy) over: the banner says "leaving now instead".
         vm.missedIt(MissedIt.Target(stored.toName, stored.to, stored.arriveBy), at(here))
-        assertTrue(vm.state.value.missedIt!!.wasArriveBy)
+        val banner = vm.state.value.missedIt
+        assertTrue(banner!!.wasArriveBy)
     }
 
     @Test fun `at the destination - already there, no request`() {
