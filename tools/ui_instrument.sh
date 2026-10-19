@@ -12,6 +12,9 @@
 # retry runs only the test that was open and the tests that never started; a test that dies
 # twice and any failed assertion stay red. Every retry is a ::warning:: and a block in the job
 # summary naming its kind, and the evidence is printed before the retry.
+#
+# Phase 11 T7: every retry is also a line "retry<TAB>API<TAB>test<TAB>kind" in flake.log next to
+# the output file; the workflow's last step (tools/ui_flake_log.sh) posts them on the "CI flake log" issue.
 
 ui_prep_emulator() {
   adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1 || true
@@ -68,6 +71,10 @@ _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"
 }
 
+_ui_flake() { # $1 = outfile, $2 = test, $3 = kind
+  printf 'retry\t%s\t%s\t%s\n' "${API:-?}" "$2" "$3" >> "$(dirname "$1")/flake.log"
+}
+
 ui_instrument() {
   local classes=$1 outfile=$2; shift 2
   local extras=("$@")
@@ -99,6 +106,7 @@ ui_instrument() {
       rc=1; break
     fi
     retried="$retried $open_now"
+    _ui_flake "$outfile" "$open_now" "$kind"
     echo "::warning::RETRY (once): $kind, during $open_now. Re-running it with the tests that had not started."
     {
       echo "### ⚠️ Retry — API ${API:-?} — $(basename "$outfile")"

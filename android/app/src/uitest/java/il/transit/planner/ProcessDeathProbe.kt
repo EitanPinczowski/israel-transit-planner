@@ -4,9 +4,16 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import android.location.Criteria
+import android.location.Location
+import android.location.LocationManager
+import android.os.SystemClock
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import il.transit.core.present.LegPalette
+import il.transit.core.user.SavedPlace
+import il.transit.planner.ride.RideService
+import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.Suggestion
@@ -24,14 +31,26 @@ import kotlinx.coroutines.withTimeoutOrNull
  *     option, opens its first ride's trip sheet and logs `ready …`;
  *  2. Home, `am kill`, `am start`: Android recreates the Activity from its saved state; the probe
  *     logs `restored …` with what came back. The script compares the two lines.
+ * Phase 11 T7 adds two more setups, driven by `tools/ui_system_run.sh` (logs under [SYSTEM_TAG]):
+ *  - [EXTRA_TAB] = a tab name (`BETTER_START`, `DROP_OFF`, `PICK_UP`, `PARK_RIDE`, `ERRANDS`): the
+ *    same round trip for that tab; the `ready` / `restored` lines then read
+ *    `<tab> mode=… from=… to=… driverTo=… | stops=… results=…`, and only the part before `|` is a
+ *    promise (what `SavedUi` keeps); the part after is reported, not enforced;
+ *  - [EXTRA_RIDE]: starts a ride on the mock location, so the script can revoke the location
+ *    permission under it; after the restart `ride-after …` says what is left.
  * uitest build only; tag [TAG].
  */
 object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     const val EXTRA = "uitest_process_death_setup"
+    const val EXTRA_TAB = "uitest_process_death_tab"
+    const val EXTRA_RIDE = "uitest_ride_setup"
     const val TAG = "ProcessDeath"
+    const val SYSTEM_TAG = "SystemProbe"
 
     /** What onResume should do for the Activity created last: set up, or report what it shows. */
     private var pending: String? = null
+    private var tab: String? = null
+    private var ride = false
 
     /** The Activity created last came from a saved state (recreated after the kill). */
     private var fromSaved = false
@@ -39,7 +58,9 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         if (activity !is MainActivity) return
         fromSaved = savedInstanceState != null
-        pending = if (!fromSaved && activity.intent.getBooleanExtra(EXTRA, false)) "setup" else "report"
+        tab = if (fromSaved) null else activity.intent.getStringExtra(EXTRA_TAB)
+        ride = !fromSaved && activity.intent.getBooleanExtra(EXTRA_RIDE, false)
+        pending = if (!fromSaved && (tab != null || ride || activity.intent.getBooleanExtra(EXTRA, false))) "setup" else "report"
     }
 
     override fun onActivityResumed(activity: Activity) {
@@ -54,7 +75,11 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             delay(500)
             val vm = ViewModelProvider(main)[MainViewModel::class.java]
             val trip = ViewModelProvider(main)[TripDetailsViewModel::class.java]
-            if (what == "setup") {
+            if (what == "setup" && ride) {
+                rideSetup(main, vm)
+            } else if (what == "setup" && tab != null) {
+                tabSetup(vm, tab!!)
+            } else if (what == "setup") {
                 val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
                 vm.startEditing(Field.FROM)
                 vm.pick(Suggestion(from.name, null, from.latLon, saved = true, isStop = false))
@@ -70,15 +95,91 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 Log.i(TAG, "ready ${line(vm.state.value, trip)}")
             } else {
                 val before = app.replay.calls.get()
-                withTimeoutOrNull(10_000) { vm.state.first { it.results != null } }
+                val tabbed = vm.state.value.let { it.mode != AppMode.TRIP || it.chainStops.isNotEmpty() }
+                if (tabbed) delay(4_000) else withTimeoutOrNull(10_000) { vm.state.first { it.results != null } }
                 delay(2_000) // the trip sheet reopens once its option is back
                 // saved=false: this Activity did not come back from a saved state (the script says why).
                 Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip)} requests=${app.replay.calls.get() - before}")
+                rideAfter(main)
             }
         }
     }
 
+    private suspend fun place(vm: MainViewModel, field: Field, p: SavedPlace) {
+        vm.startEditing(field)
+        vm.pick(Suggestion(p.name, null, p.latLon, saved = true, isStop = false))
+        delay(300)
+    }
+
+    /** One tab's search, as a user would set it up (places the replay's fixtures answer). */
+    private suspend fun tabSetup(vm: MainViewModel, tab: String) {
+        val a = UiTestApp
+        if (tab == "ERRANDS") {
+            place(vm, Field.FROM, a.BGU)
+            place(vm, Field.STOP, a.MEITAR)
+            place(vm, Field.TO, a.TEL_AVIV)
+        } else {
+            vm.setMode(AppMode.valueOf(tab))
+            when (tab) {
+                "DROP_OFF" -> { place(vm, Field.FROM, a.MEITAR); place(vm, Field.DRIVER_TO, a.TEL_AVIV); place(vm, Field.TO, a.REHOVOT) }
+                "PICK_UP" -> { place(vm, Field.FROM, a.TEL_AVIV); place(vm, Field.TO, a.MEITAR) }
+                else -> { place(vm, Field.FROM, a.MEITAR); place(vm, Field.TO, a.TEL_AVIV) }
+            }
+        }
+        withTimeoutOrNull(20_000) { vm.state.first { !it.loading && (it.hasResults || it.error != null) } }
+        delay(2_000)
+        Log.i(TAG, "ready ${tabLine(vm.state.value)}")
+    }
+
+    /** A ride on the mock GPS, started the way the button does; the script then revokes location. */
+    private suspend fun rideSetup(main: MainActivity, vm: MainViewModel) {
+        val s = withTimeoutOrNull(15_000) {
+            val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
+            vm.startEditing(Field.FROM)
+            vm.pick(Suggestion(from.name, null, from.latLon, saved = true, isStop = false))
+            vm.startEditing(Field.TO)
+            vm.pick(Suggestion(to.name, null, to.latLon, saved = true, isStop = false))
+            vm.state.first { it.results != null && !it.loading }
+        }
+        if (s == null) { Log.e(SYSTEM_TAG, "ride-setup: no results"); return }
+        val i = s.options.indexOfFirst { it.firstTransitLeg != null }.coerceAtLeast(0)
+        vm.select(i)
+        val lm = main.getSystemService(LocationManager::class.java)
+        val gps = LocationManager.GPS_PROVIDER
+        runCatching { lm.removeTestProvider(gps) }
+        @Suppress("DEPRECATION")
+        lm.addTestProvider(gps, false, false, false, false, true, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_FINE)
+        lm.setTestProviderEnabled(gps, true)
+        val started = vm.startRide()
+        val from = s.options[i].legs.first { it.isTransit }.from.latLon
+        lm.setTestProviderLocation(
+            gps,
+            Location(gps).apply {
+                latitude = from.lat
+                longitude = from.lon
+                accuracy = 5f
+                time = System.currentTimeMillis()
+                elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+            },
+        )
+        val until = SystemClock.uptimeMillis() + 8_000
+        while (!RideService.active.value && SystemClock.uptimeMillis() < until) delay(200)
+        Log.i(SYSTEM_TAG, "ride-ready started=$started active=${RideService.active.value}")
+    }
+
+    /** After the restart: what the ride left behind (the script judges it). */
+    private fun rideAfter(main: MainActivity) {
+        val nm = main.getSystemService(android.app.NotificationManager::class.java)
+        val ongoing = nm.activeNotifications.filter { it.notification.channelId == "ride_ongoing" }
+        val text = ongoing.joinToString(" / ") { it.notification.extras.getCharSequence("android.title")?.toString().orEmpty() }
+        Log.i(SYSTEM_TAG, "ride-after active=${RideService.active.value} ongoing=${ongoing.size} title=$text")
+    }
+
+    private fun tabLine(s: UiState): String =
+        "mode=${s.mode} from=${s.from} to=${s.to} driverTo=${s.driverTo} | stops=${s.chainStops.size} results=${s.hasResults}"
+
     private fun line(s: UiState, trip: TripDetailsViewModel): String {
+        if (s.mode != AppMode.TRIP || s.chainStops.isNotEmpty()) return tabLine(s)
         val itin = s.selectedItinerary
         val leg = trip.sheet.value?.leg?.let { l -> itin?.legs?.indexOf(l) }
         return "mode=${s.mode} selected=${s.selected} option=${MainViewModel.optionId(itin)} sheet=$leg"

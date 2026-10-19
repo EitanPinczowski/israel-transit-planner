@@ -72,6 +72,8 @@ android {
             versionNameSuffix = "-uitest"
             matchingFallbacks += listOf("debug")
             ndk { abiFilters += listOf("x86_64") }
+            // en-XA / ar-XB, for the nightly pseudolocale audit (Phase 11 T7). Debug-only strings.
+            isPseudoLocalesEnabled = true
         }
         release {
             // R8 off on purpose: MapLibre and kotlinx-serialization need keep rules, and a
