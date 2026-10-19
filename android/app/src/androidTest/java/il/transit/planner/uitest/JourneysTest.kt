@@ -399,6 +399,57 @@ class JourneysTest {
     }
 
     /**
+     * Phase 11 E2: on a ride, the ongoing notification's "Missed it? Plan from here" opens the Trip tab
+     * from the phone's fix to the ride's destination with options, for exactly 1 more request, and the
+     * old ride stops.
+     */
+    @Test fun j16_missed_it_from_ride_notification() = AppDriver(compose).launch().use { d ->
+        d.place(Field.FROM, BGU)
+        d.place(Field.TO, TEL_AVIV)
+        d.awaitSearch()
+        val i = d.selectTrain()
+        val leg = d.vm.state.value.options[i].legs.first { it.isTransit }
+        val pkg = d.app.packageName
+        d.shell("appops set $pkg android:mock_location allow")
+        val lm = d.app.getSystemService(LocationManager::class.java)
+        val gps = LocationManager.GPS_PROVIDER
+        @Suppress("DEPRECATION")
+        lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
+        lm.setTestProviderEnabled(gps, true)
+        try {
+            d.tapInResults(d.str(R.string.action_start_trip))
+            val started = SystemClock.uptimeMillis() + 8_000
+            while (!RideService.active.value && SystemClock.uptimeMillis() < started) SystemClock.sleep(200)
+            assertTrue("J16: the ride did not start in 8 s (${d.inputState()})", RideService.active.value)
+            // On the train, halfway along its first ride: well away from the destination.
+            val here = LatLon((leg.from.lat + leg.to.lat) / 2, (leg.from.lon + leg.to.lon) / 2)
+            lm.setTestProviderLocation(gps, fix(gps, here))
+            val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
+            val label = d.str(R.string.missed_it_action)
+            fun action() = nm.activeNotifications.firstOrNull { it.notification.channelId == "ride_ongoing" }
+                ?.notification?.actions?.firstOrNull { it.title?.toString() == label }
+            val until = SystemClock.uptimeMillis() + 5_000
+            while (action() == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
+            val tap = action() ?: throw AssertionError("J16: no \"$label\" on the ride notification: ${nm.activeNotifications.map { it.notification.channelId }}")
+            val before = d.app.replay.calls.get()
+            tap.actionIntent.send()
+            compose.waitUntil(15_000) {
+                val s = d.vm.state.value
+                s.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.PLANNED && !s.loading && s.options.isNotEmpty()
+            }
+            assertEquals("one plan for the tap", 1, d.app.replay.calls.get() - before)
+            val s = d.vm.state.value
+            assertEquals(il.transit.planner.ui.PlaceRef.MyLocation, s.from)
+            assertEquals(il.transit.core.plan.TimeMode.NOW, s.timeMode)
+            compose.waitUntil(5_000) { !RideService.active.value } // the old ride's alerts stop
+            d.awaitNode(hasText(d.str(R.string.missed_it_from, il.transit.core.present.hhmm(s.missedIt!!.at!!))))
+        } finally {
+            d.onMain { it.stopRide() }
+            runCatching { lm.removeTestProvider(gps) }
+        }
+    }
+
+    /**
      * Phase 10 D10: the leave-now countdown posts on the reminder's id, as a Live Update on
      * Android 16+ and with a plain progress bar below; cancelling it leaves nothing behind.
      */

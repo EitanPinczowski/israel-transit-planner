@@ -155,6 +155,17 @@ class MissedItTest {
         assertEquals(3, s.replay.calls.get())
     }
 
+    @Test fun `a ride's destination is where its itinerary ends`() {
+        val plan = MotisJson.decodeFromString(il.transit.core.api.PlanResponse.serializer(), fixture("plan_bgu_telaviv"))
+        val itin = plan.itineraries.first()
+        val end = itin.legs.last().to
+        val t = MissedIt.target(itin)!!
+        assertEquals(LatLon(end.lat, end.lon), t.at)
+        assertNull("MOTIS's END is no name", t.name)
+        assertEquals("Azrieli", MissedIt.target(itin, "Azrieli")!!.name)
+        assertFalse(t.arriveBy)
+    }
+
     @Test fun `only the missed reminder ends, never a later one`() {
         val r = Reminder(31.0, 34.0, 32.0, 34.7, UserSettings(), null, "5", "Stop", now.epochSecond, leaveAtEpoch = now.epochSecond + 600)
         assertFalse("still ahead: a later trip", MissedIt.endsReminder(r, now))

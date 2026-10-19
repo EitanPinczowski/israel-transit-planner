@@ -78,6 +78,7 @@ class RideService : Service() {
         val itinerary = intent?.getStringExtra(EXTRA_ITINERARY)
             ?.let { runCatching { MotisJson.decodeFromString(Itinerary.serializer(), it) }.getOrNull() }
         finalStop = itinerary?.legs?.lastOrNull { it.isTransit }?.to?.name.orEmpty()
+        this.itinerary = itinerary // before the first notification: its "Missed it?" action needs the destination
         // startForegroundService() must be answered by startForeground() even when we are about
         // to stop, or Android kills the app ("did not then call Service.startForeground()").
         ServiceCompat.startForeground(
@@ -206,6 +207,7 @@ class RideService : Service() {
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
+        itinerary?.let(il.transit.core.plan.MissedIt::target)?.let { b.addAction(il.transit.planner.remind.MissedItAction.action(this, it)) } // Phase 11 E2
         return il.transit.planner.remind.Notifications.build(this, b, live, text)
     }
 

@@ -1,6 +1,7 @@
 package il.transit.core.plan
 
 import il.transit.core.api.Endpoint
+import il.transit.core.api.Itinerary
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.remind.Reminder
@@ -94,6 +95,15 @@ class MissedIt(private val planner: TripPlanner) {
         const val SAME_START_M = 100.0
 
         fun usable(f: Fix): Boolean = f.ageSec in 0..MAX_FIX_AGE_SEC && (f.accuracyM ?: Float.MAX_VALUE) <= MAX_ACCURACY_M
+
+        /**
+         * Where [itinerary] ends: the destination a ride or a countdown carries into its notification.
+         * MOTIS names the street end "END"; then [name] (the reminder's place name) or none (the app
+         * names it from a saved place or the trip on screen).
+         */
+        fun target(itinerary: Itinerary, name: String? = null): Target? = itinerary.legs.lastOrNull()?.to?.let {
+            Target(name ?: it.name.takeUnless { n -> n.isBlank() || n == "END" }, LatLon(it.lat, it.lon))
+        }
 
         /** Always a plain Trip, depart now: an arrive-by or car-tab trip becomes this. */
         fun query(target: Target, from: LatLon, settings: UserSettings, language: String) =

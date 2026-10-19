@@ -137,6 +137,7 @@ object Notifications {
                 )
                 b.addAction(0, context.getString(R.string.countdown_start), start)
             }
+            b.addAction(MissedItAction.action(context, il.transit.core.plan.MissedIt.Target(r.toName, r.to))) // Phase 11 E2
             b.addAction(0, context.getString(R.string.countdown_dismiss), ReminderScheduler.dismissIntent(context))
         }
         return true
@@ -184,7 +185,7 @@ object Notifications {
         ID_CHANGED,
         context.getString(R.string.notify_changed_title),
         context.getString(R.string.notify_changed_text, r.line ?: "", r.boardStop),
-    )
+    ) { b -> b.addAction(MissedItAction.action(context, il.transit.core.plan.MissedIt.Target(r.toName, r.to))) } // Phase 11 E2
 
     @SuppressLint("MissingPermission") // areNotificationsEnabled() covers POST_NOTIFICATIONS
     private fun post(

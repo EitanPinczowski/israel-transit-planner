@@ -252,7 +252,7 @@ class BudgetInventoryTest {
         }
 
         println("Request-budget inventory (${rows.size} rows):\n" + rows.joinToString("\n") { "  %-62s %-32s sent %2d / cap %2d".format(it.feature, it.constant, it.sent, it.cap) })
-        assertEquals("every row ran", 22, rows.size)
+        assertEquals("every row ran", 24, rows.size)
     }
 
     /** The caps are policy: this fails when one moves, so the change is a reviewed edit (skill `transitous-api`). */
@@ -270,5 +270,6 @@ class BudgetInventoryTest {
         assertEquals(3, NightRefresh.MAX_STOPS)
         assertEquals(2, DayTimetable.PAGES_PER_OPEN)
         assertEquals(1, PlaceSearch.BACKUP_PER_SEARCH)
+        assertEquals(1, MissedIt.PLANS_PER_TAP)
     }
 }

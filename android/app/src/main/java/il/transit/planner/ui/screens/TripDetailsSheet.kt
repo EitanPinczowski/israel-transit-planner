@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -58,9 +59,10 @@ import il.transit.planner.ui.TripSheet
  * Every stop of the vehicle behind one leg (Phase 8 B1). Live times, ⚠ alerts and "live
  * position" only appear when the answer carries them — on Israeli MOT lines it never does
  * (2026-10), so the usual sheet is the timetable with a "scheduled position" note.
+ * [onMissedIt]: "Missed it? Plan from here" (Phase 11 E2), from where the phone is to the trip's destination.
  */
 @Composable
-internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape) {
+internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape, onMissedIt: (() -> Unit)? = null) {
     // No dispatcher in screenshot tests; on a phone there always is one.
     if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(onBack = onClose)
     val d = sheet.details
@@ -84,6 +86,7 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: M
             sheet.vehicle?.let { v ->
                 Note(stringResource(if (v.realTime) R.string.trip_live_position else R.string.trip_scheduled_position))
             }
+            onMissedIt?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.missed_it_action)) } }
             val list = rememberLazyListState()
             // A long ride is folded (Phase 10 D1); each opened fold is remembered by its first row.
             var opened by rememberSaveable(d.tripId) { mutableStateOf(listOf<Int>()) }

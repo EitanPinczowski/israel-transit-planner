@@ -224,7 +224,7 @@ fun MainScreen(
 
     val pin = state.places.pin
     val showPanel = state.editing == null &&
-        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
+        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null || state.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.ALREADY_THERE)
     // A new search always shows its answer (and folds the search again); closing the results
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
