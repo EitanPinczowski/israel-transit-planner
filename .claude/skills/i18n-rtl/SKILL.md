@@ -27,6 +27,16 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
   number in FSI/PDI, or the plus sign jumps to the wrong side (`late`, `late_paren`).
 - Times: 24-hour, `HH:mm`, zone `Asia/Jerusalem` (`ISRAEL` in `core/features/Common.kt`),
   whatever the phone's zone is.
+- **Days** (Phase 11 E7, core `present/DayPick`): the time chip names the day only when it is not
+  today: "Depart tomorrow 08:15", "Arrive by Fri 23 Oct 17:30" / "יציאה מחר 08:15", "הגעה עד יום ו׳
+  23 אוק׳ 17:30" (`strings_day.xml`, time in FSI/PDI). Dates are `EEE d MMM` (`DayPick.dateText`),
+  weekday chips `EEE d` (`chipText`), in the app's locale (the JDK and the goldens write
+  "אוק׳"; a phone's ICU may write "באוק׳": both read right, so never hard-code either); never "→" or a slash date. Between
+  00:00 and 04:00 (the service day's edge) "tomorrow" is never used for another day: the date is.
+  Day chips sit in a `FlowRow`, so Today is at the right in Hebrew; a mark under the name (Shabbat,
+  Short day, a D3 holiday name, "Eve of …" / "ערב …") is one line; no Shabbat mark in Hebrew,
+  where the chip already says "שבת 24". The "Tomorrow at …?" question follows the same rule
+  (`pastAskText`: the date at night), and Hebrew writes "בשעה", not a maqaf.
 - Stop and route names come from MOTIS with `language=he` by default; request `en` when
   the UI is English.
 - Plurals: `<plurals>` in both files; Hebrew needs `one` and `other` (and `two` reads

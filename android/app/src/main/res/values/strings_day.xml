@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pick a day (Phase 11 E7): the day step after Depart / Arrive by, and the day on the time chip. -->
+    <string name="day_step_title">Which day?</string>
+    <string name="day_today">Today</string>
+    <string name="day_tomorrow">Tomorrow</string>
+    <!-- Between midnight and 04:00 the Today and Tomorrow chips name their dates too: "Today, Tue 21". -->
+    <string name="day_with_date">%1$s, %2$s</string>
+    <string name="day_other">Other date…</string>
+    <string name="day_mark_shabbat">Shabbat</string>
+    <string name="day_mark_friday">Short day</string>
+    <string name="day_mark_eve">Eve of %1$s</string>
+    <string name="time_step_ok">OK</string>
+    <string name="time_step_type">Type the time</string>
+    <string name="time_step_dial">Use the clock</string>
+    <string name="past_title">That time has passed today</string>
+    <string name="past_ask">Tomorrow at %1$s?</string>
+    <!-- Between midnight and 04:00 the next day is named by its date: "Tue 20 Oct at 01:30?" -->
+    <string name="past_ask_on">%1$s at %2$s?</string>
+    <string name="past_yes">Yes</string>
+    <string name="past_change">Change</string>
+    <!-- The time chip when the day is not today. -->
+    <string name="depart_tomorrow">Depart tomorrow %1$s</string>
+    <string name="depart_on">Depart %1$s %2$s</string>
+    <string name="arrive_tomorrow">Arrive by tomorrow %1$s</string>
+    <string name="arrive_on">Arrive by %1$s %2$s</string>
+</resources>

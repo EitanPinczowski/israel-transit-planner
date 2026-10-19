@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- בחירת יום (שלב 11, E7): שלב היום אחרי יציאה / הגעה עד, והיום על שבב השעה. -->
+    <string name="day_step_title">באיזה יום?</string>
+    <string name="day_today">היום</string>
+    <string name="day_tomorrow">מחר</string>
+    <string name="day_with_date">%1$s, %2$s</string>
+    <string name="day_other">תאריך אחר…</string>
+    <string name="day_mark_shabbat">שבת</string>
+    <string name="day_mark_friday">יום קצר</string>
+    <string name="day_mark_eve">ערב %1$s</string>
+    <string name="time_step_ok">אישור</string>
+    <string name="time_step_type">הקלדת השעה</string>
+    <string name="time_step_dial">שימוש בשעון</string>
+    <string name="past_title">השעה הזאת כבר עברה היום</string>
+    <string name="past_ask">מחר בשעה ⁨%1$s⁩?</string>
+    <string name="past_ask_on">%1$s בשעה ⁨%2$s⁩?</string>
+    <string name="past_yes">כן</string>
+    <string name="past_change">לשנות</string>
+    <string name="depart_tomorrow">יציאה מחר ⁨%1$s⁩</string>
+    <string name="depart_on">יציאה %1$s ⁨%2$s⁩</string>
+    <string name="arrive_tomorrow">הגעה עד מחר ⁨%1$s⁩</string>
+    <string name="arrive_on">הגעה עד %1$s ⁨%2$s⁩</string>
+</resources>

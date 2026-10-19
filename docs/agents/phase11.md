@@ -468,8 +468,8 @@ instant; `SavedUi` already saves it)
 >   5 weekdays by name ("Sun 20"), plus **Other date…** (Material date picker, from today to 60 days
 >   ahead). Then the clock. Dates past `DayNotice.HORIZON_DAYS` are allowed; the existing D3 notice
 >   ("The timetable may not reach …" + the nearest day with service) handles them.
-> - **The chip shows the day** whenever it is not today: "Depart tomorrow 08:15", "Arrive by Thu 23
->   Oct 17:30" (Hebrew: "יציאה מחר 08:15", "הגעה עד יום ה׳ 23 באוק׳ 17:30"). Remove the silent
+> - **The chip shows the day** whenever it is not today: "Depart tomorrow 08:15", "Arrive by Fri 23
+>   Oct 17:30" (Hebrew: "יציאה מחר 08:15", "הגעה עד יום ו׳ 23 אוק׳ 17:30"). Remove the silent
 >   "an hour in the past means tomorrow" rule: a past time today asks "Tomorrow at 06:10?" with Yes /
 >   Change, never guesses.
 > - **Day logic in core** (`present/DayPick.kt`, pure, tested): the chip label, the list of days,

@@ -26,6 +26,7 @@ import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.lifecycle.Lifecycle
@@ -36,6 +37,7 @@ import il.transit.core.api.ReplayTransitApi
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
+import il.transit.core.present.DayPick
 import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateState
 import il.transit.core.user.UserSettings
@@ -46,7 +48,9 @@ import il.transit.planner.UiTestApp.Companion.TEL_AVIV
 import il.transit.planner.ride.RideService
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
+import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.UiTags
+import il.transit.planner.ui.screens.DayTags
 import kotlinx.coroutines.flow.first
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertEquals
@@ -56,6 +60,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * What a user does, tap by tap, and what they must see. A broken journey fails the test;
@@ -273,6 +279,58 @@ class JourneysTest {
         } finally {
             Intents.release()
         }
+    }
+
+    /**
+     * E7 pick a day: Depart → Tomorrow → 08:00 (typed) before the places, then the trip by taps. Picking
+     * sends nothing; the search is one plan, for tomorrow 08:00, every option is on that day, Earlier and
+     * Later stay on it, and the chip says "Depart tomorrow 08:00".
+     */
+    @Test fun j16_pick_tomorrow_searches_that_day() = AppDriver(compose).launch().use { d ->
+        val vm = d.vm
+        val calls = d.app.replay.calls
+        val clock = d.app.clock
+        fun state() = vm.state.value
+        val tomorrow = DayPick.days(clock.instant())[1].date
+        val at = DayPick.at(tomorrow, LocalTime.of(8, 0))
+        val before = calls.get()
+        compose.onNode(hasText(d.str(R.string.depart_at)) and hasClickAction()).performClick()
+        d.awaitNode(hasTestTag(DayTags.day(1)))
+        compose.onNode(hasTestTag(DayTags.day(1))).performClick()
+        d.awaitNode(hasTestTag(DayTags.CLOCK_TYPE))
+        compose.onNode(hasTestTag(DayTags.CLOCK_TYPE)).performClick()
+        val fields = hasSetTextAction() and hasAnyAncestor(hasTestTag(DayTags.CLOCK))
+        compose.waitUntil(5_000) { compose.onAllNodes(fields).fetchSemanticsNodes().size == 2 }
+        compose.onAllNodes(fields)[0].performTextReplacement("08")
+        compose.onAllNodes(fields)[1].performTextReplacement("00")
+        compose.onNode(hasTestTag(DayTags.CLOCK_OK)).performClick()
+        compose.waitUntil(5_000) { state().time != null }
+        assertEquals("the picked time", at, state().time)
+        assertEquals("picking a day sent a request", before, calls.get())
+
+        d.tripByTaps()
+        val s = state()
+        assertEquals(null, s.error)
+        assertTrue("no options", s.options.isNotEmpty())
+        fun days(): Set<LocalDate> = state().options.mapTo(HashSet()) { DayPick.today(it.start) }
+        assertEquals("options on the searched day", setOf(tomorrow), days())
+        assertTrue("an option leaves before 08:00", s.options.minOf { it.start } >= at)
+        // One plan, plus the geocoding of what was typed (as j02).
+        val sent = calls.get() - before
+        assertTrue("requests: $sent", sent <= 3)
+
+        // Earlier / Later through the ViewModel: the buttons sit at the end of a lazy list and are not
+        // always composed on a 320 dp screen (API 35 run 39141187371); what matters here is the day they keep.
+        for ((name, page) in listOf<Pair<String, (MainViewModel) -> Unit>>("Earlier" to { it.earlier() }, "Later" to { it.later() })) {
+            val shown = state().results
+            d.onMain(page)
+            compose.waitUntil(5_000) { state().pages.loading == null && state().results !== shown }
+            assertEquals("$name: options on the searched day", setOf(tomorrow), days())
+            assertEquals(at, state().time)
+        }
+
+        d.unfoldSearch()
+        d.awaitNode(hasText(d.str(R.string.depart_tomorrow, "08:00")))
     }
 
     /** Walks a fake GPS along the train ride; the "get off" alert must fire before the stop. */

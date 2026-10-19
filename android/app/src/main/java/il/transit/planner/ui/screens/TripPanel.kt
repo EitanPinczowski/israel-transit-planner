@@ -2,7 +2,6 @@
 
 package il.transit.planner.ui.screens
 
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -117,7 +116,6 @@ import il.transit.core.fare.FareTable
 import il.transit.core.features.BetterStartResult
 import il.transit.core.features.DropOffKind
 import il.transit.core.features.DropOffResult
-import il.transit.core.features.ISRAEL
 import il.transit.core.features.NavLinks
 import il.transit.core.features.PickUpResult
 import il.transit.core.geo.LatLon
@@ -154,9 +152,6 @@ import il.transit.core.user.WalkSpeed
 import il.transit.planner.R
 import il.transit.planner.ui.*
 import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -262,40 +257,33 @@ internal fun placeLabel(ref: PlaceRef): String = when (ref) {
     is PlaceRef.Point -> ref.name ?: pinFallback(ref.at)
 }
 
+/** Now, Depart at, Arrive by (Trip only). Depart at / Arrive by open the day step, then the clock (E7, [TimeSteps]). */
 @Composable
 internal fun TimeRow(state: UiState, vm: MainActions) {
-    val context = LocalContext.current
-    fun pickTime(mode: TimeMode) {
-        val now = ZonedDateTime.now(ISRAEL)
-        TimePickerDialog(context, { _, h, m ->
-            var at = ZonedDateTime.of(LocalDate.now(ISRAEL), LocalTime.of(h, m), ISRAEL)
-            // A time more than an hour in the past means tomorrow.
-            if (at.isBefore(now.minusHours(1))) at = at.plusDays(1)
-            vm.setTime(mode, at.toInstant())
-        }, now.hour, now.minute, true).show()
-    }
+    var step by remember { mutableStateOf<TimeStep?>(null) }
+    TimeSteps(step, state, { step = it }, vm::setTime)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         FilterChip(selected = state.timeMode == TimeMode.NOW, onClick = { vm.setTime(TimeMode.NOW, null) }, label = { Text(stringResource(R.string.now)) })
         FilterChip(
             selected = state.timeMode == TimeMode.DEPART_AT,
-            onClick = { pickTime(TimeMode.DEPART_AT) },
+            onClick = { step = TimeStep.Day(TimeMode.DEPART_AT) },
             label = { Text(timeLabel(R.string.depart_at, state, TimeMode.DEPART_AT)) },
         )
         if (state.mode == AppMode.TRIP && state.chainStops.isEmpty()) {
             FilterChip(
                 selected = state.timeMode == TimeMode.ARRIVE_BY,
-                onClick = { pickTime(TimeMode.ARRIVE_BY) },
+                onClick = { step = TimeStep.Day(TimeMode.ARRIVE_BY) },
                 label = { Text(timeLabel(R.string.arrive_by, state, TimeMode.ARRIVE_BY)) },
             )
         }
     }
 }
 
+/** The chip's text: the day too whenever it is not today ("Depart tomorrow 08:15"). */
 @Composable
 internal fun timeLabel(res: Int, state: UiState, mode: TimeMode): String {
-    val base = stringResource(res)
     val t = state.time
-    return if (state.timeMode == mode && t != null) "$base ${hhmm(t)}" else base
+    return if (state.timeMode == mode && t != null) timeChipText(mode, t, dayNow()) else stringResource(res)
 }
 
 /** Fills whatever room is left above the keyboard ([modifier] carries the weight). */

@@ -92,6 +92,11 @@ new `plan`; the reopened trip sheet asks its one `trip` again.
 - A new screen state: a `@Test` in `ScreensTest` (set up via the ViewModel, `AppDriver.place`).
 - A new journey: `JourneysTest`, through taps; assert what the user sees and
   `app.replay.calls` (it doubles as the request-budget check).
+- Setting a time in a journey (E7, `j16`): tap Depart / Arrive by, the day chip by
+  `DayTags.day(offset)`, then `DayTags.CLOCK_TYPE` (the clock's "type the time") and replace the
+  two text fields under `DayTags.CLOCK`, then `DayTags.CLOCK_OK`. The day step, clock and
+  "Tomorrow at …?" are Compose dialogs; times are the app's clock (`TransitApp.clock`), so the
+  uitest build's Mon 2026-10-05 07:55 makes "Tomorrow" Tue 6 Oct.
 - Popups and buttons that appear after a search (the ⋮ menu items, the results' ★ Save trip)
   are composed a frame later: go through `AppDriver.tapMenuItem` / `tapSaveTrip`, which wait.
 - A new fixture: record it (skill `transitous-api`), add its name to `ReplayTransitApi.FIXTURES`.

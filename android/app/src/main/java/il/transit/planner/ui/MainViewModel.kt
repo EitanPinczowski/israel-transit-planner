@@ -707,7 +707,7 @@ class MainViewModel(
         _state.update { it.copy(pages = TripPagesUi(loading = direction)) }
         viewModelScope.launch {
             val merged = try {
-                planner.page(q, current, direction)
+                planner.page(q, current, direction, clock.instant()) // E7: what already left is dropped, as in the search
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

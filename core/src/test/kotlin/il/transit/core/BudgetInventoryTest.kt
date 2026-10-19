@@ -31,6 +31,7 @@ import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPages
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
+import il.transit.core.present.DayPick
 import il.transit.core.present.DayTimetable
 import il.transit.core.present.TimetableLoader
 import il.transit.core.search.BackupGeocoder
@@ -45,6 +46,7 @@ import org.junit.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -92,6 +94,10 @@ class BudgetInventoryTest {
         record("Trip plan", "-", 1, replay().requests {
             TripPlanner(it).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv)), now)
         })
+        // Phase 11 E7: a picked day only changes the time of that same plan (DayPickTest).
+        val tomorrow8 = DayPick.at(DayPick.days(now)[1].date, LocalTime.of(8, 0))
+        val onDay = TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.DEPART_AT, tomorrow8)
+        record("Trip plan on a picked day", "-", 1, replay().requests { TripPlanner(it).plan(onDay, now) })
 
         run {
             val first = plan("plan_pages_first")
@@ -234,7 +240,7 @@ class BudgetInventoryTest {
         }
 
         println("Request-budget inventory (${rows.size} rows):\n" + rows.joinToString("\n") { "  %-62s %-32s sent %2d / cap %2d".format(it.feature, it.constant, it.sent, it.cap) })
-        assertEquals("every row ran", 21, rows.size)
+        assertEquals("every row ran", 22, rows.size)
     }
 
     /** The caps are policy: this fails when one moves, so the change is a reviewed edit (skill `transitous-api`). */

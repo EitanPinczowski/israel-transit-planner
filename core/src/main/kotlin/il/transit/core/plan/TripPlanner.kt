@@ -4,6 +4,7 @@ import il.transit.core.api.Endpoint
 import il.transit.core.api.Itinerary
 import il.transit.core.api.PlanRequest
 import il.transit.core.api.TransitApi
+import il.transit.core.api.parseTime
 import il.transit.core.features.Option
 import il.transit.core.user.UserSettings
 import java.time.Instant
@@ -88,10 +89,16 @@ data class TripResult(
 
 /** The ordinary A→B search: one `plan` request. */
 class TripPlanner(private val api: TransitApi) {
-    suspend fun plan(q: TripQuery, now: Instant = Instant.now()): TripResult {
-        val time = if (q.timeMode == TimeMode.NOW) now else requireNotNull(q.time) { "time needed for ${q.timeMode}" }
+    /**
+     * One search. [now] is the caller's clock: the live Trip tab passes it, and only then are options
+     * that already left dropped ([notDeparted]); errands and the reminder re-check pass none (the
+     * phone's time is used for a Now search) and keep MOTIS's answer as it is.
+     */
+    suspend fun plan(q: TripQuery, now: Instant? = null): TripResult {
+        val time = if (q.timeMode == TimeMode.NOW) now ?: Instant.now() else requireNotNull(q.time) { "time needed for ${q.timeMode}" }
         val resp = api.plan(request(q, time))
-        val sorted = TripPages.order(TripPages.sane(resp.itineraries), q.timeMode == TimeMode.ARRIVE_BY)
+        val shown = now?.let { notDeparted(resp.itineraries, q, time, it) } ?: resp.itineraries
+        val sorted = TripPages.order(TripPages.sane(shown), q.timeMode == TimeMode.ARRIVE_BY)
         val walk = resp.direct.minByOrNull { it.duration }?.takeIf { it.duration <= MAX_WALK_ONLY_SEC }
         return TripResult(sorted, walk, resp.previousPageCursor, resp.nextPageCursor, time.epochSecond)
     }
@@ -100,16 +107,31 @@ class TripPlanner(private val api: TransitApi) {
      * "Earlier" / "Later": one `plan` request for the window next to [current], merged into it
      * ([TripPages.merge]). The request repeats [current]'s search time, so the same cursor
      * twice is the same query (the guard cache answers it). [current] unchanged when there is
-     * no cursor that way.
+     * no cursor that way. With the caller's clock [now], a page of a live search drops what
+     * already left, as [plan] does (boss, 2026-10-19: one rule for the whole list).
      */
-    suspend fun page(q: TripQuery, current: TripResult, direction: TripPages.Direction): TripResult {
+    suspend fun page(q: TripQuery, current: TripResult, direction: TripPages.Direction, now: Instant? = null): TripResult {
         val cursor = when (direction) {
             TripPages.Direction.EARLIER -> current.earlierCursor
             TripPages.Direction.LATER -> current.laterCursor
         } ?: return current
         val time = current.searchEpoch?.let(Instant::ofEpochSecond) ?: q.time ?: Instant.now()
         val resp = api.plan(request(q, time).copy(pageCursor = cursor))
-        return TripPages.merge(current, resp, direction, q.timeMode == TimeMode.ARRIVE_BY)
+        val shown = now?.let { resp.copy(itineraries = notDeparted(resp.itineraries, q, time, it)) } ?: resp
+        return TripPages.merge(current, shown, direction, q.timeMode == TimeMode.ARRIVE_BY)
+    }
+
+    /**
+     * Phase 11 E7 (owner's "wrong trip results"): for Now, and for a Depart at that is not
+     * more than [LIVE_WINDOW_SEC] ahead, an option whose first boarding (not the walk before
+     * it) is more than [DEPARTED_GRACE_SEC] before [now] has left without us: dropped. Arrive by
+     * is left alone (a past arrival is asked about in the app, never searched). 0 requests.
+     */
+    private fun notDeparted(options: List<Itinerary>, q: TripQuery, time: Instant, now: Instant): List<Itinerary> {
+        val live = q.timeMode == TimeMode.NOW || (q.timeMode == TimeMode.DEPART_AT && time < now.plusSeconds(LIVE_WINDOW_SEC))
+        if (!live) return options
+        val cutoff = now.minusSeconds(DEPARTED_GRACE_SEC)
+        return options.filter { o -> o.firstTransitLeg?.let { parseTime(it.startTime) >= cutoff } ?: true }
     }
 
     private fun request(q: TripQuery, time: Instant) = PlanRequest(
@@ -123,6 +145,12 @@ class TripPlanner(private val api: TransitApi) {
 
     companion object {
         const val MAX_WALK_ONLY_SEC = 45 * 60
+
+        /** A boarding this long ago may still be at the stop (clocks, a late bus): kept. */
+        const val DEPARTED_GRACE_SEC = 60L
+
+        /** A Depart at up to this far ahead is "about now": departed options are dropped as for Now. */
+        const val LIVE_WINDOW_SEC = 15 * 60L
 
         /** An option is dropped when it takes more than twice the fastest and over an hour longer. */
         const val MAX_EXTRA_SEC = 60 * 60

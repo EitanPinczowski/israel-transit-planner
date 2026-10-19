@@ -305,8 +305,8 @@ package. Tick only your own package's lines.
 - [x] Rav-Kav pass-expiry reminder from a typed date (3 days before and the last day)
 
 ### E7 — Pick a day (`claude/p11-pick-day`, 0 requests; owner, 2026-10-18)
-- [ ] Choose the day of a search in every tab (Today, Tomorrow, weekdays, Other date…)
-- [ ] The time chip shows the day; no silent "past time means tomorrow"
+- [x] Choose the day of a search in every tab (Today, Tomorrow, weekdays, Other date…)
+- [x] The time chip shows the day; no silent "past time means tomorrow"
 
 ### T3 — ViewModel + state tests (`claude/p11-viewmodel-tests`, Sonnet, 0 requests)
 - [x] Every UI state transition per tab, with cancel, retry and error paths, on the JVM

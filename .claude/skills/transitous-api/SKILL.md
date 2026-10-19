@@ -215,11 +215,13 @@ lists all its platforms). A quiet Omer stop (`26760`) fits a whole day in one pa
 (`stoptimes_day_omer_quiet`); on Friday from 12:00 its last bus is 15:43, the next Saturday 20:15
 (`stoptimes_day_omer_friday`). Pinned in `DayTimetableTest`.
 
-**Timetable horizon** (`DayNotice.HORIZON_DAYS = 8`): measured 2026-10-12 with 3 live `plan`
+**Timetable horizon** (`DayNotice.HORIZON_DAYS = 21`): measured 2026-10-12 with 3 live `plan`
 calls, Be'er Sheva → Tel Aviv 08:00 (`plan_horizon_20261111/20261210/20270110`): +30, +60 and
 +90 days answer no itinerary (`n_routes_visited: 0`), while +8 days answered (`plan_pages_*`,
-recorded 2026-10-05 for 13 Oct). So the MOT timetable on Transitous reaches at least 8 and under
-30 days ahead; "may not reach" shows only past 8. Owner, 2026-10-12: keep 8, no extra calls.
+recorded 2026-10-05 for 13 Oct). Measured again 2026-10-18 (tester): +14 and +23 days gave full
+results. So the MOT timetable on Transitous reaches about 3 weeks ahead and under 30 days;
+"may not reach" shows only past 21. Owner, 2026-10-18: 21 (was 8, 2026-10-12), no extra calls.
+The day step (E7) still offers dates up to 60 days ahead; past 21 the notice speaks.
 
 | background job | requests | worst case per day | constraints |
 |---|---|---|---|
