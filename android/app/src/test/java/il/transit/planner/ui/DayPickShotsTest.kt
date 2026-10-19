@@ -34,6 +34,7 @@ import il.transit.planner.ui.screens.ClockStepContent
 import il.transit.planner.ui.screens.DayStepContent
 import il.transit.planner.ui.screens.LocalDayClock
 import il.transit.planner.ui.screens.TimeRow
+import il.transit.planner.ui.screens.pastAskText
 import il.transit.planner.ui.screens.rememberDayPickerState
 import org.junit.Rule
 import org.junit.Test
@@ -89,7 +90,11 @@ class DayPickShotsTest(private val v: Variant) {
         Frame {
             Box(Modifier.fillMaxSize().background(scrim()), contentAlignment = Alignment.Center) {
                 Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    DatePicker(rememberDayPickerState(il("2026-01-10T09:00"), LocalDate.of(2026, 1, 14)), showModeToggle = false)
+                    // As DateStepDialog draws it: the picker, then Cancel and OK.
+                    Column {
+                        DatePicker(rememberDayPickerState(il("2026-01-10T09:00"), LocalDate.of(2026, 1, 14)), showModeToggle = false)
+                        Buttons(stringResource(R.string.cancel), stringResource(R.string.time_step_ok))
+                    }
                 }
             }
         }
@@ -118,11 +123,16 @@ class DayPickShotsTest(private val v: Variant) {
     }
 
     /** 06:10 picked at 10:00: asked, never moved. */
-    @Test fun pastAsk() = paparazzi.snapshot("day_past_ask") {
+    @Test fun pastAsk() = pastAskShot("day_past_ask", il("2026-10-19T06:10"), monday)
+
+    /** 00:10 picked at 00:30 (still Monday night): the question names the date, as the chip will. */
+    @Test fun pastAskNight() = pastAskShot("day_past_ask_night", il("2026-10-20T00:10"), il("2026-10-20T00:30"))
+
+    private fun pastAskShot(name: String, at: Instant, now: Instant) = paparazzi.snapshot(name) {
         Card {
             Column {
                 Title(stringResource(R.string.past_title))
-                Text(stringResource(R.string.past_ask, "06:10"), style = MaterialTheme.typography.bodyMedium)
+                Text(pastAskText(at, now), style = MaterialTheme.typography.bodyMedium)
                 Buttons(stringResource(R.string.past_change), stringResource(R.string.past_yes))
             }
         }

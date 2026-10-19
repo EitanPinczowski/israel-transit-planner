@@ -15,6 +15,8 @@
     <string name="time_step_dial">Use the clock</string>
     <string name="past_title">That time has passed today</string>
     <string name="past_ask">Tomorrow at %1$s?</string>
+    <!-- Between midnight and 04:00 the next day is named by its date: "Tue 20 Oct at 01:30?" -->
+    <string name="past_ask_on">%1$s at %2$s?</string>
     <string name="past_yes">Yes</string>
     <string name="past_change">Change</string>
     <!-- The time chip when the day is not today. -->

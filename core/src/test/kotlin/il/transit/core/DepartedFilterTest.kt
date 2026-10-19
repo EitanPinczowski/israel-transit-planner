@@ -56,6 +56,22 @@ class DepartedFilterTest {
         assertEquals(5, search(TimeMode.DEPART_AT, il("09:40"), il("08:40")).itineraries.size)
     }
 
+    @Test fun `the live window ends at 15 minutes - 14 59 is filtered, 15 00 and later are not`() {
+        assertEquals(15 * 60L, TripPlanner.LIVE_WINDOW_SEC)
+        assertEquals(60L, TripPlanner.DEPARTED_GRACE_SEC)
+        val now = il("08:40")
+        assertEquals(listOf("08:48", "09:07"), boardings(search(TimeMode.DEPART_AT, now.plusSeconds(14 * 60 + 59), now)))
+        assertEquals(5, search(TimeMode.DEPART_AT, now.plusSeconds(15 * 60), now).itineraries.size)
+        assertEquals(5, search(TimeMode.DEPART_AT, now.plusSeconds(15 * 60 + 1), now).itineraries.size)
+    }
+
+    @Test fun `an option with no ride (walk only) is never dropped`() = runBlocking {
+        val walk = recorded.itineraries.first().let { it.copy(legs = it.legs.filter { l -> !l.isTransit }) }
+        val api = FakeTransitApi().apply { onPlan = { recorded.copy(itineraries = recorded.itineraries + walk) } }
+        val r = TripPlanner(api).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.NOW, null), il("09:30"))
+        assertTrue("every ride has left at 09:30; the walk stays", r.itineraries.isNotEmpty() && r.itineraries.all { it.firstTransitLeg == null })
+    }
+
     @Test fun `without the caller's clock (errands, the reminder re-check) MOTIS's answer is kept as it is`() = runBlocking {
         val api = FakeTransitApi().apply { onPlan = { recorded } }
         val r = TripPlanner(api).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.DEPART_AT, il("08:00")))

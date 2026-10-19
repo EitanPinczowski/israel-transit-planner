@@ -54,7 +54,6 @@ import il.transit.core.calendar.DayKind
 import il.transit.core.features.ISRAEL
 import il.transit.core.plan.TimeMode
 import il.transit.core.present.DayPick
-import il.transit.core.present.hhmm
 import il.transit.planner.R
 import il.transit.planner.TransitApp
 import il.transit.planner.ui.UiState
@@ -102,6 +101,10 @@ internal fun dayNow(): Instant {
 internal fun TimeSteps(step: TimeStep?, state: UiState, onStep: (TimeStep?) -> Unit, onSet: (TimeMode, Instant) -> Unit) {
     step ?: return
     val now = dayNow()
+    fun go(next: TimeFlow.Next) {
+        onStep(next.step)
+        next.set?.let { (mode, at) -> onSet(mode, at) }
+    }
     val picked = state.time?.takeIf { state.timeMode == step.mode }
     when (step) {
         is TimeStep.Day -> DayStepDialog(
@@ -121,23 +124,37 @@ internal fun TimeSteps(step: TimeStep?, state: UiState, onStep: (TimeStep?) -> U
             date = step.date,
             now = now,
             initial = (picked ?: now).atZone(ISRAEL).toLocalTime(),
-            onTime = { t ->
-                val at = DayPick.at(step.date, t)
-                if (DayPick.past(at, now)) {
-                    onStep(TimeStep.Past(step.mode, at))
-                } else {
-                    onStep(null)
-                    onSet(step.mode, at)
-                }
-            },
+            onTime = { t -> go(TimeFlow.clock(step, t, now)) },
             onBack = { onStep(TimeStep.Day(step.mode)) },
         )
         is TimeStep.Past -> PastAskDialog(
             at = step.at,
-            onYes = { onStep(null); onSet(step.mode, DayPick.nextDay(step.at)) },
-            onChange = { onStep(TimeStep.Clock(step.mode, step.at.atZone(ISRAEL).toLocalDate())) },
+            now = now,
+            onYes = { go(TimeFlow.yes(step)) },
+            onChange = { go(TimeFlow.change(step)) },
         )
     }
+}
+
+/**
+ * What each answer of the clock and of "Tomorrow at …?" leads to: the next step, and the time to
+ * set, if any. Plain Kotlin, so the flow is a JVM test (`TimeFlowTest`); nothing is set before
+ * the question is answered.
+ */
+internal object TimeFlow {
+    data class Next(val step: TimeStep?, val set: Pair<TimeMode, Instant>? = null)
+
+    /** OK on the clock: a time already gone today asks first; any other is set. */
+    fun clock(step: TimeStep.Clock, time: LocalTime, now: Instant): Next {
+        val at = DayPick.at(step.date, time)
+        return if (DayPick.past(at, now)) Next(TimeStep.Past(step.mode, at)) else Next(null, step.mode to at)
+    }
+
+    /** Yes: the same clock time on the next day, in the same mode. */
+    fun yes(step: TimeStep.Past) = Next(null, step.mode to DayPick.nextDay(step.at))
+
+    /** Change: the clock again, on the day picked. */
+    fun change(step: TimeStep.Past) = Next(TimeStep.Clock(step.mode, step.at.atZone(ISRAEL).toLocalDate()))
 }
 
 @Composable
@@ -169,7 +186,7 @@ internal fun DayStepContent(now: Instant, selected: LocalDate?, onDay: (LocalDat
                     label = {
                         Column(Modifier.padding(vertical = 4.dp)) {
                             Text(dayName(d, night, locale), maxLines = 1)
-                            d.mark?.let { Text(markText(it), style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                            d.mark?.let { markText(it, locale) }?.let { Text(it, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis) }
                         }
                     },
                 )
@@ -193,9 +210,10 @@ private fun dayName(d: DayPick.Day, night: Boolean, locale: Locale): String {
     return if (night) stringResource(R.string.day_with_date, word, DayPick.chipText(d.date, locale)) else word
 }
 
+/** The line under the day's name; none for Shabbat in Hebrew, where the name already is "שבת". */
 @Composable
-private fun markText(m: DayPick.Mark): String = when (m) {
-    DayPick.Mark.Shabbat -> stringResource(R.string.day_mark_shabbat)
+private fun markText(m: DayPick.Mark, locale: Locale): String? = when (m) {
+    DayPick.Mark.Shabbat -> if (locale.language == "iw" || locale.language == "he") null else stringResource(R.string.day_mark_shabbat)
     DayPick.Mark.Friday -> stringResource(R.string.day_mark_friday)
     is DayPick.Mark.Holiday -> when (m.day.kind) {
         DayKind.EVE, DayKind.YOM_KIPPUR_EVE -> stringResource(R.string.day_mark_eve, stringResource(holidayName(m.day.holiday)))
@@ -289,15 +307,26 @@ internal fun ClockStepContent(
 
 /** "Tomorrow at 06:10?": a past time today is never moved without asking. */
 @Composable
-internal fun PastAskDialog(at: Instant, onYes: () -> Unit, onChange: () -> Unit) {
+internal fun PastAskDialog(at: Instant, now: Instant, onYes: () -> Unit, onChange: () -> Unit) {
     AlertDialog(
         onDismissRequest = onChange,
         modifier = Modifier.testTag(DayTags.PAST),
         title = { Text(stringResource(R.string.past_title)) },
-        text = { Text(stringResource(R.string.past_ask, hhmm(at))) },
+        text = { Text(pastAskText(at, now)) },
         confirmButton = { TextButton(onClick = onYes) { Text(stringResource(R.string.past_yes)) } },
         dismissButton = { TextButton(onClick = onChange) { Text(stringResource(R.string.past_change)) } },
     )
+}
+
+/** "Tomorrow at 06:10?", or between midnight and 04:00 the date, as the chip will say it ([DayPick.label]). */
+@Composable
+internal fun pastAskText(at: Instant, now: Instant): String {
+    val l = DayPick.label(DayPick.nextDay(at), now)
+    return if (l.word == DayPick.Word.TOMORROW) {
+        stringResource(R.string.past_ask, l.time)
+    } else {
+        stringResource(R.string.past_ask_on, DayPick.dateText(l.date, LocalConfiguration.current.locales[0]), l.time)
+    }
 }
 
 /** The time chip's text: "Depart 08:15" today, "Depart tomorrow 08:15", "Arrive by Fri 23 Oct 17:30". */
