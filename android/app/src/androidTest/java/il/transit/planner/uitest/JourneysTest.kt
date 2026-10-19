@@ -32,6 +32,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import il.transit.core.api.ReplayTransitApi
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
@@ -54,6 +55,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.Instant
 
 /**
  * What a user does, tap by tap, and what they must see. A broken journey fails the test;
@@ -347,7 +349,8 @@ class JourneysTest {
         val i = d.selectTrain()
         // The replay is dated at the uitest clock (2026-10-05); Android 16 drops a notification whose
         // `when` (here: boarding) is over 14 days older than the phone's clock, so move it to today.
-        val itinerary = il.transit.core.api.ReplayTransitApi.moved(d.vm.state.value.options[i], java.time.Instant.now())
+        val chosen = d.vm.state.value.options[i]
+        val itinerary = ReplayTransitApi.moved(chosen, Instant.now())
         val r = il.transit.core.remind.Reminder.from(
             itinerary,
             itinerary.legs.first().from.latLon,
