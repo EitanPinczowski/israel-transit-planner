@@ -99,7 +99,7 @@ jobs:
           :app:koverXmlReportDebug :app:koverVerifyDebug
       - name: Android coverage per package
         if: always()
-        run: python3 tools/kover_summary.py android/app/build/reports/kover/reportDebug.xml "app ui/ line coverage (Kover)" il/transit/planner/ >> "$GITHUB_STEP_SUMMARY"
+        run: python3 tools/kover_summary.py android/app/build/reports/kover/reportDebug.xml "app ui/ line coverage (Kover)" il/transit/planner/ | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
