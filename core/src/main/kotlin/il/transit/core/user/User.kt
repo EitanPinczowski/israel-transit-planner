@@ -126,6 +126,10 @@ data class UserSettings(
     val transferBufferMin: Int = MIN_TRANSFER_BUFFER_MIN,
     /** A note when rain is likely on the walks, from Open-Meteo (Phase 10 D9; owner, 2026-10-13: on). */
     val rainAware: Boolean = true,
+    /** The Rav-Kav pass's last day, ISO (`2026-11-01`); null = Off (Phase 11 E1, see [il.transit.core.remind.PassExpiry]). */
+    val passEndsOn: String? = null,
+    /** "Check that reminders will ring on this phone" was offered after the first reminder (Phase 11 E1). */
+    val reminderCheckHintShown: Boolean = false,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,
