@@ -194,7 +194,7 @@ kover {
         }
         verify {
             rule("ui line coverage") {
-                bound { minValue.set(1) }
+                bound { minValue.set(69) }
             }
         }
     }
