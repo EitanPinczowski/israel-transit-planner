@@ -116,6 +116,23 @@ class ReplayTransitApiTest {
         assertEquals("BUS", replay.trip("no-such-trip").legs.single().mode)
     }
 
+    @Test fun `a replayed trip moved to today keeps its shape and counts down to today`() = runTest {
+        val r = TripPlanner(replay).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv)), now)
+        val train = r.itineraries.first { i -> i.legs.any { it.mode.contains("RAIL") } }
+        val today = Instant.parse("2026-10-19T10:40:30Z") // the API 36 run that dropped J14's countdown
+        val moved = ReplayTransitApi.moved(train, today)
+        assertEquals(Instant.parse("2026-10-19T10:40:00Z"), moved.start) // whole minutes
+        assertEquals(train.legs.size, moved.legs.size)
+        val delta = java.time.Duration.between(train.start, moved.start)
+        assertEquals(train.legs.map { it.start.plus(delta) to it.end.plus(delta) }, moved.legs.map { it.start to it.end })
+        // J14 posts the countdown with `when` = boarding: at the fixed clock that is 14 days old on
+        // the run's day (Android 16 ignores it); moved, it is minutes from now.
+        fun boardAt(i: il.transit.core.api.Itinerary) =
+            il.transit.core.remind.Countdown.of(il.transit.core.remind.Reminder.from(i, bgu, telAviv, il.transit.core.user.UserSettings())!!, i.start)!!.boardAt
+        assertTrue(java.time.Duration.between(boardAt(train), today) > java.time.Duration.ofDays(14))
+        assertTrue(java.time.Duration.between(today, boardAt(moved)).abs() < java.time.Duration.ofHours(2))
+    }
+
     @Test fun `vehicles on the map start at the window asked`() = runTest {
         val segs = replay.mapTrips(il.transit.core.geo.BBox(bgu, telAviv), now, now.plusSeconds(600), 14.0)
         assertTrue(segs.isNotEmpty())

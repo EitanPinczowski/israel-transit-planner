@@ -166,6 +166,17 @@ class ReplayTransitApi(
 
         private val INSTANT = Regex("""\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d(\.\d+)?)?Z""")
 
+        /**
+         * [it] moved in time, whole minutes, so it starts at [start]: every time in it moves alike.
+         * For an on-device test that hands a replayed trip (dated at the uitest build's fixed clock)
+         * to the real phone, whose clock is today: Android 16 drops a notification whose `when`
+         * is over 14 days old.
+         */
+        fun moved(it: Itinerary, start: Instant): Itinerary {
+            val delta = Duration.ofMinutes(Duration.between(it.start, start).toMinutes())
+            return MotisJson.decodeFromJsonElement(Itinerary.serializer(), shift(MotisJson.encodeToJsonElement(Itinerary.serializer(), it), delta))
+        }
+
         /** Moves every ISO-8601 UTC timestamp in [e] by [delta]. */
         fun shift(e: JsonElement, delta: Duration): JsonElement = when (e) {
             is JsonObject -> JsonObject(e.mapValues { (_, v) -> shift(v, delta) })
