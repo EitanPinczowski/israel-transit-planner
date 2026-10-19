@@ -264,6 +264,8 @@ internal fun SettingsContent(
         item { CalendarBufferSetting(s.calendarBufferMin) { set(s.copy(calendarBufferMin = it)) } }
         item { NightRefreshSection(s, state.savedPlaces, ::set) }
         item { LastTripSetting(s, state.savedPlaces, ::set) }
+        item { ReminderCheckRow { vm.reminderCheck(ReminderCheckView.OPEN) } } // Phase 11 E1
+        item { PassExpirySetting(s, ::set) } // Phase 11 E1
         item { QuickTileSection() }
         item { OfflineSection(actions) }
         item { CrashLogSection(actions.crashLog) }

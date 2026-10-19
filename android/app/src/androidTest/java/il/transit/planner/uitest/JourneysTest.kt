@@ -18,6 +18,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.swipe
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.hasScrollAction
@@ -37,6 +39,7 @@ import il.transit.core.geo.LatLon
 import il.transit.core.present.DayPick
 import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateState
+import il.transit.core.user.UserSettings
 import il.transit.planner.R
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.MEITAR
@@ -47,6 +50,7 @@ import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.UiTags
 import il.transit.planner.ui.screens.DayTags
+import kotlinx.coroutines.flow.first
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -280,7 +284,7 @@ class JourneysTest {
      * sends nothing; the search is one plan, for tomorrow 08:00, every option is on that day, Earlier and
      * Later stay on it, and the chip says "Depart tomorrow 08:00".
      */
-    @Test fun j15_pick_tomorrow_searches_that_day() = AppDriver(compose).launch().use { d ->
+    @Test fun j16_pick_tomorrow_searches_that_day() = AppDriver(compose).launch().use { d ->
         val vm = d.vm
         val calls = d.app.replay.calls
         val clock = d.app.clock
@@ -439,6 +443,70 @@ class JourneysTest {
         }
     }
 
+    /**
+     * Phase 11 E1: Settings → Check reminders → Test reminder in 1 minute → the real exact alarm
+     * fires and the receiver posts "Test: your reminders work" on the reminders' channel within 90 s;
+     * the check then says it rang. A reminder is active the whole time (leaving in 3 h, no alarms of
+     * its own armed): the test alarm must leave it exactly as it was and send no request.
+     */
+    @Test fun j15_test_reminder_rings() = AppDriver(compose).launch().use { d ->
+        val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
+        nm.cancel(TEST_NOTIFICATION)
+        val now = System.currentTimeMillis() / 1000
+        val active = il.transit.core.remind.Reminder(
+            fromLat = BGU.lat,
+            fromLon = BGU.lon,
+            toLat = TEL_AVIV.lat,
+            toLon = TEL_AVIV.lon,
+            settings = UserSettings(),
+            tripId = "j15",
+            line = "5",
+            boardStop = "Rager",
+            scheduledBoardingEpoch = now + 3 * 3600 + 300,
+            leaveAtEpoch = now + 3 * 3600,
+        )
+        val store = d.app.store
+        kotlinx.coroutines.runBlocking { store.setReminder(active) }
+        try {
+            d.tapMenuItem(R.string.settings)
+            compose.waitUntil(5_000) { d.vm.state.value.showSettings }
+            val list = hasScrollAction() and hasAnyAncestor(isDialog())
+            val row = hasTestTag("check_reminders")
+            // The row is in the middle of the list: slow, short drags (a fling would pass it by).
+            repeat(30) {
+                if (compose.onAllNodes(row).fetchSemanticsNodes().isNotEmpty()) return@repeat
+                d.awaitNode(list)
+                compose.onAllNodes(list).onFirst().performTouchInput {
+                    val step = height / 6f
+                    swipe(Offset(centerX, centerY + step), Offset(centerX, centerY - step), 600)
+                }
+                compose.waitForIdle()
+            }
+            d.awaitNode(row)
+            compose.onNode(row).performSemanticsAction(SemanticsActions.OnClick)
+            d.awaitNode(hasTestTag("check_test"))
+            val calls = d.app.replay.calls
+            compose.onNode(hasTestTag("check_test")).performSemanticsAction(SemanticsActions.OnClick)
+            val before = calls.get() // from the tap to the delivery: the alarm and the receiver only
+            val until = SystemClock.uptimeMillis() + 90_000
+            fun posted() = nm.activeNotifications.filter { it.id == TEST_NOTIFICATION }
+            while (posted().isEmpty() && SystemClock.uptimeMillis() < until) SystemClock.sleep(500)
+            val sent = calls.get() - before
+            val n = posted()
+            assertEquals("J15: the test reminder was not posted within 90 s", 1, n.size)
+            val notification = n.single().notification
+            assertEquals("trip_reminders", notification.channelId)
+            assertEquals(d.str(R.string.check_test_title), notification.extras.getCharSequence(android.app.Notification.EXTRA_TITLE)?.toString())
+            assertEquals("J15: the test alarm sent requests", 0, sent)
+            val after = kotlinx.coroutines.runBlocking { store.reminder.first() }
+            assertEquals("J15: the test alarm changed the active reminder", active, after)
+            d.awaitNode(hasTestTag("check_test_rang"), 10_000) // the check re-reads every 3 s
+        } finally {
+            nm.cancel(TEST_NOTIFICATION)
+            kotlinx.coroutines.runBlocking { store.setReminder(null) }
+        }
+    }
+
     @Test fun j13_update_banner_shows_and_dismisses() {
         val d = AppDriver(compose)
         d.app.latestRelease = LatestRelease("9.9.9", "https://example.invalid/release", null)
@@ -459,5 +527,10 @@ class JourneysTest {
         accuracy = 5f
         time = System.currentTimeMillis()
         elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+    }
+
+    private companion object {
+        /** `Notifications.ID_TEST`. */
+        const val TEST_NOTIFICATION = 1005
     }
 }

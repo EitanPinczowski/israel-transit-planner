@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 11 E1: "Will my reminder ring?" (Settings → Check reminders). -->
+    <string name="check_reminders_row">Check reminders</string>
+    <string name="check_reminders_help">Will a reminder ring on this phone? Looks at notifications, alarms and battery settings.</string>
+    <string name="check_reminders_open">Check</string>
+    <string name="check_title">Will my reminders ring?</string>
+    <string name="check_all_set">All set: reminders should ring on this phone</string>
+    <string name="check_open">Open settings</string>
+    <string name="check_sev_wont_ring">Won\'t ring</string>
+    <string name="check_sev_may_fail">May be late or silent</string>
+    <string name="check_sev_other_alert">Other alerts</string>
+    <string name="check_sev_tip">Tip</string>
+    <string name="check_notifications_permission">Notifications are not allowed for this app, so no reminder can show.</string>
+    <string name="check_notifications_off">Notifications are turned off for this app, so no reminder can show.</string>
+    <string name="check_reminder_channel_off">The \"Trip reminders\" notifications are turned off.</string>
+    <string name="check_background_restricted">Android is stopping this app in the background, so alarms may never fire. Set Battery to Unrestricted.</string>
+    <string name="check_reminder_channel_quiet">\"Trip reminders\" arrive without sound. Set them to make a sound.</string>
+    <string name="check_exact_alarms_off">Alarms and reminders are not allowed for this app: a reminder may ring a few minutes late.</string>
+    <string name="check_standby_restricted">Android has put this app in a rarely-used group, so alarms may come late. Opening the app more often helps; Battery → Unrestricted too.</string>
+    <string name="check_battery_optimized">Battery optimisation is on for this app. If a reminder ever comes late, allow the app to run unrestricted.</string>
+    <string name="check_pass_channel_off">The \"Rav-Kav pass\" notifications are turned off.</string>
+    <string name="check_last_trip_channel_off">The \"Last trip home\" notifications are turned off.</string>
+    <string name="check_location_off">Location is not allowed, so \"get off at the next stop\" can\'t follow the ride.</string>
+    <string name="check_maker">%1$s phones may stop apps in the background to save battery. If the test does not ring, look in the phone\'s battery settings for this app and let it run in the background.</string>
+    <string name="check_test">Test reminder in 1 minute</string>
+    <string name="check_test_cant">A test can\'t ring until the first problem above is fixed.</string>
+    <string name="check_test_waiting">The test reminder rings at %1$s. You can leave the app.</string>
+    <string name="check_test_rang">Last test rang at %1$s</string>
+    <string name="check_test_missed">The test did not ring.</string>
+    <string name="check_test_missed_first">Most likely the first problem above.</string>
+    <string name="check_test_missed_none">Nothing on this phone explains it: the maker\'s battery saver may have stopped it.</string>
+    <string name="check_test_title">Test: your reminders work</string>
+    <string name="check_test_text">This is how a \"time to leave\" reminder arrives.</string>
+    <string name="check_hint">Check that reminders will ring on this phone</string>
+    <string name="check_hint_ok">Check now</string>
+    <string name="check_hint_later">Not now</string>
+
+    <!-- Rav-Kav pass expiry. Nothing about prices. -->
+    <string name="channel_pass">Rav-Kav pass</string>
+    <string name="pass_title">Rav-Kav pass</string>
+    <string name="pass_ends_on">Your Rav-Kav pass ends on %1$s</string>
+    <string name="pass_ends_today">Your Rav-Kav pass ends today, %1$s</string>
+    <string name="pass_row">Rav-Kav pass ends on</string>
+    <!-- The date, isolated so Hebrew keeps "Sun 1 Nov" in one piece. -->
+    <string name="pass_date">%1$s</string>
+    <string name="pass_off">Off</string>
+    <string name="pass_set">Set date</string>
+    <string name="pass_change">Change</string>
+    <string name="pass_turn_off">Turn off</string>
+    <string name="pass_help">A reminder 3 days before and on the last day, at 09:00.</string>
+    <string name="pass_refused_past">That date has passed.</string>
+    <string name="pass_refused_far">That is more than 400 days ahead.</string>
+</resources>

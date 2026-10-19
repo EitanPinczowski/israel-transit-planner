@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- שלב 11 E1: "האם התזכורת תצלצל?" (הגדרות ← בדיקת תזכורות). -->
+    <string name="check_reminders_row">בדיקת תזכורות</string>
+    <string name="check_reminders_help">האם תזכורת תצלצל בטלפון הזה? בודק התראות, שעונים מעוררים והגדרות סוללה.</string>
+    <string name="check_reminders_open">בדיקה</string>
+    <string name="check_title">האם התזכורות יצלצלו?</string>
+    <string name="check_all_set">הכול מוכן: תזכורות אמורות לצלצל בטלפון הזה</string>
+    <string name="check_open">פתיחת ההגדרות</string>
+    <string name="check_sev_wont_ring">לא תצלצל</string>
+    <string name="check_sev_may_fail">עלולה לאחר או לבוא בשקט</string>
+    <string name="check_sev_other_alert">התראות אחרות</string>
+    <string name="check_sev_tip">טיפ</string>
+    <string name="check_notifications_permission">לאפליקציה אין הרשאה להציג התראות, ולכן שום תזכורת לא תופיע.</string>
+    <string name="check_notifications_off">ההתראות של האפליקציה כבויות, ולכן שום תזכורת לא תופיע.</string>
+    <string name="check_reminder_channel_off">ההתראות מסוג \"תזכורות נסיעה\" כבויות.</string>
+    <string name="check_background_restricted">אנדרואיד עוצר את האפליקציה ברקע, ולכן ייתכן ששעונים מעוררים לא יופעלו בכלל. הגדירו סוללה ל״ללא הגבלה״.</string>
+    <string name="check_reminder_channel_quiet">\"תזכורות נסיעה\" מגיעות בלי צליל. הגדירו אותן להשמיע צליל.</string>
+    <string name="check_exact_alarms_off">לאפליקציה אין הרשאה לשעונים מעוררים ותזכורות: תזכורת עלולה לצלצל באיחור של כמה דקות.</string>
+    <string name="check_standby_restricted">אנדרואיד שם את האפליקציה בקבוצת השימוש הנדיר, ולכן שעונים מעוררים עלולים לאחר. פתיחה תכופה יותר עוזרת, וגם סוללה ← ״ללא הגבלה״.</string>
+    <string name="check_battery_optimized">חיסכון בסוללה פועל על האפליקציה. אם תזכורת תאחר פעם, אפשרו לאפליקציה לפעול ללא הגבלה.</string>
+    <string name="check_pass_channel_off">ההתראות מסוג \"מנוי רב־קו\" כבויות.</string>
+    <string name="check_last_trip_channel_off">ההתראות מסוג \"נסיעה אחרונה הביתה\" כבויות.</string>
+    <string name="check_location_off">אין הרשאת מיקום, ולכן \"לרדת בתחנה הבאה\" לא יכול לעקוב אחרי הנסיעה.</string>
+    <string name="check_maker">טלפונים של ⁨%1$s⁩ עלולים לעצור אפליקציות ברקע כדי לחסוך בסוללה. אם הבדיקה לא מצלצלת, חפשו בהגדרות הסוללה של הטלפון את האפליקציה הזו ואפשרו לה לפעול ברקע.</string>
+    <string name="check_test">תזכורת ניסיון בעוד דקה</string>
+    <string name="check_test_cant">תזכורת ניסיון לא תוכל לצלצל עד שהבעיה הראשונה למעלה תתוקן.</string>
+    <string name="check_test_waiting">תזכורת הניסיון תצלצל ב־⁨%1$s⁩. אפשר לצאת מהאפליקציה.</string>
+    <string name="check_test_rang">תזכורת הניסיון האחרונה צלצלה ב־⁨%1$s⁩</string>
+    <string name="check_test_missed">תזכורת הניסיון לא צלצלה.</string>
+    <string name="check_test_missed_first">כנראה בגלל הבעיה הראשונה למעלה.</string>
+    <string name="check_test_missed_none">שום דבר בטלפון לא מסביר את זה: ייתכן שחיסכון הסוללה של היצרן עצר אותה.</string>
+    <string name="check_test_title">ניסיון: התזכורות עובדות</string>
+    <string name="check_test_text">כך מגיעה תזכורת \"הגיע הזמן לצאת\".</string>
+    <string name="check_hint">בדקו שתזכורות יצלצלו בטלפון הזה</string>
+    <string name="check_hint_ok">לבדוק עכשיו</string>
+    <string name="check_hint_later">לא עכשיו</string>
+
+    <!-- תפוגת מנוי רב־קו. בלי מחירים. -->
+    <string name="channel_pass">מנוי רב־קו</string>
+    <string name="pass_title">מנוי רב־קו</string>
+    <string name="pass_ends_on">מנוי הרב־קו שלכם מסתיים ב־⁨%1$s⁩</string>
+    <string name="pass_ends_today">מנוי הרב־קו שלכם מסתיים היום, ⁨%1$s⁩</string>
+    <string name="pass_row">מנוי רב־קו מסתיים ב־</string>
+    <!-- The date, isolated so Hebrew keeps "Sun 1 Nov" in one piece. -->
+    <string name="pass_date">⁨%1$s⁩</string>
+    <string name="pass_off">כבוי</string>
+    <string name="pass_set">בחירת תאריך</string>
+    <string name="pass_change">שינוי</string>
+    <string name="pass_turn_off">כיבוי</string>
+    <string name="pass_help">תזכורת 3 ימים לפני וביום האחרון, ב־09:00.</string>
+    <string name="pass_refused_past">התאריך הזה כבר עבר.</string>
+    <string name="pass_refused_far">זה יותר מ־400 ימים מהיום.</string>
+</resources>

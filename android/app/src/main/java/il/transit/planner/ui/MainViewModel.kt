@@ -166,6 +166,8 @@ data class UiState(
     val selected: Int = 0,
     val stopSheet: StopSheet? = null,
     val showSettings: Boolean = false,
+    /** Phase 11 E1: "Will my reminder ring?" open, offered as a hint, or closed. */
+    val reminderCheck: il.transit.planner.ui.screens.ReminderCheckView = il.transit.planner.ui.screens.ReminderCheckView.NONE,
     val settings: UserSettings = UserSettings(),
     /** [settings] come from the store, not the defaults: the first-run tour waits for this. */
     val settingsLoaded: Boolean = false,
@@ -740,6 +742,11 @@ class MainViewModel(
         reminders?.cancel() // a countdown still showing for the old one goes, with its alarms
         viewModelScope.launch { store.setReminder(r) }
         reminders?.schedule(r)
+        // Phase 11 E1: after the first reminder, once: "Check that reminders will ring on this phone".
+        if (!s.settings.reminderCheckHintShown) {
+            updateSettings(s.settings.copy(reminderCheckHintShown = true))
+            reminderCheck(il.transit.planner.ui.screens.ReminderCheckView.HINT)
+        }
         return true
     }
 
@@ -1198,6 +1205,8 @@ class MainViewModel(
     }
 
     fun showSettings(show: Boolean) = _state.update { it.copy(showSettings = show) }
+
+    fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView) = _state.update { it.copy(reminderCheck = view) }
 
     fun updateSettings(s: UserSettings) = viewModelScope.launch { store.setSettings(s) }
 

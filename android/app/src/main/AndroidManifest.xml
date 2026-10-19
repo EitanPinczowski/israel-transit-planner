@@ -110,6 +110,10 @@
         <receiver android:name=".remind.BootReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- Phase 11 E1: the Rav-Kav pass notice and a pending test reminder are re-armed when the
+                     phone's time zone changes and after an app update. -->
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
         <!-- "Last trip home" (C5): the evening check and its alert; no background location. -->

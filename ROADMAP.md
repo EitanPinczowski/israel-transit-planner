@@ -300,9 +300,9 @@ package. Tick only your own package's lines.
 - [x] GitHub bug-report issue form for friends
 
 ### E1 — Reminder check + pass expiry (`claude/p11-reminder-check`, 0 requests)
-- [ ] "Check reminders": notifications, channels, exact alarms, battery, standby, location, each with its settings page
-- [ ] "Test reminder in 1 minute" through the real alarm path
-- [ ] Rav-Kav pass-expiry reminder from a typed date (3 days before and the last day)
+- [x] "Check reminders": notifications, channels, exact alarms, battery, standby, location, each with its settings page
+- [x] "Test reminder in 1 minute" through the real alarm path
+- [x] Rav-Kav pass-expiry reminder from a typed date (3 days before and the last day)
 
 ### E7 — Pick a day (`claude/p11-pick-day`, 0 requests; owner, 2026-10-18)
 - [x] Choose the day of a search in every tab (Today, Tomorrow, weekdays, Other date…)
