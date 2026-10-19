@@ -480,7 +480,8 @@ class JourneysTest {
         val lm = ctx.getSystemService(LocationManager::class.java)
         val gps = LocationManager.GPS_PROVIDER
         val shell = InstrumentationRegistry.getInstrumentation().uiAutomation
-        shell.executeShellCommand("appops set $pkg android:mock_location allow").close()
+        // Read to the end: the command runs only as its output is drained (AppDriver.shell does the same).
+        android.os.ParcelFileDescriptor.AutoCloseInputStream(shell.executeShellCommand("appops set $pkg android:mock_location allow")).use { it.readBytes() }
         @Suppress("DEPRECATION")
         lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
         lm.setTestProviderEnabled(gps, true)

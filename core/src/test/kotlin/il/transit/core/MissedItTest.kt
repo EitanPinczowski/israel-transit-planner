@@ -16,6 +16,7 @@ import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripSort
 import il.transit.core.remind.Reminder
+import il.transit.core.user.UserJson
 import il.transit.core.user.UserSettings
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -193,10 +194,12 @@ class MissedItTest {
         val itin = recorded().itineraries.first()
         assertTrue(MissedIt.target(itin, arriveBy = true)!!.arriveBy)
         val r = Reminder(31.0, 34.0, 32.0, 34.7, UserSettings(), null, "5", "Stop", now.epochSecond, leaveAtEpoch = now.epochSecond, arriveBy = true)
-        assertTrue(il.transit.core.user.UserJson.decodeReminder(il.transit.core.user.UserJson.encodeReminder(r))!!.arriveBy)
-        val old = il.transit.core.user.UserJson.encodeReminder(r.copy(arriveBy = false)).replace(",\"arriveBy\":false", "")
+        val back = UserJson.decodeReminder(UserJson.encodeReminder(r))
+        assertTrue(back!!.arriveBy)
+        val encoded = UserJson.encodeReminder(r.copy(arriveBy = false))
+        val old = encoded.replace(",\"arriveBy\":false", "")
         assertFalse(old.contains("arriveBy"))
-        assertEquals(r.copy(arriveBy = false), il.transit.core.user.UserJson.decodeReminder(old))
+        assertEquals(r.copy(arriveBy = false), UserJson.decodeReminder(old))
     }
 
     @Test fun `a ride's destination is where its itinerary ends`() {
