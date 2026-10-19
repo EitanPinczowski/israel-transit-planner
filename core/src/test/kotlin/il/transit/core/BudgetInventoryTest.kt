@@ -25,6 +25,7 @@ import il.transit.core.plan.CarCompare
 import il.transit.core.plan.ChainPlanner
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.LastRideFinder
+import il.transit.core.plan.MissedIt
 import il.transit.core.plan.NightRefresh
 import il.transit.core.plan.NightRefresher
 import il.transit.core.plan.TimeMode
@@ -98,6 +99,17 @@ class BudgetInventoryTest {
         val tomorrow8 = DayPick.at(DayPick.days(now)[1].date, LocalTime.of(8, 0))
         val onDay = TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.DEPART_AT, tomorrow8)
         record("Trip plan on a picked day", "-", 1, replay().requests { TripPlanner(it).plan(onDay, now) })
+
+        // Phase 11 E2: "Missed it? Plan from here": 1 `plan` per tap; a second tap within 60 s, 0 (MissedItTest).
+        run {
+            val api = replay()
+            val missed = MissedIt(TripPlanner(GuardedTransitApi(api, Clock.fixed(now, ZoneOffset.UTC))))
+            val here = MissedIt.Fix(bgu, ageSec = 20, accuracyM = 15f)
+            missed.tap(MissedIt.Target("Tel Aviv", telAviv), here, now, UserSettings(), "he")
+            record("Missed it (one tap)", "MissedIt.PLANS_PER_TAP", MissedIt.PLANS_PER_TAP, api.calls.get())
+            missed.tap(MissedIt.Target("Tel Aviv", telAviv), here, now.plusSeconds(30), UserSettings(), "he")
+            record("Missed it (second tap within 60 s)", "-", 0, api.calls.get() - MissedIt.PLANS_PER_TAP)
+        }
 
         run {
             val first = plan("plan_pages_first")
