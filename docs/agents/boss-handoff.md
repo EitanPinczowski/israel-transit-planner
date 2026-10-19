@@ -4,25 +4,38 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-13, 19:15 Israel time)
-- **Phase 10 is complete.** All of D1–D12 merged, plus MapLibre crash fix #72, D10 #73, D11 #74.
-  Costs incl. Sonnet reviews: MapLibre fix $4.5, D10 $12.2, D11 $25.5 (over its $20 cap: a design
-  fix round plus a full golden re-record). Earlier: D6 $15.0, D12 $10.8, D7 $12.9, D8 ≈ $13, D9 $15.4.
-- **Release:** v0.9.0 notes in `docs/releases/v0.9.0.md` (fragments joined and removed). The owner
-  approved the release (2026-10-13: "do all, I will check after the release"); the Pixel check
-  of every Phase 10 feature comes after it.
-- **Owner decisions this round:** a trip or stop sheet open at process death reopens with its one
-  usual request (boss call, owner can overrule).
-- **Next:** Phase 11 planning (owner, 2026-10-13): researcher (Sonnet) → owner picks → planner (Opus).
-- **Merge approvals:** the owner OKs each feature merge; docs-only handoff PRs merge when green.
+## State (2026-10-19, 19:40 Israel time)
+- **Released:** v0.9.0 (2026-10-13). Next proposed: v0.9.1 after Phase 11 Wave 4 (ask the owner first).
+- **Phase 11** (`docs/agents/phase11.md`, all 31 owner decisions "as proposed"; E7 added by the owner 2026-10-18):
+  - Merged: plan #78 (+ E7 #81), T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9, over budget: 4-day weekly-limit
+    pause + fix round), API-36 j14 fix #85 ($4.5; cause: Android 16 drops notifications whose `when` is > 14 days
+    old, the uitest fixture clock had aged), licence exception for guava listenablefuture #86 (boss-made,
+    reported to the owner; he may revert).
+  - Open: **T3 #84** (ViewModel tests, session `session_01AnaLPosPaeqWace6fxCo4B`, Sonnet): green except API 36,
+    merging main now. **E7 #82** (Pick a day, `session_0147oE4BQDF62Rx1AcMBVmLU`, Opus, ~$36 so far): designer +
+    tester review done (2 blocking test gaps + 6 nits), fix round in progress. Its scope grew on 2026-10-18:
+    "past time → ask Tomorrow?", departed-options filter in `TripPlanner.plan`/`more`, `HORIZON_DAYS` 8 → 21.
+    The reminder re-check stays unfiltered (boss call). Both: verify every check, then merge.
+  - Next: Wave 3 = E2 (I missed it, Opus) + T7 (system + chaos journeys, Sonnet). Then Wave 4 (E3, T5) → v0.9.1.
+    T5 must also fix the stale golden-trip-12 check (ignores the 10-min window) and `tools/plan_summary.py`'s
+    hard-coded +03:00.
+- **Owner decisions this round:** pick-a-day package E7 (2026-10-18); 21-day timetable notice (2026-10-18);
+  API keys allowed on a $0, no-card plan (2026-10-13, in CLAUDE.md); **"when green merge and continue"**
+  (2026-10-18): the boss merges each package after green + review + fix round, without asking; still ask
+  before any release or new owner decision.
 - **Open owner to-dos:** uninstall the Gemini GitHub app; delete branches `claude/geocoder-check`,
-  `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`
-  (branch deletes are blocked from cloud sessions).
-- **Gotchas learned:** Maven Central often 429s cloud sessions (rely on green CI); `gh run download` is
-  refused (blob store) — reviewers read goldens + the `ci-screens` branch; concurrent UI-tests runs can
-  race on the `ci-screens` push (harmless red "report → ci-screens"). Paparazzi 1.3.5 needs D10's
-  API 35 mockable-jar workaround while compileSdk is 36. Live Updates promote only on Android 16 QPR1
-  (36.1); the CI emulator is 36.0.
+  `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`,
+  `scratch/p11-*`, `scratch/t3-deps-probe`.
+- **Lessons this round (follow them):**
+  - **Never run 3 agents at once.** Twice, 3 concurrent sessions burned the shared 5-hour limit in ~20 min.
+    Keep to 2, and a short review counts.
+  - **Long agent contexts are the real cost.** E7 reached ~730k tokens; every turn re-reads it. For a fix round
+    on a big session, prefer a fresh focused session with a precise brief.
+  - **When a limit hits, schedule the resume yourself** (`send_later` at resetsAt + 5 min, for every stalled
+    session). A check scheduled before the limit fires late, because the boss is limited too.
+  - **Verify the head after merging a PR into main:** a PR green on its branch can still break main (E1 → j14 on
+    API 36 was actually a time bomb in the test fixture, but it surfaced right after a merge).
+  - A docs-only plan change that adds a package is fine to merge when green after the owner asked for it.
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
