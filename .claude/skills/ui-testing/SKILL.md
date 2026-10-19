@@ -96,6 +96,8 @@ new `plan`; the reopened trip sheet asks its one `trip` again.
   are composed a frame later: go through `AppDriver.tapMenuItem` / `tapSaveTrip`, which wait.
 - A new fixture: record it (skill `transitous-api`), add its name to `ReplayTransitApi.FIXTURES`.
 - The fixed clock means fixture dates matter: alarms/rides use 2026-10-05.
+- The phone's own clock is today. Android 16 silently drops a notification whose `when` is over 14 days
+  old: a notification dated by a replayed trip must first be moved to now (`ReplayTransitApi.moved`, J14).
 
 ## Real phones: Firebase Test Lab, Spark plan (free, no card)
 

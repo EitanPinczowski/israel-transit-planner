@@ -2,6 +2,7 @@ package il.transit.core
 
 import il.transit.core.api.BudgetedTransitApi
 import il.transit.core.api.Endpoint
+import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisJson
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.features.BetterStartPlanner
@@ -16,6 +17,9 @@ import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
 import il.transit.core.present.hhmm
+import il.transit.core.remind.Countdown
+import il.transit.core.remind.Reminder
+import il.transit.core.user.UserSettings
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -23,6 +27,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -114,6 +119,26 @@ class ReplayTransitApiTest {
         assertTrue(train.legs.single().mode.contains("RAIL"))
         assertEquals("08:00", hhmm(train.start))
         assertEquals("BUS", replay.trip("no-such-trip").legs.single().mode)
+    }
+
+    @Test fun `a replayed trip moved to today keeps its shape and counts down to today`() = runTest {
+        val r = TripPlanner(replay).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv)), now)
+        val train = r.itineraries.first { i -> i.legs.any { it.mode.contains("RAIL") } }
+        val today = Instant.parse("2026-10-19T10:40:30Z") // the API 36 run that dropped J14's countdown
+        val moved = ReplayTransitApi.moved(train, today)
+        assertEquals(Instant.parse("2026-10-19T10:40:00Z"), moved.start) // whole minutes
+        assertEquals(train.legs.size, moved.legs.size)
+        val delta = Duration.between(train.start, moved.start)
+        assertEquals(train.legs.map { it.start.plus(delta) to it.end.plus(delta) }, moved.legs.map { it.start to it.end })
+        // J14 posts the countdown with `when` = boarding: at the fixed clock that is 14 days old on
+        // the run's day (Android 16 ignores it); moved, it is minutes from now.
+        fun boardAt(i: Itinerary): Instant {
+            val reminder = Reminder.from(i, bgu, telAviv, UserSettings())!!
+            return Countdown.of(reminder, i.start)!!.boardAt
+        }
+        assertTrue(Duration.between(boardAt(train), today) > Duration.ofDays(14))
+        val toBoarding = Duration.between(today, boardAt(moved))
+        assertTrue(toBoarding.abs() < Duration.ofHours(2))
     }
 
     @Test fun `vehicles on the map start at the window asked`() = runTest {
