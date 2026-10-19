@@ -309,8 +309,8 @@ package. Tick only your own package's lines.
 - [x] The time chip shows the day; no silent "past time means tomorrow"
 
 ### T3 — ViewModel + state tests (`claude/p11-viewmodel-tests`, Sonnet, 0 requests)
-- [ ] Every UI state transition per tab, with cancel, retry and error paths, on the JVM
-- [ ] Coverage of the Android JVM tests measured and ratcheted
+- [x] Every UI state transition per tab, with cancel, retry and error paths, on the JVM
+- [x] Coverage of the Android JVM tests measured and ratcheted
 
 ### E2 — I missed it (`claude/p11-missed-it`, 1 request per tap)
 - [ ] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet

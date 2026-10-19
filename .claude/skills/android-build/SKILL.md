@@ -108,6 +108,29 @@ Cloud sessions have no Android SDK: the Lint and APK gates can only be proven by
   real bug, fix it (small, in core) and keep the case as a plain test, so it does not depend on the seed.
 - The Android JVM tests have no kotest dependency: `SavedUiPropertyTest` uses a seeded `java.util.Random`.
 
+## ViewModel state tests and Android coverage (Phase 11 T3)
+- **Where:** `android/app/src/test/.../ui/vm/`. Plain JVM, in the `screenshots` job (it already runs the app's unit tests).
+  `VmTest` is the base class: Main is a virtual-time `UnconfinedTestDispatcher`, so a ViewModel's coroutines run the moment
+  they are launched or resumed, on the test's thread. No sleeping; `advance(ms)` moves virtual time (typing debounce, retry
+  waits, the 2-minute refresh loop). Only the steps that hop to a real IO thread (the Trip cache file) use `settle { }`.
+- **Fakes:** `MemoryPrefs` (an in-memory DataStore, so `UserStore` answers at once) and `ScriptedApi(inner)`, which wraps core's
+  `ReplayTransitApi` (recorded answers, never the network) and counts every call by kind. `hold = true` parks every `plan` until
+  `release()` / `releaseAll()`, so a search can be seen "searching" and cancelled by a newer one (`cancelledPlans`);
+  `fault = { kind, n -> throwable }` throws what the real client throws (`TransitHttpException` 429/503, `IOException`,
+  `SerializationException`, `BudgetExceededException`); `planAnswer` replaces what `plan` answers (empty, a recorded page).
+  Put `GuardedTransitApi` in front to test its cache and its one retry.
+- **Assert the sequence:** `phasesOf(vm)` records the distinct `phase(state)` words (`idle`, `searching`, `results`, `offline`,
+  `error:NETWORK`, ...): `assertEquals(listOf("idle", "searching", "results"), phases)`, not just the end state.
+- **A new feature adds its case** here (`add-feature`): the sequence, the cancel / retry / error paths, and the request count
+  against its budget constant.
+- **Android coverage gate:** `./gradlew -p android :app:testDebugUnitTest --tests 'il.transit.planner.ui.vm.*' --tests '*ViewModelTest'
+  --tests '*SavedUi*Test' :app:koverXmlReportDebug :app:koverVerifyDebug` (the CI step; the Paparazzi shots are not run again).
+  The report is `android/app/build/reports/kover/reportDebug.xml`; `tools/kover_summary.py` prints it to the log and the job
+  summary. Counted: `il.transit.planner.ui.*` without `ui.screens.*` (Paparazzi covers those) and without the classes that only
+  talk to Compose, the map and Android (`MainScreen`, `Theme`, `MapController`, `OfflineMap`, `VoiceSearch`, `Shortcuts`,
+  `AppLocale`). Measured 2026-10-19: **69.56 %** (1,186 lines), gate **69** (`minValue` in `android/app/build.gradle.kts`).
+  It only ratchets up: raise `minValue` after a coverage-raising change, never lower it; a PR that must says why in its body.
+
 ## Emulator / device
 
 - The APK ships ARM only (`ndk.abiFilters` in `app/build.gradle.kts`): x86 MapLibre doubled

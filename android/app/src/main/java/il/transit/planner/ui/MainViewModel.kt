@@ -512,7 +512,13 @@ class MainViewModel(
             val time = if (mode != AppMode.TRIP && it.timeMode == TimeMode.ARRIVE_BY) TimeMode.NOW else it.timeMode
             it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0)
         }
-        if (_state.value.readyToPlan) plan()
+        if (_state.value.readyToPlan) {
+            plan()
+        } else {
+            // Nothing to search on this tab yet: the other tab's search must not finish into it, nor keep the spinner.
+            planJob?.cancel()
+            _state.update { it.copy(loading = false) }
+        }
     }
 
     fun setMaxDrive(min: Int) {
