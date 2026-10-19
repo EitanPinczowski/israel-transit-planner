@@ -1208,11 +1208,33 @@ class MainViewModel(
         planJob?.cancel()
         _state.update {
             it.copy(
-                mode = AppMode.TRIP, from = PlaceRef.MyLocation, to = PlaceRef.Point(name, target.at), timeMode = TimeMode.NOW, time = null,
-                chainStops = emptyList(), chain = null, editing = null, showSettings = false, showHistory = false, stopSheet = null,
-                results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(),
-                error = null, offlineSince = null, loading = true, selected = 0, pages = TripPagesUi(), missedIt = null,
-                lastRide = null, lastRideAsked = false, lastRideBack = null, carTime = null, routinePlace = null, // a routine must not re-plan over it
+                mode = AppMode.TRIP,
+                from = PlaceRef.MyLocation,
+                to = PlaceRef.Point(name, target.at),
+                timeMode = TimeMode.NOW,
+                time = null,
+                chainStops = emptyList(),
+                chain = null,
+                editing = null,
+                showSettings = false,
+                showHistory = false,
+                stopSheet = null,
+                results = null,
+                betterStart = null,
+                dropOff = null,
+                pickUp = null,
+                parkRide = it.parkRide.cleared(),
+                error = null,
+                offlineSince = null,
+                loading = true,
+                selected = 0,
+                pages = TripPagesUi(),
+                missedIt = null,
+                lastRide = null,
+                lastRideAsked = false,
+                lastRideBack = null,
+                carTime = null,
+                routinePlace = null, // a routine must not re-plan over it
             )
         }
         val settings = store.settings.first()
@@ -1235,7 +1257,10 @@ class MainViewModel(
                 val r = out.result
                 _state.update {
                     it.copy(
-                        loading = false, results = r, resultsAt = out.at, missedIt = ui,
+                        loading = false,
+                        results = r,
+                        resultsAt = out.at,
+                        missedIt = ui,
                         error = if (r.itineraries.isEmpty() && r.walkOnly == null) UiError.NO_RESULTS else null,
                     )
                 }

@@ -64,10 +64,11 @@ object MissedItAction {
         val lm = context.getSystemService(LocationManager::class.java)
         val providers = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, "fused")
         val platform = providers.mapNotNull { p -> runCatching { lm?.getLastKnownLocation(p) }.getOrNull() }
-        val fixes = (platform + listOfNotNull(mapFix)).map { l ->
-            val ageSec = (SystemClock.elapsedRealtimeNanos() - l.elapsedRealtimeNanos) / 1_000_000_000L
-            MissedIt.Fix(LatLon(l.latitude, l.longitude), ageSec, l.accuracy.takeIf { l.hasAccuracy() })
-        }.sortedBy { it.ageSec }
+        val fixes = (platform + listOfNotNull(mapFix))
+            .map { l ->
+                val ageSec = (SystemClock.elapsedRealtimeNanos() - l.elapsedRealtimeNanos) / 1_000_000_000L
+                MissedIt.Fix(LatLon(l.latitude, l.longitude), ageSec, l.accuracy.takeIf { l.hasAccuracy() })
+            }.sortedBy { it.ageSec }
         // The newest precise one; a fresher rough network fix must not hide a GPS fix of a minute ago.
         return fixes.firstOrNull(MissedIt::usable) ?: fixes.firstOrNull()
     }

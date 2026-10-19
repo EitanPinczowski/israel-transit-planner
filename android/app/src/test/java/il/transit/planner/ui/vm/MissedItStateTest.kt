@@ -93,7 +93,9 @@ class MissedItStateTest : VmTest() {
         f = here
         advance(500)
         assertEquals(1, api.count("plan"))
-        assertEquals(MissedItUi.Kind.PLANNED, vm.state.value.missedIt?.kind)
+        val kind = vm.state.value.missedIt
+            ?.kind
+        assertEquals(MissedItUi.Kind.PLANNED, kind)
     }
 
     @Test fun `at the destination - already there, no request`() {
@@ -101,7 +103,9 @@ class MissedItStateTest : VmTest() {
         val vm = newVm(api)
         vm.missedIt(toSavidor) { here.copy(at = LatLon(SAVIDOR.lat + 0.0005, SAVIDOR.lon)) }
         assertEquals(0, api.total)
-        assertEquals(MissedItUi.Kind.ALREADY_THERE, vm.state.value.missedIt?.kind)
+        val kind = vm.state.value.missedIt
+            ?.kind
+        assertEquals(MissedItUi.Kind.ALREADY_THERE, kind)
         vm.clearResults()
         assertNull(vm.state.value.missedIt)
     }
