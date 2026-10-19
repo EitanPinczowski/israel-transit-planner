@@ -13,8 +13,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import il.transit.core.plan.MissedIt
+import il.transit.core.plan.TimeMode
 import il.transit.core.user.Appearance
+import il.transit.planner.remind.MissedItAction
 import il.transit.planner.ui.AppLocale
+import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.DarkColors
 import il.transit.planner.ui.LightColors
 import androidx.compose.ui.graphics.toArgb
@@ -34,6 +38,7 @@ import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.OptionsMap
+import il.transit.planner.ui.PlaceRef
 import il.transit.planner.ui.screens.Haptics
 import il.transit.planner.ui.AppTheme
 import il.transit.planner.ui.MainScreen
@@ -111,7 +116,7 @@ class MainActivity : ComponentActivity() {
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
         if (intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
         if (intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true) // Phase 11 E1: the pass notice
-        il.transit.planner.remind.MissedItAction.target(intent)?.let(::missedIt) // Phase 11 E2
+        MissedItAction.target(intent)?.let(::missedIt) // Phase 11 E2
         openShared(intent)
     }
 
@@ -178,7 +183,7 @@ class MainActivity : ComponentActivity() {
         if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
         if (fresh && intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true)
         // "Missed it? Plan from here" (Phase 11 E2): the destination is in the intent, so a killed app plans too.
-        if (fresh) il.transit.planner.remind.MissedItAction.target(intent)?.let(::missedIt)
+        if (fresh) MissedItAction.target(intent)?.let(::missedIt)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
@@ -274,7 +279,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
-                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is il.transit.planner.ui.PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null) }) else null
+                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null) }) else null
                 CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
                     MainScreen(state, ui, actions, tripSheet = sheetUi) {
                         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
@@ -318,16 +323,16 @@ class MainActivity : ComponentActivity() {
      * Phase 11 E2: [MainViewModel.missedIt] with the phone's last fix, its age and accuracy, read on
      * the tap only. No permission: no fix, so the Trip tab asks where the user is (nothing is asked).
      */
-    private fun missedIt(target: il.transit.core.plan.MissedIt.Target) = vm.missedIt(target) {
+    private fun missedIt(target: MissedIt.Target) = vm.missedIt(target) {
         val mapFix = map?.locationComponent?.takeIf { hasLocationPermission() && it.isLocationComponentActivated }?.lastKnownLocation
-        il.transit.planner.remind.MissedItAction.lastFix(this, mapFix)
+        MissedItAction.lastFix(this, mapFix)
     }
 
     /** The trip sheet's "Missed it?": the destination on screen, as the user searched it. */
     private fun missedItFromSheet() {
         val s = vm.state.value
-        val to = s.to as? il.transit.planner.ui.PlaceRef.Point ?: return
-        missedIt(il.transit.core.plan.MissedIt.Target(to.name, to.at, arriveBy = s.mode == il.transit.planner.ui.AppMode.TRIP && s.timeMode == il.transit.core.plan.TimeMode.ARRIVE_BY))
+        val to = s.to as? PlaceRef.Point ?: return
+        missedIt(MissedIt.Target(to.name, to.at, arriveBy = s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY))
     }
 
     /** The same checks as [startRide], for the reminder's own option. */

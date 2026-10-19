@@ -63,9 +63,9 @@ class MissedIt(private val planner: TripPlanner) {
             ?: return Outcome.NeedStart
         if (Geo.distanceM(start.at, target.at) <= ARRIVED_M) return Outcome.AlreadyThere
         val again = last?.takeIf {
-            it.to == target.at && it.settings == settings &&
-                !now.isBefore(it.at) && Duration.between(it.at, now).seconds <= REUSE_SEC &&
-                Geo.distanceM(it.from, start.at) <= SAME_START_M
+            val soon = !now.isBefore(it.at) && Duration.between(it.at, now).seconds <= REUSE_SEC
+            val same = it.to == target.at && it.settings == settings
+            same && soon && Geo.distanceM(it.from, start.at) <= SAME_START_M
         }
         val from = again?.from ?: start.at
         val at = again?.at ?: now

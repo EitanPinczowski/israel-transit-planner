@@ -21,6 +21,7 @@ import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
 import il.transit.core.features.PickUpResult
 import il.transit.core.geo.BBox
+import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.StopsViewport
@@ -31,6 +32,7 @@ import il.transit.core.plan.ChainResult
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
+import il.transit.core.plan.MissedIt
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
@@ -74,6 +76,7 @@ import il.transit.planner.TransitApp
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UserStore
+import il.transit.planner.ui.screens.MissedItUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -221,7 +224,7 @@ data class UiState(
     /** Bumped when a route is tapped on the map (D11): the results list scrolls to its card. */
     val mapPick: Int = 0,
     /** Phase 11 E2: the "Missed it?" banner ("From your location at 07:46"), while its destination is shown. */
-    val missedIt: il.transit.planner.ui.screens.MissedItUi? = null,
+    val missedIt: MissedItUi? = null,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -1185,21 +1188,21 @@ class MainViewModel(
         }
     }
 
-    private val missed = il.transit.core.plan.MissedIt(planner)
+    private val missed = MissedIt(planner)
 
     /**
      * "Missed it? Plan from here" (Phase 11 E2), from a notification or the trip sheet: the Trip tab
      * from where the phone is now to [target], leaving now, with the user's settings and sort. At
-     * most 1 `plan` ([il.transit.core.plan.MissedIt], tested); a second tap within 60 s costs 0.
+     * most 1 `plan` ([MissedIt], tested); a second tap within 60 s costs 0.
      * [fix] reads the phone's last fix (with its age and accuracy) and is read only here, on the tap.
      * The missed trip's ride alert and countdown stop; a reminder still ahead is left alone.
      */
-    fun missedIt(target: il.transit.core.plan.MissedIt.Target, fix: () -> il.transit.core.plan.MissedIt.Fix?) = viewModelScope.launch {
+    fun missedIt(target: MissedIt.Target, fix: () -> MissedIt.Fix?) = viewModelScope.launch {
         if (rides?.active?.value == true) rides.stop()
-        if (il.transit.core.plan.MissedIt.endsReminder(store.reminder.first(), clock.instant())) cancelReminder()
+        if (MissedIt.endsReminder(store.reminder.first(), clock.instant())) cancelReminder()
         val places = store.places.first()
         val shown = _state.value.to as? PlaceRef.Point
-        val near = { p: LatLon -> il.transit.core.geo.Geo.distanceM(p, target.at) <= il.transit.core.plan.MissedIt.ARRIVED_M }
+        val near = { p: LatLon -> Geo.distanceM(p, target.at) <= MissedIt.ARRIVED_M }
         // A ride carries no name: the saved place there, else the trip on screen.
         val name = target.name ?: places.firstOrNull { near(it.latLon) }?.name ?: shown?.takeIf { near(it.at) }?.name
         planJob?.cancel()
@@ -1216,7 +1219,7 @@ class MainViewModel(
         val out = try {
             missed.tap(target, fix(), clock.instant(), settings, language) {
                 var f = fix()
-                while (f == null || !il.transit.core.plan.MissedIt.usable(f)) { delay(250); f = fix() }
+                while (f == null || !MissedIt.usable(f)) { delay(250); f = fix() }
                 f
             }
         } catch (e: CancellationException) {
@@ -1225,10 +1228,10 @@ class MainViewModel(
             _state.update { it.copy(loading = false, error = UiError.NETWORK) }
             return@launch
         }
-        val ui = il.transit.planner.ui.screens.MissedItUi.of(out, target.at)
+        val ui = MissedItUi.of(out, target.at)
         when (out) {
-            is il.transit.core.plan.MissedIt.Outcome.Planned -> {
-                tripQuery = il.transit.core.plan.MissedIt.query(target, out.from, settings, language) // Earlier / Later repeat this search
+            is MissedIt.Outcome.Planned -> {
+                tripQuery = MissedIt.query(target, out.from, settings, language) // Earlier / Later repeat this search
                 val r = out.result
                 _state.update {
                     it.copy(
@@ -1238,11 +1241,11 @@ class MainViewModel(
                 }
             }
             // "Where are you?": From empty and focused, nothing sent.
-            il.transit.core.plan.MissedIt.Outcome.NeedStart -> {
+            MissedIt.Outcome.NeedStart -> {
                 _state.update { it.copy(loading = false, missedIt = ui) }
                 startEditing(Field.FROM)
             }
-            il.transit.core.plan.MissedIt.Outcome.AlreadyThere -> _state.update { it.copy(loading = false, missedIt = ui) }
+            MissedIt.Outcome.AlreadyThere -> _state.update { it.copy(loading = false, missedIt = ui) }
         }
     }
 

@@ -3,6 +3,7 @@ package il.transit.core
 import il.transit.core.api.Endpoint
 import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.MotisJson
+import il.transit.core.api.PlanResponse
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.StreetModes
 import il.transit.core.geo.LatLon
@@ -12,6 +13,7 @@ import il.transit.core.plan.MissedIt.Outcome
 import il.transit.core.plan.MissedIt.Target
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
+import il.transit.core.plan.TripQuery
 import il.transit.core.plan.TripSort
 import il.transit.core.remind.Reminder
 import il.transit.core.user.UserSettings
@@ -32,6 +34,8 @@ class MissedItTest {
     private val telAviv = LatLon(32.0839, 34.7983)
     private val toTelAviv = Target("Tel Aviv", telAviv)
     private fun fixture(name: String) = javaClass.getResource("/fixtures/$name.json")!!.readText()
+
+    private fun recorded() = MotisJson.decodeFromString(PlanResponse.serializer(), fixture("plan_bgu_telaviv"))
 
     private class Setup(val replay: ReplayTransitApi, val missed: MissedIt)
 
@@ -101,7 +105,7 @@ class MissedItTest {
     }
 
     @Test fun `an arrive-by trip becomes depart-now, and the banner says so`() = runBlocking {
-        val api = FakeTransitApi().apply { onPlan = { MotisJson.decodeFromString(il.transit.core.api.PlanResponse.serializer(), fixture("plan_bgu_telaviv")) } }
+        val api = FakeTransitApi().apply { onPlan = { recorded() } }
         val out = MissedIt(TripPlanner(api)).tap(toTelAviv.copy(arriveBy = true), fresh, now, UserSettings(), "he")
         assertTrue((out as Outcome.Planned).wasArriveBy)
         val req = api.planRequests.single()
@@ -110,7 +114,7 @@ class MissedItTest {
     }
 
     @Test fun `from a car tab it is a plain Trip to the final destination`() = runBlocking {
-        val api = FakeTransitApi().apply { onPlan = { MotisJson.decodeFromString(il.transit.core.api.PlanResponse.serializer(), fixture("plan_bgu_telaviv")) } }
+        val api = FakeTransitApi().apply { onPlan = { recorded() } }
         MissedIt(TripPlanner(api)).tap(toTelAviv, fresh, now, UserSettings(), "he")
         val req = api.planRequests.single()
         assertTrue(req.preTransitModes.none { it in StreetModes.CAR_LIKE })
@@ -124,11 +128,11 @@ class MissedItTest {
 
     @Test fun `the same settings and sort as the user's Trip search`() = runBlocking {
         val mine = UserSettings(tripSort = TripSort.LEAST_WALKING, maxWalkMin = 7)
-        val api = FakeTransitApi().apply { onPlan = { MotisJson.decodeFromString(il.transit.core.api.PlanResponse.serializer(), fixture("plan_bgu_telaviv")) } }
+        val api = FakeTransitApi().apply { onPlan = { recorded() } }
         MissedIt(TripPlanner(api)).tap(toTelAviv, fresh, now, mine, "en")
         // The very request the Trip tab sends for the same search, settings included.
         val trip = FakeTransitApi().apply { onPlan = api.onPlan }
-        TripPlanner(trip).plan(il.transit.core.plan.TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.NOW, null, mine, "en"), now)
+        TripPlanner(trip).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.NOW, null, mine, "en"), now)
         assertEquals(trip.planRequests.single(), api.planRequests.single())
         assertEquals(mine, MissedIt.query(toTelAviv, bgu, mine, "en").settings)
     }
@@ -156,7 +160,7 @@ class MissedItTest {
     }
 
     @Test fun `a ride's destination is where its itinerary ends`() {
-        val plan = MotisJson.decodeFromString(il.transit.core.api.PlanResponse.serializer(), fixture("plan_bgu_telaviv"))
+        val plan = recorded()
         val itin = plan.itineraries.first()
         val end = itin.legs.last().to
         val t = MissedIt.target(itin)!!

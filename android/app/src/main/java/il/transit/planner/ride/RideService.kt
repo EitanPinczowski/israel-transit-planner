@@ -23,11 +23,13 @@ import androidx.core.content.ContextCompat
 import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisJson
 import il.transit.core.geo.LatLon
+import il.transit.core.plan.MissedIt
 import il.transit.core.ride.RideEvent
 import il.transit.core.ride.RideTracker
 import il.transit.planner.MainActivity
 import il.transit.planner.TransitApp
 import il.transit.planner.R
+import il.transit.planner.remind.MissedItAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import il.transit.core.ride.RideProgress
 import il.transit.core.remind.LiveProgress
@@ -207,7 +209,7 @@ class RideService : Service() {
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
-        itinerary?.let(il.transit.core.plan.MissedIt::target)?.let { b.addAction(il.transit.planner.remind.MissedItAction.action(this, it)) } // Phase 11 E2
+        itinerary?.let(MissedIt::target)?.let { b.addAction(MissedItAction.action(this, it)) } // Phase 11 E2
         return il.transit.planner.remind.Notifications.build(this, b, live, text)
     }
 
