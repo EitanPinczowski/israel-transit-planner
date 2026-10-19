@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +30,7 @@ import il.transit.core.features.ISRAEL
 import il.transit.core.plan.TimeMode
 import il.transit.planner.R
 import il.transit.planner.ui.screens.ClockStepContent
+import il.transit.planner.ui.screens.DateStepContent
 import il.transit.planner.ui.screens.DayStepContent
 import il.transit.planner.ui.screens.LocalDayClock
 import il.transit.planner.ui.screens.TimeRow
@@ -88,13 +88,10 @@ class DayPickShotsTest(private val v: Variant) {
      */
     @Test fun datePicker() = paparazzi.snapshot("day_date_picker") {
         Frame {
-            Box(Modifier.fillMaxSize().background(scrim()), contentAlignment = Alignment.Center) {
+            // As DateStepDialog draws it: 16 dp from the sides, the picker, then Cancel and OK.
+            Box(Modifier.fillMaxSize().background(scrim()).padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
                 Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    // As DateStepDialog draws it: the picker, then Cancel and OK.
-                    Column {
-                        DatePicker(rememberDayPickerState(il("2026-01-10T09:00"), LocalDate.of(2026, 1, 14)), showModeToggle = false)
-                        Buttons(stringResource(R.string.cancel), stringResource(R.string.time_step_ok))
-                    }
+                    DateStepContent(rememberDayPickerState(il("2026-01-10T09:00"), LocalDate.of(2026, 1, 14)), {}, {})
                 }
             }
         }

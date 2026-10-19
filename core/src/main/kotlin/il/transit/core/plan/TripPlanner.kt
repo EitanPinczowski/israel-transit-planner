@@ -107,17 +107,18 @@ class TripPlanner(private val api: TransitApi) {
      * "Earlier" / "Later": one `plan` request for the window next to [current], merged into it
      * ([TripPages.merge]). The request repeats [current]'s search time, so the same cursor
      * twice is the same query (the guard cache answers it). [current] unchanged when there is
-     * no cursor that way. Not filtered for departures ([notDeparted]): "Earlier" is asked for
-     * on purpose, and on a Now search it shows what just left.
+     * no cursor that way. With the caller's clock [now], a page of a live search drops what
+     * already left, as [plan] does (boss, 2026-10-19: one rule for the whole list).
      */
-    suspend fun page(q: TripQuery, current: TripResult, direction: TripPages.Direction): TripResult {
+    suspend fun page(q: TripQuery, current: TripResult, direction: TripPages.Direction, now: Instant? = null): TripResult {
         val cursor = when (direction) {
             TripPages.Direction.EARLIER -> current.earlierCursor
             TripPages.Direction.LATER -> current.laterCursor
         } ?: return current
         val time = current.searchEpoch?.let(Instant::ofEpochSecond) ?: q.time ?: Instant.now()
         val resp = api.plan(request(q, time).copy(pageCursor = cursor))
-        return TripPages.merge(current, resp, direction, q.timeMode == TimeMode.ARRIVE_BY)
+        val shown = now?.let { resp.copy(itineraries = notDeparted(resp.itineraries, q, time, it)) } ?: resp
+        return TripPages.merge(current, shown, direction, q.timeMode == TimeMode.ARRIVE_BY)
     }
 
     /**

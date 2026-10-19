@@ -72,6 +72,26 @@ class DepartedFilterTest {
         assertTrue("every ride has left at 09:30; the walk stays", r.itineraries.isNotEmpty() && r.itineraries.all { it.firstTransitLeg == null })
     }
 
+    @Test fun `Earlier on a live search drops what already left too, as the search does`() = runBlocking {
+        fun pages(name: String) = MotisJson.decodeFromString(PlanResponse.serializer(), DepartedFilterTest::class.java.getResource("/fixtures/$name.json")!!.readText())
+        val first = pages("plan_pages_first")
+        val api = FakeTransitApi().apply {
+            onPlan = { first }
+            this.pages = mapOf(first.previousPageCursor!! to pages("plan_pages_earlier"))
+        }
+        val now = LocalDateTime.parse("2026-10-13T08:29").atZone(ISRAEL).toInstant() // the recorded Tuesday
+        val q = TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.NOW, null)
+        val planner = TripPlanner(api)
+        val r0 = planner.plan(q, now)
+        val cutoff = now.minusSeconds(TripPlanner.DEPARTED_GRACE_SEC)
+        fun boarded(r: TripResult) = r.itineraries.map { parseTime(it.firstTransitLeg!!.startTime) }
+        val withClock = planner.page(q, r0, il.transit.core.plan.TripPages.Direction.EARLIER, now)
+        assertTrue(boarded(withClock).all { it >= cutoff })
+        // Without the caller's clock the page is merged as MOTIS sent it: the earlier trips are there.
+        val without = planner.page(q, r0, il.transit.core.plan.TripPages.Direction.EARLIER)
+        assertTrue(boarded(without).any { it < cutoff })
+    }
+
     @Test fun `without the caller's clock (errands, the reminder re-check) MOTIS's answer is kept as it is`() = runBlocking {
         val api = FakeTransitApi().apply { onPlan = { recorded } }
         val r = TripPlanner(api).plan(TripQuery(Endpoint.Coord(bgu), Endpoint.Coord(telAviv), TimeMode.DEPART_AT, il("08:00")))
