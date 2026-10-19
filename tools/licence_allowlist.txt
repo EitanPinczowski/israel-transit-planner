@@ -13,3 +13,6 @@ ISC: isc license | isc
 # Test-only libraries (junit, mockwebserver deps...) are not in the release APK and are not checked.
 # EPL is allowed only for those; it is listed here so a release dependency under EPL still fails:
 # (no EPL line on purpose)
+#
+# Exceptions (coordinate, then the reason). Each one is listed in the owner's report.
+exception com.google.guava:listenablefuture Apache-2.0: part of Guava (github.com/google/guava, Apache License 2.0); its 1.0 POM declares no <licenses> and its parent guava-parent is not always in the Gradle cache. Boss, 2026-10-19, reported to the owner.
