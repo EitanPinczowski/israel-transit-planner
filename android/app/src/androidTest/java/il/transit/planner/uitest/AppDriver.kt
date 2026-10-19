@@ -64,8 +64,10 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     /** The Activity's own ViewModel (it exists once onCreate ran). */
     val vm: MainViewModel get() = ViewModelProvider(activity)[MainViewModel::class.java]
 
-    fun launch(): AppDriver {
-        scenario = ActivityScenario.launch(MainActivity::class.java).also { s -> s.onActivity { activity = it } }
+    /** [intent]: start the Activity from it, as a notification tap on a killed app does (a fresh Activity and ViewModel). */
+    fun launch(intent: android.content.Intent? = null): AppDriver {
+        val s0 = if (intent != null) ActivityScenario.launch<MainActivity>(intent) else ActivityScenario.launch(MainActivity::class.java)
+        scenario = s0.also { s -> s.onActivity { activity = it } }
         compose.waitForIdle()
         return this
     }

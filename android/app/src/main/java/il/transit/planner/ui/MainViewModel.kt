@@ -446,7 +446,7 @@ class MainViewModel(
                 Field.DRIVER_TO -> it.copy(driverTo = ref)
                 Field.STOP -> it
             }
-            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = next.parkRide.cleared())
+            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = next.parkRide.cleared(), missedIt = null)
         }
         if (_state.value.readyToPlan) plan()
     }
@@ -501,12 +501,12 @@ class MainViewModel(
     fun swap() {
         val s = _state.value
         val to = s.to ?: return
-        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared()) }
+        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), missedIt = null) }
         plan()
     }
 
     fun setTime(mode: TimeMode, time: Instant?) {
-        _state.update { it.copy(timeMode = mode, time = if (mode == TimeMode.NOW) null else time) }
+        _state.update { it.copy(timeMode = mode, time = if (mode == TimeMode.NOW) null else time, missedIt = null) }
         if (_state.value.readyToPlan) plan()
     }
 
@@ -515,7 +515,7 @@ class MainViewModel(
         _state.update {
             // Only the plain trip has arrive-by: the car tabs ask "leaving now/at T, where do I get out?"
             val time = if (mode != AppMode.TRIP && it.timeMode == TimeMode.ARRIVE_BY) TimeMode.NOW else it.timeMode
-            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0)
+            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0, missedIt = null)
         }
         if (_state.value.readyToPlan) {
             plan()
@@ -564,6 +564,7 @@ class MainViewModel(
             return
         }
         planJob?.cancel()
+        if (!quiet) missedJob?.cancel() // a "Missed it?" tap still waiting must not land over this search
         if (!quiet) {
             _state.update {
                 it.copy(
@@ -571,6 +572,7 @@ class MainViewModel(
                     selected = 0, stopSheet = null, offlineSince = null,
                     lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
                     chain = null, carTime = null, carLoading = false, pages = TripPagesUi(),
+                    missedIt = null, // a new search is not "from your location at 07:46"
                 )
             }
         }
@@ -749,6 +751,7 @@ class MainViewModel(
         val to = s.to?.let(::resolve) ?: return false
         // An errand leg is re-checked on its own stops; the chain's A → B would never find its bus.
         val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings, nameOf(s.from), s.to?.let(::nameOf)))
+            ?.copy(arriveBy = s.chain == null && s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY)
             ?: return false
         reminders?.cancel() // a countdown still showing for the old one goes, with its alarms
         viewModelScope.launch { store.setReminder(r) }
@@ -768,7 +771,7 @@ class MainViewModel(
         val s = _state.value
         val itin = s.selectedItinerary ?: return false
         if (itin.firstTransitLeg == null) return false
-        rides?.start(itin, s.settings.speakAlerts)
+        rides?.start(itin, s.settings.speakAlerts, arriveBy = s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY)
         val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, clock.instant(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
@@ -778,7 +781,7 @@ class MainViewModel(
     fun startReminderRide() = viewModelScope.launch {
         val r = store.reminder.first() ?: return@launch
         val itin = r.itinerary ?: return@launch
-        rides?.start(itin, store.settings.first().speakAlerts)
+        rides?.start(itin, store.settings.first().speakAlerts, arriveBy = r.arriveBy)
         historyStore?.add(TripRecord.from(itin, r.fromName.orEmpty(), r.toName.orEmpty(), AppMode.TRIP.name, clock.instant(), null))
         cancelReminder()
     }
@@ -1194,10 +1197,18 @@ class MainViewModel(
      * "Missed it? Plan from here" (Phase 11 E2), from a notification or the trip sheet: the Trip tab
      * from where the phone is now to [target], leaving now, with the user's settings and sort. At
      * most 1 `plan` ([MissedIt], tested); a second tap within 60 s costs 0.
-     * [fix] reads the phone's last fix (with its age and accuracy) and is read only here, on the tap.
+     * [fixes] is read only here, on the tap: the last fix, else one new one for at most 10 s.
      * The missed trip's ride alert and countdown stop; a reminder still ahead is left alone.
+     * A tap while one is still running is ignored (one request, not two).
      */
-    fun missedIt(target: MissedIt.Target, fix: () -> MissedIt.Fix?) = viewModelScope.launch {
+    fun missedIt(target: MissedIt.Target, fixes: MissedIt.Fixes): Job {
+        missedJob?.takeIf { it.isActive }?.let { return it }
+        return viewModelScope.launch { missedTap(target, fixes) }.also { missedJob = it }
+    }
+
+    private var missedJob: Job? = null
+
+    private suspend fun missedTap(target: MissedIt.Target, fixes: MissedIt.Fixes) {
         if (rides?.active?.value == true) rides.stop()
         if (MissedIt.endsReminder(store.reminder.first(), clock.instant())) cancelReminder()
         val places = store.places.first()
@@ -1239,16 +1250,12 @@ class MainViewModel(
         }
         val settings = store.settings.first()
         val out = try {
-            missed.tap(target, fix(), clock.instant(), settings, language) {
-                var f = fix()
-                while (f == null || !MissedIt.usable(f)) { delay(250); f = fix() }
-                f
-            }
+            missed.tap(target, fixes.last(), clock.instant(), settings, language) { fixes.fresh() }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             _state.update { it.copy(loading = false, error = UiError.NETWORK) }
-            return@launch
+            return
         }
         val ui = MissedItUi.of(out, target.at)
         when (out) {
@@ -1267,6 +1274,7 @@ class MainViewModel(
             }
             // "Where are you?": From empty and focused, nothing sent.
             MissedIt.Outcome.NeedStart -> {
+                // From is never null: the field opens empty (startEditing clears the text) and focused.
                 _state.update { it.copy(loading = false, missedIt = ui) }
                 startEditing(Field.FROM)
             }

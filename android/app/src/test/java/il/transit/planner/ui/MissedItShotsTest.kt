@@ -3,6 +3,7 @@ package il.transit.planner.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -22,6 +23,7 @@ import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripResult
 import il.transit.planner.ui.screens.MissedItUi
 import il.transit.planner.ui.screens.ResultsPanel
+import il.transit.planner.ui.screens.SearchCard
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,6 +49,15 @@ class MissedItShotsTest(private val v: Variant) {
     @Test fun arriveBy() = results("missed_it_arrive_by", base.copy(results = short, missedIt = MissedItUi(MissedItUi.Kind.PLANNED, to, at, wasArriveBy = true)))
 
     @Test fun alreadyThere() = results("missed_it_there", base.copy(missedIt = MissedItUi(MissedItUi.Kind.ALREADY_THERE, to)))
+
+    /** No fix: From is focused and empty under "Where are you?" (the results panel is hidden while typing). */
+    @Test fun needStart() = paparazzi.snapshot("missed_it_where") {
+        Frame {
+            Box(Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.TopCenter) {
+                SearchCard(base.copy(editing = Field.FROM, missedIt = MissedItUi(MissedItUi.Kind.NEED_START, to)), NoActions) {}
+            }
+        }
+    }
 
     private fun results(name: String, state: UiState) = paparazzi.snapshot(name) {
         Frame {

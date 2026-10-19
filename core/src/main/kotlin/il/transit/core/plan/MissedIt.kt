@@ -30,6 +30,15 @@ class MissedIt(private val planner: TripPlanner) {
      */
     data class Target(val name: String?, val at: LatLon, val arriveBy: Boolean = false)
 
+    /** Where the phone is, read on the tap only (Android: `MissedItAction`). Null without permission. */
+    interface Fixes {
+        /** The phone's last known fix ([pick] of the ones it has). */
+        fun last(): Fix?
+
+        /** Asks the phone for one new fix and waits for it; the tap gives up after [WAIT_MS]. */
+        suspend fun fresh(): Fix?
+    }
+
     sealed interface Outcome {
         /** Within [ARRIVED_M] of the destination: "You're already there", no request. */
         data object AlreadyThere : Outcome
@@ -69,8 +78,9 @@ class MissedIt(private val planner: TripPlanner) {
         }
         val from = again?.from ?: start.at
         val at = again?.at ?: now
-        val result = planner.plan(query(target, from, settings, language), at)
+        // Before the plan: a second tap while this one is still waiting repeats the same query (guard cache).
         last = Last(from, target.at, settings, at)
+        val result = planner.plan(query(target, from, settings, language), at)
         return Outcome.Planned(from, at, result, target.arriveBy)
     }
 
@@ -97,12 +107,21 @@ class MissedIt(private val planner: TripPlanner) {
         fun usable(f: Fix): Boolean = f.ageSec in 0..MAX_FIX_AGE_SEC && (f.accuracyM ?: Float.MAX_VALUE) <= MAX_ACCURACY_M
 
         /**
+         * The phone's freshest fix among [fixes] (GPS, network, fused, the map's): the newest usable
+         * one, else the newest. A fresher rough network fix must not hide a GPS fix of a minute ago.
+         */
+        fun pick(fixes: List<Fix>): Fix? {
+            val newest = fixes.sortedBy { it.ageSec }
+            return newest.firstOrNull(::usable) ?: newest.firstOrNull()
+        }
+
+        /**
          * Where [itinerary] ends: the destination a ride or a countdown carries into its notification.
          * MOTIS names the street end "END"; then [name] (the reminder's place name) or none (the app
          * names it from a saved place or the trip on screen).
          */
-        fun target(itinerary: Itinerary, name: String? = null): Target? = itinerary.legs.lastOrNull()?.to?.let {
-            Target(name ?: it.name.takeUnless { n -> n.isBlank() || n == "END" }, LatLon(it.lat, it.lon))
+        fun target(itinerary: Itinerary, name: String? = null, arriveBy: Boolean = false): Target? = itinerary.legs.lastOrNull()?.to?.let {
+            Target(name ?: it.name.takeUnless { n -> n.isBlank() || n == "END" }, LatLon(it.lat, it.lon), arriveBy)
         }
 
         /** Always a plain Trip, depart now: an arrive-by or car-tab trip becomes this. */

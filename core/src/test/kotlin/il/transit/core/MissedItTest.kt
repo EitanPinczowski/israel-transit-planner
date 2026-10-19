@@ -159,6 +159,46 @@ class MissedItTest {
         assertEquals(3, s.replay.calls.get())
     }
 
+    @Test fun `a tap with a clock behind the last one plans again, at its own time`() = runBlocking {
+        val s = setup()
+        s.missed.tap(toTelAviv, fresh, now, UserSettings(), "he")
+        val earlier = now.minusSeconds(10) // the clock was set back
+        val out = s.missed.tap(toTelAviv, fresh, earlier, UserSettings(), "he")
+        assertEquals(earlier, (out as Outcome.Planned).at)
+        assertEquals(2, s.replay.calls.get())
+    }
+
+    @Test fun `a second tap while the first still waits for its plan repeats the same query`() = runBlocking {
+        val api = FakeTransitApi().apply { onPlan = { recorded() } }
+        val missed = MissedIt(TripPlanner(api))
+        // The first tap's query is kept before its plan answers, so a tap 5 s later asks the same thing.
+        val first = missed.tap(toTelAviv, fresh, now, UserSettings(), "he") as Outcome.Planned
+        val second = missed.tap(toTelAviv, fresh, now.plusSeconds(5), UserSettings(), "he") as Outcome.Planned
+        assertEquals(first.at, second.at)
+        assertEquals(api.planRequests[0], api.planRequests[1])
+    }
+
+    @Test fun `the last fix - the newest precise one, else the newest`() {
+        val gpsMinuteAgo = Fix(bgu, ageSec = 60, accuracyM = 8f)
+        val roughNetworkNow = Fix(LatLon(31.27, 34.80), ageSec = 2, accuracyM = 900f)
+        val oldGps = Fix(bgu, ageSec = 600, accuracyM = 5f)
+        assertEquals(gpsMinuteAgo, MissedIt.pick(listOf(roughNetworkNow, oldGps, gpsMinuteAgo)))
+        assertEquals("none usable: the newest, so the tap waits for a new one", roughNetworkNow, MissedIt.pick(listOf(oldGps, roughNetworkNow)))
+        assertEquals(Fix(bgu, 10, 50f), MissedIt.pick(listOf(Fix(bgu, 90, 20f), Fix(bgu, 10, 50f))))
+        assertFalse("no accuracy is not precise", MissedIt.usable(MissedIt.pick(listOf(Fix(bgu, 1, null)))!!))
+        assertNull(MissedIt.pick(emptyList()))
+    }
+
+    @Test fun `an arrive-by reminder or ride carries it, older reminders read false`() {
+        val itin = recorded().itineraries.first()
+        assertTrue(MissedIt.target(itin, arriveBy = true)!!.arriveBy)
+        val r = Reminder(31.0, 34.0, 32.0, 34.7, UserSettings(), null, "5", "Stop", now.epochSecond, leaveAtEpoch = now.epochSecond, arriveBy = true)
+        assertTrue(il.transit.core.user.UserJson.decodeReminder(il.transit.core.user.UserJson.encodeReminder(r))!!.arriveBy)
+        val old = il.transit.core.user.UserJson.encodeReminder(r.copy(arriveBy = false)).replace(",\"arriveBy\":false", "")
+        assertFalse(old.contains("arriveBy"))
+        assertEquals(r.copy(arriveBy = false), il.transit.core.user.UserJson.decodeReminder(old))
+    }
+
     @Test fun `a ride's destination is where its itinerary ends`() {
         val plan = recorded()
         val itin = plan.itineraries.first()

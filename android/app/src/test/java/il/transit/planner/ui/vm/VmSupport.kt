@@ -196,8 +196,10 @@ abstract class VmTest {
         weather: GuardedWeather? = null,
         updates: UpdateChecker? = null,
         saved: SavedStateHandle? = null,
+        rides: il.transit.planner.Rides? = null,
+        reminders: il.transit.planner.Reminders? = null,
     ): MainViewModel =
-        track(MainViewModel(api, store, { "en" }, planCache = planCache, updates = updates, clock = clock, weather = weather, saved = saved))
+        track(MainViewModel(api, store, { "en" }, planCache = planCache, reminders = reminders, rides = rides, updates = updates, clock = clock, weather = weather, saved = saved))
             .also { it.locationProvider = { fix } }
 
     /** Every distinct [phase] the ViewModel's state goes through, from now on (the current one first). */

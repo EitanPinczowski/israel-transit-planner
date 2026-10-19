@@ -206,6 +206,12 @@ internal val barsAndCutout: WindowInsets
  * Wide windows: both in one side column at the start edge. Every edge respects the status
  * and navigation bars, the camera cutout (which is on a side in landscape) and the keyboard.
  */
+/** "You're already there" (Phase 11 E2) keeps the panel open only while the Trip tab still shows that destination. */
+private fun alreadyThere(s: UiState): Boolean {
+    val m = s.missedIt ?: return false
+    return m.kind == MissedItUi.Kind.ALREADY_THERE && s.mode == AppMode.TRIP && (s.to as? PlaceRef.Point)?.at == m.to
+}
+
 @Composable
 fun MainScreen(
     state: UiState,
@@ -224,7 +230,7 @@ fun MainScreen(
 
     val pin = state.places.pin
     val showPanel = state.editing == null &&
-        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null || state.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.ALREADY_THERE)
+        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null || alreadyThere(state))
     // A new search always shows its answer (and folds the search again); closing the results
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }

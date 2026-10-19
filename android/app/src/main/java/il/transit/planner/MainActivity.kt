@@ -320,13 +320,15 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Phase 11 E2: [MainViewModel.missedIt] with the phone's last fix, its age and accuracy, read on
-     * the tap only. No permission: no fix, so the Trip tab asks where the user is (nothing is asked).
+     * Phase 11 E2: [MainViewModel.missedIt] with the phone's location, read on the tap only: the last
+     * fix, else one new one. No permission: no fix, so the Trip tab asks where the user is (nothing is asked).
      */
-    private fun missedIt(target: MissedIt.Target) = vm.missedIt(target) {
-        val mapFix = map?.locationComponent?.takeIf { hasLocationPermission() && it.isLocationComponentActivated }?.lastKnownLocation
-        MissedItAction.lastFix(this, mapFix)
-    }
+    private fun missedIt(target: MissedIt.Target) = vm.missedIt(
+        target,
+        MissedItAction.fixes(this) {
+            map?.locationComponent?.takeIf { hasLocationPermission() && it.isLocationComponentActivated }?.lastKnownLocation
+        },
+    )
 
     /** The trip sheet's "Missed it?": the destination on screen, as the user searched it. */
     private fun missedItFromSheet() {

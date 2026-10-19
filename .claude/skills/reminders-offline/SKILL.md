@@ -93,7 +93,7 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   becomes depart-now and the banner says so). The notification actions are `remind/MissedItAction`:
   a `PendingIntent` to `MainActivity` with `missed_it` + the destination's lat/lon/name in the
   intent (a killed app still plans), on the same notification ids (no second notification).
-- `MainViewModel.missedIt(target, fix)` → core `plan/MissedIt` (tested, `MissedItTest`,
+- `MainViewModel.missedIt(target, fixes)` → core `plan/MissedIt` (tested, `MissedItTest`,
   `MissedItStateTest`): the last fix (map or platform GPS/network/fused, read on the tap only) if
   ≤ 2 min old and ≤ 100 m accuracy, else waits ≤ 10 s for one, else the Trip tab with From focused
   ("Where are you?"), 0 requests. Within 150 m of the destination: "You're already there", 0.
@@ -102,7 +102,13 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   within 60 s from about the same spot repeats the same query: the guard cache answers, 0.
 - What stops: the ride (alerts and its notification), and the reminder that is counting down or
   past its leave time (`MissedIt.endsReminder` → `cancelReminder`, which removes the countdown).
-  A reminder still ahead (a later trip or day) is untouched. Never automatic, never in the background.
+  A reminder still ahead (a later trip or day) is untouched; so from "trip changed", a reminder for
+  that trip that is not counting down yet survives the tap (the later-day rule). Never automatic,
+  never in the background. One tap at a time (`missedJob`): a tap while one runs is ignored. The
+  fix: `MissedIt.Fixes` (`MissedItAction.fixes`): `MissedIt.pick` of the last known fixes, else one
+  new one (`getCurrentLocation` 30+, `requestSingleUpdate` below), cancelled after 10 s. Arrive-by
+  travels in `Reminder.arriveBy` and the ride intent. Any other search, From/To, tab, swap or time
+  change clears the banner. Each destination's PendingIntent differs by its data (`missedit:lat,lon`).
   Journey `j16_missed_it_from_ride_notification`.
 
 # "Get off at the next stop" (`core/ride/RideTracker.kt`, `android/.../ride/RideService.kt`)
