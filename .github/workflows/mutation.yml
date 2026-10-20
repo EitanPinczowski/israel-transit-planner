@@ -5,6 +5,8 @@ name: Mutation
 # workflow_dispatch: the same run; `write_baseline` writes the first baseline instead (committed to the ref it ran on).
 # The per-PR gate on changed classes is the `mutation` job in ci.yml.
 on:
+  push:   # TEMPORARY (T5 first run, removed again): a workflow not on main cannot be dispatched
+    branches: [claude/p11-t5-first-run]
   schedule:
     - cron: "17 21 * * 0"   # Sunday night UTC = Monday 00:17 Israel in summer time
   workflow_dispatch:
@@ -41,7 +43,7 @@ jobs:
           retention-days: 30
       - name: Write or raise the baseline
         run: |
-          if [ "${{ inputs.write_baseline }}" = "true" ]; then
+          if [ "${{ inputs.write_baseline }}" = "true" ] || [ "${{ github.event_name }}" = "push" ]; then
             python3 tools/mutation_score.py write core/build/reports/pitest/mutations.xml
           else
             python3 tools/mutation_score.py raise core/build/reports/pitest/mutations.xml

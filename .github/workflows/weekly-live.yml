@@ -5,6 +5,8 @@ name: Weekly live
 # Open-Meteo 1, Photon 1 (skill transitous-api). A failure comments on its own issue.
 # GitHub's cron is UTC: 00:47 is Tuesday 03:47 Israel in summer time, 02:47 in winter.
 on:
+  push:   # TEMPORARY (T5 first run, removed again): a workflow not on main cannot be dispatched
+    branches: [claude/p11-t5-first-run]
   schedule:
     - cron: "47 0 * * 2"
   workflow_dispatch:
