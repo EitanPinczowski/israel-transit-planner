@@ -194,6 +194,31 @@ is missing from the test's "constant" column or from this table. **A package tha
 | Stop code · pin name (twice at a point) | 0 · 1 | – |
 | Rain on the walks (Open-Meteo, not Transitous): per 0.1° cell per hour | 1 | `GuardedWeather.cell` |
 
+### Weekly CI traffic and the contract check (Phase 11 T5)
+`.github/workflows/weekly-live.yml`, Tuesdays 00:47 UTC (03:47 Israel in summer time), never on a PR:
+
+| job | requests | what |
+|---|---|---|
+| `golden` | ≤ **60** Transitous, ≥ 1 s apart | the ~28 golden trips through the app's own planners (skill `golden-trips`); the runner counts below the cache and stops at the cap |
+| `contract` | ≤ **5** Transitous + 1 Open-Meteo + 1 Photon | `tools/contract_check.py`: `plan` Be'er Sheva → Tel Aviv next Tuesday 08:00, `trip` for its first transit leg, `stoptimes` (two weeks on), `geocode` "דיזנגוף 50 תל אביב", `reverse-geocode`; one Open-Meteo forecast, one Photon search; the script stops at the cap |
+
+**Transitous traffic from CI: ≤ 65 requests a week**, about one person's busy day of planning (the owner
+mentions it in the Transitous Matrix thread, owner decision 9). Both jobs send `MotisClient.USER_AGENT`.
+
+The contract check compares the **shape** (every JSON path the app reads: a `val` of `Models.kt`,
+`OpenMeteo.kt` or `Photon.kt`, with its JSON types, and whether it was in every recorded object) of each live
+answer with the shapes in `core/src/test/resources/contract/*.shape.json`. Drift = a path that was always there
+is gone, or has a type the recordings never had. It also reports a **timetable horizon under 14 days** (the
+`stoptimes` call two weeks ahead is empty), any new **`realTime: true`** (MOT has none on Transitous; busofash
+does), and the two `Leg` fields Phase 11 E3 reads, `wheelchairAccessible` and `tripShortName` (missing from every
+transit leg, or not a string; an empty `tripShortName` on a train is expected). Drift comments on the open
+"contract-drift" issue (created on first drift) and fails the job; it never blocks a PR.
+- **Shapes are generated, never edited by hand:** `python tools/contract_check.py --update-shapes` reads the
+  fixtures. CI runs `--check-shapes` (offline) so a re-recorded fixture without regenerated shapes fails.
+- **To accept a change in the service:** re-record the fixture (`tools/record_fixture.py`), run
+  `--update-shapes`, update the parser if the app reads the field differently, commit both.
+- `python tools/contract_check.py --out report.md` runs it live from your machine (7 requests).
+
 ### What the guards do when the network misbehaves (pinned by `NetworkFaultTest`, Phase 10 D4)
 | fault | `GuardedTransitApi` / `GuardedGeocoder` | against the budget |
 |---|---|---|

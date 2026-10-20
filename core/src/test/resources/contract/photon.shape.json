@@ -1,0 +1,128 @@
+{
+ "$": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.features": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.features[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.features[].geometry": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.features[].geometry.coordinates": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.features[].geometry.coordinates[]": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.features[].geometry.type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.features[].properties.city": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.country": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.district": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.housenumber": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.name": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.osm_id": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.features[].properties.osm_type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.osm_value": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.state": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.street": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].properties.type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.features[].type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ }
+}

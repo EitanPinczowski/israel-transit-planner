@@ -312,3 +312,21 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   Keep it city-sized: OpenFreeMap is free and donation-run.
 - Stops are cached in memory only (GuardedTransitApi, 1 day). A disk cache is an open
   roadmap item, not a bug.
+
+## GPS replay of `RideTracker` (Phase 11 T5)
+`ride/RideReplayTest` feeds a GPX track fix by fix to `RideTracker` against the itinerary it rides, and asserts
+the "get off at the next stop" alert fires **once per transit leg**, in order, naming the right stop, **never
+before boarding or after the vehicle arrived, never more than 15 min before the planned end**, and only within
+400 m of the alighting stop or 120 m of the stop before it (plus the track's noise).
+- **Tracks:** `core/src/test/resources/tracks/<name>.gpx` + `<name>.json` (`fixture`, and `itinerary` for a plan
+  fixture). Synthetic ones come from `python tools/gpx_synth.py` (seeded; `--check` verifies the committed files):
+  clean train, 60 s tunnel mid-ride and just before the stop, urban-canyon jitter, stop-and-go, two 300 m jumps, a
+  skipped stop (30 s fixes), a loop line, a three-bus plan. To add one, add a `SCENARIOS` entry and a test line.
+- **Known gaps (reproduced by tracks that are generated but not asserted, see the T5 PR body):** `bus_loop_line`
+  (the vehicle passes the alighting stop at 65 % of the ride: the alert fires ~31 min early, at the first pass)
+  and `plan_three_buses` (a one-minute first bus leg: the alert fires while the rider is still walking to the
+  stop, before boarding). Add the test lines to `RideReplayTest` with the fix in `RideTracker`.
+- **Real rides (owner decision 23):** record a bus, a train and a light-rail ride with a free GPX logger (e.g.
+  OsmAnd, GPSLogger); trim 300 m off both ends (home, work); record the same trip's plan or `trip` with
+  `tools/record_fixture.py` (the leg times must match the ride); commit `tracks/real/<name>.gpx` and
+  `tracks/real/<name>.json` (`{"fixture": "...", "itinerary": 0}`). The test picks it up by itself; no code change.

@@ -31,6 +31,9 @@ ktlintPlugin = "12.1.2"
 # Core test foundation (Phase 11 T1): line-coverage gate on core; property tests (standalone, from JUnit 4).
 kover = "0.9.1"
 kotest = "5.9.1"
+# Mutation testing (Phase 11 T5, owner decision 20): PIT (Apache-2.0, JUnit 4) through its Gradle plugin; tools/mutation_score.py gates per class.
+pitestPlugin = "1.15.0"
+pitestEngine = "1.17.4"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -67,6 +70,7 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+pitest = { id = "info.solidsoft.pitest", version.ref = "pitestPlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

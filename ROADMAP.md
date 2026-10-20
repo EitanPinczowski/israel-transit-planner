@@ -326,10 +326,10 @@ package. Tick only your own package's lines.
 - [x] Accessible-bus badge from `wheelchairAccessible` (buses only, after the ≤ 10-plan sample)
 
 ### T5 — Routing correctness (`claude/p11-routing-tests`, Sonnet, ≤ 65 Transitous requests a week)
-- [ ] ~25 golden trips (every special feature, north, south, Jerusalem, night, Friday/Shabbat, holiday) with the invariants, run weekly live
-- [ ] Weekly contract check against Transitous, Open-Meteo and Photon; an issue on drift
-- [ ] GPS-replay tests of `RideTracker` (synthetic tracks now, the owner's real ones later)
-- [ ] Mutation testing: weekly report + a ratcheting gate on changed core classes
+- [x] ~25 golden trips (every special feature, north, south, Jerusalem, night, Friday/Shabbat, holiday) with the invariants, run weekly live
+- [x] Weekly contract check against Transitous, Open-Meteo and Photon; an issue on drift
+- [x] GPS-replay tests of `RideTracker` (synthetic tracks now, the owner's real ones later)
+- [x] Mutation testing: weekly report + a ratcheting gate on changed core classes
 
 ### R1 Restore car tabs + errands (`claude/p11-restore-tabs`, 0 requests; owner 2026-10-20)
 - [x] After process death the four car tabs and errands come back with their options, the chosen one and its sheet, at 0 requests; T7's checks blocking

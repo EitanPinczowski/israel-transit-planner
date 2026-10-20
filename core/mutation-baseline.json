@@ -1,0 +1,382 @@
+{
+ "il.transit.core.calendar.Holiday": {
+  "mutations": 1,
+  "score": 100.0
+ },
+ "il.transit.core.calendar.Holidays": {
+  "mutations": 23,
+  "score": 100.0
+ },
+ "il.transit.core.fare.FareEstimate": {
+  "mutations": 6,
+  "score": 100.0
+ },
+ "il.transit.core.fare.FareEstimator": {
+  "mutations": 21,
+  "score": 100.0
+ },
+ "il.transit.core.fare.FareProfile": {
+  "mutations": 11,
+  "score": 100.0
+ },
+ "il.transit.core.fare.FareTable": {
+  "mutations": 13,
+  "score": 92.3
+ },
+ "il.transit.core.fare.PassAdvice": {
+  "mutations": 7,
+  "score": 100.0
+ },
+ "il.transit.core.fare.PassAdvisor": {
+  "mutations": 28,
+  "score": 67.9
+ },
+ "il.transit.core.features.BetterStartOption": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.features.BetterStartPlanner": {
+  "mutations": 47,
+  "score": 61.7
+ },
+ "il.transit.core.features.BetterStartQuery": {
+  "mutations": 4,
+  "score": 75.0
+ },
+ "il.transit.core.features.BetterStartResult": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.features.CommonKt": {
+  "mutations": 33,
+  "score": 84.8
+ },
+ "il.transit.core.features.DropOffKt": {
+  "mutations": 4,
+  "score": 75.0
+ },
+ "il.transit.core.features.DropOffOption": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.features.DropOffPlanner": {
+  "mutations": 145,
+  "score": 63.4
+ },
+ "il.transit.core.features.DropOffQuery": {
+  "mutations": 7,
+  "score": 100.0
+ },
+ "il.transit.core.features.DropOffResult": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.features.NavLinks": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.features.Option": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.features.ParkRideKt": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.features.ParkRideOption": {
+  "mutations": 3,
+  "score": 66.7
+ },
+ "il.transit.core.features.ParkRidePlanner": {
+  "mutations": 63,
+  "score": 61.9
+ },
+ "il.transit.core.features.ParkRideQuery": {
+  "mutations": 5,
+  "score": 60.0
+ },
+ "il.transit.core.features.ParkRideResult": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.features.PickUpOption": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.features.PickUpPlanner": {
+  "mutations": 28,
+  "score": 64.3
+ },
+ "il.transit.core.features.PickUpQuery": {
+  "mutations": 4,
+  "score": 100.0
+ },
+ "il.transit.core.features.PickUpResult": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.features.TrafficProfile": {
+  "mutations": 18,
+  "score": 77.8
+ },
+ "il.transit.core.plan.TripPages": {
+  "mutations": 84,
+  "score": 82.1
+ },
+ "il.transit.core.present.AccessibleBadgeKt": {
+  "mutations": 2,
+  "score": 100.0
+ },
+ "il.transit.core.present.AlertText": {
+  "mutations": 3,
+  "score": 33.3
+ },
+ "il.transit.core.present.BetterStartRow": {
+  "mutations": 6,
+  "score": 83.3
+ },
+ "il.transit.core.present.BigStopText": {
+  "mutations": 8,
+  "score": 87.5
+ },
+ "il.transit.core.present.BigStopTextKt": {
+  "mutations": 8,
+  "score": 100.0
+ },
+ "il.transit.core.present.Boarding": {
+  "mutations": 6,
+  "score": 66.7
+ },
+ "il.transit.core.present.CachedDeparture": {
+  "mutations": 17,
+  "score": 64.7
+ },
+ "il.transit.core.present.DayNotice": {
+  "mutations": 27,
+  "score": 85.2
+ },
+ "il.transit.core.present.DayPick": {
+  "mutations": 22,
+  "score": 100.0
+ },
+ "il.transit.core.present.DayTimetable": {
+  "mutations": 20,
+  "score": 90.0
+ },
+ "il.transit.core.present.DepartureCache": {
+  "mutations": 13,
+  "score": 69.2
+ },
+ "il.transit.core.present.DepartureCacheJson": {
+  "mutations": 15,
+  "score": 73.3
+ },
+ "il.transit.core.present.DepartureRow": {
+  "mutations": 9,
+  "score": 77.8
+ },
+ "il.transit.core.present.DropOffRow": {
+  "mutations": 7,
+  "score": 71.4
+ },
+ "il.transit.core.present.FewerStops": {
+  "mutations": 2,
+  "score": 0.0
+ },
+ "il.transit.core.present.FormatKt": {
+  "mutations": 175,
+  "score": 91.4
+ },
+ "il.transit.core.present.Geohash": {
+  "mutations": 21,
+  "score": 95.2
+ },
+ "il.transit.core.present.ItinerarySummary": {
+  "mutations": 12,
+  "score": 91.7
+ },
+ "il.transit.core.present.LastRideNote": {
+  "mutations": 7,
+  "score": 71.4
+ },
+ "il.transit.core.present.LegChip": {
+  "mutations": 9,
+  "score": 66.7
+ },
+ "il.transit.core.present.LegPalette": {
+  "mutations": 55,
+  "score": 96.4
+ },
+ "il.transit.core.present.ParkRideRow": {
+  "mutations": 8,
+  "score": 87.5
+ },
+ "il.transit.core.present.ParkRideRowKt": {
+  "mutations": 9,
+  "score": 44.4
+ },
+ "il.transit.core.present.PickUpRow": {
+  "mutations": 7,
+  "score": 71.4
+ },
+ "il.transit.core.present.RideDetails": {
+  "mutations": 4,
+  "score": 100.0
+ },
+ "il.transit.core.present.RideDetailsKt": {
+  "mutations": 6,
+  "score": 100.0
+ },
+ "il.transit.core.present.RideLeg": {
+  "mutations": 7,
+  "score": 100.0
+ },
+ "il.transit.core.present.RideTotal": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.present.SavedBoard": {
+  "mutations": 10,
+  "score": 80.0
+ },
+ "il.transit.core.present.SavedBoardsJson": {
+  "mutations": 15,
+  "score": 80.0
+ },
+ "il.transit.core.present.SharedPlace": {
+  "mutations": 149,
+  "score": 83.9
+ },
+ "il.transit.core.present.StopListItem": {
+  "mutations": 8,
+  "score": 75.0
+ },
+ "il.transit.core.present.StopPlatform": {
+  "mutations": 8,
+  "score": 62.5
+ },
+ "il.transit.core.present.StopPlatformKt": {
+  "mutations": 24,
+  "score": 95.8
+ },
+ "il.transit.core.present.StopTimes": {
+  "mutations": 4,
+  "score": 100.0
+ },
+ "il.transit.core.present.TileText": {
+  "mutations": 6,
+  "score": 100.0
+ },
+ "il.transit.core.present.TimetableLoader": {
+  "mutations": 25,
+  "score": 64.0
+ },
+ "il.transit.core.present.TimetablePage": {
+  "mutations": 8,
+  "score": 87.5
+ },
+ "il.transit.core.present.TrainLabel": {
+  "mutations": 3,
+  "score": 100.0
+ },
+ "il.transit.core.present.TrainLabelKt": {
+  "mutations": 44,
+  "score": 95.5
+ },
+ "il.transit.core.present.Transfer": {
+  "mutations": 10,
+  "score": 100.0
+ },
+ "il.transit.core.present.TransfersKt": {
+  "mutations": 24,
+  "score": 100.0
+ },
+ "il.transit.core.present.TripDetails": {
+  "mutations": 12,
+  "score": 75.0
+ },
+ "il.transit.core.present.TripDetailsSession": {
+  "mutations": 40,
+  "score": 62.5
+ },
+ "il.transit.core.present.TripStopRow": {
+  "mutations": 13,
+  "score": 84.6
+ },
+ "il.transit.core.present.TripStopsKt": {
+  "mutations": 172,
+  "score": 74.4
+ },
+ "il.transit.core.present.VehicleMark": {
+  "mutations": 4,
+  "score": 100.0
+ },
+ "il.transit.core.present.WalkDirectionsKt": {
+  "mutations": 75,
+  "score": 69.3
+ },
+ "il.transit.core.present.WalkStep": {
+  "mutations": 2,
+  "score": 0.0
+ },
+ "il.transit.core.remind.AlarmKind": {
+  "mutations": 6,
+  "score": 100.0
+ },
+ "il.transit.core.remind.Countdown": {
+  "mutations": 20,
+  "score": 100.0
+ },
+ "il.transit.core.remind.LiveProgress": {
+  "mutations": 49,
+  "score": 95.9
+ },
+ "il.transit.core.remind.Maker": {
+  "mutations": 7,
+  "score": 85.7
+ },
+ "il.transit.core.remind.PassExpiry": {
+  "mutations": 22,
+  "score": 100.0
+ },
+ "il.transit.core.remind.PhoneState": {
+  "mutations": 20,
+  "score": 100.0
+ },
+ "il.transit.core.remind.Rearm": {
+  "mutations": 7,
+  "score": 100.0
+ },
+ "il.transit.core.remind.Reminder": {
+  "mutations": 63,
+  "score": 58.7
+ },
+ "il.transit.core.remind.ReminderHealth": {
+  "mutations": 52,
+  "score": 92.3
+ },
+ "il.transit.core.remind.ReminderLogic": {
+  "mutations": 18,
+  "score": 77.8
+ },
+ "il.transit.core.remind.ReminderProblem": {
+  "mutations": 1,
+  "score": 100.0
+ },
+ "il.transit.core.remind.ReminderUpdate": {
+  "mutations": 1,
+  "score": 100.0
+ },
+ "il.transit.core.ride.RideEvent": {
+  "mutations": 4,
+  "score": 50.0
+ },
+ "il.transit.core.ride.RideProgress": {
+  "mutations": 4,
+  "score": 100.0
+ },
+ "il.transit.core.ride.RideTracker": {
+  "mutations": 70,
+  "score": 77.1
+ }
+}

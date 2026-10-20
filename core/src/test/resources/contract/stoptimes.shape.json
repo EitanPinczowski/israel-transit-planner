@@ -1,0 +1,344 @@
+{
+ "$": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.nextPageCursor": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.place.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place.importance": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.place.lat": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.place.lon": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.place.modes": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.place.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place.name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place.stopCode": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.place.stopId": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.previousPageCursor": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.stopTimes[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.stopTimes[].agencyName": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].cancelled": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.stopTimes[].displayName": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].headsign": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].mode": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.stopTimes[].place.arrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.cancelled": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.stopTimes[].place.departure": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.importance": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].place.lat": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].place.lon": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].place.modes": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.stopTimes[].place.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.scheduledArrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.scheduledDeparture": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.stopCode": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].place.stopId": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].realTime": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.stopTimes[].routeColor": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].routeLongName": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].routeShortName": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripCancelled": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.stopTimes[].tripId": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripShortName": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.stopTimes[].tripTo.cancelled": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.stopTimes[].tripTo.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo.importance": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].tripTo.lat": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].tripTo.lon": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.stopTimes[].tripTo.modes": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.stopTimes[].tripTo.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo.name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo.stopCode": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].tripTo.stopId": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.stopTimes[].wheelchairAccessible": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ }
+}
