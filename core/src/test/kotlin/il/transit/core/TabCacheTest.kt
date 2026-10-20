@@ -47,12 +47,12 @@ class TabCacheTest {
     private val bgu = LatLon(31.262, 34.801)
     private val soroka = LatLon(31.2589, 34.7992)
 
-    /** Every kind, planned from the recordings as the app plans it. */
+    /** Every kind, planned from the recordings as the app plans it (at limits where the replay offers options). */
     private val all: List<TabResult> = runBlocking {
         listOf(
-            TabResult.BetterStart(BetterStartPlanner(replay).plan(BetterStartQuery(meitar, telAviv, now))),
+            TabResult.BetterStart(BetterStartPlanner(replay).plan(BetterStartQuery(meitar, telAviv, now, maxDriveMin = 20))),
             TabResult.DropOff(DropOffPlanner(replay).plan(DropOffQuery(meitar, telAviv, LatLon(32.08, 34.81), now))),
-            TabResult.PickUp(PickUpPlanner(replay).plan(PickUpQuery(telAviv, meitar, now))),
+            TabResult.PickUp(PickUpPlanner(replay).plan(PickUpQuery(telAviv, meitar, now, maxDriveMin = 30))),
             TabResult.ParkRide(ParkRidePlanner(replay).plan(ParkRideQuery(meitar, telAviv, now)), meitar),
             TabResult.Errands(ChainPlanner(replay).plan(bgu, listOf(ChainStop(soroka, "Soroka", 15)), telAviv, now, UserSettings(), "en")),
         )
@@ -102,6 +102,27 @@ class TabCacheTest {
         assertEquals("\"2026-10-05T04:55:00Z\"", json.encodeToString(il.transit.core.plan.InstantIso, now))
     }
 
+    /**
+     * The same through a decoder that reads fields in order (kotlinx's sequential path, as a binary
+     * format would): the generated code's other branch, so a future format change cannot break it unseen.
+     */
+    @Test fun `every result also round-trips field by field`() {
+        fun <T> seq(ser: kotlinx.serialization.KSerializer<T>, v: T) {
+            val out = ArrayList<Any?>()
+            ser.serialize(ListEncoder(out), v)
+            assertEquals(v, ser.deserialize(ListDecoder(ArrayDeque(out))))
+        }
+        all.forEach { r ->
+            when (r) {
+                is TabResult.BetterStart -> seq(BetterStartResult.serializer(), r.result)
+                is TabResult.DropOff -> seq(DropOffResult.serializer(), r.result)
+                is TabResult.PickUp -> seq(PickUpResult.serializer(), r.result)
+                is TabResult.ParkRide -> seq(ParkRideResult.serializer(), r.result)
+                is TabResult.Errands -> seq(ChainResult.serializer(), r.chain)
+            }
+        }
+    }
+
     @Test fun `unreadable data is no entry`() {
         assertTrue(TabCacheJson.decode("{not json").isEmpty())
         assertTrue(TabCacheJson.decode(null).isEmpty())
@@ -134,4 +155,48 @@ class TabCacheTest {
     @Test fun `long after every boarding nothing is left to show`() {
         all.forEach { r -> assertNull("$r", r.stillAhead(now.plusSeconds(3 * 86_400))) }
     }
+}
+
+/** Writes every value in order into a list (kotlinx docs' "list encoder"); null marks as false/true. */
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+private class ListEncoder(private val out: MutableList<Any?>) : kotlinx.serialization.encoding.AbstractEncoder() {
+    override val serializersModule = kotlinx.serialization.modules.EmptySerializersModule()
+
+    override fun encodeValue(value: Any) {
+        out += value
+    }
+
+    override fun encodeNull() {
+        out += false
+    }
+
+    override fun encodeNotNullMark() {
+        out += true
+    }
+
+    override fun beginCollection(descriptor: kotlinx.serialization.descriptors.SerialDescriptor, collectionSize: Int): kotlinx.serialization.encoding.CompositeEncoder {
+        encodeInt(collectionSize)
+        return this
+    }
+}
+
+/** Reads [ListEncoder]'s list back, declaring every structure sequential. */
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+private class ListDecoder(private val input: ArrayDeque<Any?>, private var count: Int = 0) : kotlinx.serialization.encoding.AbstractDecoder() {
+    private var index = 0
+    override val serializersModule = kotlinx.serialization.modules.EmptySerializersModule()
+
+    override fun decodeValue(): Any = input.removeFirst()!!
+
+    override fun decodeElementIndex(descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int =
+        if (index == count) kotlinx.serialization.encoding.CompositeDecoder.DECODE_DONE else index++
+
+    override fun beginStructure(descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlinx.serialization.encoding.CompositeDecoder =
+        ListDecoder(input, descriptor.elementsCount)
+
+    override fun decodeSequentially(): Boolean = true
+
+    override fun decodeCollectionSize(descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int = decodeInt().also { count = it }
+
+    override fun decodeNotNullMark(): Boolean = decodeValue() as Boolean
 }
