@@ -84,7 +84,10 @@ open class TransitApp : Application() {
     /** Rain on the walks (Phase 10 D9): Open-Meteo, told only the rounded start. */
     open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock) }
     val store: UserStore by lazy { UserStore(this) }
-    val planCache: PlanCacheStore by lazy { PlanCacheStore(File(filesDir, "trip_cache.json"), clock) }
+    val planCache: PlanCacheStore<il.transit.core.plan.TripResult> by lazy { PlanCacheStore.trips(File(filesDir, "trip_cache.json"), clock) }
+
+    /** What the car tabs and errands showed, for a restore after process death (Phase 11 R1). */
+    val tabCache: PlanCacheStore<il.transit.core.plan.TabResult> by lazy { PlanCacheStore.tabs(File(filesDir, "tab_cache.json"), clock) }
     val departureCache: il.transit.planner.data.DepartureCacheStore by lazy {
         il.transit.planner.data.DepartureCacheStore(File(filesDir, "departures_cache.json"))
     }

@@ -46,6 +46,7 @@ data class DropOffQuery(
 
 enum class DropOffKind { STOP_ON_THE_WAY, RIDE_TO_END, TRANSIT_FROM_START }
 
+@kotlinx.serialization.Serializable
 data class DropOffOption(
     val kind: DropOffKind,
     /** The stop to get out at (null for [DropOffKind.TRANSIT_FROM_START]). */
@@ -58,6 +59,7 @@ data class DropOffOption(
     val carPath: List<LatLon> = emptyList(),
 )
 
+@kotlinx.serialization.Serializable
 data class DropOffResult(
     val directDriveSec: Int?,
     val options: List<Option<DropOffOption>>,

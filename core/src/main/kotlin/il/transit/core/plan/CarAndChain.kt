@@ -46,12 +46,14 @@ class CarCompare(private val api: TransitApi) {
 }
 
 /** A stop on an errand chain: where, and how long to stay there before moving on. */
+@kotlinx.serialization.Serializable
 data class ChainStop(val at: LatLon, val name: String?, val stayMin: Int = 0)
 
 /**
  * The chain's legs in order. [failedAt] is the index of the first leg with no way to make it
  * (the rest are not planned); null when every leg was found.
  */
+@kotlinx.serialization.Serializable
 data class ChainResult(val legs: List<Itinerary>, val failedAt: Int?) {
     val leaveAt: Instant? get() = legs.firstOrNull()?.start
     val arriveAt: Instant? get() = legs.lastOrNull()?.end?.takeIf { failedAt == null }

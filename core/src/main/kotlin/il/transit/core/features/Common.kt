@@ -1,3 +1,5 @@
+@file:kotlinx.serialization.UseSerializers(il.transit.core.plan.InstantIso::class)
+
 package il.transit.core.features
 
 import il.transit.core.api.Itinerary
@@ -35,6 +37,7 @@ data class TrafficProfile(
  * the driver (a drop-off detour, a drive to the station, a pick-up round trip);
  * [arrival] is when the passenger reaches their destination.
  */
+@kotlinx.serialization.Serializable
 data class Option<T>(
     val payload: T,
     val driverCostSec: Int,
