@@ -8,7 +8,8 @@ decisions already recorded.
 - **Released:** **v0.9.1 (2026-10-20 23:08)**: E1, E7, E2, E3, R1. Saved-data sample 0.9.1 merged (#99).
   Next: **v0.9.2 = R2 (ride-alert fix); ask the owner first** (asked 2026-10-21 00:22, no answer yet).
 - **Boss:** handing over from `session_011tJH15m5mUzgr2G4vFCaKt` (context 422k) on 2026-10-21.
-- **Phase 11:** Waves 1–4 merged: … T5 #93 ($4.3), E3 #91 ($16), plus owner-approved fix packages R1 #95
+- **Phase 11:** Waves 1–4 merged: T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9), T3 #84 ($11), E7 #82 (~$47),
+  E2 #88 ($26.5), T7 #89 ($4.6), T5 #93 ($4.3), E3 #91 ($16), plus owner-approved fix packages R1 #95
   (restore car tabs + errands after process death, ~$14 + $0.6 review + fresh fix round) and the 0.9.1 sample #99 ($2).
   - **In flight: R2, PR #98** (`session_01N31TZYDzer5aTUXHQkq8Pd`, Opus, ~$8, ctx ~294k): the RideTracker get-off-alert
     fix. The review found the first version's time gate broke the early-bus case (blocking); the fix round adds
