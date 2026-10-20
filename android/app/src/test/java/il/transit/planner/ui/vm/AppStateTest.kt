@@ -460,12 +460,12 @@ class AppStateTest : VmTest() {
         assertNull(read()!!.sheet)
     }
 
-    private fun savedCopy(): Triple<PlanCacheStore, Itinerary, String> {
+    private fun savedCopy(): Triple<PlanCacheStore<il.transit.core.plan.TripResult>, Itinerary, String> {
         val planned = runBlocking {
             TripPlanner(replay()).plan(TripQuery(Endpoint.Coord(BGU), Endpoint.Coord(SAVIDOR), TimeMode.NOW), NOW)
         }
         val key = PlanCache.key("TRIP-NOW", BGU, SAVIDOR)
-        val cache = PlanCacheStore(tmp.newFile("trip_cache.json").also { it.delete() }, CLOCK)
+        val cache = PlanCacheStore.trips(tmp.newFile("trip_cache.json").also { it.delete() }, CLOCK)
         runBlocking { cache.put(key, planned) }
         return Triple(cache, sortOptions(planned, UserSettings().tripSort, false)[1], key)
     }

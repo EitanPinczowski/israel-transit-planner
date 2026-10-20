@@ -8,6 +8,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+@kotlinx.serialization.Serializable
 data class LatLon(val lat: Double, val lon: Double) {
     /** MOTIS `fromPlace`/`toPlace`/`place` format. */
     fun comma(): String = "$lat,$lon"

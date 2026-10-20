@@ -115,7 +115,7 @@ instrument "$S#mid_flow_rotation,$S#mid_flow_theme,$S#mid_flow_language" mid-flo
 adb shell cmd uimode night no >/dev/null 2>&1 || true
 say | sed 's/^/  /' > "$OUT/system-journey.txt"
 
-# --- Process death in every car tab ----------------------------------------------------------------
+# --- Process death in every car tab and errands (blocking since Phase 11 R1) ----------------------
 process_death() { # $1 = tab
   local tab=$1 ready restored pid_before pid_after key_before key_after
   echo "::group::process death: $tab"
@@ -154,14 +154,14 @@ process_death() { # $1 = tab
   elif [[ $restored != "restored saved=true "* ]]; then
     fail "process death $tab: the Activity did not come back from its saved state: '$restored'"
   else
-    key_before=${ready#ready }; key_before=${key_before%% | *}
-    key_after=${restored#restored saved=true }; key_after=${key_after%% | *}
+    # Phase 11 R1: the whole line is a promise (tab, places, errand stops, options, the selected one,
+    # its trip sheet, the car path), and the restore asks nothing (the reopened sheet's `trip` aside).
+    key_before=${ready#ready }
+    key_after=${restored#restored saved=true }; asked=${key_after##* requests=}; key_after=${key_after% requests=*}
     if [[ $key_before != "$key_after" ]]; then
       fail "process death $tab: '$key_before' came back as '$key_after'"
     fi
-    # Reported, not enforced: what SavedUi does not keep.
-    info_before=${ready#* | }; info_after=${restored#* | }; info_after=${info_after% requests=*}
-    if [[ $info_before != "$info_after" ]]; then note "process death $tab: before '$info_before', after '$info_after'"; fi
+    if [[ $asked != 0 ]]; then fail "process death $tab: the restore sent $asked request(s), expected 0"; fi
   fi
   adb shell am force-stop "$PKG"
   echo "::endgroup::"

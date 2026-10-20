@@ -204,7 +204,17 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   `data/PlanCacheStore` in `filesDir/trip_cache.json`. Key = tab + time mode + places rounded
   to 3 decimals (~110 m), so "my location" a few steps away still hits. On a NETWORK error
   the Trip tab shows the cached entry with an "Offline — saved at HH:MM" banner. Car tabs
-  are not cached: their whole point is live combinations.
+  are not cached for offline: their whole point is live combinations.
+- **Back after process death** (Phase 10 D11 for Trip, Phase 11 R1 for the car tabs and errands):
+  `ui/SavedUi` keeps only keys and ids (tab, places, errand stops, the four sliders, the option's
+  times, the open sheet) plus `cacheKey`; the options come back from the cache entry it names, at
+  0 requests. Trip: the Trip cache. Car tabs and errands: a second `PlanCacheStore`
+  (`TransitApp.tabCache`, `filesDir/tab_cache.json`, 6 entries, core `plan/TabCache.kt`:
+  `TabResult` + `TabCacheJson`), written on each answer and **read only by the restore** (never
+  an offline view). Keys: `<TAB>-<timeMode>-<slider>` / `ERRANDS-<timeMode>` + every place
+  (`MainViewModel.tabKey`); `SavedUi.keyPrefix` keeps a key only while its tab shows its answer.
+  Reading drops what left > 60 s ago (`TabResult.stillAhead`, E7's grace; a chain goes whole);
+  nothing left or no entry = the tab with its inputs and no results.
   Every offline view drops options whose vehicle already left (`TripResult.stillAhead`,
   applied in `PlanCacheStore.get`); an entry with nothing left shows the network error.
 - **Home** (`UserSettings.homePlace`, the saved place's name; `core/user/Home.kt`): "Set as

@@ -1,3 +1,5 @@
+@file:kotlinx.serialization.UseSerializers(il.transit.core.plan.InstantIso::class)
+
 package il.transit.core.features
 
 import il.transit.core.api.Endpoint
@@ -43,6 +45,7 @@ data class ParkRideQuery(
     val language: String = "he",
 )
 
+@kotlinx.serialization.Serializable
 data class ParkRideOption(
     val station: Place,
     /** Drive to the station with the traffic factor applied. */
@@ -69,6 +72,7 @@ data class ParkRideOption(
     fun driveHomeSec(at: Instant, traffic: TrafficProfile = TrafficProfile()): Int = traffic.adjust(freeFlowSec, at)
 }
 
+@kotlinx.serialization.Serializable
 data class ParkRideResult(
     val baseline: Itinerary?,
     val options: List<Option<ParkRideOption>>,

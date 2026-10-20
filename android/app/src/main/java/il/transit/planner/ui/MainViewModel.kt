@@ -34,6 +34,7 @@ import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.MissedIt
 import il.transit.core.plan.PlanCache
+import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.user.FavoriteLine
@@ -264,7 +265,7 @@ class MainViewModel(
     private val store: UserStore,
     /** Read per request: the app language can change while this ViewModel lives (C6). */
     private val languageOf: () -> String,
-    private val planCache: PlanCacheStore? = null,
+    private val planCache: PlanCacheStore<TripResult>? = null,
     private val reminders: Reminders? = null,
     private val rides: Rides? = null,
     private val historyStore: HistoryStore? = null,
@@ -280,6 +281,8 @@ class MainViewModel(
     private val weather: il.transit.core.weather.GuardedWeather? = null,
     /** The search and the chosen option across process death (D11, [SavedUi]); null = not kept. */
     private val saved: SavedStateHandle? = null,
+    /** What the car tabs and errands showed, read back only after process death (Phase 11 R1). */
+    private val tabCache: PlanCacheStore<TabResult>? = null,
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -577,6 +580,7 @@ class MainViewModel(
             }
         }
         val cacheKey = PlanCache.key("TRIP-${s.timeMode}", from, to)
+        val tabKey = tabKey(s, from, to, driverTo)
         planJob = viewModelScope.launch {
             try {
                 when (s.mode) {
@@ -593,6 +597,7 @@ class MainViewModel(
                                 error = if (r.legs.isEmpty()) UiError.NO_RESULTS else null,
                             )
                         }
+                        keepTab(tabKey, TabResult.Errands(r), empty = r.legs.isEmpty())
                     } else {
                         val q = TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), s.timeMode, s.time, s.settings, language)
                         if (!quiet) tripQuery = q
@@ -638,6 +643,7 @@ class MainViewModel(
                         )
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, betterStart = r, error = if (empty) UiError.NO_RESULTS else null).arranged() }
+                        keepTab(tabKey, TabResult.BetterStart(r), empty)
                     }
                     AppMode.DROP_OFF -> {
                         val budgeted = BudgetedTransitApi(api, DropOffPlanner.BUDGET)
@@ -653,6 +659,7 @@ class MainViewModel(
                             ),
                         )
                         _state.update { it.copy(loading = false, dropOff = r, error = if (r.options.isEmpty()) UiError.NO_RESULTS else null).arranged() }
+                        keepTab(tabKey, TabResult.DropOff(r), empty = r.options.isEmpty())
                     }
                     AppMode.PICK_UP -> {
                         val budgeted = BudgetedTransitApi(api, PickUpPlanner.BUDGET)
@@ -668,11 +675,13 @@ class MainViewModel(
                         )
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, pickUp = r, error = if (empty) UiError.NO_RESULTS else null).arranged() }
+                        keepTab(tabKey, TabResult.PickUp(r), empty)
                     }
                     AppMode.PARK_RIDE -> {
                         val r = planParkRide(api, s, from, to, language)
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null).arranged() }
+                        keepTab(tabKey, TabResult.ParkRide(r, from), empty)
                     }
                 }
             } catch (e: CancellationException) {
@@ -1381,27 +1390,42 @@ class MainViewModel(
      */
     private fun restore(r: SavedUi) {
         restoring = true
-        _state.update { it.copy(mode = r.mode, from = r.from, to = r.to, driverTo = r.driverTo, timeMode = r.timeMode, time = r.time) }
+        _state.update {
+            it.copy(
+                mode = r.mode, from = r.from, to = r.to, driverTo = r.driverTo, timeMode = r.timeMode, time = r.time,
+                chainStops = r.stops, maxDriveMin = r.maxDriveMin, maxDetourMin = r.maxDetourMin, maxPickUpDriveMin = r.maxPickUpDriveMin,
+                parkRide = it.parkRide.copy(maxDriveMin = r.maxParkRideMin),
+            )
+        }
         (r.sheet as? SavedUi.Sheet.Stop)?.let { openStop(it.stopId, it.name) }
         restoreRide = (r.sheet as? SavedUi.Sheet.Ride)?.legIndex
         val key = r.cacheKey
-        if (key == null || planCache == null) {
+        val trip = key?.startsWith("TRIP-") == true
+        if (key == null || (if (trip) planCache == null else tabCache == null)) {
             restoreRide = null
             restoring = false
             persist()
             return
         }
         viewModelScope.launch {
-            val entry = try { planCache.get(key, clock.instant()) } catch (e: CancellationException) { throw e } catch (e: Exception) { null }
+            // Options already gone are dropped by the store's own rule at the time of reading.
+            val entry: PlanCache.Entry<*>? = try {
+                if (trip) planCache?.get(key, clock.instant()) else tabCache?.get(key, clock.instant())
+            } catch (e: CancellationException) { throw e } catch (e: Exception) { null }
             // The sort order is a setting: wait for the stored one before finding the option again.
             val loaded = _state.first { it.settingsLoaded }
-            if (entry != null && loaded.results == null && !loaded.loading && loaded.to == r.to) {
+            if (entry != null && !loaded.hasResults && !loaded.loading && loaded.mode == r.mode && loaded.to == r.to) {
                 shownKey = key
                 _state.update {
-                    val sorted = sortOptions(entry.value, it.settings.tripSort, it.timeMode == TimeMode.ARRIVE_BY)
+                    val next = when (val v = entry.value) {
+                        is TripResult -> it.copy(results = v)
+                        is TabResult -> it.showing(v)
+                        else -> it
+                    }
+                    val sorted = next.options
                     val pick = sorted.indexOfFirst { o -> optionId(o) == r.optionId }.takeIf { i -> i >= 0 }
                         ?: r.selected.coerceAtMost((sorted.size - 1).coerceAtLeast(0))
-                    it.copy(results = entry.value, resultsAt = entry.savedAt, selected = pick)
+                    next.copy(resultsAt = entry.savedAt, selected = pick)
                 }
             } else {
                 restoreRide = null
@@ -1410,6 +1434,31 @@ class MainViewModel(
             persist()
         }
     }
+
+    /** The key a car tab's or errands' answer is kept under (R1): the tab, its limit and every place. */
+    private fun tabKey(s: UiState, from: LatLon, to: LatLon, driverTo: LatLon?): String = when (s.mode) {
+        AppMode.TRIP -> PlanCache.key("ERRANDS-${s.timeMode}", from, *s.chainStops.map { it.at }.toTypedArray(), to)
+        AppMode.BETTER_START -> PlanCache.key("BETTER_START-${s.timeMode}-${s.maxDriveMin}", from, to)
+        AppMode.DROP_OFF -> PlanCache.key("DROP_OFF-${s.timeMode}-${s.maxDetourMin}", from, driverTo, to)
+        AppMode.PICK_UP -> PlanCache.key("PICK_UP-${s.timeMode}-${s.maxPickUpDriveMin}", from, to)
+        AppMode.PARK_RIDE -> PlanCache.key("PARK_RIDE-${s.timeMode}-${s.parkRide.maxDriveMin}", from, to)
+    }
+
+    /** A car tab's or errands' answer, kept for a restore after process death (0 requests to bring back). */
+    private suspend fun keepTab(key: String, r: TabResult, empty: Boolean) {
+        if (!empty) runCatching { tabCache?.put(key, r) }
+        shownKey = key.takeIf { !empty }
+        persist()
+    }
+
+    /** [r] on screen in its own tab, arranged as a fresh answer is. */
+    private fun UiState.showing(r: TabResult): UiState = when (r) {
+        is TabResult.BetterStart -> copy(betterStart = r.result)
+        is TabResult.DropOff -> copy(dropOff = r.result)
+        is TabResult.PickUp -> copy(pickUp = r.result)
+        is TabResult.ParkRide -> copy(parkRide = parkRide.copy(result = r.result, origin = r.origin))
+        is TabResult.Errands -> copy(chain = r.chain)
+    }.arranged()
 
     init {
         // Last in the class: openStop and the checks it uses must be initialised first.
@@ -1431,7 +1480,7 @@ class MainViewModel(
                 val saved = createSavedStateHandle()
                 // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
                 Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved, app.tabCache)
             }
         }
     }

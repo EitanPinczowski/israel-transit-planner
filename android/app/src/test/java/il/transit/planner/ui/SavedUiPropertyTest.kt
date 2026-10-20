@@ -45,6 +45,13 @@ class SavedUiPropertyTest {
             1 -> SavedUi.Sheet.Ride(rnd.nextInt(8))
             else -> SavedUi.Sheet.Stop("il-Israel-MOT_${rnd.nextInt(99999)}", pick(names))
         },
+        stops = List(rnd.nextInt(il.transit.core.plan.ChainPlanner.MAX_STOPS + 1)) {
+            il.transit.core.plan.ChainStop(point().at, if (rnd.nextInt(4) == 0) null else pick(names), rnd.nextInt(240))
+        },
+        maxDriveMin = rnd.nextInt(60),
+        maxDetourMin = rnd.nextInt(60),
+        maxPickUpDriveMin = rnd.nextInt(60),
+        maxParkRideMin = rnd.nextInt(60),
     )
 
     private fun write(s: SavedUi, into: MutableMap<String, Any?>) = s.write { k, v -> into[k] = v }
