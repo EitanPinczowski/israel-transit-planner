@@ -77,7 +77,6 @@ class PlanCacheStore<T>(
             file.delete()
         }
     }
-}
 
     companion object {
         /** The Trip tab's searches (offline view, night refresh, the Quick Settings tile). */
