@@ -104,6 +104,7 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 // saved=false: this Activity did not come back from a saved state (the script says why).
                 Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip, marker.exists())} requests=${app.replay.calls.get() - before}")
                 rideAfter(main)
+                missedAfter(vm, app.replay.calls.get() - before)
             }
         }
     }
@@ -184,6 +185,12 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 .orEmpty()
         }
         Log.i(SYSTEM_TAG, "ride-after active=${RideService.active.value} ongoing=${ongoing.size} title=$text")
+    }
+
+    /** E2: a "Missed it" tap with no location permission asks for the start, with no request. */
+    private fun missedAfter(vm: MainViewModel, requests: Int) {
+        val s = vm.state.value
+        Log.i(SYSTEM_TAG, "missed-it kind=${s.missedIt?.kind} editing=${s.editing} requests=$requests")
     }
 
     private fun tabLine(s: UiState): String =

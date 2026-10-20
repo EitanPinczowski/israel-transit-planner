@@ -173,8 +173,9 @@ is a finding (`::notice::finding:` + the job summary).
   errand stops are printed after `|` and become findings when they differ. The Trip check stays in
   `ui_behaviour_run.sh` on every API level.
 - *Location revoked mid-ride*: `--ez uitest_ride_setup true` starts a ride on the mock GPS, `pm revoke`
-  kills the process, the restart must not crash or leave the ride active. E2's "Missed it asks for
-  the start" joins here once E2 is on `main`.
+  kills the process, the restart must not crash or leave the ride active. Then the shell sends the
+  intent the "Missed it" action carries (the notification died with the process): without the location
+  permission it must ask for the start (`kind=NEED_START editing=FROM`) with 0 requests.
 
 **Nightly** (`nightly-ui.yml`, 01:47 Israel winter time, only when `main` changed since the last good
 run; a failure comments on the open issue "nightly"; `ui_chaos_run.sh chaos|monkey`, API 35, root):
@@ -187,7 +188,8 @@ windowing mode), pseudolocales en-XA and ar-XB on P1 and P5 (`ScreensTest`, whos
 apply; R3 stays a finding) and the long monkey (3 seeds × 20 000 events, seeds in the log).
 `isPseudoLocalesEnabled` is on in the `uitest` build type only.
 
-**Flake log.** `ui_instrument.sh` writes every retry to `flake.log` next to its output; the last step of
+**Flake log.** `ui_instrument.sh` writes every retry **and every failed test** (assertion or error, with its
+class#test) to `flake.log` next to its output; the last step of
 each UI job (`tools/ui_flake_log.sh`) comments on the open issue "CI flake log" (created once) with the
 run link, API, test and kind, and also for a job re-run (`run_attempt > 1`). **A test that flakes twice
 in 14 days gets a fix package, never a skip.** `issues: write` is given to those jobs for that step only.

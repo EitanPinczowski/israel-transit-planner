@@ -11,8 +11,8 @@ JOB=${2:-job}
 RUN="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-0}"
 lines=""
 while IFS= read -r f; do
-  while IFS=$'\t' read -r _ api test kind; do
-    lines+="- retry: \`$test\` on API $api. $kind"$'\n'
+  while IFS=$'\t' read -r word api test kind; do
+    lines+="- $word: \`$test\` on API $api. $kind"$'\n'
   done < "$f"
 done < <(find "$DIR" -name flake.log 2>/dev/null)
 if [[ ${GITHUB_RUN_ATTEMPT:-1} -gt 1 ]]; then

@@ -13,7 +13,7 @@
 # twice and any failed assertion stay red. Every retry is a ::warning:: and a block in the job
 # summary naming its kind, and the evidence is printed before the retry.
 #
-# Phase 11 T7: every retry is also a line "retry<TAB>API<TAB>test<TAB>kind" in flake.log next to
+# Phase 11 T7: every retry and every failed test is also a line "retry|failed<TAB>API<TAB>test<TAB>kind" in flake.log next to
 # the output file; the workflow's last step (tools/ui_flake_log.sh) posts them on the "CI flake log" issue.
 
 ui_prep_emulator() {
@@ -71,8 +71,16 @@ _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"
 }
 
-_ui_flake() { # $1 = outfile, $2 = test, $3 = kind
-  printf 'retry\t%s\t%s\t%s\n' "${API:-?}" "$2" "$3" >> "$(dirname "$1")/flake.log"
+_ui_flake() { # $1 = outfile, $2 = test, $3 = kind, $4 = word (retry | failed)
+  printf '%s\t%s\t%s\t%s\n' "${4:-retry}" "${API:-?}" "$2" "$3" >> "$(dirname "$1")/flake.log"
+}
+
+# Tests of one attempt that failed an assertion or errored (status code -1 / -2), one "class#test" a line.
+_ui_failed() {
+  tr -d '\r' < "$1" | awk '
+    /^INSTRUMENTATION_STATUS: class=/ { cls = substr($0, index($0, "=") + 1) }
+    /^INSTRUMENTATION_STATUS: test=/  { tst = substr($0, index($0, "=") + 1) }
+    /^INSTRUMENTATION_STATUS_CODE: -[12]$/ { print cls "#" tst }'
 }
 
 ui_instrument() {
@@ -89,6 +97,10 @@ ui_instrument() {
     tr -d '\r' < "$attempt" >> "$outfile"
     # Real failures of this attempt: a failed assertion, an error, a refused start.
     if tr -d '\r' < "$attempt" | grep -qE "^INSTRUMENTATION_STATUS_CODE: -[12]$|^INSTRUMENTATION_FAILED"; then rc=1; fi
+    # Phase 11 T7: a failed test goes in the flake log too; if the job is re-run and passes, that line is the evidence.
+    while IFS= read -r failed_test; do
+      [[ -n $failed_test ]] && _ui_flake "$outfile" "$failed_test" "failed (assertion or error)" failed
+    done < <(_ui_failed "$attempt")
     if ! tr -d '\r' < "$attempt" | grep -q "Process crashed"; then break; fi
 
     parsed=$(_ui_parse "$attempt")
