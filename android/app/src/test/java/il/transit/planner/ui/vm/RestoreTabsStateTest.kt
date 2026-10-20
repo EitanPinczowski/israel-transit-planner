@@ -130,7 +130,7 @@ class RestoreTabsStateTest : VmTest() {
         assertEquals(0, api.total)
     }
 
-    @Test fun `long after, nothing is left: the inputs come back and no stale option`() {
+    @Test fun `long after, nothing is left - the inputs come back and no stale option`() {
         listOf(AppMode.BETTER_START, AppMode.TRIP).forEach { mode ->
             val handle = SavedStateHandle()
             val file = tabFile()
