@@ -2,16 +2,25 @@ package il.transit.core
 
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.parseTime
+import il.transit.core.features.BetterStartOption
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.features.BetterStartQuery
+import il.transit.core.features.BetterStartResult
+import il.transit.core.features.DropOffOption
 import il.transit.core.features.DropOffPlanner
 import il.transit.core.features.DropOffQuery
+import il.transit.core.features.DropOffResult
+import il.transit.core.features.ParkRideOption
 import il.transit.core.features.ParkRidePlanner
 import il.transit.core.features.ParkRideQuery
+import il.transit.core.features.ParkRideResult
+import il.transit.core.features.PickUpOption
 import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
+import il.transit.core.features.PickUpResult
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainResult
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TabCacheJson
@@ -62,6 +71,35 @@ class TabCacheTest {
         all.forEach { r -> assertTrue("$r has something to show", boardings(r).isNotEmpty()) }
         val entries = all.mapIndexed { i, r -> PlanCache.Entry("k$i", now, r) }
         assertEquals(entries, TabCacheJson.decode(TabCacheJson.encode(entries)))
+    }
+
+    /** Each saved type on its own, through its own serializer: what a later field change must keep readable. */
+    @Test fun `every part has a serializer of its own that round-trips`() {
+        val json = kotlinx.serialization.json.Json
+        fun <T> back(ser: kotlinx.serialization.KSerializer<T>, v: T) = assertEquals(v, json.decodeFromString(ser, json.encodeToString(ser, v)))
+        val bs = all.filterIsInstance<TabResult.BetterStart>().single()
+        val dr = all.filterIsInstance<TabResult.DropOff>().single()
+        val pu = all.filterIsInstance<TabResult.PickUp>().single()
+        val pr = all.filterIsInstance<TabResult.ParkRide>().single()
+        val er = all.filterIsInstance<TabResult.Errands>().single()
+        back(TabResult.BetterStart.serializer(), bs)
+        back(TabResult.DropOff.serializer(), dr)
+        back(TabResult.PickUp.serializer(), pu)
+        back(TabResult.ParkRide.serializer(), pr)
+        back(TabResult.Errands.serializer(), er)
+        back(BetterStartResult.serializer(), bs.result)
+        back(DropOffResult.serializer(), dr.result)
+        back(PickUpResult.serializer(), pu.result)
+        back(ParkRideResult.serializer(), pr.result)
+        back(ChainResult.serializer(), er.chain)
+        back(ChainStop.serializer(), ChainStop(soroka, "Soroka"))
+        back(LatLon.serializer(), meitar)
+        dr.result.options.forEach { back(DropOffOption.serializer(), it.payload) }
+        pu.result.options.forEach { back(PickUpOption.serializer(), it.payload) }
+        pr.result.options.forEach { back(ParkRideOption.serializer(), it.payload) }
+        val start = BetterStartOption(bs.result.baseline!!, 300, "Stop", meitar, now)
+        back(BetterStartOption.serializer(), start)
+        assertEquals("\"2026-10-05T04:55:00Z\"", json.encodeToString(il.transit.core.plan.InstantIso, now))
     }
 
     @Test fun `unreadable data is no entry`() {

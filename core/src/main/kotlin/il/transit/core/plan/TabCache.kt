@@ -59,21 +59,25 @@ fun TabResult.stillAhead(now: Instant): TabResult? {
     fun ahead(i: Itinerary?): Boolean = i != null && (i.firstTransitLeg?.let { parseTime(it.startTime) >= cutoff } ?: true)
     fun <T> List<Option<T>>.left(itinerary: (T) -> Itinerary) = filter { ahead(itinerary(it.payload)) }
     fun Itinerary?.kept() = this?.takeIf { ahead(it) }
-    val next: TabResult = when (this) {
-        is TabResult.BetterStart -> TabResult.BetterStart(result.copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary }))
-        is TabResult.DropOff -> TabResult.DropOff(result.copy(options = result.options.left { it.transit }))
-        is TabResult.PickUp -> TabResult.PickUp(result.copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary }))
-        is TabResult.ParkRide -> copy(result = result.copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary }))
-        is TabResult.Errands -> return takeIf { chain.legs.isNotEmpty() && chain.legs.all(::ahead) }
+    return when (this) {
+        is TabResult.BetterStart ->
+            result
+                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .let { r -> TabResult.BetterStart(r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
+        is TabResult.DropOff ->
+            result
+                .copy(options = result.options.left { it.transit })
+                .let { r -> TabResult.DropOff(r).takeIf { r.options.isNotEmpty() } }
+        is TabResult.PickUp ->
+            result
+                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .let { r -> TabResult.PickUp(r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
+        is TabResult.ParkRide ->
+            result
+                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .let { r -> copy(result = r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
+        is TabResult.Errands -> takeIf { chain.legs.isNotEmpty() && chain.legs.all(::ahead) }
     }
-    val empty = when (next) {
-        is TabResult.BetterStart -> next.result.options.isEmpty() && next.result.baseline == null
-        is TabResult.DropOff -> next.result.options.isEmpty()
-        is TabResult.PickUp -> next.result.options.isEmpty() && next.result.baseline == null
-        is TabResult.ParkRide -> next.result.options.isEmpty() && next.result.baseline == null
-        is TabResult.Errands -> false
-    }
-    return next.takeIf { !empty }
 }
 
 /** An [Instant] as its ISO-8601 text: lossless, and readable in the saved file. */
