@@ -21,6 +21,7 @@ import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
 import il.transit.core.features.PickUpResult
 import il.transit.core.geo.BBox
+import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.MapData
 import il.transit.core.geo.StopsViewport
@@ -31,6 +32,7 @@ import il.transit.core.plan.ChainResult
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
+import il.transit.core.plan.MissedIt
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
@@ -74,6 +76,7 @@ import il.transit.planner.TransitApp
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UserStore
+import il.transit.planner.ui.screens.MissedItUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -220,6 +223,8 @@ data class UiState(
     val rain: RainUi = RainUi(),
     /** Bumped when a route is tapped on the map (D11): the results list scrolls to its card. */
     val mapPick: Int = 0,
+    /** Phase 11 E2: the "Missed it?" banner ("From your location at 07:46"), while its destination is shown. */
+    val missedIt: MissedItUi? = null,
 ) {
     val historyStats: HistoryStats get() = History.stats(history, Instant.now())
 
@@ -441,7 +446,7 @@ class MainViewModel(
                 Field.DRIVER_TO -> it.copy(driverTo = ref)
                 Field.STOP -> it
             }
-            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = next.parkRide.cleared())
+            next.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = next.parkRide.cleared(), missedIt = null)
         }
         if (_state.value.readyToPlan) plan()
     }
@@ -496,12 +501,12 @@ class MainViewModel(
     fun swap() {
         val s = _state.value
         val to = s.to ?: return
-        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared()) }
+        _state.update { it.copy(from = to, to = s.from, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), missedIt = null) }
         plan()
     }
 
     fun setTime(mode: TimeMode, time: Instant?) {
-        _state.update { it.copy(timeMode = mode, time = if (mode == TimeMode.NOW) null else time) }
+        _state.update { it.copy(timeMode = mode, time = if (mode == TimeMode.NOW) null else time, missedIt = null) }
         if (_state.value.readyToPlan) plan()
     }
 
@@ -510,7 +515,7 @@ class MainViewModel(
         _state.update {
             // Only the plain trip has arrive-by: the car tabs ask "leaving now/at T, where do I get out?"
             val time = if (mode != AppMode.TRIP && it.timeMode == TimeMode.ARRIVE_BY) TimeMode.NOW else it.timeMode
-            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0)
+            it.copy(mode = mode, timeMode = time, results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, selected = 0, missedIt = null)
         }
         if (_state.value.readyToPlan) {
             plan()
@@ -559,6 +564,7 @@ class MainViewModel(
             return
         }
         planJob?.cancel()
+        if (!quiet) missedJob?.cancel() // a "Missed it?" tap still waiting must not land over this search
         if (!quiet) {
             _state.update {
                 it.copy(
@@ -566,6 +572,7 @@ class MainViewModel(
                     selected = 0, stopSheet = null, offlineSince = null,
                     lastRide = null, lastRideAsked = false, lastRideBack = null, lastRideLoading = false,
                     chain = null, carTime = null, carLoading = false, pages = TripPagesUi(),
+                    missedIt = null, // a new search is not "from your location at 07:46"
                 )
             }
         }
@@ -744,6 +751,7 @@ class MainViewModel(
         val to = s.to?.let(::resolve) ?: return false
         // An errand leg is re-checked on its own stops; the chain's A → B would never find its bus.
         val r = (if (s.chain != null) Reminder.forOwnEndpoints(itin, s.settings) else Reminder.from(itin, from, to, s.settings, nameOf(s.from), s.to?.let(::nameOf)))
+            ?.copy(arriveBy = s.chain == null && s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY)
             ?: return false
         reminders?.cancel() // a countdown still showing for the old one goes, with its alarms
         viewModelScope.launch { store.setReminder(r) }
@@ -763,7 +771,7 @@ class MainViewModel(
         val s = _state.value
         val itin = s.selectedItinerary ?: return false
         if (itin.firstTransitLeg == null) return false
-        rides?.start(itin, s.settings.speakAlerts)
+        rides?.start(itin, s.settings.speakAlerts, arriveBy = s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY)
         val record = TripRecord.from(itin, nameOf(s.from), s.to?.let(::nameOf).orEmpty(), s.mode.name, clock.instant(), savedMinOfSelected(s))
         viewModelScope.launch { historyStore?.add(record) }
         return true
@@ -773,7 +781,7 @@ class MainViewModel(
     fun startReminderRide() = viewModelScope.launch {
         val r = store.reminder.first() ?: return@launch
         val itin = r.itinerary ?: return@launch
-        rides?.start(itin, store.settings.first().speakAlerts)
+        rides?.start(itin, store.settings.first().speakAlerts, arriveBy = r.arriveBy)
         historyStore?.add(TripRecord.from(itin, r.fromName.orEmpty(), r.toName.orEmpty(), AppMode.TRIP.name, clock.instant(), null))
         cancelReminder()
     }
@@ -979,7 +987,7 @@ class MainViewModel(
         }
     }
 
-    fun clearResults() = _state.update { it.copy(results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, loading = false) }
+    fun clearResults() = _state.update { it.copy(results = null, betterStart = null, dropOff = null, pickUp = null, parkRide = it.parkRide.cleared(), error = null, loading = false, missedIt = null) }
 
     private fun resolve(ref: PlaceRef): LatLon? = when (ref) {
         PlaceRef.MyLocation -> locationProvider()
@@ -1180,6 +1188,97 @@ class MainViewModel(
         } finally {
             // Home is now the destination, so a routine would not replace it anyway; later launches get routines back.
             tripHomeAsked = false
+        }
+    }
+
+    private val missed = MissedIt(planner)
+
+    /**
+     * "Missed it? Plan from here" (Phase 11 E2), from a notification or the trip sheet: the Trip tab
+     * from where the phone is now to [target], leaving now, with the user's settings and sort. At
+     * most 1 `plan` ([MissedIt], tested); a second tap within 60 s costs 0.
+     * [fixes] is read only here, on the tap: the last fix, else one new one for at most 10 s.
+     * The missed trip's ride alert and countdown stop; a reminder still ahead is left alone.
+     * A tap while one is still running is ignored (one request, not two).
+     */
+    fun missedIt(target: MissedIt.Target, fixes: MissedIt.Fixes): Job {
+        missedJob?.takeIf { it.isActive }?.let { return it }
+        return viewModelScope.launch { missedTap(target, fixes) }.also { missedJob = it }
+    }
+
+    private var missedJob: Job? = null
+
+    private suspend fun missedTap(target: MissedIt.Target, fixes: MissedIt.Fixes) {
+        if (rides?.active?.value == true) rides.stop()
+        if (MissedIt.endsReminder(store.reminder.first(), clock.instant())) cancelReminder()
+        val places = store.places.first()
+        val shown = _state.value.to as? PlaceRef.Point
+        val near = { p: LatLon -> Geo.distanceM(p, target.at) <= MissedIt.ARRIVED_M }
+        // A ride carries no name: the saved place there, else the trip on screen.
+        val name = target.name ?: places.firstOrNull { near(it.latLon) }?.name ?: shown?.takeIf { near(it.at) }?.name
+        planJob?.cancel()
+        _state.update {
+            it.copy(
+                mode = AppMode.TRIP,
+                from = PlaceRef.MyLocation,
+                to = PlaceRef.Point(name, target.at),
+                timeMode = TimeMode.NOW,
+                time = null,
+                chainStops = emptyList(),
+                chain = null,
+                editing = null,
+                showSettings = false,
+                showHistory = false,
+                stopSheet = null,
+                results = null,
+                betterStart = null,
+                dropOff = null,
+                pickUp = null,
+                parkRide = it.parkRide.cleared(),
+                error = null,
+                offlineSince = null,
+                loading = true,
+                selected = 0,
+                pages = TripPagesUi(),
+                missedIt = null,
+                lastRide = null,
+                lastRideAsked = false,
+                lastRideBack = null,
+                carTime = null,
+                routinePlace = null, // a routine must not re-plan over it
+            )
+        }
+        val settings = store.settings.first()
+        val out = try {
+            missed.tap(target, fixes.last(), clock.instant(), settings, language) { fixes.fresh() }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            _state.update { it.copy(loading = false, error = UiError.NETWORK) }
+            return
+        }
+        val ui = MissedItUi.of(out, target.at)
+        when (out) {
+            is MissedIt.Outcome.Planned -> {
+                tripQuery = MissedIt.query(target, out.from, settings, language) // Earlier / Later repeat this search
+                val r = out.result
+                _state.update {
+                    it.copy(
+                        loading = false,
+                        results = r,
+                        resultsAt = out.at,
+                        missedIt = ui,
+                        error = if (r.itineraries.isEmpty() && r.walkOnly == null) UiError.NO_RESULTS else null,
+                    )
+                }
+            }
+            // "Where are you?": From empty and focused, nothing sent.
+            MissedIt.Outcome.NeedStart -> {
+                // From is never null: the field opens empty (startEditing clears the text) and focused.
+                _state.update { it.copy(loading = false, missedIt = ui) }
+                startEditing(Field.FROM)
+            }
+            MissedIt.Outcome.AlreadyThere -> _state.update { it.copy(loading = false, missedIt = ui) }
         }
     }
 

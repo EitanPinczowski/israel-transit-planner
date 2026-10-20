@@ -161,6 +161,7 @@ is missing from the test's "constant" column or from this table. **A package tha
 | entry point | cap | constant |
 |---|---|---|
 | Trip plan; Earlier / Later (per tap) | 1 | – |
+| Missed it? Plan from here (per tap; a second tap within 60 s from about the same spot: 0, guard cache) | 1 | `MissedIt.PLANS_PER_TAP` |
 | Better start · Let me off on the way · Best pick-up point · Park & ride | 5 · 10 · 4 · 5 | `BetterStartPlanner.BUDGET` · `DropOffPlanner.BUDGET` · `PickUpPlanner.BUDGET` · `ParkRidePlanner.BUDGET` |
 | Errands: a plan per leg; more than the limit refused (0) | 4 | `ChainPlanner.BUDGET`, `ChainPlanner.MAX_STOPS` (3) |
 | Car comparison | 1 | `CarCompare.BUDGET` |
