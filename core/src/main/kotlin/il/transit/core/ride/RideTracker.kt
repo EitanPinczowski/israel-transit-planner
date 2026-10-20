@@ -41,6 +41,15 @@ sealed interface RideEvent {
  *  - within [passedStopM] of the stop before it (when MOTIS listed intermediate stops) —
  *    "your stop is next" is what people on Israeli buses actually need.
  * A leg is done once you are at its stop, or its planned end is [legGrace] behind you.
+ *
+ * Both location checks wait until the leg is [armed] (R2), by either of:
+ *  - **stop progress**, on a leg listing at least [MIN_STOPS] intermediate stops: the rider passed
+ *    its stops in order (within [matchM], at most one skipped per fix, never backwards) up to the
+ *    third from last. An earlier bus than planned alerts on time, and a loop line that passes your
+ *    stop mid-ride (bus 470 around the station) does not, as the order cannot jump ahead;
+ *  - **time**: boarded (the planned start reached) and at most [earliestAlert] before the planned end.
+ *    A short first leg whose stop is near the origin then stays quiet during the walk to it.
+ * When the next leg is armed by stop progress, the rider is on it: the current leg is left behind.
  */
 class RideTracker(
     itinerary: Itinerary,
@@ -49,11 +58,19 @@ class RideTracker(
     private val atStopM: Double = 80.0,
     private val legGrace: Duration = Duration.ofMinutes(3),
     private val tripGrace: Duration = Duration.ofMinutes(30),
+    private val earliestAlert: Duration = Duration.ofMinutes(20),
+    private val matchM: Double = 150.0,
 ) {
     private val legs: List<Leg> = itinerary.legs.filter { it.isTransit }
     private val destination: LatLon = itinerary.legs.last().to.latLon
     private val plannedEnd: Instant = itinerary.end
     private var index = 0
+
+    /** Per transit leg: boarding stop, intermediate stops, alighting stop. */
+    private val stops: List<List<Place>> = legs.map { listOf(it.from) + it.intermediateStops + listOf(it.to) }
+
+    /** Per transit leg: the furthest stop of [stops] passed in order (0 = boarding); never moves backwards. */
+    private val matched = IntArray(legs.size)
     private var alerted = false
 
     /** Furthest stop-to-stop segment reached on the current leg; never moves backwards. */
@@ -65,17 +82,24 @@ class RideTracker(
     fun update(pos: LatLon, now: Instant): RideEvent? {
         if (now.isAfter(plannedEnd.plus(tripGrace))) return RideEvent.Finished
         while (index < legs.size) {
+            match(index, pos)
+            if (index + 1 < legs.size) {
+                match(index + 1, pos)
+                if (onRoute(index + 1)) {
+                    next()
+                    continue
+                }
+            }
             val leg = legs[index]
             val toStop = Geo.distanceM(pos, leg.to.latLon)
-            if (!alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
+            val armed = onRoute(index) || timeArmed(leg, now)
+            if (armed && !alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
                 alerted = true
                 return RideEvent.Approaching(index, leg.to.name, isLastLeg = index == legs.size - 1)
             }
-            val legOver = toStop <= atStopM || now.isAfter(leg.end.plus(legGrace))
+            val legOver = (armed && toStop <= atStopM) || now.isAfter(leg.end.plus(legGrace))
             if (!legOver) return null
-            index++
-            alerted = false
-            segment = 0
+            next()
         }
         return if (Geo.distanceM(pos, destination) <= approachM || now.isAfter(plannedEnd)) RideEvent.Finished else null
     }
@@ -135,8 +159,36 @@ class RideTracker(
         return Geo.distanceM(p, closest) to f
     }
 
+    private fun next() {
+        index++
+        alerted = false
+        segment = 0
+    }
+
+    /** Moves leg [k]'s [matched] stop on when [pos] is at the next stop or the one after it. */
+    private fun match(k: Int, pos: LatLon) {
+        val s = stops[k]
+        for (j in matched[k] + 2 downTo matched[k] + 1) {
+            if (j < s.size && Geo.distanceM(pos, s[j].latLon) <= matchM) {
+                matched[k] = j
+                return
+            }
+        }
+    }
+
+    /** Leg [k] lists enough stops and the rider passed them in order up to the third from last. */
+    private fun onRoute(k: Int): Boolean = legs[k].intermediateStops.size >= MIN_STOPS && matched[k] >= stops[k].size - 3
+
+    /** Boarded, and no more than [earliestAlert] before the vehicle is due at the stop. */
+    private fun timeArmed(leg: Leg, now: Instant): Boolean = !now.isBefore(leg.start) && !now.isBefore(leg.end.minus(earliestAlert))
+
     private fun passedPenultimate(leg: Leg, pos: LatLon): Boolean {
         val before = leg.intermediateStops.lastOrNull() ?: return false
         return Geo.distanceM(pos, before.latLon) <= passedStopM
+    }
+
+    private companion object {
+        /** Fewer listed stops than this and a leg is armed by time only: two passes in order prove little. */
+        const val MIN_STOPS = 3
     }
 }
