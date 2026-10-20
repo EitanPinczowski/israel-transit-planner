@@ -1,0 +1,7 @@
+{
+ "fixture": "plan_bgu_telaviv",
+ "itinerary": 0,
+ "seed": 9,
+ "kind": "synthetic",
+ "scenario": "sigma=15"
+}
