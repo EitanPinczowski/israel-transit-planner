@@ -10,9 +10,10 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
-IL = timezone(timedelta(hours=3))  # display only; close enough for eyeballing
+IL = ZoneInfo("Asia/Jerusalem")  # UTC+3 in summer, UTC+2 in winter (DST ends Sun 2026-10-25)
 
 
 def hhmm(iso: str) -> str:

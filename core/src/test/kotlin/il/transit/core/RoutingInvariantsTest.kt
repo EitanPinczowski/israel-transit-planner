@@ -7,7 +7,6 @@ import il.transit.core.api.MotisJson
 import il.transit.core.api.Place
 import il.transit.core.api.PlanResponse
 import il.transit.core.api.StreetModes
-import il.transit.core.api.parseTime
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.features.BetterStartQuery
 import il.transit.core.features.DropOffPlanner
@@ -19,13 +18,9 @@ import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
 import il.transit.core.features.TrafficProfile
 import il.transit.core.features.paretoFront
-import il.transit.core.fare.FareEstimator
-import il.transit.core.fare.FareProfile
 import il.transit.core.geo.LatLon
 import il.transit.core.geo.RailStations
-import il.transit.core.present.RideDetails
-import il.transit.core.present.minutes
-import il.transit.core.present.rideDetails
+import il.transit.core.invariants.Invariants
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonObject
@@ -66,78 +61,13 @@ class RoutingInvariantsTest {
 
     // ---- one itinerary --------------------------------------------------------------------------
 
-    private fun times(p: Place): List<Instant> = listOfNotNull(p.arrival, p.departure).map(::parseTime)
-
+    /** The checks live in `core/src/invariants` so the live golden trips apply the same ones. */
     internal fun checkItinerary(where: String, it: Itinerary) {
-        assertTrue("$where: arrival before departure", !it.end.isBefore(it.start))
-        assertTrue("$where: negative duration", it.duration >= 0)
-        assertTrue("$where: transfers < 0", it.transfers >= 0)
-        assertTrue("$where: no legs", it.legs.isNotEmpty())
-        it.legs.forEachIndexed { i, leg ->
-            val at = "$where leg $i (${leg.mode})"
-            assertTrue("$at ends before it starts", !leg.end.isBefore(leg.start))
-            assertTrue("$at: negative duration", leg.duration >= 0)
-            // A leg's stops, in time order: from → intermediate stops → to. (A stop's arrival ≤ its departure.)
-            val stops = listOf(leg.from) + leg.intermediateStops + leg.to
-            stops.forEach { s ->
-                if (s.arrival != null && s.departure != null && s !== leg.from && s !== leg.to) {
-                    assertTrue("$at: stop '${s.name}' departs before it arrives", !parseTime(s.departure).isBefore(parseTime(s.arrival)))
-                }
-            }
-            val sequence = listOfNotNull(leg.from.departure?.let(::parseTime)) +
-                leg.intermediateStops.flatMap(::times) + listOfNotNull(leg.to.arrival?.let(::parseTime))
-            sequence.zipWithNext().forEachIndexed { k, (a, b) ->
-                assertTrue("$at: stop times go back in time at #$k ($a > $b)", !a.isAfter(b))
-            }
-            if (i > 0) {
-                assertTrue("$where: leg $i starts before leg ${i - 1} ends", !leg.start.isBefore(it.legs[i - 1].end))
-            }
-        }
-        assertTrue("$where: itinerary starts after its first leg", !it.start.isAfter(it.legs.first().start))
-        assertTrue("$where: itinerary ends before its last leg", !it.end.isBefore(it.legs.last().end))
-        checkRideDetails(where, it)
-        checkFare(where, it)
+        val bad = Invariants.itinerary(where, it)
+        assertTrue(bad.joinToString("\n"), bad.isEmpty())
     }
 
-    /** Ride details add up to the legs: stops, minutes, count, and what the card shows of them. */
-    private fun checkRideDetails(where: String, it: Itinerary) {
-        val d = rideDetails(it)
-        val transit = it.legs.filter { l -> l.isTransit }
-        assertEquals("$where: ride legs", transit.size, d.legs.size)
-        d.legs.forEach { r ->
-            val leg = it.legs[r.legIndex]
-            assertTrue("$where: ride leg points at a walk", leg.isTransit)
-            assertEquals("$where: stops of leg ${r.legIndex}", leg.intermediateStops.size + 1, r.stops)
-            assertEquals("$where: minutes of leg ${r.legIndex}", minutes((leg.end.epochSecond - leg.start.epochSecond).toInt()), r.minutes)
-            assertEquals("$where: get-off of leg ${r.legIndex}", leg.to.name, r.getOff)
-            assertTrue("$where: ride minutes < 0", r.minutes >= 0 && r.stops >= 1)
-        }
-        assertEquals("$where: shown + more", d.legs.size, d.shown.size + d.more)
-        assertTrue("$where: too many lines", d.shown.size <= RideDetails.MAX_LINES)
-        val total = d.total
-        if (transit.isEmpty()) {
-            assertEquals("$where: total without a ride", null, total)
-        } else {
-            assertEquals("$where: total stops", d.legs.sumOf { r -> r.stops }, total!!.stops)
-            assertEquals("$where: total minutes", d.legs.sumOf { r -> r.minutes }, total.minutes)
-            assertEquals("$where: total get-off", transit.last().to.name, total.getOff)
-            // Time on board can't exceed the whole trip.
-            assertTrue("$where: on board longer than the trip", total.minutes <= minutes(it.duration) + d.legs.size)
-        }
-    }
-
-    private fun checkFare(where: String, it: Itinerary) {
-        val regular = FareEstimator.estimate(it)
-        val half = FareEstimator.estimate(it, FareProfile.HALF)
-        val free = FareEstimator.estimate(it, FareProfile.FREE)
-        if (it.legs.none { l -> l.isTransit }) {
-            assertEquals("$where: fare without a ride", null, regular)
-            return
-        }
-        assertTrue("$where: fare < 0 (${regular?.agorot})", regular != null && regular.agorot >= 0)
-        assertTrue("$where: half fare dearer than full", half!!.agorot in 0..regular!!.agorot)
-        assertEquals("$where: free fare", 0, free!!.agorot)
-    }
+    // ---- one itinerary --------------------------------------------------------------------------
 
     // ---- every recorded answer ------------------------------------------------------------------
 
@@ -186,14 +116,8 @@ class RoutingInvariantsTest {
             (a.driverCostSec < b.driverCostSec || a.arrival.isBefore(b.arrival) || a.transfers < b.transfers)
 
     private fun <T> checkFront(where: String, front: List<Option<T>>) {
-        front.forEach { o ->
-            assertTrue("$where: driver cost ${o.driverCostSec} < 0", o.driverCostSec >= 0)
-            assertTrue("$where: transfers < 0", o.transfers >= 0)
-        }
-        for (a in front) for (b in front) {
-            if (a !== b) assertFalse("$where: ${b.driverCostSec}s/${b.arrival}/${b.transfers} is dominated", dominates(a, b))
-        }
-        assertEquals("$where: sorted by arrival", front.sortedBy { it.arrival }.map { it.arrival }, front.map { it.arrival })
+        val bad = Invariants.front(where, front)
+        assertTrue(bad.joinToString("\n"), bad.isEmpty())
     }
 
     @Test fun `paretoFront - no member dominated, nothing good dropped - over random options`() {

@@ -42,11 +42,21 @@ dependencies {
     testImplementation(libs.okhttp.mockwebserver)
 }
 
+// Routing invariants (Phase 11 T5): the checks every itinerary and every feature front must meet, as
+// plain functions that return what they found. `test` asserts them on recordings, `golden` on live
+// answers, so a rule is written once. Not a test source set: it holds no tests.
+val invariants: SourceSet by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+}
+configurations[invariants.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[invariants.runtimeOnlyConfigurationName].extendsFrom(configurations.runtimeOnly.get())
+
 // Golden trips: the reference trips against LIVE Transitous (~25 requests). A separate
 // source set so `test` and CI never run it; see .claude/skills/golden-trips.
 val golden: SourceSet by sourceSets.creating {
-    compileClasspath += sourceSets.main.get().output
-    runtimeClasspath += sourceSets.main.get().output
+    compileClasspath += sourceSets.main.get().output + invariants.output
+    runtimeClasspath += sourceSets.main.get().output + invariants.output
 }
 configurations[golden.implementationConfigurationName].extendsFrom(configurations.implementation.get())
 configurations[golden.runtimeOnlyConfigurationName].extendsFrom(configurations.runtimeOnly.get())
@@ -59,6 +69,11 @@ tasks.register<JavaExec>("goldenTrips") {
     workingDir = projectDir
     jvmArgs("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8")
     outputs.upToDateWhen { false }
+}
+
+sourceSets.test {
+    compileClasspath += invariants.output
+    runtimeClasspath += invariants.output
 }
 
 tasks.test {
@@ -87,6 +102,7 @@ kover {
                     "il.transit.core.search.TownsData*",
                     "il.transit.core.search.NeighbourhoodsData*",
                     "il.transit.core.golden.*",
+                    "il.transit.core.invariants.*",
                 )
             }
         }
