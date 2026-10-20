@@ -1,0 +1,5049 @@
+{
+ "requestParameters": {},
+ "debugOutput": {
+  "algorithm": 1,
+  "direct": 11,
+  "execute_time": 26,
+  "fares": 0,
+  "fastest_direct": 0,
+  "fp_update_prevented_by_lower_bound": 0,
+  "gpu_supported": 1,
+  "gpu_used": 1,
+  "interval_extensions": 0,
+  "lb_time": 0,
+  "n_dest_offsets": 40,
+  "n_earliest_arrival_updated_by_footpath": 0,
+  "n_earliest_arrival_updated_by_route": 0,
+  "n_earliest_trip_calls": 0,
+  "n_events_skipped_by_early_termination": 0,
+  "n_execute_bwd": 5,
+  "n_execute_fwd": 5,
+  "n_footpaths_visited": 0,
+  "n_routes_visited": 0,
+  "n_routing_time": 0,
+  "n_start_offsets": 30,
+  "n_td_dest_offsets": 0,
+  "n_td_start_offsets": 0,
+  "prepare": 1,
+  "prepare_backward_WALK": 0,
+  "prepare_forward_WALK": 0,
+  "route_update_prevented_by_lower_bound": 0,
+  "search_interval_reduction_by_early_termination": 0
+ },
+ "from": {
+  "name": "START",
+  "lat": 32.7,
+  "lon": 35.297,
+  "vertexType": "NORMAL"
+ },
+ "to": {
+  "name": "END",
+  "lat": 32.607,
+  "lon": 35.29,
+  "vertexType": "NORMAL"
+ },
+ "direct": [],
+ "itineraries": [
+  {
+   "duration": 2460,
+   "startTime": "2026-10-27T06:02:00Z",
+   "endTime": "2026-10-27T06:43:00Z",
+   "transfers": 1,
+   "id": "Ck0hmpmZmZlZQEApvHSTGASmQUAyE2lsLUlzcmFlbC1NT1RfMTgzNjM5mg6dnndZQEBBISOgwhGmQUBI2PyA1wZQhP+A1wZaBFdBTEtgAQqTAQoCMjISLTIwMjYxMDI3XzA3OjI1X2lsLUlzcmFlbC1NT1RfNTg1NzYzNTU2XzI1MTAyNhoTaWwtSXNyYWVsLU1PVF8xODM2MyGaDp2ed1lAQCkhI6DCEaZBQDISaWwtSXNyYWVsLU1PVF80MjYxORi9UwH3WEBAQZInSddMpkFASIT/gNcGUPz/gNcGWgNCVVNgAQpgGhJpbC1Jc3JhZWwtTU9UXzQyNjEhGL1TAfdYQEApkidJ10ymQUAyEmlsLUlzcmFlbC1NT1RfNTE0MznOkgA1tVhAQEFLmGn7V6ZBQEj8/4DXBlDcg4HXBloEV0FMS2ABCpIBCgMzNTYSLDIwMjYxMDI3XzA3OjUwX2lsLUlzcmFlbC1NT1RfNDQzNzY3OTFfMjcxMDI2GhJpbC1Jc3JhZWwtTU9UXzUxNDMhzpIANbVYQEApS5hp+1emQUAyEmlsLUlzcmFlbC1NT1RfNDg1NDm8QEmBBU5AQEGwrDQpBaVBQEiQhYHXBlCUjIHXBloDQlVTYAEKTBoSaWwtSXNyYWVsLU1PVF80ODU0IbxASYEFTkBAKbCsNCkFpUFAOQRWDi2yTUBAQYXrUbgepUFASJSMgdcGUPSPgdcGWgRXQUxLYAE=",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 32.7,
+      "lon": 35.297,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:02:00Z",
+      "scheduledDeparture": "2026-10-27T06:02:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "תאופיק זיאד/הרובע המזרחי",
+      "stopId": "il-Israel-MOT_18363",
+      "importance": 1.752149182721041e-05,
+      "lat": 32.698963000000006,
+      "lon": 35.297417,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:07:00Z",
+      "scheduledArrival": "2026-10-27T06:07:00Z",
+      "stopCode": "51013",
+      "description": "רחוב: תופיק זיאד 14 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 300,
+     "startTime": "2026-10-27T06:02:00Z",
+     "endTime": "2026-10-27T06:07:00Z",
+     "scheduledStartTime": "2026-10-27T06:02:00Z",
+     "scheduledEndTime": "2026-10-27T06:07:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 272.0,
+     "legGeometry": {
+      "points": "glzj}@}_jibAfUtOfUnR??rDuIhD{Lj@kUIoT@oG??zMaB",
+      "precision": 6,
+      "length": 11
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 119.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 14161655021,
+       "polyline": {
+        "points": "glzj}@}_jibAfUtOfUnR",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 120.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1557231549,
+       "fromOsmNode": 14161655021,
+       "toOsmNode": 14161655026,
+       "polyline": {
+        "points": "w_yj}@w{hibArDuIhD{Lj@kUIoT@oG",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 33.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 14161655026,
+       "polyline": {
+        "points": "usxj}@uhkibAzMaB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "תאופיק זיאד/הרובע המזרחי",
+      "stopId": "il-Israel-MOT_18363",
+      "importance": 1.752149182721041e-05,
+      "lat": 32.698963000000006,
+      "lon": 35.297417,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:07:00Z",
+      "scheduledDeparture": "2026-10-27T06:07:00Z",
+      "stopCode": "51013",
+      "description": "רחוב: תופיק זיאד 14 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "עיריית נצרת",
+      "stopId": "il-Israel-MOT_4261",
+      "importance": 1.212424012919655e-05,
+      "lat": 32.69503800000001,
+      "lon": 35.299220000000005,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:09:00Z",
+      "scheduledArrival": "2026-10-27T06:09:00Z",
+      "stopCode": "54286",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 120,
+     "startTime": "2026-10-27T06:07:00Z",
+     "endTime": "2026-10-27T06:09:00Z",
+     "scheduledStartTime": "2026-10-27T06:07:00Z",
+     "scheduledEndTime": "2026-10-27T06:09:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "נצרת_ביג פאשן",
+     "tripFrom": {
+      "name": "צומת בית רימון",
+      "stopId": "il-Israel-MOT_42736",
+      "importance": 2.529689845687244e-05,
+      "lat": 32.76272200000001,
+      "lon": 35.34563,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T05:25:00Z",
+      "scheduledDeparture": "2026-10-27T05:25:00Z",
+      "stopCode": "56188",
+      "description": "רחוב:   עיר: כפר כנא רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ביג פאשן",
+      "stopId": "il-Israel-MOT_19380",
+      "importance": 8.84122619027039e-06,
+      "lat": 32.69630000000001,
+      "lon": 35.300575,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:10:00Z",
+      "scheduledArrival": "2026-10-27T06:10:00Z",
+      "stopCode": "52166",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_40913",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "ש.א.מ",
+     "agencyUrl": "http://www.nazareth-unbs.com",
+     "agencyFareUrl": "",
+     "agencyId": "6",
+     "tripId": "20261027_07:25_il-Israel-MOT_585763556_251026",
+     "routeShortName": "22",
+     "routeLongName": "צומת בית רימון-כפר כנא<->ביג פאשן-נצרת-2#",
+     "tripShortName": "",
+     "displayName": "22",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:12031452:12031489",
+     "intermediateStops": [
+      {
+       "name": "היכל התרבות נצרת",
+       "stopId": "il-Israel-MOT_21049",
+       "importance": 1.3967310223961249e-05,
+       "lat": 32.69586,
+       "lon": 35.29787,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:08:00Z",
+       "departure": "2026-10-27T06:08:00Z",
+       "scheduledArrival": "2026-10-27T06:08:00Z",
+       "scheduledDeparture": "2026-10-27T06:08:00Z",
+       "stopCode": "53913",
+       "description": "רחוב: תופיק זיאד 44 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "edxj}@qgkibAeE{@tJuAdPoBbU_CJJXNLFV?V?TGNGTMjLOzPsApRcBLL^RRBV?VCTSNMLUjQ_AnICfSOhHg@xPuCfKuCjK{EnVeH~W_Ig@aDgEaRkC}T~@oG",
+      "precision": 6,
+      "length": 37
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "עיריית נצרת",
+      "stopId": "il-Israel-MOT_4261",
+      "importance": 1.212424012919655e-05,
+      "lat": 32.69503800000001,
+      "lon": 35.299220000000005,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:09:00Z",
+      "departure": "2026-10-27T06:09:00Z",
+      "scheduledArrival": "2026-10-27T06:09:00Z",
+      "scheduledDeparture": "2026-10-27T06:09:00Z",
+      "stopCode": "54286",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:17:00Z",
+      "scheduledArrival": "2026-10-27T06:17:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T06:09:00Z",
+     "endTime": "2026-10-27T06:17:00Z",
+     "scheduledStartTime": "2026-10-27T06:09:00Z",
+     "scheduledEndTime": "2026-10-27T06:17:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "cancelled": true,
+     "legGeometry": {
+      "points": "",
+      "precision": 6,
+      "length": 0
+     }
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:20:00Z",
+      "scheduledDeparture": "2026-10-27T06:20:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:35:00Z",
+      "scheduledArrival": "2026-10-27T06:35:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 900,
+     "startTime": "2026-10-27T06:20:00Z",
+     "endTime": "2026-10-27T06:35:00Z",
+     "scheduledStartTime": "2026-10-27T06:20:00Z",
+     "scheduledEndTime": "2026-10-27T06:35:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "עפולה_תחנה מרכזית",
+     "tripFrom": {
+      "name": "מעלה יצחק/הרב פינחס מילר",
+      "stopId": "il-Israel-MOT_38965",
+      "importance": 8.999286364996806e-06,
+      "lat": 32.72875000000001,
+      "lon": 35.341175,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T05:50:00Z",
+      "scheduledDeparture": "2026-10-27T05:50:00Z",
+      "stopCode": "50905",
+      "description": "רחוב: שדרות מעלה יצחק עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית עפולה/הורדה",
+      "stopId": "il-Israel-MOT_47851",
+      "parentId": "il-Israel-MOT_48299",
+      "importance": 9.080926975002512e-05,
+      "lat": 32.60924,
+      "lon": 35.29255000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:38:00Z",
+      "scheduledArrival": "2026-10-27T06:38:00Z",
+      "stopCode": "52152",
+      "description": "רחוב:   עיר: עפולה רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_918",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_07:50_il-Israel-MOT_44376791_271026",
+     "routeShortName": "356",
+     "routeLongName": "מעלה יצחק/הרב פינחס מילר-נוף הגליל<->ת.מרכזית עפולה/הורדה-עפולה-20",
+     "tripShortName": "",
+     "displayName": "356",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:10690762:10690806",
+     "intermediateStops": [
+      {
+       "name": "מחלף המחצבות/יציאה לכביש 60",
+       "stopId": "il-Israel-MOT_51788",
+       "importance": 7.404182269965531e-06,
+       "lat": 32.689636,
+       "lon": 35.302025,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:21:00Z",
+       "departure": "2026-10-27T06:21:00Z",
+       "scheduledArrival": "2026-10-27T06:21:00Z",
+       "scheduledDeparture": "2026-10-27T06:21:00Z",
+       "stopCode": "2637",
+       "description": "רחוב: יציאה לכביש 60 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מחלף איכסאל",
+       "stopId": "il-Israel-MOT_4717",
+       "importance": 1.064369371306384e-05,
+       "lat": 32.674088,
+       "lon": 35.29093000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:25:00Z",
+       "departure": "2026-10-27T06:25:00Z",
+       "scheduledArrival": "2026-10-27T06:25:00Z",
+       "scheduledDeparture": "2026-10-27T06:25:00Z",
+       "stopCode": "55312",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף תל עדשים",
+       "stopId": "il-Israel-MOT_4805",
+       "importance": 1.8661265130504034e-05,
+       "lat": 32.655277,
+       "lon": 35.292080000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:27:00Z",
+       "departure": "2026-10-27T06:27:00Z",
+       "scheduledArrival": "2026-10-27T06:27:00Z",
+       "scheduledDeparture": "2026-10-27T06:27:00Z",
+       "stopCode": "55418",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכללת עמק יזרעאל",
+       "stopId": "il-Israel-MOT_4678",
+       "importance": 2.188917642342858e-05,
+       "lat": 32.652405,
+       "lon": 35.291737000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:28:00Z",
+       "departure": "2026-10-27T06:28:00Z",
+       "scheduledArrival": "2026-10-27T06:28:00Z",
+       "scheduledDeparture": "2026-10-27T06:28:00Z",
+       "stopCode": "55264",
+       "description": "רחוב:   עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף מזרע",
+       "stopId": "il-Israel-MOT_18845",
+       "importance": 2.0212866729707457e-05,
+       "lat": 32.64810000000001,
+       "lon": 35.291473,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:30:00Z",
+       "departure": "2026-10-27T06:30:00Z",
+       "scheduledArrival": "2026-10-27T06:30:00Z",
+       "scheduledDeparture": "2026-10-27T06:30:00Z",
+       "stopCode": "51588",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף כפר גדעון",
+       "stopId": "il-Israel-MOT_4744",
+       "importance": 1.9769138816627674e-05,
+       "lat": 32.643463,
+       "lon": 35.291046,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:30:00Z",
+       "departure": "2026-10-27T06:30:00Z",
+       "scheduledArrival": "2026-10-27T06:30:00Z",
+       "scheduledDeparture": "2026-10-27T06:30:00Z",
+       "stopCode": "55344",
+       "description": "רחוב: 60 עיר: כפר גדעון רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף בלפוריה",
+       "stopId": "il-Israel-MOT_4725",
+       "importance": 1.9308008631924167e-05,
+       "lat": 32.62876500000001,
+       "lon": 35.289757,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:32:00Z",
+       "departure": "2026-10-27T06:32:00Z",
+       "scheduledArrival": "2026-10-27T06:32:00Z",
+       "scheduledDeparture": "2026-10-27T06:32:00Z",
+       "stopCode": "55321",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת עוקף עפולה/מעונות הסטודנטים",
+       "stopId": "il-Israel-MOT_5020",
+       "importance": 9.360359399579465e-06,
+       "lat": 32.62227200000001,
+       "lon": 35.28928,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:33:00Z",
+       "departure": "2026-10-27T06:33:00Z",
+       "scheduledArrival": "2026-10-27T06:33:00Z",
+       "scheduledDeparture": "2026-10-27T06:33:00Z",
+       "stopCode": "56013",
+       "description": "רחוב: 60/65 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אורט אלון/חטיבה תשע",
+       "stopId": "il-Israel-MOT_49559",
+       "importance": 2.9670383810298517e-05,
+       "lat": 32.618076,
+       "lon": 35.288967,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:34:00Z",
+       "departure": "2026-10-27T06:34:00Z",
+       "scheduledArrival": "2026-10-27T06:34:00Z",
+       "scheduledDeparture": "2026-10-27T06:34:00Z",
+       "stopCode": "56877",
+       "description": "רחוב: חטיבה תשע עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכבי אש/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4598",
+       "importance": 4.461940625333227e-05,
+       "lat": 32.615185000000004,
+       "lon": 35.288790000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:34:00Z",
+       "departure": "2026-10-27T06:34:00Z",
+       "scheduledArrival": "2026-10-27T06:34:00Z",
+       "scheduledDeparture": "2026-10-27T06:34:00Z",
+       "stopCode": "55160",
+       "description": "רחוב: חטיבה תשע 5 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "היכל התרבות/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4566",
+       "importance": 5.562852311413735e-05,
+       "lat": 32.612232000000006,
+       "lon": 35.28788399999999,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:35:00Z",
+       "departure": "2026-10-27T06:35:00Z",
+       "scheduledArrival": "2026-10-27T06:35:00Z",
+       "scheduledDeparture": "2026-10-27T06:35:00Z",
+       "stopCode": "55116",
+       "description": "רחוב: חטיבה תשע 23 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "kqlj}@omoibA{HDzk@aPbe@qO~MkFpR}JxQoLnLyIrHqGbgBsaCbV}ZzY{_@hA}A`f@io@rQwNrDuC~R}Kja@mOfT_DnYeA|^dAl[~Ch[jFbLbDdPlG`\\hRpV~RlV`Xdc@dd@`tBdvBbk@`m@lEfF~Q`UrIpMjKhRjJnRhIxStItYjGx[fE~]z@pMlIjwBpCp`@zArRz@hG|@dI|B|L|BbK~C|LfDvLlEfNrD|JfFjKzE|JrGzKnH`MvNxQt@|@dKtKfC~B|IfIfIfHd_@~SrLbEpBn@dDfAvD`AbGrArQ|DvLbBlLr@hGFrKl@vILpHMv]aAdO{@n^cGjj@yDnl@iG`NmAxRyB~`CcUrjCqWxeAuK`q@qG`f@oC~^kAng@g@p\\Xfh@hAzl@xBni@pBjq@rAz[zAha@bBpjA|D~SjAf\\|@ztB~HtDNpCHrSz@rDjCxAz@tMfA~JFvJSjJcBrcAzDpkBnGhWvAb_@rAfUd@~[jAxl@fD||BlJjER`C?vNz@xRp@tzCnMpOd@be@bBhi@rCltDbOrFVbJ\\z_GdTlfC|JvuAxF|b@tAj{BhGho@xBjVt@rtA|EbVz@nSVl@DnHf@zKr@nNG~SdAt@DtAFrYr@~Mz@Z?jRn@zFNnDN~fArDzeAhDRd@^VTL\\L^H\\H`@?J?ZI^INE^MRWVUh`AhB|_@bApf@jAdJFNt@FT\\d@LV^d@NJ^XRVl@Ld@NVFl@DT?j@EVGl@ONCl@YLMd@_@^e@LWrGe@|PVfOd@zJp@xFvA`Cr@z@FNFd@Nd@?n@Kb@[d@e@tPXva@fBzAVhGl@lALfHjAvJ~D\\d@\\l@RLf@d@l@d@l@\\bAn@nA^p@Lp@LR?j@Fl@Gd@?~^hRdExBrUhMpChAl@^`BbA~PpHz@|AzElIf@d@ZVl@L`BId@CrAm@~CuEhCkGvAsCbQkRrl@qh@t@{@tKuJlDgI|EyM`BD",
+      "precision": 6,
+      "length": 252
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:35:00Z",
+      "departure": "2026-10-27T06:35:00Z",
+      "scheduledArrival": "2026-10-27T06:35:00Z",
+      "scheduledDeparture": "2026-10-27T06:35:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.607,
+      "lon": 35.29,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:43:00Z",
+      "scheduledArrival": "2026-10-27T06:43:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T06:35:00Z",
+     "endTime": "2026-10-27T06:43:00Z",
+     "scheduledStartTime": "2026-10-27T06:35:00Z",
+     "scheduledEndTime": "2026-10-27T06:43:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 431.0,
+     "legGeometry": {
+      "points": "ynie}@qg{hbASu@??pIoV??`ByF??hQsm@??rDbB??zX`M??hGpC??ly@z^??jKuZzBwH??rJjEbBt@x@bA",
+      "precision": 6,
+      "length": 23
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 5115532812,
+       "polyline": {
+        "points": "ynie}@qg{hbASu@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 5115532812,
+       "toOsmNode": 1376158212,
+       "polyline": {
+        "points": "moie}@gi{hbApIoV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 1376158212,
+       "toOsmNode": 14077706476,
+       "polyline": {
+        "points": "{die}@w`|hbA`ByF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 77.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 14077706476,
+       "toOsmNode": 5115254176,
+       "polyline": {
+        "points": "yaie}@qh|hbAhQsm@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254176,
+       "toOsmNode": 14077706482,
+       "polyline": {
+        "points": "oohe}@ew}hbArDbB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 14077706482,
+       "toOsmNode": 1376158226,
+       "polyline": {
+        "points": "{ihe}@at}hbAzX`M",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 1376158226,
+       "toOsmNode": 5115254127,
+       "polyline": {
+        "points": "_pge}@_f}hbAhGpC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 114.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254127,
+       "toOsmNode": 1376158119,
+       "polyline": {
+        "points": "ugge}@ma}hbAly@z^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 63.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 525611913,
+       "fromOsmNode": 1376158119,
+       "toOsmNode": 5112955896,
+       "polyline": {
+        "points": "gmee}@qa|hbAjKuZzBwH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 43.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 5112955896,
+       "polyline": {
+        "points": "_}de}@_g}hbArJjEbBt@x@bA",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 2280,
+   "startTime": "2026-10-27T06:07:00Z",
+   "endTime": "2026-10-27T06:45:00Z",
+   "transfers": 1,
+   "id": "Ck0hmpmZmZlZQEApvHSTGASmQUAyE2lsLUlzcmFlbC1NT1RfMTkzOTY5lMZoHVVZQEBBFLcKYqClQUBIhP+A1wZQqIKB1wZaBFdBTEtgAQqRAQoCNDUSKzIwMjYxMDI3XzA3OjUwX2lsLUlzcmFlbC1NT1RfNDk3OTQxMV8xOTEwMjYaE2lsLUlzcmFlbC1NT1RfMTkzOTYhlMZoHVVZQEApFLcKYqClQUAyEmlsLUlzcmFlbC1NT1RfNDQ3OTnvVwG+21hAQEHnqKPjaqZBQEiogoHXBlCYhIHXBloDQlVTYAEKYBoSaWwtSXNyYWVsLU1PVF80NDc5Ie9XAb7bWEBAKeeoo+NqpkFAMhJpbC1Jc3JhZWwtTU9UXzUxNDM5zpIANbVYQEBBS5hp+1emQUBImISB1wZQiIaB1wZaBFdBTEtgAQqSAQoDMzU0EiwyMDI2MTAyN18wODowNV9pbC1Jc3JhZWwtTU9UXzE5NjM1MjE0XzI3MTAyNhoSaWwtSXNyYWVsLU1PVF81MTQzIc6SADW1WEBAKUuYaftXpkFAMhJpbC1Jc3JhZWwtTU9UXzQ4NTQ5vEBJgQVOQEBBsKw0KQWlQUBIiIaB1wZQjI2B1wZaA0JVU2ABCkwaEmlsLUlzcmFlbC1NT1RfNDg1NCG8QEmBBU5AQCmwrDQpBaVBQDkEVg4tsk1AQEGF61G4HqVBQEiMjYHXBlDskIHXBloEV0FMS2AB",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 32.7,
+      "lon": 35.297,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:07:00Z",
+      "scheduledDeparture": "2026-10-27T06:07:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "פאולוס השישי/אבונא אוגו",
+      "stopId": "il-Israel-MOT_19396",
+      "importance": 4.7313682443927974e-05,
+      "lat": 32.69791000000001,
+      "lon": 35.293957000000006,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:14:00Z",
+      "scheduledArrival": "2026-10-27T06:14:00Z",
+      "stopCode": "52187",
+      "description": "רחוב: פאולוס השישי 58 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 420,
+     "startTime": "2026-10-27T06:07:00Z",
+     "endTime": "2026-10-27T06:14:00Z",
+     "scheduledStartTime": "2026-10-27T06:07:00Z",
+     "scheduledEndTime": "2026-10-27T06:14:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 408.0,
+     "legGeometry": {
+      "points": "glzj}@}_jibAfUtOfUnR??vy@pr@tUvW??fCfLt@xHj@bW`@fP",
+      "precision": 6,
+      "length": 11
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 119.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 14161655021,
+       "polyline": {
+        "points": "glzj}@}_jibAfUtOfUnR",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 185.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 41170205,
+       "fromOsmNode": 14161655021,
+       "toOsmNode": 2364063399,
+       "polyline": {
+        "points": "w_yj}@w{hibAvy@pr@tUvW",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "بولس السادس",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 104.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 2364063399,
+       "polyline": {
+        "points": "invj}@mofibAfCfLt@xHj@bW`@fP",
+        "precision": 6,
+        "length": 5
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "פאולוס השישי/אבונא אוגו",
+      "stopId": "il-Israel-MOT_19396",
+      "importance": 4.7313682443927974e-05,
+      "lat": 32.69791000000001,
+      "lon": 35.293957000000006,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:14:00Z",
+      "scheduledDeparture": "2026-10-27T06:14:00Z",
+      "stopCode": "52187",
+      "description": "רחוב: פאולוס השישי 58 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כביש 75/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_4479",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.694206,
+      "lon": 35.300137,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:18:00Z",
+      "scheduledArrival": "2026-10-27T06:18:00Z",
+      "stopCode": "55012",
+      "description": "רחוב: 3001 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 240,
+     "startTime": "2026-10-27T06:14:00Z",
+     "endTime": "2026-10-27T06:18:00Z",
+     "scheduledStartTime": "2026-10-27T06:14:00Z",
+     "scheduledEndTime": "2026-10-27T06:18:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "נוף הגליל_שוק עירוני",
+     "tripFrom": {
+      "name": "מועדון פיס לגיל הזהב",
+      "stopId": "il-Israel-MOT_4484",
+      "importance": 4.7867620196484495e-06,
+      "lat": 32.68172,
+      "lon": 35.32284,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T05:50:00Z",
+      "scheduledDeparture": "2026-10-27T05:50:00Z",
+      "stopCode": "55019",
+      "description": "רחוב: 1 40 עיר: אכסאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "שוק נוף הגליל",
+      "stopId": "il-Israel-MOT_18488",
+      "importance": 5.907829836360179e-05,
+      "lat": 32.69350000000001,
+      "lon": 35.305873999999996,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:19:00Z",
+      "scheduledArrival": "2026-10-27T06:19:00Z",
+      "stopCode": "51164",
+      "description": "רחוב: דרך אריאל שרון 41 עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_892",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_07:50_il-Israel-MOT_4979411_191026",
+     "routeShortName": "45",
+     "routeLongName": "מועדון פיס לגיל הזהב-אכסאל<->שוק נוף הגליל-נוף הגליל-20",
+     "tripShortName": "",
+     "displayName": "45",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:6164637:6164659",
+     "intermediateStops": [
+      {
+       "name": "פאולוס השישי/תאופיק זיאד",
+       "stopId": "il-Israel-MOT_19616",
+       "importance": 4.69410078949295e-05,
+       "lat": 32.69986,
+       "lon": 35.296646,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:14:00Z",
+       "departure": "2026-10-27T06:14:00Z",
+       "scheduledArrival": "2026-10-27T06:14:00Z",
+       "scheduledDeparture": "2026-10-27T06:14:00Z",
+       "stopCode": "52419",
+       "description": "רחוב: פאולוס השישי 84 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "kbvj}@iodibAoAvDoAwXm@iQe@}FkB}I^WDKLSR[?_@BM?e@CW?WISOWM]WOOOMEYGKGW?W?SFcBaCgD}D_EgEcQgOgSkOgUqRoAeA{KcKqX_TqQcLuUwMHM?a@I[?_@`D_Dd@]p@Mf@Ol@?t@?zAR`BXhD|@pBTfCHxGg@nOkBbVcCnHaA~IcAtJuAdPoBbU_CJJXNLFV?V?TGNGTMjLOzPsApRcBLL^RRBV?VCTSNMLUjQ_AnICfSOhHg@xPuCfKuCjK{EnVeH~W_IzJyDfJkCf@SrRgHpCsApCqBhAcBzAqCVg@d@{@l@c@~CcAl@?z@?z@OV?b@Gz@Kz@_@z@Wr@]r@e@l@c@p@g@p@m@l@u@d@u@d@s@d@}@LUNe@\\}@\\eARcARsALs@NkAHeA?kAD{@EsAImAIcAKcAOkAWeAU{@]eAO]O]]{@a@u@q@}@e@k@m@u@m@m@s@g@u@g@u@[s@_@u@S}@S{@SgAMg@?{@E_AD}@F{@Du@R{@R{@Rw@^{At@gFFgAkB",
+      "precision": 6,
+      "length": 164
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כביש 75/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_4479",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.694206,
+      "lon": 35.300137,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:18:00Z",
+      "departure": "2026-10-27T06:18:00Z",
+      "scheduledArrival": "2026-10-27T06:18:00Z",
+      "scheduledDeparture": "2026-10-27T06:18:00Z",
+      "stopCode": "55012",
+      "description": "רחוב: 3001 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:22:00Z",
+      "scheduledArrival": "2026-10-27T06:22:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 240,
+     "startTime": "2026-10-27T06:18:00Z",
+     "endTime": "2026-10-27T06:22:00Z",
+     "scheduledStartTime": "2026-10-27T06:18:00Z",
+     "scheduledEndTime": "2026-10-27T06:22:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "cancelled": true,
+     "legGeometry": {
+      "points": "",
+      "precision": 6,
+      "length": 0
+     }
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:22:00Z",
+      "scheduledDeparture": "2026-10-27T06:22:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:37:00Z",
+      "scheduledArrival": "2026-10-27T06:37:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 900,
+     "startTime": "2026-10-27T06:22:00Z",
+     "endTime": "2026-10-27T06:37:00Z",
+     "scheduledStartTime": "2026-10-27T06:22:00Z",
+     "scheduledEndTime": "2026-10-27T06:37:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "עפולה_תחנה מרכזית",
+     "tripFrom": {
+      "name": "האדמו''ר מבעלזא/כניסה",
+      "stopId": "il-Israel-MOT_43143",
+      "importance": 4.15307067669346e-06,
+      "lat": 32.72909000000001,
+      "lon": 35.35032699999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:05:00Z",
+      "scheduledDeparture": "2026-10-27T06:05:00Z",
+      "stopCode": "56247",
+      "description": "רחוב: האדמו''ר מבעלזא עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית עפולה/הורדה",
+      "stopId": "il-Israel-MOT_47851",
+      "parentId": "il-Israel-MOT_48299",
+      "importance": 9.080926975002512e-05,
+      "lat": 32.60924,
+      "lon": 35.29255000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:40:00Z",
+      "scheduledArrival": "2026-10-27T06:40:00Z",
+      "stopCode": "52152",
+      "description": "רחוב:   עיר: עפולה רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_945",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_08:05_il-Israel-MOT_19635214_271026",
+     "routeShortName": "354",
+     "routeLongName": "האדמו''ר מבעלזא/כניסה-נוף הגליל<->ת.מרכזית עפולה/הורדה-עפולה-20",
+     "tripShortName": "",
+     "displayName": "354",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:3003364:3003396",
+     "intermediateStops": [
+      {
+       "name": "מחלף המחצבות/יציאה לכביש 60",
+       "stopId": "il-Israel-MOT_51788",
+       "importance": 7.404182269965531e-06,
+       "lat": 32.689636,
+       "lon": 35.302025,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:23:00Z",
+       "departure": "2026-10-27T06:23:00Z",
+       "scheduledArrival": "2026-10-27T06:23:00Z",
+       "scheduledDeparture": "2026-10-27T06:23:00Z",
+       "stopCode": "2637",
+       "description": "רחוב: יציאה לכביש 60 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מחלף איכסאל",
+       "stopId": "il-Israel-MOT_4717",
+       "importance": 1.064369371306384e-05,
+       "lat": 32.674088,
+       "lon": 35.29093000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:27:00Z",
+       "departure": "2026-10-27T06:27:00Z",
+       "scheduledArrival": "2026-10-27T06:27:00Z",
+       "scheduledDeparture": "2026-10-27T06:27:00Z",
+       "stopCode": "55312",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף תל עדשים",
+       "stopId": "il-Israel-MOT_4805",
+       "importance": 1.8661265130504034e-05,
+       "lat": 32.655277,
+       "lon": 35.292080000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:29:00Z",
+       "departure": "2026-10-27T06:29:00Z",
+       "scheduledArrival": "2026-10-27T06:29:00Z",
+       "scheduledDeparture": "2026-10-27T06:29:00Z",
+       "stopCode": "55418",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכללת עמק יזרעאל",
+       "stopId": "il-Israel-MOT_4678",
+       "importance": 2.188917642342858e-05,
+       "lat": 32.652405,
+       "lon": 35.291737000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:30:00Z",
+       "departure": "2026-10-27T06:30:00Z",
+       "scheduledArrival": "2026-10-27T06:30:00Z",
+       "scheduledDeparture": "2026-10-27T06:30:00Z",
+       "stopCode": "55264",
+       "description": "רחוב:   עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף מזרע",
+       "stopId": "il-Israel-MOT_18845",
+       "importance": 2.0212866729707457e-05,
+       "lat": 32.64810000000001,
+       "lon": 35.291473,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:32:00Z",
+       "departure": "2026-10-27T06:32:00Z",
+       "scheduledArrival": "2026-10-27T06:32:00Z",
+       "scheduledDeparture": "2026-10-27T06:32:00Z",
+       "stopCode": "51588",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף כפר גדעון",
+       "stopId": "il-Israel-MOT_4744",
+       "importance": 1.9769138816627674e-05,
+       "lat": 32.643463,
+       "lon": 35.291046,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:32:00Z",
+       "departure": "2026-10-27T06:32:00Z",
+       "scheduledArrival": "2026-10-27T06:32:00Z",
+       "scheduledDeparture": "2026-10-27T06:32:00Z",
+       "stopCode": "55344",
+       "description": "רחוב: 60 עיר: כפר גדעון רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף בלפוריה",
+       "stopId": "il-Israel-MOT_4725",
+       "importance": 1.9308008631924167e-05,
+       "lat": 32.62876500000001,
+       "lon": 35.289757,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:34:00Z",
+       "departure": "2026-10-27T06:34:00Z",
+       "scheduledArrival": "2026-10-27T06:34:00Z",
+       "scheduledDeparture": "2026-10-27T06:34:00Z",
+       "stopCode": "55321",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת עוקף עפולה/מעונות הסטודנטים",
+       "stopId": "il-Israel-MOT_5020",
+       "importance": 9.360359399579465e-06,
+       "lat": 32.62227200000001,
+       "lon": 35.28928,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:35:00Z",
+       "departure": "2026-10-27T06:35:00Z",
+       "scheduledArrival": "2026-10-27T06:35:00Z",
+       "scheduledDeparture": "2026-10-27T06:35:00Z",
+       "stopCode": "56013",
+       "description": "רחוב: 60/65 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אורט אלון/חטיבה תשע",
+       "stopId": "il-Israel-MOT_49559",
+       "importance": 2.9670383810298517e-05,
+       "lat": 32.618076,
+       "lon": 35.288967,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:36:00Z",
+       "departure": "2026-10-27T06:36:00Z",
+       "scheduledArrival": "2026-10-27T06:36:00Z",
+       "scheduledDeparture": "2026-10-27T06:36:00Z",
+       "stopCode": "56877",
+       "description": "רחוב: חטיבה תשע עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכבי אש/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4598",
+       "importance": 4.461940625333227e-05,
+       "lat": 32.615185000000004,
+       "lon": 35.288790000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:36:00Z",
+       "departure": "2026-10-27T06:36:00Z",
+       "scheduledArrival": "2026-10-27T06:36:00Z",
+       "scheduledDeparture": "2026-10-27T06:36:00Z",
+       "stopCode": "55160",
+       "description": "רחוב: חטיבה תשע 5 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "היכל התרבות/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4566",
+       "importance": 5.562852311413735e-05,
+       "lat": 32.612232000000006,
+       "lon": 35.28788399999999,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:37:00Z",
+       "departure": "2026-10-27T06:37:00Z",
+       "scheduledArrival": "2026-10-27T06:37:00Z",
+       "scheduledDeparture": "2026-10-27T06:37:00Z",
+       "stopCode": "55116",
+       "description": "רחוב: חטיבה תשע 23 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "kqlj}@omoibA{HDzk@aPbe@qO~MkFpR}JxQoLnLyIrHqG~fBmaC?EfV}ZzY{_@hA}A`f@io@zRuOjCwB~R}Kja@mOfT_DnYeA|^dAl[~Ch[jFbLbDdPlG`\\hRpV~RlV`Xdc@dd@`tBdvBbk@`m@lEfF~Q`UrIpMjKhRjJnRhIxStItYjGx[fE~]z@pMlIjwBpCp`@zArRz@hG|@dI|B|L|BbK~C|LfDvLlEfNrD|JfFjKzE|JrGzKnH`MvNxQt@|@dKtKfC~B|IfIfIfHd_@~SrLbEpBn@dDfAvD`AbGrArQ|DvLbBlLr@hGFrKl@vILpHMv]aAdO{@n^cGjj@yDnl@iG`NmAxRyB~`CcUrjCqWxeAuK`q@qG`f@oC~^kAng@g@p\\Xfh@hAzl@xBni@pBjq@rAz[zAha@bBpjA|D~SjAf\\|@ztB~HtDNpCHrSz@rDjCxAz@tMfA~JFvJSjJcBrcAzDpkBnGhWvAb_@rAfUd@~[jAxl@fD||BlJjER`C?vNz@xRp@tzCnMpOd@be@bBhi@rCltDbOrFVbJ\\z_GdTlfC|JvuAxF|b@tAj{BhGpo@xBbVt@rtA|EbVz@nSVl@DnHf@zKr@nNGbR|@pBLtAFrYr@~Mz@Z?jRn@zFNnDN~fArDzeAhDRd@^VTL\\L^H\\H`@?J?ZI^INE^MRWVUh`AhB|_@bApf@jAdJFNt@FT\\d@LV^d@NJ^XRVl@Ld@NVFl@DT?j@EVGl@ONCl@YLMd@_@^e@LWrGe@|PVfOd@zJp@xFvA`Cr@z@FNFd@Nd@?n@Kb@[d@e@tPXva@fBzAVhGl@lALfHjAvJ~D\\d@\\l@RLf@d@l@d@l@\\bAn@nA^p@Lp@LR?j@Fl@Gd@?~^hRdExBrUhMpChAl@^`BbA~PpHz@|AzElIf@d@ZVl@L`BId@CrAm@~CuEhCkGvAsCbQkRrl@qh@t@{@tKuJlDgI|EyM`BD",
+      "precision": 6,
+      "length": 253
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:37:00Z",
+      "departure": "2026-10-27T06:37:00Z",
+      "scheduledArrival": "2026-10-27T06:37:00Z",
+      "scheduledDeparture": "2026-10-27T06:37:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.607,
+      "lon": 35.29,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:45:00Z",
+      "scheduledArrival": "2026-10-27T06:45:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T06:37:00Z",
+     "endTime": "2026-10-27T06:45:00Z",
+     "scheduledStartTime": "2026-10-27T06:37:00Z",
+     "scheduledEndTime": "2026-10-27T06:45:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 431.0,
+     "legGeometry": {
+      "points": "ynie}@qg{hbASu@??pIoV??`ByF??hQsm@??rDbB??zX`M??hGpC??ly@z^??jKuZzBwH??rJjEbBt@x@bA",
+      "precision": 6,
+      "length": 23
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 5115532812,
+       "polyline": {
+        "points": "ynie}@qg{hbASu@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 5115532812,
+       "toOsmNode": 1376158212,
+       "polyline": {
+        "points": "moie}@gi{hbApIoV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 1376158212,
+       "toOsmNode": 14077706476,
+       "polyline": {
+        "points": "{die}@w`|hbA`ByF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 77.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 14077706476,
+       "toOsmNode": 5115254176,
+       "polyline": {
+        "points": "yaie}@qh|hbAhQsm@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254176,
+       "toOsmNode": 14077706482,
+       "polyline": {
+        "points": "oohe}@ew}hbArDbB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 14077706482,
+       "toOsmNode": 1376158226,
+       "polyline": {
+        "points": "{ihe}@at}hbAzX`M",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 1376158226,
+       "toOsmNode": 5115254127,
+       "polyline": {
+        "points": "_pge}@_f}hbAhGpC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 114.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254127,
+       "toOsmNode": 1376158119,
+       "polyline": {
+        "points": "ugge}@ma}hbAly@z^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 63.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 525611913,
+       "fromOsmNode": 1376158119,
+       "toOsmNode": 5112955896,
+       "polyline": {
+        "points": "gmee}@qa|hbAjKuZzBwH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 43.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 5112955896,
+       "polyline": {
+        "points": "_}de}@_g}hbArJjEbBt@x@bA",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 2280,
+   "startTime": "2026-10-27T06:25:00Z",
+   "endTime": "2026-10-27T07:03:00Z",
+   "transfers": 1,
+   "id": "Ck0hmpmZmZlZQEApvHSTGASmQUAyE2lsLUlzcmFlbC1NT1RfMjEwMzc5Nzy9UpZZQEBBdL7Ye/GlQUBIvIeB1wZQrImB1wZaBFdBTEtgAQqUAQoCNDUSLTIwMjYxMDI3XzA4OjI1X2lsLUlzcmFlbC1NT1RfNTg1NzE5NjYxXzE5MTAyNhoTaWwtSXNyYWVsLU1PVF8yMTAzNyE3PL1SlllAQCl0vth78aVBQDITaWwtSXNyYWVsLU1PVF8zNTMxMzm8eapDblZAQEH/kH77OqhBQEisiYHXBlDIjYHXBloDQlVTYAEKYhoTaWwtSXNyYWVsLU1PVF8zNTMxMyG8eapDblZAQCn/kH77OqhBQDITaWwtSXNyYWVsLU1PVF8zNTMxMjkPbJVgcVZAQEFi0XR2MqhBQEjIjYHXBlDAjoHXBloEV0FMS2ABCpIBCgI0NxIsMjAyNjEwMjdfMDg6NDBfaWwtSXNyYWVsLU1PVF80NzY1ODg2OV8yNzEwMjYaE2lsLUlzcmFlbC1NT1RfMzUzMTIhD2yVYHFWQEApYtF0djKoQUAyEmlsLUlzcmFlbC1NT1RfNDg1NDm8QEmBBU5AQEGwrDQpBaVBQEi4j4HXBlDElYHXBloDQlVTYAEKTBoSaWwtSXNyYWVsLU1PVF80ODU0IbxASYEFTkBAKbCsNCkFpUFAOQRWDi2yTUBAQYXrUbgepUFASMSVgdcGUKSZgdcGWgRXQUxLYAE=",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 32.7,
+      "lon": 35.297,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:25:00Z",
+      "scheduledDeparture": "2026-10-27T06:25:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "פאולוס השישי/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_21037",
+      "importance": 4.69410078949295e-05,
+      "lat": 32.69990000000001,
+      "lon": 35.29643200000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:29:00Z",
+      "scheduledArrival": "2026-10-27T06:29:00Z",
+      "stopCode": "53901",
+      "description": "רחוב: פאולוס השישי 89 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 240,
+     "startTime": "2026-10-27T06:25:00Z",
+     "endTime": "2026-10-27T06:29:00Z",
+     "scheduledStartTime": "2026-10-27T06:25:00Z",
+     "scheduledEndTime": "2026-10-27T06:29:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 191.0,
+     "legGeometry": {
+      "points": "glzj}@}_jibAfUtOfUnR??oAxC??cUmRkCiB",
+      "precision": 6,
+      "length": 8
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 119.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 14161655021,
+       "polyline": {
+        "points": "glzj}@}_jibAfUtOfUnR",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 8.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1557231549,
+       "fromOsmNode": 14161655021,
+       "toOsmNode": 14161655020,
+       "polyline": {
+        "points": "w_yj}@w{hibAoAxC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 64.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 14161655020,
+       "polyline": {
+        "points": "gbyj}@}vhibAcUmRkCiB",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "פאולוס השישי/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_21037",
+      "importance": 4.69410078949295e-05,
+      "lat": 32.69990000000001,
+      "lon": 35.29643200000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:29:00Z",
+      "scheduledDeparture": "2026-10-27T06:29:00Z",
+      "stopCode": "53901",
+      "description": "רחוב: פאולוס השישי 89 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35313",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67524,
+      "lon": 35.314299999999996,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:38:00Z",
+      "scheduledArrival": "2026-10-27T06:38:00Z",
+      "stopCode": "58849",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 540,
+     "startTime": "2026-10-27T06:29:00Z",
+     "endTime": "2026-10-27T06:38:00Z",
+     "scheduledStartTime": "2026-10-27T06:29:00Z",
+     "scheduledEndTime": "2026-10-27T06:38:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "אכסאל_מרכז",
+     "tripFrom": {
+      "name": "שוק נוף הגליל",
+      "stopId": "il-Israel-MOT_21083",
+      "importance": 5.907829836360179e-05,
+      "lat": 32.69353000000001,
+      "lon": 35.306107,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:25:00Z",
+      "scheduledDeparture": "2026-10-27T06:25:00Z",
+      "stopCode": "53947",
+      "description": "רחוב: דרך אריאל שרון עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "אכסאל אזה''ת",
+      "stopId": "il-Israel-MOT_40632",
+      "importance": 4.144369995628949e-06,
+      "lat": 32.679398000000006,
+      "lon": 35.316745999999995,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:53:00Z",
+      "scheduledArrival": "2026-10-27T06:53:00Z",
+      "stopCode": "54769",
+      "description": "רחוב: 18 1 עיר: אכסאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_891",
+     "routeUrl": "",
+     "directionId": "0",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_08:25_il-Israel-MOT_585719661_191026",
+     "routeShortName": "45",
+     "routeLongName": "שוק נוף הגליל-נוף הגליל<->אכסאל אזה''ת-אכסאל-10",
+     "tripShortName": "",
+     "displayName": "45",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:13591750:13591777",
+     "intermediateStops": [
+      {
+       "name": "פאולוס השישי/אבונא אוגו",
+       "stopId": "il-Israel-MOT_4857",
+       "importance": 4.7313682443927974e-05,
+       "lat": 32.69847500000001,
+       "lon": 35.29519300000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:29:00Z",
+       "departure": "2026-10-27T06:29:00Z",
+       "scheduledArrival": "2026-10-27T06:29:00Z",
+       "scheduledDeparture": "2026-10-27T06:29:00Z",
+       "stopCode": "55484",
+       "description": "רחוב: פאולוס השישי 73 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "פאולוס השישי/דיאנה",
+       "stopId": "il-Israel-MOT_4674",
+       "importance": 3.772130730794743e-05,
+       "lat": 32.696960000000004,
+       "lon": 35.291720000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:30:00Z",
+       "departure": "2026-10-27T06:30:00Z",
+       "scheduledArrival": "2026-10-27T06:30:00Z",
+       "scheduledDeparture": "2026-10-27T06:30:00Z",
+       "stopCode": "55259",
+       "description": "רחוב: פאולוס השישי 43 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "פאולוס השישי/ח'לת א-דיר",
+       "stopId": "il-Israel-MOT_19615",
+       "importance": 3.5293847759021446e-05,
+       "lat": 32.69454,
+       "lon": 35.290787,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:31:00Z",
+       "departure": "2026-10-27T06:31:00Z",
+       "scheduledArrival": "2026-10-27T06:31:00Z",
+       "scheduledDeparture": "2026-10-27T06:31:00Z",
+       "stopCode": "52417",
+       "description": "רחוב: פאולוס השישי 11 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "בי''ס אל-וואספיה",
+       "stopId": "il-Israel-MOT_4703",
+       "importance": 8.200284355552867e-06,
+       "lat": 32.69229500000001,
+       "lon": 35.29214000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:32:00Z",
+       "departure": "2026-10-27T06:32:00Z",
+       "scheduledArrival": "2026-10-27T06:32:00Z",
+       "scheduledDeparture": "2026-10-27T06:32:00Z",
+       "stopCode": "55296",
+       "description": "רחוב: מרג' אבן עאמר 4 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מגדלי נצרת/מרג' אבן עאמר",
+       "stopId": "il-Israel-MOT_4702",
+       "importance": 9.637327821110375e-06,
+       "lat": 32.689823,
+       "lon": 35.291286,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:32:00Z",
+       "departure": "2026-10-27T06:32:00Z",
+       "scheduledArrival": "2026-10-27T06:32:00Z",
+       "scheduledDeparture": "2026-10-27T06:32:00Z",
+       "stopCode": "55295",
+       "description": "רחוב: מרג' אבן עאמר עיר: נוף הגליל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/מרג' אבן עאמר",
+       "stopId": "il-Israel-MOT_5000",
+       "importance": 1.0256518180540297e-05,
+       "lat": 32.686885999999994,
+       "lon": 35.28996,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:33:00Z",
+       "departure": "2026-10-27T06:33:00Z",
+       "scheduledArrival": "2026-10-27T06:33:00Z",
+       "scheduledDeparture": "2026-10-27T06:33:00Z",
+       "stopCode": "55681",
+       "description": "רחוב: אל פאח'ורה 1 עיר: נוף הגליל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/מרכז אבן עאמר",
+       "stopId": "il-Israel-MOT_4999",
+       "importance": 8.184333637473173e-06,
+       "lat": 32.686134,
+       "lon": 35.28813000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:33:00Z",
+       "departure": "2026-10-27T06:33:00Z",
+       "scheduledArrival": "2026-10-27T06:33:00Z",
+       "scheduledDeparture": "2026-10-27T06:33:00Z",
+       "stopCode": "55680",
+       "description": "רחוב: אל פאח'ורה 2 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/ביר אל-אמיר",
+       "stopId": "il-Israel-MOT_20986",
+       "importance": 4.208174232189776e-06,
+       "lat": 32.68477,
+       "lon": 35.286747,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:34:00Z",
+       "departure": "2026-10-27T06:34:00Z",
+       "scheduledArrival": "2026-10-27T06:34:00Z",
+       "scheduledDeparture": "2026-10-27T06:34:00Z",
+       "stopCode": "53850",
+       "description": "רחוב: אל פאח'ורה 39 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "ביר אבו אל-ג'יש/דרך עפולה",
+       "stopId": "il-Israel-MOT_5019",
+       "importance": 4.662053925130749e-06,
+       "lat": 32.67817300000001,
+       "lon": 35.28712,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:35:00Z",
+       "departure": "2026-10-27T06:35:00Z",
+       "scheduledArrival": "2026-10-27T06:35:00Z",
+       "scheduledDeparture": "2026-10-27T06:35:00Z",
+       "stopCode": "56012",
+       "description": "רחוב: מרג' אבן עאמר עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת איכסאל/כניסה מערבית",
+       "stopId": "il-Israel-MOT_5166",
+       "importance": 3.429473508731462e-06,
+       "lat": 32.67611000000001,
+       "lon": 35.2912,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:36:00Z",
+       "departure": "2026-10-27T06:36:00Z",
+       "scheduledArrival": "2026-10-27T06:36:00Z",
+       "scheduledDeparture": "2026-10-27T06:36:00Z",
+       "stopCode": "56818",
+       "description": "רחוב: 7269 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "w~yj}@_jiibA_A_En\\vXjCnBfYfUbPfNdOjMxBhB~CnChC~Ct@dAGRGV?V?T?VFXFRFLDXNJNVLBRHRHRDRF`AxLL|Dl@tPrAnXp@zFz@vG`AnFhBxFvDhMnChG~Nr[vAhDxDhGdHhKvFnJfKvMzOrSlIrJ|BpBrDdCnC|AzB`AvC~@nC\\rj@|BjBIpWdA|G?jIg@jFg@vIiBzIqBrDkAlDgBrEaEhH_IpCqCrP{P~CsCdIcIrCyB~H}EvHoBdKoApJ[~EFzCj@|BrA`DvCdD~DlA~Bn@pCSl@EbADz@Hv@Lj@Vf@d@f@l@f@z@`@|@Nz@IjA]|DlArDnBtCdAtDjArCd@jCVrC?hMo@hFRfEz@?LNLBNHNHLLNDLRFJNNFJLRHJ?NLJ?RDL?X?J?N?J?REJ?NGVELIVULONGNMBOHMNOFODMFWFMbDm@dCHxDb@vrAdTfE`AzE|AxH~CzK`HpWtPvF`BjCl@rD\\nLF|EvDjKnIpGxG~FpGnFpHpB|D`A~CXrBLvCMdEkAhNO~BNnCNbBl@hCjGtMxP`YvIxIdEfEvKbLzEjHlNjQ|DdEjFvDb\\rU|T`U~Xf^nCzCdJnHfEpCtDxBpEbC~ChAjCt@zAJtE?lESxGoAxDoA`Ag@dKg@NHZV^DZF`@?d@?ZM^GrC?jCYbCc@pB_ArAgAtC_D`E}E|DiG`CaCpCyB~BwAjDoAzDm@rO}AnEs@lE{@tKyCdIyCfIeDtFmDpQcMjK{EjFcBlEcAjFcApHs@x]mBrEe@~WeEvD{@zAm@`BwA|@gA^}@L{@G}@Ou@e@eAm@c@kAWsA?eD^uUbF_D^cB?iAWw@e@]m@G_A?aA`@cAf@u@tAcAhHoCzMoEzJcCnM}B`v@iK`I{@zJa@zFDjBNrAVpATtA\\vBzAbBjAbV~VpBbBhCzBjBjAvCrA~Bv@bWfHbe@jOvC|AbBxAzA~A~@lB`@xA^hDDdEEnNL~ARnAf@bAn@d@l@`@`ABdACdAg@nAu@nAaAjAcBbAcBv@cCr@_DrAgHd@iHd@eMr@cYl@cQHkEWqH}@wDe@mBkAwB{@cAuAs@yB{@iB_@qBW_I]kBa@{BYwBu@wB{@yC{A{KwFiX{Jgh@_WeEwC{AqCk@aCO_Fd@gEd@mB|@qBz@kAnDsB^?j@Cb@SXSLS\\a@Ve@N[Hq@?k@?m@I_@Oo@Wc@]e@]U]OSGg@ES?_DwDeC}DiCmOiC}PeAoPRoQp@wRfE}c@p@aIfEqa@t@uUu@kWwCwUwN{s@oCkRg@aMEuH\\aJdAmKlDqQrc@ewB`Jc_@v^olAjFqRfDuO|DwYjF_d@jCkTf@}JJcFFyHu@iL{AuJoCcLiDwIgOc[uCiHiCmJs@{FGUs@}J_@kKrAikAiCyn@u@qYs@aRJcVXkMz@cK|@yGxBqJtCsIvE{J|DsGpLgQhIkNjF_MdEkQrB}Oj@sQ?qWW_XcBgSsDkQaHwRqJsX_No_@XYTe@Jc@?IB]F_@?o@G[Om@Ue@Ye@[UUWWCMI_DcL_E}NsPkf@nCbB",
+      "precision": 6,
+      "length": 436
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35313",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67524,
+      "lon": 35.314299999999996,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:38:00Z",
+      "departure": "2026-10-27T06:38:00Z",
+      "scheduledArrival": "2026-10-27T06:38:00Z",
+      "scheduledDeparture": "2026-10-27T06:38:00Z",
+      "stopCode": "58849",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35312",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67533500000001,
+      "lon": 35.31403999999999,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:40:00Z",
+      "scheduledArrival": "2026-10-27T06:40:00Z",
+      "stopCode": "58848",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 120,
+     "startTime": "2026-10-27T06:38:00Z",
+     "endTime": "2026-10-27T06:40:00Z",
+     "scheduledStartTime": "2026-10-27T06:38:00Z",
+     "scheduledEndTime": "2026-10-27T06:40:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 256.0,
+     "legGeometry": {
+      "points": "yyii}@qiljbAiE\\??tT|m@tFtOnBpF??iAa@oA?iA`@w@z@Sj@??O}COgCo@gEiAmFmBiGaKsY",
+      "precision": 6,
+      "length": 19
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 15.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10068918747,
+       "polyline": {
+        "points": "yyii}@qiljbAiE\\",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 122.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1099882358,
+       "fromOsmNode": 10068918747,
+       "toOsmNode": 872175560,
+       "polyline": {
+        "points": "c`ji}@shljbAtT|m@tFtOnBpF",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 20.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 73591906,
+       "fromOsmNode": 872175560,
+       "toOsmNode": 10068918752,
+       "polyline": {
+        "points": "g_ii}@majjbAiAa@oA?iA`@w@z@Sj@",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 99.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 10068918752,
+       "polyline": {
+        "points": "whii}@e~ijbAO}COgCo@gEiAmFmBiGaKsY",
+        "precision": 6,
+        "length": 7
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35312",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67533500000001,
+      "lon": 35.31403999999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:42:00Z",
+      "scheduledDeparture": "2026-10-27T06:42:00Z",
+      "stopCode": "58848",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:55:00Z",
+      "scheduledArrival": "2026-10-27T06:55:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 780,
+     "startTime": "2026-10-27T06:42:00Z",
+     "endTime": "2026-10-27T06:55:00Z",
+     "scheduledStartTime": "2026-10-27T06:42:00Z",
+     "scheduledEndTime": "2026-10-27T06:55:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "עפולה_תחנה מרכזית",
+     "tripFrom": {
+      "name": "מועדון פיס לגיל הזהב",
+      "stopId": "il-Israel-MOT_4484",
+      "importance": 4.7867620196484495e-06,
+      "lat": 32.68172,
+      "lon": 35.32284,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:40:00Z",
+      "scheduledDeparture": "2026-10-27T06:40:00Z",
+      "stopCode": "55019",
+      "description": "רחוב: 1 40 עיר: אכסאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית עפולה/הורדה",
+      "stopId": "il-Israel-MOT_47851",
+      "parentId": "il-Israel-MOT_48299",
+      "importance": 9.080926975002512e-05,
+      "lat": 32.60924,
+      "lon": 35.29255000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:58:00Z",
+      "scheduledArrival": "2026-10-27T06:58:00Z",
+      "stopCode": "52152",
+      "description": "רחוב:   עיר: עפולה רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_10780",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_08:40_il-Israel-MOT_47658869_271026",
+     "routeShortName": "47",
+     "routeLongName": "מועדון פיס לגיל הזהב-אכסאל<->ת.מרכזית עפולה/הורדה-עפולה-20",
+     "tripShortName": "",
+     "displayName": "47",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:6164785:6164801",
+     "intermediateStops": [
+      {
+       "name": "מחלף איכסאל",
+       "stopId": "il-Israel-MOT_4717",
+       "importance": 1.064369371306384e-05,
+       "lat": 32.674088,
+       "lon": 35.29093000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:44:00Z",
+       "departure": "2026-10-27T06:44:00Z",
+       "scheduledArrival": "2026-10-27T06:44:00Z",
+       "scheduledDeparture": "2026-10-27T06:44:00Z",
+       "stopCode": "55312",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף תל עדשים",
+       "stopId": "il-Israel-MOT_4805",
+       "importance": 1.8661265130504034e-05,
+       "lat": 32.655277,
+       "lon": 35.292080000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:46:00Z",
+       "departure": "2026-10-27T06:46:00Z",
+       "scheduledArrival": "2026-10-27T06:46:00Z",
+       "scheduledDeparture": "2026-10-27T06:46:00Z",
+       "stopCode": "55418",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכללת עמק יזרעאל",
+       "stopId": "il-Israel-MOT_4678",
+       "importance": 2.188917642342858e-05,
+       "lat": 32.652405,
+       "lon": 35.291737000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:47:00Z",
+       "departure": "2026-10-27T06:47:00Z",
+       "scheduledArrival": "2026-10-27T06:47:00Z",
+       "scheduledDeparture": "2026-10-27T06:47:00Z",
+       "stopCode": "55264",
+       "description": "רחוב:   עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף מזרע",
+       "stopId": "il-Israel-MOT_18845",
+       "importance": 2.0212866729707457e-05,
+       "lat": 32.64810000000001,
+       "lon": 35.291473,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:49:00Z",
+       "departure": "2026-10-27T06:49:00Z",
+       "scheduledArrival": "2026-10-27T06:49:00Z",
+       "scheduledDeparture": "2026-10-27T06:49:00Z",
+       "stopCode": "51588",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף כפר גדעון",
+       "stopId": "il-Israel-MOT_4744",
+       "importance": 1.9769138816627674e-05,
+       "lat": 32.643463,
+       "lon": 35.291046,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:49:00Z",
+       "departure": "2026-10-27T06:49:00Z",
+       "scheduledArrival": "2026-10-27T06:49:00Z",
+       "scheduledDeparture": "2026-10-27T06:49:00Z",
+       "stopCode": "55344",
+       "description": "רחוב: 60 עיר: כפר גדעון רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף בלפוריה",
+       "stopId": "il-Israel-MOT_4725",
+       "importance": 1.9308008631924167e-05,
+       "lat": 32.62876500000001,
+       "lon": 35.289757,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:51:00Z",
+       "departure": "2026-10-27T06:51:00Z",
+       "scheduledArrival": "2026-10-27T06:51:00Z",
+       "scheduledDeparture": "2026-10-27T06:51:00Z",
+       "stopCode": "55321",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת עוקף עפולה/מעונות הסטודנטים",
+       "stopId": "il-Israel-MOT_5020",
+       "importance": 9.360359399579465e-06,
+       "lat": 32.62227200000001,
+       "lon": 35.28928,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:52:00Z",
+       "departure": "2026-10-27T06:52:00Z",
+       "scheduledArrival": "2026-10-27T06:52:00Z",
+       "scheduledDeparture": "2026-10-27T06:52:00Z",
+       "stopCode": "56013",
+       "description": "רחוב: 60/65 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אורט אלון/חטיבה תשע",
+       "stopId": "il-Israel-MOT_49559",
+       "importance": 2.9670383810298517e-05,
+       "lat": 32.618076,
+       "lon": 35.288967,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:53:00Z",
+       "departure": "2026-10-27T06:53:00Z",
+       "scheduledArrival": "2026-10-27T06:53:00Z",
+       "scheduledDeparture": "2026-10-27T06:53:00Z",
+       "stopCode": "56877",
+       "description": "רחוב: חטיבה תשע עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכבי אש/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4598",
+       "importance": 4.461940625333227e-05,
+       "lat": 32.615185000000004,
+       "lon": 35.288790000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:54:00Z",
+       "departure": "2026-10-27T06:54:00Z",
+       "scheduledArrival": "2026-10-27T06:54:00Z",
+       "scheduledDeparture": "2026-10-27T06:54:00Z",
+       "stopCode": "55160",
+       "description": "רחוב: חטיבה תשע 5 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "היכל התרבות/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4566",
+       "importance": 5.562852311413735e-05,
+       "lat": 32.612232000000006,
+       "lon": 35.28788399999999,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:54:00Z",
+       "departure": "2026-10-27T06:54:00Z",
+       "scheduledArrival": "2026-10-27T06:54:00Z",
+       "scheduledDeparture": "2026-10-27T06:54:00Z",
+       "stopCode": "55116",
+       "description": "רחוב: חטיבה תשע 23 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "m_ji}@ovkjbA|O|]ZxBxChRETGZ?n@?^FRDf@NRN`@LXRJRTRDVR^DV?R?^ETIXIRKR[~Mn_@pJrXl@bBbGjRfCdMbB~Mr@t^NnGm@z^}A|NiFdUkF~LiIjNqLfQ}DrGwEzJuCrIyBpJ}@xG{@bKYjMKbVr@`Rt@pYhCxn@sAhkA^jKr@|JFTr@zFhClJtChHfOb[hDvInCbLzAtJt@hLGxHKbFg@|JkCjTkF~c@}DvYgDtOkFpRw^nlAaJb_@sc@dwBmDpQeAlK]`JDtHf@`MnCjRvNzs@vCvUt@jWu@tUgEpa@q@`IgE|c@q@vRSnQdAnPhC|PhClOhBrNG`@Ml@?\\?d@?d@Ll@Vn@TZ\\^f@Rf@RZB^?j@Cb@SXSLS\\a@Ve@N[jAmB~CaCvS{KxFwCtJgH`FcGbBqCvBeEbBkFzDsIfCkCfCw@zGMrQ|DvLbBlLr@hGFrKl@vILpHMv]aAdO{@n^cGjj@yDnl@iG`NmAxRyB~`CcUrjCqWxeAuK`q@qG`f@oC~^kAng@g@p\\Xfh@hAzl@xBni@pBjq@rAz[zAha@bBpjA|D~SjAf\\|@ztB~HtDNpCHrSz@rDjCxAz@tMfA~JFvJSjJcBrcAzDpkBnGhWvAb_@rAfUd@~[jAxl@fD||BlJjER`C?vNz@xRp@tzCnMpOd@be@bBhi@rCltDbOrFVbJ\\z_GdTlfC|JvuAxF|b@tAj{BhGho@xBjVt@fvBbH~HL`HTzJVjQj@tUjAtAFrYr@~Mz@Z?jRn@zFNnDN~fArDzeAhDRd@^VTL\\L^H\\H`@?J?ZI^INE^MRWVUh`AhB|_@bApf@jAdJFNt@FT\\d@LV^d@NJ^XRVl@Ld@NVFl@DT?j@EVGl@ONCl@YLMd@_@^e@LWrGe@|PVfOd@zJp@xFvA`Cr@z@FNFd@Nd@?n@Kb@[d@e@tPXva@fBzAVhGl@lALfHjAvJ~D\\d@\\l@RLf@d@l@d@l@\\bAn@nA^p@Lp@LR?j@Fl@Gd@?~^hRdExBrUhMpChAl@^`BbA~PpHz@|AzElIf@d@ZVl@L`BId@CrAm@~CuEhCkGvAsCbQkRrl@qh@t@{@tKuJlDgI|EyM`BD",
+      "precision": 6,
+      "length": 306
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:55:00Z",
+      "departure": "2026-10-27T06:55:00Z",
+      "scheduledArrival": "2026-10-27T06:55:00Z",
+      "scheduledDeparture": "2026-10-27T06:55:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.607,
+      "lon": 35.29,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:03:00Z",
+      "scheduledArrival": "2026-10-27T07:03:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T06:55:00Z",
+     "endTime": "2026-10-27T07:03:00Z",
+     "scheduledStartTime": "2026-10-27T06:55:00Z",
+     "scheduledEndTime": "2026-10-27T07:03:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 431.0,
+     "legGeometry": {
+      "points": "ynie}@qg{hbASu@??pIoV??`ByF??hQsm@??rDbB??zX`M??hGpC??ly@z^??jKuZzBwH??rJjEbBt@x@bA",
+      "precision": 6,
+      "length": 23
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 5115532812,
+       "polyline": {
+        "points": "ynie}@qg{hbASu@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 5115532812,
+       "toOsmNode": 1376158212,
+       "polyline": {
+        "points": "moie}@gi{hbApIoV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 1376158212,
+       "toOsmNode": 14077706476,
+       "polyline": {
+        "points": "{die}@w`|hbA`ByF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 77.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 14077706476,
+       "toOsmNode": 5115254176,
+       "polyline": {
+        "points": "yaie}@qh|hbAhQsm@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254176,
+       "toOsmNode": 14077706482,
+       "polyline": {
+        "points": "oohe}@ew}hbArDbB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 14077706482,
+       "toOsmNode": 1376158226,
+       "polyline": {
+        "points": "{ihe}@at}hbAzX`M",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 1376158226,
+       "toOsmNode": 5115254127,
+       "polyline": {
+        "points": "_pge}@_f}hbAhGpC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 114.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254127,
+       "toOsmNode": 1376158119,
+       "polyline": {
+        "points": "ugge}@ma}hbAly@z^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 63.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 525611913,
+       "fromOsmNode": 1376158119,
+       "toOsmNode": 5112955896,
+       "polyline": {
+        "points": "gmee}@qa|hbAjKuZzBwH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 43.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 5112955896,
+       "polyline": {
+        "points": "_}de}@_g}hbArJjEbBt@x@bA",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 2400,
+   "startTime": "2026-10-27T06:33:00Z",
+   "endTime": "2026-10-27T07:13:00Z",
+   "transfers": 1,
+   "id": "Ck0hmpmZmZlZQEApvHSTGASmQUAyE2lsLUlzcmFlbC1NT1RfMTgzNjM5mg6dnndZQEBBISOgwhGmQUBInIuB1wZQyI2B1wZaBFdBTEtgAQqTAQoCNTcSLTIwMjYxMDI3XzA4OjIwX2lsLUlzcmFlbC1NT1RfNTg1NzYyNjY1XzE5MTAyNhoTaWwtSXNyYWVsLU1PVF8xODM2MyGaDp2ed1lAQCkhI6DCEaZBQDISaWwtSXNyYWVsLU1PVF80MjYxORi9UwH3WEBAQZInSddMpkFASMiNgdcGUISOgdcGWgNCVVNgAQpgGhJpbC1Jc3JhZWwtTU9UXzQyNjEhGL1TAfdYQEApkidJ10ymQUAyEmlsLUlzcmFlbC1NT1RfNTE0MznOkgA1tVhAQEFLmGn7V6ZBQEiEjoHXBlDkkYHXBloEV0FMS2ABCpIBCgMzNTYSLDIwMjYxMDI3XzA4OjIwX2lsLUlzcmFlbC1NT1RfMTgzNjA3NDFfMjcxMDI2GhJpbC1Jc3JhZWwtTU9UXzUxNDMhzpIANbVYQEApS5hp+1emQUAyEmlsLUlzcmFlbC1NT1RfNDg1NDm8QEmBBU5AQEGwrDQpBaVBQEiYk4HXBlCcmoHXBloDQlVTYAEKTBoSaWwtSXNyYWVsLU1PVF80ODU0IbxASYEFTkBAKbCsNCkFpUFAOQRWDi2yTUBAQYXrUbgepUFASJyagdcGUPydgdcGWgRXQUxLYAE=",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 32.7,
+      "lon": 35.297,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:33:00Z",
+      "scheduledDeparture": "2026-10-27T06:33:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "תאופיק זיאד/הרובע המזרחי",
+      "stopId": "il-Israel-MOT_18363",
+      "importance": 1.752149182721041e-05,
+      "lat": 32.698963000000006,
+      "lon": 35.297417,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:38:00Z",
+      "scheduledArrival": "2026-10-27T06:38:00Z",
+      "stopCode": "51013",
+      "description": "רחוב: תופיק זיאד 14 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 300,
+     "startTime": "2026-10-27T06:33:00Z",
+     "endTime": "2026-10-27T06:38:00Z",
+     "scheduledStartTime": "2026-10-27T06:33:00Z",
+     "scheduledEndTime": "2026-10-27T06:38:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 272.0,
+     "legGeometry": {
+      "points": "glzj}@}_jibAfUtOfUnR??rDuIhD{Lj@kUIoT@oG??zMaB",
+      "precision": 6,
+      "length": 11
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 119.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 14161655021,
+       "polyline": {
+        "points": "glzj}@}_jibAfUtOfUnR",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 120.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1557231549,
+       "fromOsmNode": 14161655021,
+       "toOsmNode": 14161655026,
+       "polyline": {
+        "points": "w_yj}@w{hibArDuIhD{Lj@kUIoT@oG",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 33.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 14161655026,
+       "polyline": {
+        "points": "usxj}@uhkibAzMaB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "תאופיק זיאד/הרובע המזרחי",
+      "stopId": "il-Israel-MOT_18363",
+      "importance": 1.752149182721041e-05,
+      "lat": 32.698963000000006,
+      "lon": 35.297417,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:38:00Z",
+      "scheduledDeparture": "2026-10-27T06:38:00Z",
+      "stopCode": "51013",
+      "description": "רחוב: תופיק זיאד 14 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "עיריית נצרת",
+      "stopId": "il-Israel-MOT_4261",
+      "importance": 1.212424012919655e-05,
+      "lat": 32.69503800000001,
+      "lon": 35.299220000000005,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:39:00Z",
+      "scheduledArrival": "2026-10-27T06:39:00Z",
+      "stopCode": "54286",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 60,
+     "startTime": "2026-10-27T06:38:00Z",
+     "endTime": "2026-10-27T06:39:00Z",
+     "scheduledStartTime": "2026-10-27T06:38:00Z",
+     "scheduledEndTime": "2026-10-27T06:39:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "ביג פאשן",
+     "tripFrom": {
+      "name": "ביג פאשן/עיריית נצרת",
+      "stopId": "il-Israel-MOT_21061",
+      "importance": 2.0230267182341777e-05,
+      "lat": 32.69585800000001,
+      "lon": 35.299744000000004,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:20:00Z",
+      "scheduledDeparture": "2026-10-27T06:20:00Z",
+      "stopCode": "53925",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ביג פאשן",
+      "stopId": "il-Israel-MOT_19380",
+      "importance": 8.84122619027039e-06,
+      "lat": 32.69630000000001,
+      "lon": 35.300575,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:40:00Z",
+      "scheduledArrival": "2026-10-27T06:40:00Z",
+      "stopCode": "52166",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_17083",
+     "routeUrl": "",
+     "directionId": "0",
+     "routeType": 3,
+     "agencyName": "ש.א.מ",
+     "agencyUrl": "http://www.nazareth-unbs.com",
+     "agencyFareUrl": "",
+     "agencyId": "6",
+     "tripId": "20261027_08:20_il-Israel-MOT_585762665_191026",
+     "routeShortName": "57",
+     "routeLongName": "ביג פאשן/עיריית נצרת-נצרת<->ביג פאשן-נצרת-3#",
+     "tripShortName": "",
+     "displayName": "57",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:1582863:1582897",
+     "intermediateStops": [
+      {
+       "name": "היכל התרבות נצרת",
+       "stopId": "il-Israel-MOT_21049",
+       "importance": 1.3967310223961249e-05,
+       "lat": 32.69586,
+       "lon": 35.29787,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:38:00Z",
+       "departure": "2026-10-27T06:38:00Z",
+       "scheduledArrival": "2026-10-27T06:38:00Z",
+       "scheduledDeparture": "2026-10-27T06:38:00Z",
+       "stopCode": "53913",
+       "description": "רחוב: תופיק זיאד 44 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "edxj}@qgkibAeE{@tJuAdPoBbU_CJJXNLFV?N?F?TGNGTMjLOhH]pGu@pRcBLL^RRBR?B?VCTSNMLUbH]fHa@nICdFLpHMlIm@`PqBbBm@fKuCjK{EnVeH~W_Ig@aDqC{Ku@eE{@cFoAyM~@oG",
+      "precision": 6,
+      "length": 45
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "עיריית נצרת",
+      "stopId": "il-Israel-MOT_4261",
+      "importance": 1.212424012919655e-05,
+      "lat": 32.69503800000001,
+      "lon": 35.299220000000005,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:39:00Z",
+      "departure": "2026-10-27T06:39:00Z",
+      "scheduledArrival": "2026-10-27T06:39:00Z",
+      "scheduledDeparture": "2026-10-27T06:39:00Z",
+      "stopCode": "54286",
+      "description": "רחוב: תופיק זיאד עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:47:00Z",
+      "scheduledArrival": "2026-10-27T06:47:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": true,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T06:39:00Z",
+     "endTime": "2026-10-27T06:47:00Z",
+     "scheduledStartTime": "2026-10-27T06:39:00Z",
+     "scheduledEndTime": "2026-10-27T06:47:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "cancelled": true,
+     "legGeometry": {
+      "points": "",
+      "precision": 6,
+      "length": 0
+     }
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "כביש 60/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_5143",
+      "importance": 4.232970604789443e-05,
+      "lat": 32.69303000000001,
+      "lon": 35.29956000000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:50:00Z",
+      "scheduledDeparture": "2026-10-27T06:50:00Z",
+      "stopCode": "56795",
+      "description": "רחוב: 60 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:05:00Z",
+      "scheduledArrival": "2026-10-27T07:05:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 900,
+     "startTime": "2026-10-27T06:50:00Z",
+     "endTime": "2026-10-27T07:05:00Z",
+     "scheduledStartTime": "2026-10-27T06:50:00Z",
+     "scheduledEndTime": "2026-10-27T07:05:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "עפולה_תחנה מרכזית",
+     "tripFrom": {
+      "name": "מעלה יצחק/הרב פינחס מילר",
+      "stopId": "il-Israel-MOT_38965",
+      "importance": 8.999286364996806e-06,
+      "lat": 32.72875000000001,
+      "lon": 35.341175,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:20:00Z",
+      "scheduledDeparture": "2026-10-27T06:20:00Z",
+      "stopCode": "50905",
+      "description": "רחוב: שדרות מעלה יצחק עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית עפולה/הורדה",
+      "stopId": "il-Israel-MOT_47851",
+      "parentId": "il-Israel-MOT_48299",
+      "importance": 9.080926975002512e-05,
+      "lat": 32.60924,
+      "lon": 35.29255000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:08:00Z",
+      "scheduledArrival": "2026-10-27T07:08:00Z",
+      "stopCode": "52152",
+      "description": "רחוב:   עיר: עפולה רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_918",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_08:20_il-Israel-MOT_18360741_271026",
+     "routeShortName": "356",
+     "routeLongName": "מעלה יצחק/הרב פינחס מילר-נוף הגליל<->ת.מרכזית עפולה/הורדה-עפולה-20",
+     "tripShortName": "",
+     "displayName": "356",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:10689187:10689231",
+     "intermediateStops": [
+      {
+       "name": "מחלף המחצבות/יציאה לכביש 60",
+       "stopId": "il-Israel-MOT_51788",
+       "importance": 7.404182269965531e-06,
+       "lat": 32.689636,
+       "lon": 35.302025,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:51:00Z",
+       "departure": "2026-10-27T06:51:00Z",
+       "scheduledArrival": "2026-10-27T06:51:00Z",
+       "scheduledDeparture": "2026-10-27T06:51:00Z",
+       "stopCode": "2637",
+       "description": "רחוב: יציאה לכביש 60 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מחלף איכסאל",
+       "stopId": "il-Israel-MOT_4717",
+       "importance": 1.064369371306384e-05,
+       "lat": 32.674088,
+       "lon": 35.29093000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:55:00Z",
+       "departure": "2026-10-27T06:55:00Z",
+       "scheduledArrival": "2026-10-27T06:55:00Z",
+       "scheduledDeparture": "2026-10-27T06:55:00Z",
+       "stopCode": "55312",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף תל עדשים",
+       "stopId": "il-Israel-MOT_4805",
+       "importance": 1.8661265130504034e-05,
+       "lat": 32.655277,
+       "lon": 35.292080000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:57:00Z",
+       "departure": "2026-10-27T06:57:00Z",
+       "scheduledArrival": "2026-10-27T06:57:00Z",
+       "scheduledDeparture": "2026-10-27T06:57:00Z",
+       "stopCode": "55418",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכללת עמק יזרעאל",
+       "stopId": "il-Israel-MOT_4678",
+       "importance": 2.188917642342858e-05,
+       "lat": 32.652405,
+       "lon": 35.291737000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:58:00Z",
+       "departure": "2026-10-27T06:58:00Z",
+       "scheduledArrival": "2026-10-27T06:58:00Z",
+       "scheduledDeparture": "2026-10-27T06:58:00Z",
+       "stopCode": "55264",
+       "description": "רחוב:   עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף מזרע",
+       "stopId": "il-Israel-MOT_18845",
+       "importance": 2.0212866729707457e-05,
+       "lat": 32.64810000000001,
+       "lon": 35.291473,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:00:00Z",
+       "departure": "2026-10-27T07:00:00Z",
+       "scheduledArrival": "2026-10-27T07:00:00Z",
+       "scheduledDeparture": "2026-10-27T07:00:00Z",
+       "stopCode": "51588",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף כפר גדעון",
+       "stopId": "il-Israel-MOT_4744",
+       "importance": 1.9769138816627674e-05,
+       "lat": 32.643463,
+       "lon": 35.291046,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:00:00Z",
+       "departure": "2026-10-27T07:00:00Z",
+       "scheduledArrival": "2026-10-27T07:00:00Z",
+       "scheduledDeparture": "2026-10-27T07:00:00Z",
+       "stopCode": "55344",
+       "description": "רחוב: 60 עיר: כפר גדעון רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף בלפוריה",
+       "stopId": "il-Israel-MOT_4725",
+       "importance": 1.9308008631924167e-05,
+       "lat": 32.62876500000001,
+       "lon": 35.289757,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:02:00Z",
+       "departure": "2026-10-27T07:02:00Z",
+       "scheduledArrival": "2026-10-27T07:02:00Z",
+       "scheduledDeparture": "2026-10-27T07:02:00Z",
+       "stopCode": "55321",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת עוקף עפולה/מעונות הסטודנטים",
+       "stopId": "il-Israel-MOT_5020",
+       "importance": 9.360359399579465e-06,
+       "lat": 32.62227200000001,
+       "lon": 35.28928,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:03:00Z",
+       "departure": "2026-10-27T07:03:00Z",
+       "scheduledArrival": "2026-10-27T07:03:00Z",
+       "scheduledDeparture": "2026-10-27T07:03:00Z",
+       "stopCode": "56013",
+       "description": "רחוב: 60/65 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אורט אלון/חטיבה תשע",
+       "stopId": "il-Israel-MOT_49559",
+       "importance": 2.9670383810298517e-05,
+       "lat": 32.618076,
+       "lon": 35.288967,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:04:00Z",
+       "departure": "2026-10-27T07:04:00Z",
+       "scheduledArrival": "2026-10-27T07:04:00Z",
+       "scheduledDeparture": "2026-10-27T07:04:00Z",
+       "stopCode": "56877",
+       "description": "רחוב: חטיבה תשע עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכבי אש/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4598",
+       "importance": 4.461940625333227e-05,
+       "lat": 32.615185000000004,
+       "lon": 35.288790000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:04:00Z",
+       "departure": "2026-10-27T07:04:00Z",
+       "scheduledArrival": "2026-10-27T07:04:00Z",
+       "scheduledDeparture": "2026-10-27T07:04:00Z",
+       "stopCode": "55160",
+       "description": "רחוב: חטיבה תשע 5 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "היכל התרבות/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4566",
+       "importance": 5.562852311413735e-05,
+       "lat": 32.612232000000006,
+       "lon": 35.28788399999999,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:05:00Z",
+       "departure": "2026-10-27T07:05:00Z",
+       "scheduledArrival": "2026-10-27T07:05:00Z",
+       "scheduledDeparture": "2026-10-27T07:05:00Z",
+       "stopCode": "55116",
+       "description": "רחוב: חטיבה תשע 23 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NOT_ALLOWED",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "kqlj}@omoibA{HDzk@aPbe@qO~MkFpR}JxQoLnLyIrHqGbgBsaCbV}ZzY{_@hA}A`f@io@rQwNrDuC~R}Kja@mOfT_DnYeA|^dAl[~Ch[jFbLbDdPlG`\\hRpV~RlV`Xdc@dd@`tBdvBbk@`m@lEfF~Q`UrIpMjKhRjJnRhIxStItYjGx[fE~]z@pMlIjwBpCp`@zArRz@hG|@dI|B|L|BbK~C|LfDvLlEfNrD|JfFjKzE|JrGzKnH`MvNxQt@|@dKtKfC~B|IfIfIfHd_@~SrLbEpBn@dDfAvD`AbGrArQ|DvLbBlLr@hGFrKl@vILpHMv]aAdO{@n^cGjj@yDnl@iG`NmAxRyB~`CcUrjCqWxeAuK`q@qG`f@oC~^kAng@g@p\\Xfh@hAzl@xBni@pBjq@rAz[zAha@bBpjA|D~SjAf\\|@ztB~HtDNpCHrSz@rDjCxAz@tMfA~JFvJSjJcBrcAzDpkBnGhWvAb_@rAfUd@~[jAxl@fD||BlJjER`C?vNz@xRp@tzCnMpOd@be@bBhi@rCltDbOrFVbJ\\z_GdTlfC|JvuAxF|b@tAj{BhGho@xBjVt@rtA|EbVz@nSVl@DnHf@zKr@nNG~SdAt@DtAFrYr@~Mz@Z?jRn@zFNnDN~fArDzeAhDRd@^VTL\\L^H\\H`@?J?ZI^INE^MRWVUh`AhB|_@bApf@jAdJFNt@FT\\d@LV^d@NJ^XRVl@Ld@NVFl@DT?j@EVGl@ONCl@YLMd@_@^e@LWrGe@|PVfOd@zJp@xFvA`Cr@z@FNFd@Nd@?n@Kb@[d@e@tPXva@fBzAVhGl@lALfHjAvJ~D\\d@\\l@RLf@d@l@d@l@\\bAn@nA^p@Lp@LR?j@Fl@Gd@?~^hRdExBrUhMpChAl@^`BbA~PpHz@|AzElIf@d@ZVl@L`BId@CrAm@~CuEhCkGvAsCbQkRrl@qh@t@{@tKuJlDgI|EyM`BD",
+      "precision": 6,
+      "length": 252
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:05:00Z",
+      "departure": "2026-10-27T07:05:00Z",
+      "scheduledArrival": "2026-10-27T07:05:00Z",
+      "scheduledDeparture": "2026-10-27T07:05:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.607,
+      "lon": 35.29,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:13:00Z",
+      "scheduledArrival": "2026-10-27T07:13:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T07:05:00Z",
+     "endTime": "2026-10-27T07:13:00Z",
+     "scheduledStartTime": "2026-10-27T07:05:00Z",
+     "scheduledEndTime": "2026-10-27T07:13:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 431.0,
+     "legGeometry": {
+      "points": "ynie}@qg{hbASu@??pIoV??`ByF??hQsm@??rDbB??zX`M??hGpC??ly@z^??jKuZzBwH??rJjEbBt@x@bA",
+      "precision": 6,
+      "length": 23
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 5115532812,
+       "polyline": {
+        "points": "ynie}@qg{hbASu@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 5115532812,
+       "toOsmNode": 1376158212,
+       "polyline": {
+        "points": "moie}@gi{hbApIoV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 1376158212,
+       "toOsmNode": 14077706476,
+       "polyline": {
+        "points": "{die}@w`|hbA`ByF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 77.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 14077706476,
+       "toOsmNode": 5115254176,
+       "polyline": {
+        "points": "yaie}@qh|hbAhQsm@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254176,
+       "toOsmNode": 14077706482,
+       "polyline": {
+        "points": "oohe}@ew}hbArDbB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 14077706482,
+       "toOsmNode": 1376158226,
+       "polyline": {
+        "points": "{ihe}@at}hbAzX`M",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 1376158226,
+       "toOsmNode": 5115254127,
+       "polyline": {
+        "points": "_pge}@_f}hbAhGpC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 114.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254127,
+       "toOsmNode": 1376158119,
+       "polyline": {
+        "points": "ugge}@ma}hbAly@z^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 63.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 525611913,
+       "fromOsmNode": 1376158119,
+       "toOsmNode": 5112955896,
+       "polyline": {
+        "points": "gmee}@qa|hbAjKuZzBwH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 43.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 5112955896,
+       "polyline": {
+        "points": "_}de}@_g}hbArJjEbBt@x@bA",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "duration": 2940,
+   "startTime": "2026-10-27T06:45:00Z",
+   "endTime": "2026-10-27T07:34:00Z",
+   "transfers": 1,
+   "id": "Ck0hmpmZmZlZQEApvHSTGASmQUAyE2lsLUlzcmFlbC1NT1RfMjEwMzc5Nzy9UpZZQEBBdL7Ye/GlQUBI7JCB1wZQ3JKB1wZaBFdBTEtgAQqTAQoCNDUSLDIwMjYxMDI3XzA4OjQ1X2lsLUlzcmFlbC1NT1RfMTgyNDU0NzRfMTkxMDI2GhNpbC1Jc3JhZWwtTU9UXzIxMDM3ITc8vVKWWUBAKXS+2HvxpUFAMhNpbC1Jc3JhZWwtTU9UXzM1MzEzObx5qkNuVkBAQf+Qfvs6qEFASNySgdcGUPiWgdcGWgNCVVNgAQpiGhNpbC1Jc3JhZWwtTU9UXzM1MzEzIbx5qkNuVkBAKf+Qfvs6qEFAMhNpbC1Jc3JhZWwtTU9UXzM1MzEyOQ9slWBxVkBAQWLRdHYyqEFASPiWgdcGUPCXgdcGWgRXQUxLYAEKkgEKAjQ3EiwyMDI2MTAyN18wOToxMF9pbC1Jc3JhZWwtTU9UXzQ3NjU5MDAwXzI3MTAyNhoTaWwtSXNyYWVsLU1PVF8zNTMxMiEPbJVgcVZAQCli0XR2MqhBQDISaWwtSXNyYWVsLU1PVF80ODU0ObxASYEFTkBAQbCsNCkFpUFASMCdgdcGUIikgdcGWgNCVVNgAQpMGhJpbC1Jc3JhZWwtTU9UXzQ4NTQhvEBJgQVOQEApsKw0KQWlQUA5BFYOLbJNQEBBhetRuB6lQUBIiKSB1wZQ6KeB1wZaBFdBTEtgAQ==",
+   "legs": [
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "START",
+      "lat": 32.7,
+      "lon": 35.297,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:45:00Z",
+      "scheduledDeparture": "2026-10-27T06:45:00Z",
+      "vertexType": "NORMAL"
+     },
+     "to": {
+      "name": "פאולוס השישי/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_21037",
+      "importance": 4.69410078949295e-05,
+      "lat": 32.69990000000001,
+      "lon": 35.29643200000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:49:00Z",
+      "scheduledArrival": "2026-10-27T06:49:00Z",
+      "stopCode": "53901",
+      "description": "רחוב: פאולוס השישי 89 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 240,
+     "startTime": "2026-10-27T06:45:00Z",
+     "endTime": "2026-10-27T06:49:00Z",
+     "scheduledStartTime": "2026-10-27T06:45:00Z",
+     "scheduledEndTime": "2026-10-27T06:49:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 191.0,
+     "legGeometry": {
+      "points": "glzj}@}_jibAfUtOfUnR??oAxC??cUmRkCiB",
+      "precision": 6,
+      "length": 8
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 119.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 14161655021,
+       "polyline": {
+        "points": "glzj}@}_jibAfUtOfUnR",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 8.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1557231549,
+       "fromOsmNode": 14161655021,
+       "toOsmNode": 14161655020,
+       "polyline": {
+        "points": "w_yj}@w{hibAoAxC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 64.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 14161655020,
+       "polyline": {
+        "points": "gbyj}@}vhibAcUmRkCiB",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "פאולוס השישי/תאופיק זיאד",
+      "stopId": "il-Israel-MOT_21037",
+      "importance": 4.69410078949295e-05,
+      "lat": 32.69990000000001,
+      "lon": 35.29643200000001,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:49:00Z",
+      "scheduledDeparture": "2026-10-27T06:49:00Z",
+      "stopCode": "53901",
+      "description": "רחוב: פאולוס השישי 89 עיר: נצרת רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35313",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67524,
+      "lon": 35.314299999999996,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:58:00Z",
+      "scheduledArrival": "2026-10-27T06:58:00Z",
+      "stopCode": "58849",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 540,
+     "startTime": "2026-10-27T06:49:00Z",
+     "endTime": "2026-10-27T06:58:00Z",
+     "scheduledStartTime": "2026-10-27T06:49:00Z",
+     "scheduledEndTime": "2026-10-27T06:58:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "אכסאל_מרכז",
+     "tripFrom": {
+      "name": "שוק נוף הגליל",
+      "stopId": "il-Israel-MOT_21083",
+      "importance": 5.907829836360179e-05,
+      "lat": 32.69353000000001,
+      "lon": 35.306107,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T06:45:00Z",
+      "scheduledDeparture": "2026-10-27T06:45:00Z",
+      "stopCode": "53947",
+      "description": "רחוב: דרך אריאל שרון עיר: נוף הגליל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "אכסאל אזה''ת",
+      "stopId": "il-Israel-MOT_40632",
+      "importance": 4.144369995628949e-06,
+      "lat": 32.679398000000006,
+      "lon": 35.316745999999995,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:13:00Z",
+      "scheduledArrival": "2026-10-27T07:13:00Z",
+      "stopCode": "54769",
+      "description": "רחוב: 18 1 עיר: אכסאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_891",
+     "routeUrl": "",
+     "directionId": "0",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_08:45_il-Israel-MOT_18245474_191026",
+     "routeShortName": "45",
+     "routeLongName": "שוק נוף הגליל-נוף הגליל<->אכסאל אזה''ת-אכסאל-10",
+     "tripShortName": "",
+     "displayName": "45",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:13590966:13590993",
+     "intermediateStops": [
+      {
+       "name": "פאולוס השישי/אבונא אוגו",
+       "stopId": "il-Israel-MOT_4857",
+       "importance": 4.7313682443927974e-05,
+       "lat": 32.69847500000001,
+       "lon": 35.29519300000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:49:00Z",
+       "departure": "2026-10-27T06:49:00Z",
+       "scheduledArrival": "2026-10-27T06:49:00Z",
+       "scheduledDeparture": "2026-10-27T06:49:00Z",
+       "stopCode": "55484",
+       "description": "רחוב: פאולוס השישי 73 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "פאולוס השישי/דיאנה",
+       "stopId": "il-Israel-MOT_4674",
+       "importance": 3.772130730794743e-05,
+       "lat": 32.696960000000004,
+       "lon": 35.291720000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:50:00Z",
+       "departure": "2026-10-27T06:50:00Z",
+       "scheduledArrival": "2026-10-27T06:50:00Z",
+       "scheduledDeparture": "2026-10-27T06:50:00Z",
+       "stopCode": "55259",
+       "description": "רחוב: פאולוס השישי 43 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "פאולוס השישי/ח'לת א-דיר",
+       "stopId": "il-Israel-MOT_19615",
+       "importance": 3.5293847759021446e-05,
+       "lat": 32.69454,
+       "lon": 35.290787,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:51:00Z",
+       "departure": "2026-10-27T06:51:00Z",
+       "scheduledArrival": "2026-10-27T06:51:00Z",
+       "scheduledDeparture": "2026-10-27T06:51:00Z",
+       "stopCode": "52417",
+       "description": "רחוב: פאולוס השישי 11 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "בי''ס אל-וואספיה",
+       "stopId": "il-Israel-MOT_4703",
+       "importance": 8.200284355552867e-06,
+       "lat": 32.69229500000001,
+       "lon": 35.29214000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:52:00Z",
+       "departure": "2026-10-27T06:52:00Z",
+       "scheduledArrival": "2026-10-27T06:52:00Z",
+       "scheduledDeparture": "2026-10-27T06:52:00Z",
+       "stopCode": "55296",
+       "description": "רחוב: מרג' אבן עאמר 4 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מגדלי נצרת/מרג' אבן עאמר",
+       "stopId": "il-Israel-MOT_4702",
+       "importance": 9.637327821110375e-06,
+       "lat": 32.689823,
+       "lon": 35.291286,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:52:00Z",
+       "departure": "2026-10-27T06:52:00Z",
+       "scheduledArrival": "2026-10-27T06:52:00Z",
+       "scheduledDeparture": "2026-10-27T06:52:00Z",
+       "stopCode": "55295",
+       "description": "רחוב: מרג' אבן עאמר עיר: נוף הגליל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/מרג' אבן עאמר",
+       "stopId": "il-Israel-MOT_5000",
+       "importance": 1.0256518180540297e-05,
+       "lat": 32.686885999999994,
+       "lon": 35.28996,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:53:00Z",
+       "departure": "2026-10-27T06:53:00Z",
+       "scheduledArrival": "2026-10-27T06:53:00Z",
+       "scheduledDeparture": "2026-10-27T06:53:00Z",
+       "stopCode": "55681",
+       "description": "רחוב: אל פאח'ורה 1 עיר: נוף הגליל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/מרכז אבן עאמר",
+       "stopId": "il-Israel-MOT_4999",
+       "importance": 8.184333637473173e-06,
+       "lat": 32.686134,
+       "lon": 35.28813000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:53:00Z",
+       "departure": "2026-10-27T06:53:00Z",
+       "scheduledArrival": "2026-10-27T06:53:00Z",
+       "scheduledDeparture": "2026-10-27T06:53:00Z",
+       "stopCode": "55680",
+       "description": "רחוב: אל פאח'ורה 2 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אל-פאח'ורה/ביר אל-אמיר",
+       "stopId": "il-Israel-MOT_20986",
+       "importance": 4.208174232189776e-06,
+       "lat": 32.68477,
+       "lon": 35.286747,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:54:00Z",
+       "departure": "2026-10-27T06:54:00Z",
+       "scheduledArrival": "2026-10-27T06:54:00Z",
+       "scheduledDeparture": "2026-10-27T06:54:00Z",
+       "stopCode": "53850",
+       "description": "רחוב: אל פאח'ורה 39 עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "ביר אבו אל-ג'יש/דרך עפולה",
+       "stopId": "il-Israel-MOT_5019",
+       "importance": 4.662053925130749e-06,
+       "lat": 32.67817300000001,
+       "lon": 35.28712,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:55:00Z",
+       "departure": "2026-10-27T06:55:00Z",
+       "scheduledArrival": "2026-10-27T06:55:00Z",
+       "scheduledDeparture": "2026-10-27T06:55:00Z",
+       "stopCode": "56012",
+       "description": "רחוב: מרג' אבן עאמר עיר: נצרת רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת איכסאל/כניסה מערבית",
+       "stopId": "il-Israel-MOT_5166",
+       "importance": 3.429473508731462e-06,
+       "lat": 32.67611000000001,
+       "lon": 35.2912,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T06:56:00Z",
+       "departure": "2026-10-27T06:56:00Z",
+       "scheduledArrival": "2026-10-27T06:56:00Z",
+       "scheduledDeparture": "2026-10-27T06:56:00Z",
+       "stopCode": "56818",
+       "description": "רחוב: 7269 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "w~yj}@_jiibA_A_En\\vXjCnBfYfUbPfNdOjMxBhB~CnChC~Ct@dAGRGV?V?T?VFXFRFLDXNJNVLBRHRHRDRF`AxLL|Dl@tPrAnXp@zFz@vG`AnFhBxFvDhMnChG~Nr[vAhDxDhGdHhKvFnJfKvMzOrSlIrJ|BpBrDdCnC|AzB`AvC~@nC\\rj@|BjBIpWdA|G?jIg@jFg@vIiBzIqBrDkAlDgBrEaEhH_IpCqCrP{P~CsCdIcIrCyB~H}EvHoBdKoApJ[~EFzCj@|BrA`DvCdD~DlA~Bn@pCSl@EbADz@Hv@Lj@Vf@d@f@l@f@z@`@|@Nz@IjA]|DlArDnBtCdAtDjArCd@jCVrC?hMo@hFRfEz@?LNLBNHNHLLNDLRFJNNFJLRHJ?NLJ?RDL?X?J?N?J?REJ?NGVELIVULONGNMBOHMNOFODMFWFMbDm@dCHxDb@vrAdTfE`AzE|AxH~CzK`HpWtPvF`BjCl@rD\\nLF|EvDjKnIpGxG~FpGnFpHpB|D`A~CXrBLvCMdEkAhNO~BNnCNbBl@hCjGtMxP`YvIxIdEfEvKbLzEjHlNjQ|DdEjFvDb\\rU|T`U~Xf^nCzCdJnHfEpCtDxBpEbC~ChAjCt@zAJtE?lESxGoAxDoA`Ag@dKg@NHZV^DZF`@?d@?ZM^GrC?jCYbCc@pB_ArAgAtC_D`E}E|DiG`CaCpCyB~BwAjDoAzDm@rO}AnEs@lE{@tKyCdIyCfIeDtFmDpQcMjK{EjFcBlEcAjFcApHs@x]mBrEe@~WeEvD{@zAm@`BwA|@gA^}@L{@G}@Ou@e@eAm@c@kAWsA?eD^uUbF_D^cB?iAWw@e@]m@G_A?aA`@cAf@u@tAcAhHoCzMoEzJcCnM}B`v@iK`I{@zJa@zFDjBNrAVpATtA\\vBzAbBjAbV~VpBbBhCzBjBjAvCrA~Bv@bWfHbe@jOvC|AbBxAzA~A~@lB`@xA^hDDdEEnNL~ARnAf@bAn@d@l@`@`ABdACdAg@nAu@nAaAjAcBbAcBv@cCr@_DrAgHd@iHd@eMr@cYl@cQHkEWqH}@wDe@mBkAwB{@cAuAs@yB{@iB_@qBW_I]kBa@{BYwBu@wB{@yC{A{KwFiX{Jgh@_WeEwC{AqCk@aCO_Fd@gEd@mB|@qBz@kAnDsB^?j@Cb@SXSLS\\a@Ve@N[Hq@?k@?m@I_@Oo@Wc@]e@]U]OSGg@ES?_DwDeC}DiCmOiC}PeAoPRoQp@wRfE}c@p@aIfEqa@t@uUu@kWwCwUwN{s@oCkRg@aMEuH\\aJdAmKlDqQrc@ewB`Jc_@v^olAjFqRfDuO|DwYjF_d@jCkTf@}JJcFFyHu@iL{AuJoCcLiDwIgOc[uCiHiCmJs@{FGUs@}J_@kKrAikAiCyn@u@qYs@aRJcVXkMz@cK|@yGxBqJtCsIvE{J|DsGpLgQhIkNjF_MdEkQrB}Oj@sQ?qWW_XcBgSsDkQaHwRqJsX_No_@XYTe@Jc@?IB]F_@?o@G[Om@Ue@Ye@[UUWWCMI_DcL_E}NsPkf@nCbB",
+      "precision": 6,
+      "length": 436
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35313",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67524,
+      "lon": 35.314299999999996,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T06:58:00Z",
+      "departure": "2026-10-27T06:58:00Z",
+      "scheduledArrival": "2026-10-27T06:58:00Z",
+      "scheduledDeparture": "2026-10-27T06:58:00Z",
+      "stopCode": "58849",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35312",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67533500000001,
+      "lon": 35.31403999999999,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:00:00Z",
+      "scheduledArrival": "2026-10-27T07:00:00Z",
+      "stopCode": "58848",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 120,
+     "startTime": "2026-10-27T06:58:00Z",
+     "endTime": "2026-10-27T07:00:00Z",
+     "scheduledStartTime": "2026-10-27T06:58:00Z",
+     "scheduledEndTime": "2026-10-27T07:00:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 256.0,
+     "legGeometry": {
+      "points": "yyii}@qiljbAiE\\??tT|m@tFtOnBpF??iAa@oA?iA`@w@z@Sj@??O}COgCo@gEiAmFmBiGaKsY",
+      "precision": 6,
+      "length": 19
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 15.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 10068918747,
+       "polyline": {
+        "points": "yyii}@qiljbAiE\\",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 122.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 1099882358,
+       "fromOsmNode": 10068918747,
+       "toOsmNode": 872175560,
+       "polyline": {
+        "points": "c`ji}@shljbAtT|m@tFtOnBpF",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 20.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 73591906,
+       "fromOsmNode": 872175560,
+       "toOsmNode": 10068918752,
+       "polyline": {
+        "points": "g_ii}@majjbAiAa@oA?iA`@w@z@Sj@",
+        "precision": 6,
+        "length": 6
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 99.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 10068918752,
+       "polyline": {
+        "points": "whii}@e~ijbAO}COgCo@gEiAmFmBiGaKsY",
+        "precision": 6,
+        "length": 7
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    },
+    {
+     "mode": "BUS",
+     "from": {
+      "name": "בית ספר ראנד/איכסאל",
+      "stopId": "il-Israel-MOT_35312",
+      "importance": 6.858947017462924e-06,
+      "lat": 32.67533500000001,
+      "lon": 35.31403999999999,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T07:12:00Z",
+      "scheduledDeparture": "2026-10-27T07:12:00Z",
+      "stopCode": "58848",
+      "description": "רחוב: 1 עיר: עמק יזרעאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:26:00Z",
+      "scheduledArrival": "2026-10-27T07:26:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "duration": 840,
+     "startTime": "2026-10-27T07:12:00Z",
+     "endTime": "2026-10-27T07:26:00Z",
+     "scheduledStartTime": "2026-10-27T07:12:00Z",
+     "scheduledEndTime": "2026-10-27T07:26:00Z",
+     "realTime": false,
+     "scheduled": true,
+     "interlineWithPreviousLeg": false,
+     "headsign": "עפולה_תחנה מרכזית",
+     "tripFrom": {
+      "name": "מועדון פיס לגיל הזהב",
+      "stopId": "il-Israel-MOT_4484",
+      "importance": 4.7867620196484495e-06,
+      "lat": 32.68172,
+      "lon": 35.32284,
+      "tz": "Asia/Jerusalem",
+      "departure": "2026-10-27T07:10:00Z",
+      "scheduledDeparture": "2026-10-27T07:10:00Z",
+      "stopCode": "55019",
+      "description": "רחוב: 1 40 עיר: אכסאל רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NORMAL",
+      "dropoffType": "NOT_ALLOWED",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "tripTo": {
+      "name": "ת.מרכזית עפולה/הורדה",
+      "stopId": "il-Israel-MOT_47851",
+      "parentId": "il-Israel-MOT_48299",
+      "importance": 9.080926975002512e-05,
+      "lat": 32.60924,
+      "lon": 35.29255000000001,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:29:00Z",
+      "scheduledArrival": "2026-10-27T07:29:00Z",
+      "stopCode": "52152",
+      "description": "רחוב:   עיר: עפולה רציף: 1   קומה:",
+      "vertexType": "TRANSIT",
+      "pickupType": "NOT_ALLOWED",
+      "dropoffType": "NORMAL",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "routeId": "il-Israel-MOT_18446",
+     "routeUrl": "",
+     "directionId": "1",
+     "routeType": 3,
+     "agencyName": "סופרבוס",
+     "agencyUrl": "http://www.superbus.co.il",
+     "agencyFareUrl": "",
+     "agencyId": "16",
+     "tripId": "20261027_09:10_il-Israel-MOT_47659000_271026",
+     "routeShortName": "47",
+     "routeLongName": "מועדון פיס לגיל הזהב-אכסאל<->ת.מרכזית עפולה/הורדה-עפולה-22",
+     "tripShortName": "",
+     "displayName": "47",
+     "cancelled": false,
+     "source": "il_Israel-MOT.gtfs.zip/stop_times.txt:6166207:6166224",
+     "intermediateStops": [
+      {
+       "name": "מחלף איכסאל",
+       "stopId": "il-Israel-MOT_4717",
+       "importance": 1.064369371306384e-05,
+       "lat": 32.674088,
+       "lon": 35.29093000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:14:00Z",
+       "departure": "2026-10-27T07:14:00Z",
+       "scheduledArrival": "2026-10-27T07:14:00Z",
+       "scheduledDeparture": "2026-10-27T07:14:00Z",
+       "stopCode": "55312",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף תל עדשים",
+       "stopId": "il-Israel-MOT_4805",
+       "importance": 1.8661265130504034e-05,
+       "lat": 32.655277,
+       "lon": 35.292080000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:16:00Z",
+       "departure": "2026-10-27T07:16:00Z",
+       "scheduledArrival": "2026-10-27T07:16:00Z",
+       "scheduledDeparture": "2026-10-27T07:16:00Z",
+       "stopCode": "55418",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכללת עמק יזרעאל",
+       "stopId": "il-Israel-MOT_4678",
+       "importance": 2.188917642342858e-05,
+       "lat": 32.652405,
+       "lon": 35.291737000000005,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:17:00Z",
+       "departure": "2026-10-27T07:17:00Z",
+       "scheduledArrival": "2026-10-27T07:17:00Z",
+       "scheduledDeparture": "2026-10-27T07:17:00Z",
+       "stopCode": "55264",
+       "description": "רחוב:   עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף מזרע",
+       "stopId": "il-Israel-MOT_18845",
+       "importance": 2.0212866729707457e-05,
+       "lat": 32.64810000000001,
+       "lon": 35.291473,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:19:00Z",
+       "departure": "2026-10-27T07:19:00Z",
+       "scheduledArrival": "2026-10-27T07:19:00Z",
+       "scheduledDeparture": "2026-10-27T07:19:00Z",
+       "stopCode": "51588",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף כפר גדעון",
+       "stopId": "il-Israel-MOT_4744",
+       "importance": 1.9769138816627674e-05,
+       "lat": 32.643463,
+       "lon": 35.291046,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:19:00Z",
+       "departure": "2026-10-27T07:19:00Z",
+       "scheduledArrival": "2026-10-27T07:19:00Z",
+       "scheduledDeparture": "2026-10-27T07:19:00Z",
+       "stopCode": "55344",
+       "description": "רחוב: 60 עיר: כפר גדעון רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מסעף בלפוריה",
+       "stopId": "il-Israel-MOT_4725",
+       "importance": 1.9308008631924167e-05,
+       "lat": 32.62876500000001,
+       "lon": 35.289757,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:21:00Z",
+       "departure": "2026-10-27T07:21:00Z",
+       "scheduledArrival": "2026-10-27T07:21:00Z",
+       "scheduledDeparture": "2026-10-27T07:21:00Z",
+       "stopCode": "55321",
+       "description": "רחוב: 60 עיר: עמק יזרעאל רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "צומת עוקף עפולה/מעונות הסטודנטים",
+       "stopId": "il-Israel-MOT_5020",
+       "importance": 9.360359399579465e-06,
+       "lat": 32.62227200000001,
+       "lon": 35.28928,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:22:00Z",
+       "departure": "2026-10-27T07:22:00Z",
+       "scheduledArrival": "2026-10-27T07:22:00Z",
+       "scheduledDeparture": "2026-10-27T07:22:00Z",
+       "stopCode": "56013",
+       "description": "רחוב: 60/65 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "תחנת רכבת עפולה/יואש דובנוב",
+       "stopId": "il-Israel-MOT_41047",
+       "importance": 2.276793384226039e-05,
+       "lat": 32.620678000000005,
+       "lon": 35.29333000000001,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:24:00Z",
+       "departure": "2026-10-27T07:24:00Z",
+       "scheduledArrival": "2026-10-27T07:24:00Z",
+       "scheduledDeparture": "2026-10-27T07:24:00Z",
+       "stopCode": "54903",
+       "description": "רחוב: שדרות יואש דובנוב 3 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "אורט אלון/חטיבה תשע",
+       "stopId": "il-Israel-MOT_49559",
+       "importance": 2.9670383810298517e-05,
+       "lat": 32.618076,
+       "lon": 35.288967,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:25:00Z",
+       "departure": "2026-10-27T07:25:00Z",
+       "scheduledArrival": "2026-10-27T07:25:00Z",
+       "scheduledDeparture": "2026-10-27T07:25:00Z",
+       "stopCode": "56877",
+       "description": "רחוב: חטיבה תשע עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "מכבי אש/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4598",
+       "importance": 4.461940625333227e-05,
+       "lat": 32.615185000000004,
+       "lon": 35.288790000000006,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:25:00Z",
+       "departure": "2026-10-27T07:25:00Z",
+       "scheduledArrival": "2026-10-27T07:25:00Z",
+       "scheduledDeparture": "2026-10-27T07:25:00Z",
+       "stopCode": "55160",
+       "description": "רחוב: חטיבה תשע 5 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      },
+      {
+       "name": "היכל התרבות/חטיבה תשע",
+       "stopId": "il-Israel-MOT_4566",
+       "importance": 5.562852311413735e-05,
+       "lat": 32.612232000000006,
+       "lon": 35.28788399999999,
+       "tz": "Asia/Jerusalem",
+       "arrival": "2026-10-27T07:26:00Z",
+       "departure": "2026-10-27T07:26:00Z",
+       "scheduledArrival": "2026-10-27T07:26:00Z",
+       "scheduledDeparture": "2026-10-27T07:26:00Z",
+       "stopCode": "55116",
+       "description": "רחוב: חטיבה תשע 23 עיר: עפולה רציף:  קומה:",
+       "vertexType": "TRANSIT",
+       "pickupType": "NORMAL",
+       "dropoffType": "NORMAL",
+       "cancelled": false,
+       "modes": [
+        "BUS"
+       ]
+      }
+     ],
+     "legGeometry": {
+      "points": "m_ji}@ovkjbA|O|]ZxBxChRETGZ?n@?^FRDf@NRN`@LXRJRTRDVR^DV?R?^ETIXIRKR[~Mn_@pJrXl@bBbGjRfCdMbB~Mr@t^NnGm@z^}A|NiFdUkF~LiIjNqLfQ}DrGwEzJuCrIyBpJ}@xG{@bKYjMKbVr@`Rt@pYhCxn@sAhkA^jKr@|JFTr@zFhClJtChHfOb[hDvInCbLzAtJt@hLGxHKbFg@|JkCjTkF~c@}DvYgDtOkFpRw^nlAaJb_@sc@dwBmDpQeAlK]`JDtHf@`MnCjRvNzs@vCvUt@jWu@tUgEpa@q@`IgE|c@q@vRSnQdAnPhC|PhClOhBrNG`@Ml@?\\?d@?d@Ll@Vn@TZ\\^f@Rf@RZB^?j@Cb@SXSLS\\a@Ve@N[jAmB~CaCvS{KxFwCtJgH`FcGbBqCvBeEbBkFzDsIfCkCfCw@zGMrQ|DvLbBlLr@hGFrKl@vILpHMv]aAdO{@n^cGjj@yDnl@iG`NmAxRyB~`CcUrjCqWxeAuK`q@qG`f@oC~^kAng@g@p\\Xfh@hAzl@xBni@pBjq@rAz[zAha@bBpjA|D~SjAf\\|@ztB~HtDNpCHrSz@rDjCxAz@tMfA~JFvJSjJcBrcAzDpkBnGhWvAb_@rAfUd@~[jAxl@fD||BlJjER`C?vNz@xRp@tzCnMpOd@be@bBhi@rCltDbOrFVbJ\\z_GdTlfC|JvuAxF|b@tAj{BhGho@xBjVt@fvBbH~HL`HTzJVjQj@tUjAtAFrYr@~Mz@Z?jRn@zFNnDNJgJHiGNyG|E_wAbCko@bD{`@vEia@rJck@nE}Pf@EZGTM\\WRUXYFKN[La@N]Fc@?g@?_@?UG]Gc@Ka@IMW_@EMWYWS_@OSMO?]IWEe@D_@HM?YLa@VYJSXO`@MJ?LO`@Mb@?\\GT?^FR?^Df@LZHRLZV^kFhUmE|UeIhf@cBdMkCr]{@x\\{AnbAyBlr@Y|F[|InDN~fArDzeAhDRd@^VTL\\L^H\\H`@?J?ZI^INE^MRWVUh`AhB|_@bApf@jAdJFNt@FT\\d@LV^d@NJ^XRVl@Ld@NVFl@DT?j@EVGl@ONCl@YLMd@_@^e@LWrGe@|PVfOd@zJp@xFvA`Cr@z@FNFd@Nd@?n@Kb@[d@e@tPXva@fBzAVhGl@lALfHjAvJ~D\\d@\\l@RLf@d@l@d@l@\\bAn@nA^p@Lp@LR?j@Fl@Gd@?~^hRdExBrUhMpChAl@^`BbA~PpHz@|AzElIf@d@ZVl@L`BId@CrAm@~CuEhCkGvAsCbQkRrl@qh@t@{@tKuJlDgI|EyM`BD",
+      "precision": 6,
+      "length": 375
+     },
+     "bikesAllowed": false,
+     "wheelchairAccessible": "NOT_ACCESSIBLE",
+     "reservation": "NONE",
+     "alternatives": []
+    },
+    {
+     "mode": "WALK",
+     "from": {
+      "name": "כיכר העצמאות",
+      "stopId": "il-Israel-MOT_4854",
+      "importance": 4.827799421036616e-05,
+      "lat": 32.609543,
+      "lon": 35.28922,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:26:00Z",
+      "departure": "2026-10-27T07:26:00Z",
+      "scheduledArrival": "2026-10-27T07:26:00Z",
+      "scheduledDeparture": "2026-10-27T07:26:00Z",
+      "stopCode": "55481",
+      "description": "רחוב: הנשיא וייצמן עיר: עפולה רציף:  קומה:",
+      "vertexType": "TRANSIT",
+      "cancelled": false,
+      "modes": [
+       "BUS"
+      ]
+     },
+     "to": {
+      "name": "END",
+      "lat": 32.607,
+      "lon": 35.29,
+      "tz": "Asia/Jerusalem",
+      "arrival": "2026-10-27T07:34:00Z",
+      "scheduledArrival": "2026-10-27T07:34:00Z",
+      "vertexType": "NORMAL"
+     },
+     "duration": 480,
+     "startTime": "2026-10-27T07:26:00Z",
+     "endTime": "2026-10-27T07:34:00Z",
+     "scheduledStartTime": "2026-10-27T07:26:00Z",
+     "scheduledEndTime": "2026-10-27T07:34:00Z",
+     "realTime": false,
+     "scheduled": false,
+     "distance": 431.0,
+     "legGeometry": {
+      "points": "ynie}@qg{hbASu@??pIoV??`ByF??hQsm@??rDbB??zX`M??hGpC??ly@z^??jKuZzBwH??rJjEbBt@x@bA",
+      "precision": 6,
+      "length": 23
+     },
+     "steps": [
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 3.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "toOsmNode": 5115532812,
+       "polyline": {
+        "points": "ynie}@qg{hbASu@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 40.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 5115532812,
+       "toOsmNode": 1376158212,
+       "polyline": {
+        "points": "moie}@gi{hbApIoV",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 13.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 1376158212,
+       "toOsmNode": 14077706476,
+       "polyline": {
+        "points": "{die}@w`|hbA`ByF",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 77.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 30680631,
+       "fromOsmNode": 14077706476,
+       "toOsmNode": 5115254176,
+       "polyline": {
+        "points": "yaie}@qh|hbAhQsm@",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "הנשיא ויצמן",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 11.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254176,
+       "toOsmNode": 14077706482,
+       "polyline": {
+        "points": "oohe}@ew}hbArDbB",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 51.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 14077706482,
+       "toOsmNode": 1376158226,
+       "polyline": {
+        "points": "{ihe}@at}hbAzX`M",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 16.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 1376158226,
+       "toOsmNode": 5115254127,
+       "polyline": {
+        "points": "_pge}@_f}hbAhGpC",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 114.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 102411214,
+       "fromOsmNode": 5115254127,
+       "toOsmNode": 1376158119,
+       "polyline": {
+        "points": "ugge}@ma}hbAly@z^",
+        "precision": 6,
+        "length": 2
+       },
+       "streetName": "ורדה לרנר",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 63.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "osmWay": 525611913,
+       "fromOsmNode": 1376158119,
+       "toOsmNode": 5112955896,
+       "polyline": {
+        "points": "gmee}@qa|hbAjKuZzBwH",
+        "precision": 6,
+        "length": 3
+       },
+       "streetName": "אוסישקין",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      },
+      {
+       "relativeDirection": "CONTINUE",
+       "distance": 43.0,
+       "fromLevel": 0.0,
+       "toLevel": 0.0,
+       "fromOsmNode": 5112955896,
+       "polyline": {
+        "points": "_}de}@_g}hbArJjEbBt@x@bA",
+        "precision": 6,
+        "length": 4
+       },
+       "streetName": "",
+       "exit": "",
+       "stayOn": false,
+       "area": false,
+       "toll": false,
+       "elevationUp": 0,
+       "elevationDown": 0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "previousPageCursor": "EARLIER|1793080800",
+ "nextPageCursor": "LATER|1793083560"
+}

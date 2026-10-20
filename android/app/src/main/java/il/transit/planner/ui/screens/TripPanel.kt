@@ -480,7 +480,7 @@ internal fun ResultsPanel(
                         }
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
-                            transferBufferMin = state.settings.transferBufferMin,
+                            transferBufferMin = state.settings.transferBufferMin, fewerStops = i in rememberFewerStops(state.options),
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
                             extra = { UsualLine(state, itin); BigStopRow(state, vm); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
@@ -556,6 +556,8 @@ internal fun ItineraryCard(
     searchedAt: Instant?,
     /** "Keep transfers at least" (minutes, null = Off): raises the tight-transfer threshold. */
     transferBufferMin: Int? = null,
+    /** A train on this option makes at least 2 fewer stops than a comparable one (Phase 11 E3). */
+    fewerStops: Boolean = false,
     onLeg: ((Int) -> Unit)? = null,
     /** Drawn on the selected card only, under its summary ("If I miss this…"). */
     extra: (@Composable () -> Unit)? = null,
@@ -574,8 +576,9 @@ internal fun ItineraryCard(
             // On the selected option a bus or train chip opens that vehicle's stops (trip sheet).
             s.chips.forEach { c ->
                 val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit
-                LegChipView(c, onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null)
+                LegChipView(withTrainNumber(c, itin), onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null)
             }
+            if (fewerStops) FewerStopsChip()
         // A tight change first, so it is above the fold on a small phone (designer pass).
         TransferChips(itin, transferBufferMin)
             FareText(s.fare)

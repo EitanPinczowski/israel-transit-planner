@@ -279,7 +279,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
-                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null) }) else null
+                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null, accessibleRoutes = state.settings.accessible) }) else null
                 CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
                     MainScreen(state, ui, actions, tripSheet = sheetUi) {
                         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())

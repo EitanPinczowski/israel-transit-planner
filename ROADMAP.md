@@ -86,7 +86,8 @@ phase with open items. Full design: the approved plan (summarised in CLAUDE.md).
 - [x] Walking directions for the selected trip: street by street, turns computed from the
       step geometry (Transitous sends only CONTINUE/STAIRS), stairs called out
 - [x] Accessible routes setting: `pedestrianProfile=WHEELCHAIR` (step-free walking parts;
-      vehicle accessibility is not in the data)
+      buses carry `wheelchairAccessible` (always set, stable per route: the Phase 11 E3 badge);
+      rail reads `NOT_ACCESSIBLE` everywhere, a default, so trains and stations are unknown)
 
 ## Phase 7 — Release
 - [x] Tag-triggered release workflow: signed APK (key from repo secrets), `apksigner verify`,
@@ -321,8 +322,8 @@ package. Tick only your own package's lines.
 - [x] CI flake log issue (quarantine-free; two flakes in 14 days → a fix package)
 
 ### E3 — Leg labels (`claude/p11-leg-labels`, 0 requests, ≤ 10 recordings)
-- [ ] Train number and "Fewer stops" from `headsign`
-- [ ] Accessible-bus badge from `wheelchairAccessible` (buses only, after the ≤ 10-plan sample)
+- [x] Train number and "Fewer stops" from `headsign`
+- [x] Accessible-bus badge from `wheelchairAccessible` (buses only, after the ≤ 10-plan sample)
 
 ### T5 — Routing correctness (`claude/p11-routing-tests`, Sonnet, ≤ 65 Transitous requests a week)
 - [ ] ~25 golden trips (every special feature, north, south, Jerusalem, night, Friday/Shabbat, holiday) with the invariants, run weekly live

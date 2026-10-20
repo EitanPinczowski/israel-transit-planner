@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import il.transit.core.api.Leg
 import il.transit.core.present.AlertText
 import il.transit.core.present.StopListItem
 import il.transit.core.present.StopRole
@@ -62,7 +63,7 @@ import il.transit.planner.ui.TripSheet
  * [onMissedIt]: "Missed it? Plan from here" (Phase 11 E2), from where the phone is to the trip's destination.
  */
 @Composable
-internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape, onMissedIt: (() -> Unit)? = null) {
+internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape, onMissedIt: (() -> Unit)? = null, accessibleRoutes: Boolean = false) {
     // No dispatcher in screenshot tests; on a phone there always is one.
     if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(onBack = onClose)
     val d = sheet.details
@@ -70,7 +71,7 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: M
     Sheet(modifier, shape) {
         SheetHeader(collapsed, { collapsed = it }) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.weight(1f)) { if (d != null) Header(d) }
+                Box(Modifier.weight(1f)) { if (d != null) Header(d, sheet.leg, accessibleRoutes) }
                 IconButton(onClick = onClose) { Icon(Icons.Default.Close, stringResource(R.string.close)) }
             }
         }
@@ -113,13 +114,17 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: M
 }
 
 @Composable
-private fun Header(d: TripDetails) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.background(parseColor(d.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp)) {
-            Text(d.line ?: kindName(d.kind), style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(d.color)))
+private fun Header(d: TripDetails, leg: Leg, accessibleRoutes: Boolean) {
+    // Phase 11 E3: a train's number and stops on the way; a bus's accessibility, under the title.
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.background(parseColor(d.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp)) {
+                Text(d.line ?: kindName(d.kind), style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(d.color)))
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(legTitle(leg, d.headsign), style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
-        Spacer(Modifier.width(8.dp))
-        Text(d.headsign, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        AccessibleBadgeRow(leg, accessibleRoutes)
     }
 }
 

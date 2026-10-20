@@ -22,6 +22,8 @@ data class RideLeg(
     val getOff: String,
     /** The number on the stop's sign; null on trains and when the data has none. */
     val stopCode: String?,
+    /** A train with its number in the data: "Train 24 to Nahariya" instead of the kind (Phase 11 E3). */
+    val train: TrainLabel? = null,
 )
 
 /** The compact line of an unselected card: "17 stops · 38 min on board · off at Rager/Oren". */
@@ -51,6 +53,7 @@ fun rideLeg(leg: Leg, index: Int): RideLeg {
         minutes = minutes(((leg.end.epochSecond - leg.start.epochSecond).coerceAtLeast(0)).toInt()),
         getOff = leg.to.name,
         stopCode = stopPlatform(leg.to, train).stopCode,
+        train = trainLabel(leg),
     )
 }
 
