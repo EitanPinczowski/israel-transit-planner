@@ -165,6 +165,8 @@ internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -
         val compactEdit = e != null && LocalCompactEditing.current
         Column(Modifier.padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 8.dp)) {
             if (!compactEdit) ModeRow(state, vm)
+            // Phase 11 E2: no fix for "Missed it?": "Where are you?" over the From field it focused.
+            if (e == Field.FROM && state.missedIt?.kind == MissedItUi.Kind.NEED_START) MissedItBanner(state)
             Row(Modifier.padding(end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     PlaceRow(R.string.from, placeLabel(state.from), e == Field.FROM) { vm.startEditing(Field.FROM) }
@@ -436,6 +438,7 @@ internal fun ResultsPanel(
             }
         }
         if (!collapsed) {
+            MissedItBanner(state) // Phase 11 E2: "From your location at 07:46"
             // Everything between the header and the action row shrinks first (the list, then the
             // banners): the row keeps its full 48 dp even on a 320 dp phone at a large font (D11, R8).
             Column(Modifier.fillMaxWidth().weight(1f, fill = false)) {

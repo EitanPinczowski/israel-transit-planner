@@ -103,7 +103,7 @@ open class TransitApp : Application() {
     val rides: Rides = object : Rides {
         override val active: StateFlow<Boolean> = RideService.active
         override val progress: StateFlow<il.transit.core.ride.RideProgress?> = RideService.progress
-        override fun start(itinerary: Itinerary, speak: Boolean) = RideService.start(this@TransitApp, itinerary, speak)
+        override fun start(itinerary: Itinerary, speak: Boolean, arriveBy: Boolean) = RideService.start(this@TransitApp, itinerary, speak, arriveBy)
         override fun stop() = RideService.stop(this@TransitApp)
     }
 
@@ -133,7 +133,8 @@ interface Rides {
 
     /** Live progress of the ride ("3 stops left · arrive 08:47"); null between fixes or when idle. */
     val progress: StateFlow<il.transit.core.ride.RideProgress?>
-    /** [speak]: also say the get-off alert out loud. */
-    fun start(itinerary: Itinerary, speak: Boolean)
+
+    /** [speak]: also say the get-off alert out loud. [arriveBy]: an arrive-by trip ("Missed it?" says it leaves now). */
+    fun start(itinerary: Itinerary, speak: Boolean, arriveBy: Boolean = false)
     fun stop()
 }

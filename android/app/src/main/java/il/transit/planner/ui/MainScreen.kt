@@ -201,6 +201,12 @@ data class MapPadding(val left: Int = 0, val top: Int = 0, val right: Int = 0, v
 internal val barsAndCutout: WindowInsets
     @Composable get() = WindowInsets.systemBars.union(WindowInsets.displayCutout)
 
+/** "You're already there" (Phase 11 E2) keeps the panel open only while the Trip tab still shows that destination. */
+private fun alreadyThere(s: UiState): Boolean {
+    val m = s.missedIt ?: return false
+    return m.kind == MissedItUi.Kind.ALREADY_THERE && s.mode == AppMode.TRIP && (s.to as? PlaceRef.Point)?.at == m.to
+}
+
 /**
  * The whole screen over the map. Phones: search card on top, results as a bottom sheet.
  * Wide windows: both in one side column at the start edge. Every edge respects the status
@@ -224,7 +230,7 @@ fun MainScreen(
 
     val pin = state.places.pin
     val showPanel = state.editing == null &&
-        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null)
+        (pin != null || tripSheet != null || state.stopSheet != null || state.loading || state.hasResults || state.error != null || alreadyThere(state))
     // A new search always shows its answer (and folds the search again); closing the results
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }

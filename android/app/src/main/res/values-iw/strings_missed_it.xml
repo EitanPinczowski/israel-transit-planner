@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E2: "פספסתם? תכנון מכאן". -->
+<resources>
+    <string name="missed_it_action">פספסתם? תכנון מכאן</string>
+    <string name="missed_it_from">מהמיקום שלך בשעה ⁨%1$s⁩</string>
+    <string name="missed_it_arrive_by">יציאה עכשיו: שעת ההגעה בוטלה</string>
+    <string name="missed_it_there">כבר הגעתם</string>
+    <string name="missed_it_where">איפה אתם? בחרו איפה אתם עכשיו</string>
+</resources>

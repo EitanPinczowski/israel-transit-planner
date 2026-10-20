@@ -313,7 +313,7 @@ package. Tick only your own package's lines.
 - [x] Coverage of the Android JVM tests measured and ratcheted
 
 ### E2 — I missed it (`claude/p11-missed-it`, 1 request per tap)
-- [ ] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet
+- [x] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet
 
 ### T7 — System + chaos journeys (`claude/p11-system-chaos`, Sonnet, 0 requests)
 - [ ] PR-time `system` job: Doze, reboot re-arm, airplane mode, rotation / theme / language mid-flow, permission revoked mid-ride, process death in every tab

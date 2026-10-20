@@ -33,15 +33,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.present.DayPick
+import il.transit.core.present.hhmm
 import il.transit.core.update.LatestRelease
 import il.transit.core.update.UpdateState
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import il.transit.planner.ui.PlaceRef
+import il.transit.planner.remind.Notifications
+import il.transit.planner.remind.MissedItAction
+import il.transit.planner.MainActivity
+import il.transit.core.plan.MissedIt
+import android.os.ParcelFileDescriptor
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.MEITAR
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
@@ -399,6 +407,115 @@ class JourneysTest {
     }
 
     /**
+     * Phase 11 E2: on a ride, the ongoing notification's "Missed it? Plan from here" opens the Trip tab
+     * from the phone's fix to the ride's destination with options, for exactly 1 more request, and the
+     * old ride stops.
+     */
+    @Test fun j16_missed_it_from_ride_notification() = AppDriver(compose).launch().use { d ->
+        d.place(Field.FROM, BGU)
+        d.place(Field.TO, TEL_AVIV)
+        d.awaitSearch()
+        val i = d.selectTrain()
+        val options = d.vm.state.value.options
+        val leg = options[i].legs.first { it.isTransit }
+        val pkg = d.app.packageName
+        d.shell("appops set $pkg android:mock_location allow")
+        val lm = d.app.getSystemService(LocationManager::class.java)
+        val gps = LocationManager.GPS_PROVIDER
+        @Suppress("DEPRECATION")
+        lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
+        lm.setTestProviderEnabled(gps, true)
+        try {
+            d.tapInResults(d.str(R.string.action_start_trip))
+            val started = SystemClock.uptimeMillis() + 8_000
+            while (!RideService.active.value && SystemClock.uptimeMillis() < started) SystemClock.sleep(200)
+            assertTrue("J16: the ride did not start in 8 s (${d.inputState()})", RideService.active.value)
+            // On the train, halfway along its first ride: well away from the destination.
+            val here = LatLon((leg.from.lat + leg.to.lat) / 2, (leg.from.lon + leg.to.lon) / 2)
+            lm.setTestProviderLocation(gps, fix(gps, here))
+            val nm = d.app.getSystemService(android.app.NotificationManager::class.java)
+            val label = d.str(R.string.missed_it_action)
+            fun action(): android.app.Notification.Action? {
+                val ride = nm.activeNotifications.firstOrNull { it.notification.channelId == "ride_ongoing" } ?: return null
+                val actions = ride.notification.actions ?: return null
+                return actions.firstOrNull { "${it.title}" == label }
+            }
+            val until = SystemClock.uptimeMillis() + 5_000
+            while (action() == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
+            val tap = action() ?: throw AssertionError("J16: no \"$label\" on the ride notification: ${nm.activeNotifications.map { it.notification.channelId }}")
+            val calls = d.app.replay.calls
+            val before = calls.get()
+            tap.actionIntent.send()
+            compose.waitUntil(15_000) {
+                val s = d.vm.state.value
+                s.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.PLANNED && !s.loading && s.options.isNotEmpty()
+            }
+            assertEquals("one plan for the tap", 1, calls.get() - before)
+            val s = d.vm.state.value
+            assertEquals(il.transit.planner.ui.PlaceRef.MyLocation, s.from)
+            assertEquals(il.transit.core.plan.TimeMode.NOW, s.timeMode)
+            compose.waitUntil(5_000) { !RideService.active.value } // the old ride's alerts stop
+            val at = hhmm(s.missedIt!!.at!!)
+            d.awaitNode(hasText(d.str(R.string.missed_it_from, at)))
+        } finally {
+            d.onMain { it.stopRide() }
+            runCatching { lm.removeTestProvider(gps) }
+        }
+    }
+
+    /**
+     * Phase 11 E2, the headline case: "Missed it?" tapped while the app is not running. A fresh
+     * Activity (and ViewModel) starts from the action's intent alone, with no map fix yet: the
+     * platform fix answers, the Trip tab shows options to the intent's destination for exactly 1 more
+     * request, and the arrive-by flag in the intent reaches the banner. Broken intents plan nothing.
+     */
+    @Test fun j17_missed_it_from_a_killed_app() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val target = MissedIt.Target("Tel Aviv", LatLon(TEL_AVIV.lat, TEL_AVIV.lon), arriveBy = true)
+        val good = MissedItAction.intent(ctx, target)
+        assertEquals(target, MissedItAction.target(good))
+        assertEquals(null, MissedItAction.target(Intent(good).putExtra("missed_it_lat", Double.NaN)))
+        assertEquals(null, MissedItAction.target(Intent(good).apply { removeExtra("missed_it_lon") }))
+        assertEquals(null, MissedItAction.target(Intent(good).putExtra("missed_it", false)))
+        assertEquals(null, MissedItAction.target(Intent(ctx, MainActivity::class.java)))
+        assertEquals(null, MissedItAction.target(null))
+        val other = MissedItAction.intent(ctx, target.copy(at = LatLon(BGU.lat, BGU.lon)))
+        assertTrue("each destination its own PendingIntent", !good.filterEquals(other))
+
+        val pkg = ctx.packageName
+        val lm = ctx.getSystemService(LocationManager::class.java)
+        val gps = LocationManager.GPS_PROVIDER
+        val shell = InstrumentationRegistry.getInstrumentation().uiAutomation
+        // Read to the end: the command runs only as its output is drained (AppDriver.shell does the same).
+        val appops = shell.executeShellCommand("appops set $pkg android:mock_location allow")
+        ParcelFileDescriptor.AutoCloseInputStream(appops).use { it.readBytes() }
+        @Suppress("DEPRECATION")
+        lm.addTestProvider(gps, false, false, false, false, true, true, true, android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE)
+        lm.setTestProviderEnabled(gps, true)
+        try {
+            lm.setTestProviderLocation(gps, fix(gps, LatLon(BGU.lat, BGU.lon)))
+            val calls = (ctx.applicationContext as il.transit.planner.UiTestApp).replay.calls
+            val before = calls.get()
+            AppDriver(compose).launch(good).use { d ->
+                compose.waitUntil(15_000) {
+                    val s = d.vm.state.value
+                    s.missedIt?.kind == il.transit.planner.ui.screens.MissedItUi.Kind.PLANNED && !s.loading && s.options.isNotEmpty()
+                }
+                assertEquals("one plan for the tap", 1, calls.get() - before)
+                val s = d.vm.state.value
+                assertEquals(AppMode.TRIP, s.mode)
+                assertEquals(il.transit.planner.ui.PlaceRef.MyLocation, s.from)
+                assertEquals(PlaceRef.Point("Tel Aviv", target.at), s.to)
+                assertTrue("arrive-by reached the banner", s.missedIt!!.wasArriveBy)
+                d.awaitNode(hasText(d.str(R.string.missed_it_from, hhmm(s.missedIt!!.at!!))))
+                d.awaitNode(hasText(d.str(R.string.missed_it_arrive_by)))
+            }
+        } finally {
+            runCatching { lm.removeTestProvider(gps) }
+        }
+    }
+
+    /**
      * Phase 10 D10: the leave-now countdown posts on the reminder's id, as a Live Update on
      * Android 16+ and with a plain progress bar below; cancelling it leaves nothing behind.
      */
@@ -426,6 +543,27 @@ class JourneysTest {
             assertEquals("one countdown notification: ${all.map { it.id }}", 1, all.size)
             assertEquals(1001, all.single().id) // ID_LEAVE, on every Android version
             liveUpdateCheck("J14", all.single())
+            // Phase 11 E2: the countdown and "your trip changed" both offer "Missed it? Plan from here".
+            val label = d.str(R.string.missed_it_action)
+            fun hasMissedIt(id: Int): Boolean {
+                val n = nm.activeNotifications.firstOrNull { it.id == id } ?: return false
+                val actions = n.notification.actions ?: return false
+                return actions.any { "${it.title}" == label }
+            }
+            assertTrue("J14: no \"$label\" on the countdown", hasMissedIt(1001))
+            Notifications.changed(d.app, r)
+            val changedBy = SystemClock.uptimeMillis() + 3_000
+            // By its title: another notice on the channel (a test reminder) must not stand in for it.
+            val changedTitle = d.str(R.string.notify_changed_title)
+            fun titleOf(sbn: android.service.notification.StatusBarNotification): String {
+                val extras = sbn.notification.extras
+                return "${extras.getCharSequence(android.app.Notification.EXTRA_TITLE)}"
+            }
+            val changedId = { nm.activeNotifications.firstOrNull { titleOf(it) == changedTitle }?.id }
+            while (changedId() == null && SystemClock.uptimeMillis() < changedBy) SystemClock.sleep(100)
+            val id = changedId() ?: throw AssertionError("J14: \"trip changed\" was not posted")
+            assertTrue("J14: no \"$label\" on \"trip changed\"", hasMissedIt(id))
+            nm.cancel(id)
         } finally {
             il.transit.planner.remind.Notifications.cancelCountdown(d.app)
         }

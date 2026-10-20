@@ -23,11 +23,13 @@ import androidx.core.content.ContextCompat
 import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisJson
 import il.transit.core.geo.LatLon
+import il.transit.core.plan.MissedIt
 import il.transit.core.ride.RideEvent
 import il.transit.core.ride.RideTracker
 import il.transit.planner.MainActivity
 import il.transit.planner.TransitApp
 import il.transit.planner.R
+import il.transit.planner.remind.MissedItAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import il.transit.core.ride.RideProgress
 import il.transit.core.remind.LiveProgress
@@ -48,6 +50,7 @@ import java.time.Instant
 class RideService : Service() {
     private var tracker: RideTracker? = null
     private var itinerary: Itinerary? = null
+    private var arriveBy = false
 
     /** The last progress shown: the text stays on it through the walk after the last ride. */
     private var lastProgress: RideProgress? = null
@@ -78,6 +81,8 @@ class RideService : Service() {
         val itinerary = intent?.getStringExtra(EXTRA_ITINERARY)
             ?.let { runCatching { MotisJson.decodeFromString(Itinerary.serializer(), it) }.getOrNull() }
         finalStop = itinerary?.legs?.lastOrNull { it.isTransit }?.to?.name.orEmpty()
+        this.itinerary = itinerary // before the first notification: its "Missed it?" action needs the destination
+        arriveBy = intent?.getBooleanExtra(EXTRA_ARRIVE_BY, false) == true
         // startForegroundService() must be answered by startForeground() even when we are about
         // to stop, or Android kills the app ("did not then call Service.startForeground()").
         ServiceCompat.startForeground(
@@ -206,6 +211,7 @@ class RideService : Service() {
             .setOngoing(true)
             .setContentIntent(openApp())
             .addAction(0, getString(R.string.ride_stop), stop)
+        itinerary?.let { MissedIt.target(it, arriveBy = arriveBy) }?.let { b.addAction(MissedItAction.action(this, it)) } // Phase 11 E2
         return il.transit.planner.remind.Notifications.build(this, b, live, text)
     }
 
@@ -240,6 +246,7 @@ class RideService : Service() {
         private const val ACTION_STOP = "il.transit.planner.action.STOP_RIDE"
         private const val EXTRA_ITINERARY = "itinerary"
         private const val EXTRA_SPEAK = "speak"
+        private const val EXTRA_ARRIVE_BY = "arrive_by"
         private const val CHANNEL_ONGOING = "ride_ongoing"
         private const val CHANNEL_ALERTS = "ride_alerts"
         private const val ID_ONGOING = 2001
@@ -270,10 +277,11 @@ class RideService : Service() {
         /** True while a ride is being tracked; the service clears it when it stops itself. */
         val active: StateFlow<Boolean> = _active.asStateFlow()
 
-        fun start(context: Context, itinerary: Itinerary, speak: Boolean) {
+        fun start(context: Context, itinerary: Itinerary, speak: Boolean, arriveBy: Boolean = false) {
             val intent = Intent(context, RideService::class.java)
                 .putExtra(EXTRA_ITINERARY, MotisJson.encodeToString(Itinerary.serializer(), itinerary))
                 .putExtra(EXTRA_SPEAK, speak)
+                .putExtra(EXTRA_ARRIVE_BY, arriveBy)
             ContextCompat.startForegroundService(context, intent)
         }
 

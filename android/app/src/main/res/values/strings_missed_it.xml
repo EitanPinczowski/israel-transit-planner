@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E2: "Missed it? Plan from here". -->
+<resources>
+    <string name="missed_it_action">Missed it? Plan from here</string>
+    <string name="missed_it_from">From your location at %1$s</string>
+    <string name="missed_it_arrive_by">Leaving now: the arrive-by time was dropped</string>
+    <string name="missed_it_there">You\'re already there</string>
+    <string name="missed_it_where">Where are you? Pick where you are now</string>
+</resources>

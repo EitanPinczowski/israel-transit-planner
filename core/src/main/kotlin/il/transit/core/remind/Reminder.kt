@@ -43,6 +43,8 @@ data class Reminder(
     val toName: String? = null,
     /** The leave alarm fired and the countdown is showing; the reminder stays until it ends. */
     val counting: Boolean = false,
+    /** The trip was an arrive-by search (Phase 11 E2: "Missed it?" says it now leaves now). False on older reminders. */
+    val arriveBy: Boolean = false,
 ) {
     val from: LatLon get() = LatLon(fromLat, fromLon)
     val to: LatLon get() = LatLon(toLat, toLon)
