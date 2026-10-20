@@ -101,7 +101,7 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   81 of 81 bus legs (100 %) carry a value, and none of 59 route + operator pairs carries two (also over
   all 30 `plan_*` fixtures: 207 bus legs). Every REGIONAL_RAIL leg in every fixture (29) is
   `NOT_ACCESSIBLE`, a default. So: **badge on buses only** (`present/AccessibleBadge`, pinned in
-  `AccessibleBadgeTest`); rail and light rail get nothing (2 tram legs are too few to call). `tripShortName`
+  `AccessibleBadgeTest`); rail and light rail get nothing: 2 tram legs (תבל, both `ACCESSIBLE`) are not a consistent sample, so light rail stays unlabelled (boss, 2026-10-20) until a larger sample says otherwise. `tripShortName`
   is empty on trains.
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
