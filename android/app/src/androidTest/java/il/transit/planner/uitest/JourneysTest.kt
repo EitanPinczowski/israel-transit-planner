@@ -553,7 +553,13 @@ class JourneysTest {
             assertTrue("J14: no \"$label\" on the countdown", hasMissedIt(1001))
             Notifications.changed(d.app, r)
             val changedBy = SystemClock.uptimeMillis() + 3_000
-            val changedId = { nm.activeNotifications.firstOrNull { it.id != 1001 && it.notification.channelId == "trip_reminders" }?.id }
+            // By its title: another notice on the channel (a test reminder) must not stand in for it.
+            val changedTitle = d.str(R.string.notify_changed_title)
+            fun titleOf(sbn: android.service.notification.StatusBarNotification): String {
+                val extras = sbn.notification.extras
+                return "${extras.getCharSequence(android.app.Notification.EXTRA_TITLE)}"
+            }
+            val changedId = { nm.activeNotifications.firstOrNull { titleOf(it) == changedTitle }?.id }
             while (changedId() == null && SystemClock.uptimeMillis() < changedBy) SystemClock.sleep(100)
             val id = changedId() ?: throw AssertionError("J14: \"trip changed\" was not posted")
             assertTrue("J14: no \"$label\" on \"trip changed\"", hasMissedIt(id))
