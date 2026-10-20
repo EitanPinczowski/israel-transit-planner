@@ -121,6 +121,9 @@ generated `*Data` tables are excluded. `./gradlew -p core pitest` (all; ~45 min)
   or `plan/TripPages.kt` changes): PIT on those classes only (history cached), then `python3 tools/mutation_score.py gate`
   **fails a changed class that scores more than 2 points under its baseline**. Fix it by killing the surviving
   mutants with a test. A PR that must lower a class says why in its body and edits the baseline by hand; the owner accepts.
+- **Today's scores** (first full run, CI 2026-10-20, 7.5 min on a runner, 95 classes, 2,068 mutants, **80.7 %** overall;
+  baseline `core/mutation-baseline.json`): calendar 100 %, fare 88.4 %, remind 86.1 %, present 82.5 %, plan/TripPages
+  82.1 %, ride 76.9 %, features 69.2 % (the planners: `DropOffPlanner` 63 %, `ParkRidePlanner` 62 %, `BetterStartPlanner` 62 %).
 - Local first aid: `python3 tools/mutation_score.py gate core/build/reports/pitest/mutations.xml` prints the table.
 
 ## ViewModel state tests and Android coverage (Phase 11 T3)
