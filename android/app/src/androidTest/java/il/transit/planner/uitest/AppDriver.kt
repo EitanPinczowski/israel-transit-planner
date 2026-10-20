@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -117,6 +118,23 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     fun awaitNode(m: SemanticsMatcher, timeoutMs: Long = 5_000) {
         compose.waitUntil(timeoutMs) { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() }
         compose.waitForIdle()
+    }
+
+    /**
+     * Brings [target] into view in the open Settings dialog's list, by the list's own
+     * scroll-to-node semantics action (it runs on the UI thread, in the list's layout) and not by
+     * touch swipes. The old loop of `swipeUp` + `fetchSemanticsNodes` ran gestures and tree reads
+     * from the test thread across the 600 ms of a drag while the dialog recomposed (saved rows,
+     * settings flow), and Android then reported "multithreaded access to SnapshotStateObserver"
+     * (`s15_settings_bottom`, `j15`). Idle before, so the dialog is laid out; idle after,
+     * so the scroll has settled before the caller reads or clicks the node.
+     */
+    fun scrollSettingsTo(target: SemanticsMatcher) {
+        val list = hasScrollToNodeAction() and hasAnyAncestor(isDialog())
+        awaitNode(list)
+        compose.onAllNodes(list).onFirst().performScrollToNode(target)
+        compose.waitForIdle()
+        awaitNode(target)
     }
 
     /**
