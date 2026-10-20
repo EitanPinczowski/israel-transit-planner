@@ -42,6 +42,9 @@ class ReplayTransitApi(
     /** `trip` calls among [calls]: a reopened trip sheet asks its one (Phase 11 R1's probe leaves it out). */
     val tripCalls = AtomicInteger()
 
+    /** `stoptimes` calls among [calls]: a reopened stop sheet fetches its departures (R1's probe leaves them out too). */
+    val stopTimesCalls = AtomicInteger()
+
     override suspend fun plan(req: PlanRequest): PlanResponse {
         hit()
         val car = StreetModes.CAR_LIKE
@@ -92,6 +95,7 @@ class ReplayTransitApi(
     }
 
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
+        stopTimesCalls.incrementAndGet()
         hit()
         val raw = MotisJson.parseToJsonElement(load("stoptimes_beersheva_north"))
         val recorded = MotisJson.decodeFromJsonElement(StopTimesResponse.serializer(), raw)

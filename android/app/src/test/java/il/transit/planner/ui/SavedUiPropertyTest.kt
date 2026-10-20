@@ -1,9 +1,15 @@
 package il.transit.planner.ui
 
+import il.transit.core.features.BetterStartResult
+import il.transit.core.features.DropOffResult
+import il.transit.core.features.ParkRideResult
+import il.transit.core.features.PickUpResult
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainResult
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.TimeMode
+import il.transit.core.plan.TripResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -92,6 +98,27 @@ class SavedUiPropertyTest {
             } catch (t: Throwable) {
                 throw AssertionError("case $i seed $SEED damaged '$k' -> ${bundle[k]}", t)
             }
+        }
+    }
+
+    /** A state of [mode] showing an (empty) answer of its own: Trip options or an errand chain in Trip. */
+    private fun showing(mode: AppMode, errands: Boolean): UiState = when (mode) {
+        AppMode.TRIP -> if (errands) UiState(chain = ChainResult(emptyList(), null)) else UiState(results = TripResult(emptyList(), null))
+        AppMode.BETTER_START -> UiState(mode = mode, betterStart = BetterStartResult(null, emptyList(), "CAR"))
+        AppMode.DROP_OFF -> UiState(mode = mode, dropOff = DropOffResult(null, emptyList(), 0))
+        AppMode.PICK_UP -> UiState(mode = mode, pickUp = PickUpResult(null, emptyList()))
+        AppMode.PARK_RIDE -> UiState(mode = mode, parkRide = ParkRideUi(result = ParkRideResult(null, emptyList(), 0)))
+    }
+
+    @Test fun `a cache key from another tab is dropped even while this tab shows its answer`() {
+        val prefixes = listOf("TRIP-", "ERRANDS-", "BETTER_START-", "DROP_OFF-", "PICK_UP-", "PARK_RIDE-")
+        repeat(CASES) { i ->
+            val s = showing(pick(AppMode.entries), rnd.nextBoolean())
+            val own = SavedUi.keyPrefix(s)!!
+            val rest = "${pick(TimeMode.entries)}-${rnd.nextInt(60)}:${rnd.nextDouble()},${rnd.nextDouble()}|${pick(names)}"
+            val other = pick(prefixes - own) + rest
+            assertNull("case $i seed $SEED: ${s.mode} kept '$other'", SavedUi.of(s, other, null, null).cacheKey)
+            assertEquals("case $i seed $SEED", own + rest, SavedUi.of(s, own + rest, null, null).cacheKey)
         }
     }
 }

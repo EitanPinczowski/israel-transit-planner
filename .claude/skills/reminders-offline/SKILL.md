@@ -208,13 +208,19 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - **Back after process death** (Phase 10 D11 for Trip, Phase 11 R1 for the car tabs and errands):
   `ui/SavedUi` keeps only keys and ids (tab, places, errand stops, the four sliders, the option's
   times, the open sheet) plus `cacheKey`; the options come back from the cache entry it names, at
-  0 requests. Trip: the Trip cache. Car tabs and errands: a second `PlanCacheStore`
+  0 plan requests; reopening a stop's departures fetches them (one `stoptimes`), and a reopened
+  trip sheet asks its one `trip` (the probe and `RestoreTabsStateTest` leave out exactly those).
+  Trip: the Trip cache. Car tabs and errands: a second `PlanCacheStore`
   (`TransitApp.tabCache`, `filesDir/tab_cache.json`, 6 entries, core `plan/TabCache.kt`:
   `TabResult` + `TabCacheJson`), written on each answer and **read only by the restore** (never
   an offline view). Keys: `<TAB>-<timeMode>-<slider>` / `ERRANDS-<timeMode>` + every place
   (`MainViewModel.tabKey`); `SavedUi.keyPrefix` keeps a key only while its tab shows its answer.
-  Reading drops what left > 60 s ago (`TabResult.stillAhead`, E7's grace; a chain goes whole);
-  nothing left or no entry = the tab with its inputs and no results.
+  Reading drops what left > 60 s ago (`TabResult.stillAhead`, E7's grace): the first boarding, a
+  walk-only option's start, a car option's `leaveAt` / `driverLeavesAt`; a chain goes whole (a
+  failed one too). Age: as Trip's restore, no cutoff; the entry's `savedAt` becomes `resultsAt`
+  (Trip's "Updated HH:MM"). A key of another tab is never shown. Nothing left, no entry, or an
+  unreadable file (one bad row loses the file: it is decoded whole) = the tab with its inputs and
+  no results. Both stores write atomically (`.tmp`, then rename).
   Every offline view drops options whose vehicle already left (`TripResult.stillAhead`,
   applied in `PlanCacheStore.get`); an entry with nothing left shows the network error.
 - **Home** (`UserSettings.homePlace`, the saved place's name; `core/user/Home.kt`): "Set as

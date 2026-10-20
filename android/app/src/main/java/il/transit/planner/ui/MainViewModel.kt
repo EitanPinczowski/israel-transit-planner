@@ -1422,7 +1422,13 @@ class MainViewModel(
             } catch (e: CancellationException) { throw e } catch (e: Exception) { null }
             // The sort order is a setting: wait for the stored one before finding the option again.
             val loaded = _state.first { it.settingsLoaded }
-            if (entry != null && !loaded.hasResults && !loaded.loading && loaded.mode == r.mode && loaded.to == r.to) {
+            // An entry of another tab (a key that does not fit the saved tab) is never shown in this one.
+            val fits = when (val v = entry?.value) {
+                is TripResult -> r.mode == AppMode.TRIP && key.startsWith("TRIP-")
+                is TabResult -> tabOf(v) == r.mode && key.startsWith(if (v is TabResult.Errands) "ERRANDS-" else "${r.mode.name}-")
+                else -> false
+            }
+            if (entry != null && fits && !loaded.hasResults && !loaded.loading && loaded.mode == r.mode && loaded.to == r.to) {
                 shownKey = key
                 _state.update {
                     val next = when (val v = entry.value) {
@@ -1457,6 +1463,15 @@ class MainViewModel(
         if (!empty) runCatching { tabCache?.put(key, r) }
         shownKey = key.takeIf { !empty }
         persist()
+    }
+
+    /** The tab that shows [r]: errands are the Trip tab's. */
+    private fun tabOf(r: TabResult): AppMode = when (r) {
+        is TabResult.BetterStart -> AppMode.BETTER_START
+        is TabResult.DropOff -> AppMode.DROP_OFF
+        is TabResult.PickUp -> AppMode.PICK_UP
+        is TabResult.ParkRide -> AppMode.PARK_RIDE
+        is TabResult.Errands -> AppMode.TRIP
     }
 
     /** [r] on screen in its own tab, arranged as a fresh answer is. */

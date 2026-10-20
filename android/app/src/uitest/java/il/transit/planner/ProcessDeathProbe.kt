@@ -36,7 +36,8 @@ import kotlinx.coroutines.withTimeoutOrNull
  *    same round trip for that tab (the second option, its first ride's trip sheet); the `ready` /
  *    `restored` lines then read `mode=… from=… to=… driverTo=… stops=… options=… selected=… option=…
  *    sheet=… carPath=…`, all of it a promise since Phase 11 R1 (the tab cache brings the options
- *    back), and `requests=` counts what the restore asked, the reopened sheet's `trip` left out;
+ *    back), and `requests=` counts what the restore asked: 0 plan requests is the promise; a reopened
+ *    trip sheet's `trip` and a reopened stop sheet's `stoptimes` are left out by name;
  *  - [EXTRA_RIDE]: starts a ride on the mock location, so the script can revoke the location
  *    permission under it; after the restart `ride-after …` says what is left.
  * uitest build only; tag [TAG].
@@ -100,11 +101,14 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             } else {
                 val before = app.replay.calls.get()
                 val tripsBefore = app.replay.tripCalls.get()
+                val stopTimesBefore = app.replay.stopTimesCalls.get()
                 val tabbed = marker.exists()
                 withTimeoutOrNull(10_000) { vm.state.first { if (tabbed) it.hasResults else it.results != null } }
                 delay(2_000) // the trip sheet reopens once its option is back
-                // R1: the reopened sheet asks its one `trip`; anything else is the restore searching again.
-                val asked = if (tabbed) (app.replay.calls.get() - before) - (app.replay.tripCalls.get() - tripsBefore) else app.replay.calls.get() - before
+                // R1's promise is 0 plan requests. Left out by name: a reopened trip sheet's one `trip`, and a
+                // reopened stop sheet's `stoptimes` (it fetches its departures again, as Trip's always did).
+                val sheets = (app.replay.tripCalls.get() - tripsBefore) + (app.replay.stopTimesCalls.get() - stopTimesBefore)
+                val asked = if (tabbed) (app.replay.calls.get() - before) - sheets else app.replay.calls.get() - before
                 // saved=false: this Activity did not come back from a saved state (the script says why).
                 Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip, marker.exists())} requests=$asked")
                 rideAfter(main)

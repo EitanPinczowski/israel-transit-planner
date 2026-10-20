@@ -1,5 +1,8 @@
 package il.transit.core
 
+import il.transit.core.api.Itinerary
+import il.transit.core.api.MotisJson
+import il.transit.core.api.PlanResponse
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.parseTime
 import il.transit.core.features.BetterStartOption
@@ -25,7 +28,9 @@ import il.transit.core.plan.ChainStop
 import il.transit.core.plan.PlanCache
 import il.transit.core.plan.TabCacheJson
 import il.transit.core.plan.TabResult
+import il.transit.core.plan.TripCacheJson
 import il.transit.core.plan.TripPlanner
+import il.transit.core.plan.TripResult
 import il.transit.core.plan.stillAhead
 import il.transit.core.user.UserSettings
 import kotlinx.coroutines.runBlocking
@@ -58,14 +63,17 @@ class TabCacheTest {
         )
     }
 
-    /** First boardings of every option and the baseline. */
+    /** When [i] has to be started: its first boarding, or the walk's start when it has no ride. */
+    private fun start(i: Itinerary): Instant = parseTime(i.firstTransitLeg?.startTime ?: i.startTime)
+
+    /** The earliest time each option and the baseline needs: its start, or the driver's leaving if earlier. */
     private fun boardings(r: TabResult): List<Instant> = when (r) {
-        is TabResult.BetterStart -> r.result.options.map { it.payload.itinerary } + listOfNotNull(r.result.baseline)
-        is TabResult.DropOff -> r.result.options.map { it.payload.transit }
-        is TabResult.PickUp -> r.result.options.map { it.payload.itinerary } + listOfNotNull(r.result.baseline)
-        is TabResult.ParkRide -> r.result.options.map { it.payload.itinerary } + listOfNotNull(r.result.baseline)
-        is TabResult.Errands -> r.chain.legs
-    }.mapNotNull { i -> i.firstTransitLeg?.let { parseTime(it.startTime) } }
+        is TabResult.BetterStart -> r.result.options.map { minOf(start(it.payload.itinerary), it.payload.leaveAt) } + listOfNotNull(r.result.baseline).map(::start)
+        is TabResult.DropOff -> r.result.options.map { start(it.payload.transit) }
+        is TabResult.PickUp -> r.result.options.map { minOf(start(it.payload.itinerary), it.payload.driverLeavesAt) } + listOfNotNull(r.result.baseline).map(::start)
+        is TabResult.ParkRide -> r.result.options.map { minOf(start(it.payload.itinerary), it.payload.leaveAt) } + listOfNotNull(r.result.baseline).map(::start)
+        is TabResult.Errands -> r.chain.legs.map(::start)
+    }
 
     @Test fun `every kind comes back from the file as it was`() {
         all.forEach { r -> assertTrue("$r has something to show", boardings(r).isNotEmpty()) }
@@ -128,11 +136,49 @@ class TabCacheTest {
         assertTrue(TabCacheJson.decode(null).isEmpty())
     }
 
+    private val file: String get() = TabCacheJson.encode(all.mapIndexed { i, r -> PlanCache.Entry("k$i", now, r) })
+
+    @Test fun `a file cut off mid-write restores as empty, never throws`() {
+        val whole = file
+        listOf(1, whole.length / 3, whole.length / 2, whole.length - 1).forEach { n ->
+            assertTrue("cut at $n", TabCacheJson.decode(whole.take(n)).isEmpty())
+        }
+    }
+
+    @Test fun `a kind this version does not know restores as empty`() {
+        val unknown = file.replaceFirst("\"type\":\"pickUp\"", "\"type\":\"teleport\"")
+        assertTrue("the test changed a type", unknown != file)
+        assertTrue(TabCacheJson.decode(unknown).isEmpty())
+    }
+
+    @Test fun `the Trip cache's file is not a tab cache`() {
+        val plan = MotisJson.decodeFromString(PlanResponse.serializer(), javaClass.getResource("/fixtures/plan_bgu_telaviv.json")!!.readText())
+        val trip = TripCacheJson.encode(listOf(PlanCache.Entry("TRIP-NOW:x", now, TripResult(plan.itineraries, null))))
+        assertTrue(TabCacheJson.decode(trip).isEmpty())
+    }
+
+    /**
+     * The file is decoded as one list: one bad row loses every row, the good ones too. Accepted: the
+     * cache only saves a restore its requests, and a fresh search writes a whole file again.
+     */
+    @Test fun `a good row then a bad one - the whole file restores as empty`() {
+        val good = TabCacheJson.encode(listOf(PlanCache.Entry("k0", now, all.first())))
+        assertEquals(1, TabCacheJson.decode(good).size)
+        val withBad = good.removeSuffix("]") + ",{\"key\":\"k1\",\"savedAtEpoch\":\"soon\",\"result\":{}}]"
+        assertTrue(TabCacheJson.decode(withBad).isEmpty())
+    }
+
+    @Test fun `a time that is not ISO-8601 restores as empty`() {
+        val leave = Regex("\"leaveAt\":\"[^\"]+\"")
+        assertNotNull("the file has a leaveAt", leave.find(file))
+        assertTrue(TabCacheJson.decode(file.replaceFirst(leave, "\"leaveAt\":\"5 past 8\"")).isEmpty())
+    }
+
     @Test fun `at the search time nothing is dropped`() {
         all.forEach { assertEquals(it, it.stillAhead(now)) }
     }
 
-    @Test fun `an option whose vehicle left over a minute ago is dropped, the rest stay`() {
+    @Test fun `an option whose vehicle or driver left over a minute ago is dropped, the rest stay`() {
         all.filter { it !is TabResult.Errands }.forEach { r ->
             val times = boardings(r).sorted()
             val first = times.first()
@@ -150,6 +196,63 @@ class TabCacheTest {
         val first = boardings(chain).min()
         assertNotNull(chain.stillAhead(first))
         assertNull(chain.stillAhead(first.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)))
+    }
+
+    @Test fun `exactly at the grace minute an option stays, a second later it goes`() {
+        val pickUp = all.single { it is TabResult.PickUp } as TabResult.PickUp
+        val o = pickUp.result.options.first()
+        val board = start(o.payload.itinerary)
+        val only = TabResult.PickUp(pickUp.result.copy(baseline = null, options = listOf(o.copy(payload = o.payload.copy(driverLeavesAt = board)))))
+        assertEquals(only, only.stillAhead(board.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC)))
+        assertNull(only.stillAhead(board.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)))
+    }
+
+    /** [i] with no ride, starting at [at]: walking all the way. */
+    private fun walk(i: Itinerary, at: Instant) = i.copy(startTime = at.toString(), legs = i.legs.filter { !it.isTransit })
+
+    @Test fun `a walk-only option goes once its walk started over a minute ago`() {
+        val pickUp = all.single { it is TabResult.PickUp } as TabResult.PickUp
+        val start = now.plusSeconds(600)
+        val walking = TabResult.PickUp(pickUp.result.copy(baseline = walk(pickUp.result.baseline!!, start), options = emptyList()))
+        assertEquals(walking, walking.stillAhead(start.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC)))
+        assertNull("not kept forever", walking.stillAhead(start.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)))
+        val chain = TabResult.Errands(ChainResult(listOf(walk(pickUp.result.baseline!!, start)), null))
+        assertNull(chain.stillAhead(start.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)))
+    }
+
+    @Test fun `a car option whose driver had to leave over a minute ago goes, though its ride is ahead`() {
+        val gone = now.minusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)
+        val bs = all.single { it is TabResult.BetterStart } as TabResult.BetterStart
+        val bsLate = bs.result.options.map { it.copy(payload = it.payload.copy(leaveAt = gone)) }
+        assertEquals(bs.result.baseline, (TabResult.BetterStart(bs.result.copy(options = bsLate)).stillAhead(now) as TabResult.BetterStart).result.baseline)
+        assertTrue((TabResult.BetterStart(bs.result.copy(options = bsLate)).stillAhead(now) as TabResult.BetterStart).result.options.isEmpty())
+        val pu = all.single { it is TabResult.PickUp } as TabResult.PickUp
+        val puLate = pu.result.options.mapIndexed { i, o -> if (i == 0) o.copy(payload = o.payload.copy(driverLeavesAt = gone)) else o }
+        assertEquals(pu.result.options.drop(1), (TabResult.PickUp(pu.result.copy(options = puLate)).stillAhead(now) as TabResult.PickUp).result.options)
+        val pr = all.single { it is TabResult.ParkRide } as TabResult.ParkRide
+        val prLate = pr.result.options.map { it.copy(payload = it.payload.copy(leaveAt = gone)) }
+        val prBack = TabResult.ParkRide(pr.result.copy(options = prLate, baseline = null), pr.origin).stillAhead(now)
+        assertNull("no option and no baseline left", prBack)
+        // At the boundary the driver may still be on the way out: kept.
+        val edge = now.minusSeconds(TripPlanner.DEPARTED_GRACE_SEC)
+        val prEdge = TabResult.ParkRide(pr.result.copy(options = pr.result.options.map { it.copy(payload = it.payload.copy(leaveAt = edge)) }), pr.origin)
+        assertEquals(prEdge, prEdge.stillAhead(now))
+    }
+
+    @Test fun `a failed errand chain stays while its planned legs are ahead, and goes with its first one`() {
+        val er = all.single { it is TabResult.Errands } as TabResult.Errands
+        val failed = TabResult.Errands(ChainResult(er.chain.legs.take(1), failedAt = 1))
+        assertEquals(failed, failed.stillAhead(now))
+        val first = start(failed.chain.legs.single())
+        assertNull(failed.stillAhead(first.plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1)))
+    }
+
+    @Test fun `an errand chain with only a middle leg gone is gone as a whole`() {
+        val er = all.single { it is TabResult.Errands } as TabResult.Errands
+        val legs = er.chain.legs
+        val middleGone = TabResult.Errands(ChainResult(listOf(legs.first(), walk(legs.first(), now.minusSeconds(3_600)), legs.last()), null))
+        assertTrue("first and last are ahead", listOf(legs.first(), legs.last()).all { start(it) >= now.minusSeconds(TripPlanner.DEPARTED_GRACE_SEC) })
+        assertNull(middleGone.stillAhead(now))
     }
 
     @Test fun `long after every boarding nothing is left to show`() {

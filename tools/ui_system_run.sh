@@ -153,9 +153,13 @@ process_death() { # $1 = tab
     fail "process death $tab: the process was not killed and restarted (pid $pid_before -> $pid_after)"
   elif [[ $restored != "restored saved=true "* ]]; then
     fail "process death $tab: the Activity did not come back from its saved state: '$restored'"
+  elif [[ ! $restored =~ \ requests=[0-9]+$ ]]; then
+    # Checked before slicing, so a cut or changed log line fails readably instead of comparing garbage.
+    fail "process death $tab: the restored line does not end in 'requests=<n>': '$restored'"
   else
     # Phase 11 R1: the whole line is a promise (tab, places, errand stops, options, the selected one,
-    # its trip sheet, the car path), and the restore asks nothing (the reopened sheet's `trip` aside).
+    # its trip sheet, the car path), and the restore sends 0 plan requests (the reopened trip sheet's
+    # `trip` and a reopened stop sheet's `stoptimes` are left out by the probe, by name).
     key_before=${ready#ready }
     key_after=${restored#restored saved=true }; asked=${key_after##* requests=}; key_after=${key_after% requests=*}
     if [[ $key_before != "$key_after" ]]; then

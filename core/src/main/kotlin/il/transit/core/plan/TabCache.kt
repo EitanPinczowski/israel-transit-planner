@@ -50,31 +50,34 @@ sealed interface TabResult {
 val TabCacheJson: CacheJson<TabResult> = CacheJson(TabResult.serializer())
 
 /**
- * A saved result as it may be shown again at [now]: options whose first boarding left more than
- * [TripPlanner.DEPARTED_GRACE_SEC] ago are dropped (Phase 11 E7's rule), and so is a baseline that
- * left. An errand chain is one trip: any of its legs gone and it is gone. Null when nothing is left.
+ * A saved result as it may be shown again at [now]: an option is dropped when its first boarding
+ * left more than [TripPlanner.DEPARTED_GRACE_SEC] ago (Phase 11 E7's rule), a walk-only one when
+ * its walk started that long ago, and a car option when its driver had to leave that long ago
+ * (`leaveAt`, `driverLeavesAt`). A baseline is dropped by the same rule. An errand chain is one
+ * trip: any of its legs gone (a failed chain's planned legs included) and it is gone. Null when
+ * nothing is left.
  */
 fun TabResult.stillAhead(now: Instant): TabResult? {
     val cutoff = now.minusSeconds(TripPlanner.DEPARTED_GRACE_SEC)
-    fun ahead(i: Itinerary?): Boolean = i != null && (i.firstTransitLeg?.let { parseTime(it.startTime) >= cutoff } ?: true)
-    fun <T> List<Option<T>>.left(itinerary: (T) -> Itinerary) = filter { ahead(itinerary(it.payload)) }
+    fun ahead(i: Itinerary?): Boolean = i != null && parseTime(i.firstTransitLeg?.startTime ?: i.startTime) >= cutoff
+    fun <T> List<Option<T>>.left(keep: (T) -> Boolean) = filter { keep(it.payload) }
     fun Itinerary?.kept() = this?.takeIf { ahead(it) }
     return when (this) {
         is TabResult.BetterStart ->
             result
-                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .copy(baseline = result.baseline.kept(), options = result.options.left { ahead(it.itinerary) && it.leaveAt >= cutoff })
                 .let { r -> TabResult.BetterStart(r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
         is TabResult.DropOff ->
             result
-                .copy(options = result.options.left { it.transit })
+                .copy(options = result.options.left { ahead(it.transit) })
                 .let { r -> TabResult.DropOff(r).takeIf { r.options.isNotEmpty() } }
         is TabResult.PickUp ->
             result
-                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .copy(baseline = result.baseline.kept(), options = result.options.left { ahead(it.itinerary) && it.driverLeavesAt >= cutoff })
                 .let { r -> TabResult.PickUp(r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
         is TabResult.ParkRide ->
             result
-                .copy(baseline = result.baseline.kept(), options = result.options.left { it.itinerary })
+                .copy(baseline = result.baseline.kept(), options = result.options.left { ahead(it.itinerary) && it.leaveAt >= cutoff })
                 .let { r -> copy(result = r).takeIf { r.options.isNotEmpty() || r.baseline != null } }
         is TabResult.Errands -> takeIf { chain.legs.isNotEmpty() && chain.legs.all(::ahead) }
     }

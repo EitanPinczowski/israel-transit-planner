@@ -91,6 +91,27 @@ class SavedUiTest {
         assertEquals(listOf(7, 25, 30, 35), listOf(of.maxDriveMin, of.maxDetourMin, of.maxPickUpDriveMin, of.maxParkRideMin))
     }
 
+    @Test fun `r1 keys of the wrong type fall back to the defaults, never throw`() {
+        val bundle = HashMap<String, Any?>()
+        val stops = listOf(ChainStop(LatLon(31.2589, 34.7992), "Soroka", 15), ChainStop(LatLon(31.25, 34.79), "Two", 5))
+        SavedUi(mode = AppMode.PARK_RIDE, stops = stops, maxDriveMin = 7, maxDetourMin = 25, maxPickUpDriveMin = 30, maxParkRideMin = 35)
+            .write { k, v -> bundle[k] = v }
+        bundle["r1.maxDrive"] = "7"
+        bundle["r1.maxDetour"] = 25L
+        bundle["r1.maxPickUp"] = 30.0
+        bundle["r1.maxParkRide"] = true
+        bundle["r1.errand0.lat"] = "31.2589"
+        bundle["r1.errand1.stay"] = "5"
+        val back = SavedUi.read { bundle[it] }!!
+        val defaults = SavedUi()
+        assertEquals(
+            listOf(defaults.maxDriveMin, defaults.maxDetourMin, defaults.maxPickUpDriveMin, defaults.maxParkRideMin),
+            listOf(back.maxDriveMin, back.maxDetourMin, back.maxPickUpDriveMin, back.maxParkRideMin),
+        )
+        assertEquals("a stop with no readable place is left out; a bad stay is no stay", listOf(stops[1].copy(stayMin = 0)), back.stops)
+        assertEquals(AppMode.PARK_RIDE, back.mode)
+    }
+
     @Test fun `fewer errand stops than last time clear the old ones`() {
         val bundle = HashMap<String, Any?>()
         val three = (1..3).map { ChainStop(LatLon(31.0 + it / 100.0, 34.8), "s$it", it) }

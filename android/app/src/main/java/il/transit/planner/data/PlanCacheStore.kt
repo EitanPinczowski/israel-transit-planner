@@ -10,6 +10,9 @@ import il.transit.core.plan.stillAhead
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.time.Clock
 import java.time.Instant
 
@@ -46,7 +49,7 @@ class PlanCacheStore<T>(
         synchronized(this@PlanCacheStore) {
             loadOnce()
             cache.put(key, value, clock.instant(), night)
-            runCatching { file.writeText(codec.encode(cache.all)) }
+            runCatching { writeAtomically(file, codec.encode(cache.all)) }
         }
     }
 
@@ -79,6 +82,20 @@ class PlanCacheStore<T>(
     }
 
     companion object {
+        /**
+         * [text] into [file] whole or not at all (R1): written to a `.tmp` beside it, then renamed over
+         * it, so a kill mid-write leaves the previous file, never a truncated one that loses every entry.
+         */
+        fun writeAtomically(file: File, text: String) {
+            val tmp = File(file.parentFile, file.name + ".tmp")
+            tmp.writeText(text)
+            try {
+                Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: AtomicMoveNotSupportedException) {
+                Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+        }
+
         /** The Trip tab's searches (offline view, night refresh, the Quick Settings tile). */
         fun trips(file: File, clock: Clock = Clock.systemUTC()) = PlanCacheStore(file, clock, TripCacheJson, TripResult::stillAhead)
 

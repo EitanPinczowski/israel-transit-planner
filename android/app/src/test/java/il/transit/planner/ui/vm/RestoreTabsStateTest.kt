@@ -3,6 +3,7 @@ package il.transit.planner.ui.vm
 import androidx.lifecycle.SavedStateHandle
 import il.transit.core.api.parseTime
 import il.transit.core.geo.LatLon
+import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.planner.data.PlanCacheStore
@@ -11,6 +12,7 @@ import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
 import il.transit.planner.ui.SavedUi
 import il.transit.planner.ui.UiState
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -40,8 +42,8 @@ class RestoreTabsStateTest : VmTest() {
 
     private fun read(handle: SavedStateHandle) = SavedUi.read { k -> handle.get<Any?>(k) }
 
-    /** Searches [mode] with a live ViewModel, opens the second option's ride if there is one; returns what was shown. */
-    private fun shown(mode: AppMode, handle: SavedStateHandle, file: File): UiState {
+    /** Searches [mode] with a live ViewModel and waits until its answer is kept; returns the ViewModel. */
+    private fun search(mode: AppMode, handle: SavedStateHandle, file: File): MainViewModel {
         val vm = newVm(ScriptedApi(replay()), saved = handle, tabCache = PlanCacheStore.tabs(file, CLOCK))
         if (mode == AppMode.TRIP) {
             vm.choose(Field.TO, "Savidor", SAVIDOR)
@@ -63,10 +65,26 @@ class RestoreTabsStateTest : VmTest() {
         }
         val found = vm.state.value.options
         assertTrue("$mode found something", found.isNotEmpty())
+        settle { read(handle)?.cacheKey != null && file.exists() }
+        return vm
+    }
+
+    /** [search], then the second option if there is one and its first ride's trip sheet; returns what was shown. */
+    private fun shown(mode: AppMode, handle: SavedStateHandle, file: File): UiState {
+        val vm = search(mode, handle, file)
         if (vm.state.value.options.size > 1) vm.select(1)
         vm.rideSheet(0)
-        settle { read(handle)?.cacheKey != null && file.exists() }
+        settle { read(handle)?.sheet == SavedUi.Sheet.Ride(0) }
         return vm.state.value
+    }
+
+    /**
+     * Waits, moving the test clock along, until the restore has finished with nothing to show: it then
+     * saves the state again, and with nothing shown there is no cache key.
+     */
+    private fun restoredEmpty(handle: SavedStateHandle) = settle {
+        advance(10)
+        read(handle)?.cacheKey == null
     }
 
     /** A new process: a new store on the same file, a new ViewModel on the same saved state. */
@@ -110,23 +128,6 @@ class RestoreTabsStateTest : VmTest() {
 
     @Test fun `errands come back with their stop and their chain, with no request`() = backAsItWas(AppMode.TRIP)
 
-    @Test fun `the sliders come back with the options they found`() {
-        val handle = SavedStateHandle()
-        val file = tabFile()
-        val vm = newVm(ScriptedApi(replay()), saved = handle, tabCache = PlanCacheStore.tabs(file, CLOCK))
-        vm.setMode(AppMode.PARK_RIDE)
-        vm.setTime(TimeMode.DEPART_AT, NOW)
-        vm.choose(Field.FROM, "Meitar", MEITAR)
-        vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
-        vm.setMaxParkRideDrive(35)
-        settle { read(handle)?.cacheKey?.contains("-35:") == true }
-        val (back, api) = reborn(handle, file)
-        settle { back.state.value.hasResults }
-        assertEquals(35, back.state.value.parkRide.maxDriveMin)
-        assertEquals(vm.state.value.parkRide.result, back.state.value.parkRide.result)
-        assertEquals(0, api.total)
-    }
-
     @Test fun `options that left meanwhile are dropped, the rest come back`() {
         val handle = SavedStateHandle()
         val file = tabFile()
@@ -144,17 +145,17 @@ class RestoreTabsStateTest : VmTest() {
     }
 
     @Test fun `long after, nothing is left - the inputs come back and no stale option`() {
-        listOf(AppMode.BETTER_START, AppMode.TRIP).forEach { mode ->
+        listOf(AppMode.BETTER_START, AppMode.DROP_OFF, AppMode.PICK_UP, AppMode.PARK_RIDE, AppMode.TRIP).forEach { mode ->
             val handle = SavedStateHandle()
             val file = tabFile()
             val before = shown(mode, handle, file)
             val (vm, api) = reborn(handle, file, Clock.fixed(NOW.plusSeconds(2 * 86_400), ZoneOffset.UTC))
-            advance(1_000)
-            Thread.sleep(200) // the store reads on an IO thread; give it time to answer "nothing"
-            advance(1_000)
+            restoredEmpty(handle)
             val s = vm.state.value
             assertEquals(mode, s.mode)
+            assertEquals(before.from, s.from)
             assertEquals(before.to, s.to)
+            assertEquals(before.driverTo, s.driverTo)
             assertEquals(before.chainStops, s.chainStops)
             assertFalse("$mode shows no stale result", s.hasResults)
             assertNull(vm.takeRestoredRide())
@@ -169,8 +170,7 @@ class RestoreTabsStateTest : VmTest() {
         assertNotNull(read(handle)!!.cacheKey)
         file.delete()
         val (vm, api) = reborn(handle, file)
-        Thread.sleep(200)
-        advance(1_000)
+        restoredEmpty(handle)
         val s = vm.state.value
         assertEquals(AppMode.DROP_OFF, s.mode)
         assertEquals(before.driverTo, s.driverTo)
@@ -178,4 +178,122 @@ class RestoreTabsStateTest : VmTest() {
         assertFalse(s.hasResults)
         assertEquals(0, api.total)
     }
+
+    @Test fun `a corrupt tab cache file gives the inputs only, with no plan request`() {
+        val handle = SavedStateHandle()
+        val file = tabFile()
+        val before = shown(AppMode.PICK_UP, handle, file)
+        file.writeText(file.readText().let { it.take(it.length / 2) })
+        val (vm, api) = reborn(handle, file)
+        restoredEmpty(handle)
+        val s = vm.state.value
+        assertEquals(AppMode.PICK_UP, s.mode)
+        assertEquals(before.from, s.from)
+        assertEquals(before.to, s.to)
+        assertFalse(s.hasResults)
+        assertEquals(0, api.count("plan"))
+        assertEquals(0, api.total)
+    }
+
+    @Test fun `a cache key of another tab is not shown in the saved one`() {
+        val file = tabFile()
+        val betterStart = SavedStateHandle()
+        search(AppMode.BETTER_START, betterStart, file)
+        val otherKey = read(betterStart)!!.cacheKey!!
+        assertTrue(otherKey.startsWith("BETTER_START-"))
+        val handle = SavedStateHandle()
+        search(AppMode.PICK_UP, handle, file)
+        handle["d11.cacheKey"] = otherKey // the saved tab is Pick-up; the key names Better start's entry, which is on file
+        val (vm, api) = reborn(handle, file)
+        restoredEmpty(handle)
+        val s = vm.state.value
+        assertEquals(AppMode.PICK_UP, s.mode)
+        assertFalse(s.hasResults)
+        assertNull(s.betterStart)
+        assertEquals(0, api.total)
+    }
+
+    @Test fun `a new search after a restore replaces the kept entry`() {
+        val handle = SavedStateHandle()
+        val file = tabFile()
+        shown(AppMode.PARK_RIDE, handle, file)
+        val key = read(handle)!!.cacheKey!!
+        val later = Clock.fixed(NOW.plusSeconds(30), ZoneOffset.UTC)
+        val (vm, api) = reborn(handle, file, later)
+        settle { vm.state.value.hasResults }
+        assertEquals(0, api.total)
+        vm.plan()
+        fun keptAt() = runBlocking { PlanCacheStore.tabs(file, later).entries() }.firstOrNull { it.key == key }?.savedAt
+        settle {
+            advance(10)
+            val done = api.count("plan") > 0 && !vm.state.value.loading
+            done && keptAt() == later.instant()
+        }
+        val kept = runBlocking { PlanCacheStore.tabs(file, later).entries() }.filter { it.key == key }
+        assertEquals("one entry per key", 1, kept.size)
+        val s = vm.state.value
+        assertEquals(TabResult.ParkRide(s.parkRide.result!!, s.parkRide.origin), kept.single().value)
+    }
+
+    /**
+     * R1's promise is 0 plan requests. A stop's departures sheet that was open comes back too, and it
+     * fetches its departures again (one `stoptimes`, as the Trip tab's restore always did): that one is
+     * the only request.
+     */
+    @Test fun `a stop sheet comes back and fetches its departures, the only request`() {
+        val handle = SavedStateHandle()
+        val file = tabFile()
+        val vm = search(AppMode.BETTER_START, handle, file)
+        vm.openStop("il-Israel-MOT_26669", "Soroka")
+        settle {
+            advance(10)
+            read(handle)?.sheet == SavedUi.Sheet.Stop("il-Israel-MOT_26669", "Soroka")
+        }
+        val before = vm.state.value
+        val (back, api) = reborn(handle, file)
+        settle {
+            advance(10)
+            val s = back.state.value
+            val sheet = s.stopSheet
+            s.hasResults && sheet != null && !sheet.loading
+        }
+        val after = back.state.value
+        assertEquals(before.options, after.options)
+        assertEquals("il-Israel-MOT_26669", after.stopSheet!!.stopId)
+        assertEquals("0 plan requests", 0, api.count("plan"))
+        assertEquals("the departures, fetched again", 1, api.count("stopTimes"))
+        assertEquals("nothing else", 1, api.total)
+    }
+
+    /** Each tab's own slider, moved after the search: it comes back with the options it found. */
+    private fun sliderComesBack(mode: AppMode, value: Int, move: (MainViewModel) -> Unit, slider: (UiState) -> Int) {
+        val handle = SavedStateHandle()
+        val file = tabFile()
+        val vm = search(mode, handle, file)
+        move(vm)
+        settle {
+            advance(10)
+            read(handle)?.cacheKey?.contains("-$value:") == true
+        }
+        val before = vm.state.value
+        assertEquals(value, slider(before))
+        val (back, api) = reborn(handle, file)
+        settle { back.state.value.hasResults }
+        val after = back.state.value
+        assertEquals("$mode slider", value, slider(after))
+        assertEquals(before.options, after.options)
+        assertEquals(0, api.total)
+    }
+
+    @Test fun `better start's slider comes back with its options`() =
+        sliderComesBack(AppMode.BETTER_START, 30, { it.setMaxDrive(30) }) { it.maxDriveMin }
+
+    @Test fun `drop-off's slider comes back with its options`() =
+        sliderComesBack(AppMode.DROP_OFF, 25, { it.setMaxDetour(25) }) { it.maxDetourMin }
+
+    @Test fun `pick-up's slider comes back with its options`() =
+        sliderComesBack(AppMode.PICK_UP, 40, { it.setMaxPickUpDrive(40) }) { it.maxPickUpDriveMin }
+
+    @Test fun `park and ride's slider comes back with its options`() =
+        sliderComesBack(AppMode.PARK_RIDE, 35, { it.setMaxParkRideDrive(35) }) { it.parkRide.maxDriveMin }
 }
