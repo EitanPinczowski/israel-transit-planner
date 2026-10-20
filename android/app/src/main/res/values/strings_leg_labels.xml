@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E3: train number + "fewer stops", accessible-bus badge (core present/TrainLabel, AccessibleBadge). -->
+<resources>
+    <string name="train_number">Train %1$s</string>
+    <!-- The town is in FSI…PDI: a Hebrew town name must not pull the number after it into its run. -->
+    <string name="train_to">Train %1$s to ⁨%2$s⁩</string>
+    <plurals name="train_stops_between">
+        <item quantity="one">%d stop on the way</item>
+        <item quantity="other">%d stops on the way</item>
+    </plurals>
+    <string name="fewer_stops">Fewer stops</string>
+    <string name="accessible_bus">Accessible bus</string>
+    <string name="bus_may_not_be_accessible">This bus may not be wheelchair accessible</string>
+</resources>

@@ -88,6 +88,12 @@ data class Leg(
     val legGeometry: EncodedPolyline? = null,
     /** Walking legs only: the path piece by piece. */
     val steps: List<StepInstruction> = emptyList(),
+    /** GTFS `wheelchair_accessible` of the vehicle: `ACCESSIBLE`, `NOT_ACCESSIBLE` or `UNKNOWN`. On MOT
+     *  buses it is always set and stable per route; every rail leg reads `NOT_ACCESSIBLE` (a default, not
+     *  a fact), so only buses use it (Phase 11 E3, [il.transit.core.present.accessibleBadge]). */
+    val wheelchairAccessible: String? = null,
+    /** GTFS `trip_short_name`; empty on Israel Railways, whose train number is in [headsign]. */
+    val tripShortName: String? = null,
 ) {
     val start: Instant get() = parseTime(startTime)
     val end: Instant get() = parseTime(endTime)

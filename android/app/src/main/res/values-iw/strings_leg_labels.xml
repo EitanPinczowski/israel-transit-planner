@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E3: train number + "fewer stops", accessible-bus badge (core present/TrainLabel, AccessibleBadge). -->
+<resources>
+    <string name="train_number">רכבת ⁨%1$s⁩</string>
+    <string name="train_to">רכבת ⁨%1$s⁩ ל⁨%2$s⁩</string>
+    <plurals name="train_stops_between">
+        <item quantity="one">עצירה אחת בדרך</item>
+        <item quantity="two">⁨%d⁩ עצירות בדרך</item>
+        <item quantity="other">⁨%d⁩ עצירות בדרך</item>
+    </plurals>
+    <string name="fewer_stops">פחות עצירות</string>
+    <string name="accessible_bus">אוטובוס נגיש</string>
+    <string name="bus_may_not_be_accessible">ייתכן שהאוטובוס אינו נגיש לכיסא גלגלים</string>
+</resources>

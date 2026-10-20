@@ -66,6 +66,15 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
   frame. The Transitous `language` is `TransitApp.language`, read per request: the app's
   language, else the phone's. The map style and bar icons follow the theme, not only the
   phone. A screen never reads `isSystemInDarkTheme()` itself: `AppTheme(dark)` is set once.
+- **Leg labels** (Phase 11 E3, `screens/LegLabels.kt`, `strings_leg_labels.xml`): the train chip says
+  "Train 24" / "רכבת 24" (number in FSI/PDI); the ride line and trip sheet title "Train 24 to Nahariya" /
+  "רכבת 24 לנהריה", and the sheet's second line "3 stops on the way" / "3 עצירות בדרך" (0 stops: no line);
+  never "express" or "direct". The town is in FSI/PDI in both languages (a Hebrew town in English text
+  otherwise swallows what follows; `TrainLabelTest` renders both). The stops sit on their own line: glued
+  to the title with a " · " they either stranded the dot (×1.5 font) or were cut off.
+  "Fewer stops" is a `secondaryContainer` chip. With Accessible routes on, a bus header gets a
+  `primaryContainer` badge (wheelchair symbol, never mirrored, plus the words "Accessible bus"; the icon
+  alone is never enough) or the amber warning-chip line "⚠ This bus may not be wheelchair accessible".
 - **Warning chips** (tight transfer, Phase 10 D1): `tertiaryContainer` with `onTertiaryContainer`
   text and a ⚠, `shapes.extraSmall`; the text says the risk ("Tight: may miss the change"), so
   colour is never the only signal. Its contrast in both themes is pinned in `ContrastTest`; a

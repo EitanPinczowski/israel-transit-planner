@@ -45,4 +45,15 @@ class ContrastTest {
         assertTrue("light $light", light >= 4.5)
         assertTrue("dark $dark", dark >= 4.5)
     }
+
+    /** Phase 11 E3: the accessible-bus badge (`primaryContainer`) and "Fewer stops" (`secondaryContainer`). */
+    @Test fun `the leg-label chips read in both themes`() {
+        val pairs = mapOf(
+            "badge light" to LegPalette.contrast("#001D36", "#D1E4FF"),
+            "badge dark" to LegPalette.contrast("#D1E4FF", "#00497D"),
+            "fewer light" to LegPalette.contrast("#101C2B", "#D7E3F7"),
+            "fewer dark" to LegPalette.contrast("#D7E3F7", "#3B4858"),
+        )
+        pairs.forEach { (name, c) -> assertTrue("$name $c", c >= 4.5) }
+    }
 }

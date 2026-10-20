@@ -57,7 +57,7 @@ internal fun RideDetailsLines(itin: Itinerary, selected: Boolean) {
 @Composable
 private fun rideLegText(r: RideLeg): String = stringResource(
     R.string.ride_leg,
-    r.line?.let { stringResource(R.string.ride_line, it) } ?: kindName(r.kind),
+    r.train?.let { trainText(it) } ?: r.line?.let { stringResource(R.string.ride_line, it) } ?: kindName(r.kind),
     pluralStringResource(R.plurals.ride_stops, r.stops, r.stops),
     stringResource(R.string.ride_min, r.minutes),
     r.stopCode?.let { stringResource(R.string.ride_get_off_code, r.getOff, it) } ?: stringResource(R.string.ride_get_off, r.getOff),

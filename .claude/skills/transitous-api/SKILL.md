@@ -82,14 +82,35 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   offers a 16:20 bus that **waits out Shabbat** (arrives Saturday night) — not a "next trip".
 - **`pedestrianProfile=WHEELCHAIR`** is accepted and changes the answer (BGU → Tel Aviv: a bus
   to the station instead of the 836 m walk). `map/stops` carries no wheelchair field, so
-  vehicle/stop accessibility is unknown — the app says so.
+  stop accessibility is unknown; bus vehicles carry `wheelchairAccessible` (below).
 - **Walking `steps[]`:** only `CONTINUE` or `STAIRS` (2,612 recorded steps), `streetName` on
   ~16% of steps overall but most of a street walk, and a polyline per step. Turns are computed
   from the polylines in `present/WalkDirections.kt`; `plan_walk_beersheva_streets.json` pins
   a real 1.4 km walk (Bialik → Basel → Ussishkin → Weizmann → Wolfson → HaTikva).
+- **`wheelchairAccessible` on legs (Phase 11 E3, 2026-10-20):** 9 weekday 08:00 `plan` recordings for Tue
+  27 Oct (`plan_access_*`: Tel Aviv, Jerusalem, Haifa, Bnei Brak, Ashdod, Nazareth, Rahat, Eilat, Galilee; a
+  10th, Be'er Sheva, was reset by the network and not retried). Distinct legs by trip + boarding stop:
+
+  | mode | value | legs | agencies |
+  |---|---|---|---|
+  | BUS | ACCESSIBLE | 64 | אגד 19, סופרבוס 12, דן 11, אלקטרה אפיקים 5, אקסטרה ירושלים 4, דן בדרום 4, נתיב אקספרס 4, דן באר שבע 2, ש.א.מ 2, מטרופולין 1 |
+  | BUS | NOT_ACCESSIBLE | 17 | סופרבוס 6, גלים 3, אלקטרה אפיקים 2, דן בדרום 2, נתיב אקספרס 2, אגד 1, נסיעות ותיירות 1 |
+  | TRAM | ACCESSIBLE | 2 | תבל |
+  | any | UNKNOWN / missing | 0 | |
+
+  81 of 81 bus legs (100 %) carry a value, and none of 59 route + operator pairs carries two (also over
+  all 30 `plan_*` fixtures: 207 bus legs, distinct by `tripId` + boarding `stopId` across files; counting every leg of every
+  itinerary gives more, as one trip recurs in several options). Every REGIONAL_RAIL leg in every fixture (29) is
+  `NOT_ACCESSIBLE`, a default. So: **badge on buses only** (`present/AccessibleBadge`, pinned in
+  `AccessibleBadgeTest`); rail and light rail get nothing: 2 tram legs (תבל, both `ACCESSIBLE`) are not a consistent sample, so light rail stays unlabelled (boss, 2026-10-20) until a larger sample says otherwise. `tripShortName`
+  is empty on trains.
 - **Israel Railways:** `routeShortName` is empty, `displayName` is "A-city<->B-city",
   `headsign` is the train number ("406"); the terminus is `tripTo.name`. See
-  `lineLabel()` / `headsignText()`.
+  `lineLabel()` / `headsignText()`. Phase 11 E3 (`present/TrainLabel`): a 1–4 digit `headsign` is shown as
+  "Train 24 to Nahariya" — the town of the `routeLongName` side ("station-town<->station-town") whose
+  station is `tripTo` — and the stops between from `intermediateStops`; trams never. "Fewer stops"
+  (owner decision 6) marks a train with ≥ 2 fewer stops than a train of another option between the same
+  stations (stop id or parent) leaving within 30 min (recorded: 406 vs 28, 404 vs 26, 32 vs 638).
 - **Real-time on MOT lines: confirmed none (closed 2026-10-04).** Sat 2026-10-03 23:20, late buses running: 0 of 36 departures
   at Be'er Sheva Central and 0 of 20 at Savidor (6 operators) had `realTime: true`; nor did
   the `trip`/`map/trips` answers. Departure = scheduled everywhere (`stoptimes_now_*`).
