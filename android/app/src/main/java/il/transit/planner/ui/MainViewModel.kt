@@ -1392,8 +1392,16 @@ class MainViewModel(
         restoring = true
         _state.update {
             it.copy(
-                mode = r.mode, from = r.from, to = r.to, driverTo = r.driverTo, timeMode = r.timeMode, time = r.time,
-                chainStops = r.stops, maxDriveMin = r.maxDriveMin, maxDetourMin = r.maxDetourMin, maxPickUpDriveMin = r.maxPickUpDriveMin,
+                mode = r.mode,
+                from = r.from,
+                to = r.to,
+                driverTo = r.driverTo,
+                timeMode = r.timeMode,
+                time = r.time,
+                chainStops = r.stops,
+                maxDriveMin = r.maxDriveMin,
+                maxDetourMin = r.maxDetourMin,
+                maxPickUpDriveMin = r.maxPickUpDriveMin,
                 parkRide = it.parkRide.copy(maxDriveMin = r.maxParkRideMin),
             )
         }

@@ -75,9 +75,14 @@ class SavedUiTest {
 
     @Test fun `errand stops and the car sliders come back (R1)`() {
         val s = SavedUi(
-            mode = AppMode.TRIP, to = savidor, cacheKey = "ERRANDS-NOW:x",
+            mode = AppMode.TRIP,
+            to = savidor,
+            cacheKey = "ERRANDS-NOW:x",
             stops = listOf(ChainStop(LatLon(31.2589, 34.7992), "סורוקה", 15), ChainStop(LatLon(31.25, 34.79), null, 0)),
-            maxDriveMin = 7, maxDetourMin = 25, maxPickUpDriveMin = 30, maxParkRideMin = 35,
+            maxDriveMin = 7,
+            maxDetourMin = 25,
+            maxPickUpDriveMin = 30,
+            maxParkRideMin = 35,
         )
         assertEquals(s, roundTrip(s))
         val st = UiState(chainStops = s.stops, maxDriveMin = 7, maxDetourMin = 25, maxPickUpDriveMin = 30, parkRide = ParkRideUi(maxDriveMin = 35))

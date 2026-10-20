@@ -50,7 +50,8 @@ class RestoreTabsStateTest : VmTest() {
             if (mode == AppMode.DROP_OFF) vm.choose(Field.DRIVER_TO, "Ramat Gan", RAMAT_GAN)
             vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
         }
-        assertTrue("$mode found something", vm.state.value.options.isNotEmpty())
+        val found = vm.state.value.options
+        assertTrue("$mode found something", found.isNotEmpty())
         if (vm.state.value.options.size > 1) vm.select(1)
         vm.rideSheet(0)
         settle { read(handle)?.cacheKey != null && file.exists() }
@@ -124,7 +125,8 @@ class RestoreTabsStateTest : VmTest() {
         val later = Clock.fixed(boards.first().plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1), ZoneOffset.UTC)
         val (vm, api) = reborn(handle, file, later)
         settle { vm.state.value.hasResults }
-        val left = vm.state.value.options.mapNotNull { o -> o.firstTransitLeg?.let { parseTime(it.startTime) } }
+        val restored = vm.state.value.options
+        val left = restored.mapNotNull { o -> o.firstTransitLeg?.let { parseTime(it.startTime) } }
         assertEquals(boards.count { it > boards.first() }, left.size)
         assertTrue(left.all { it > boards.first() })
         assertEquals(0, api.total)

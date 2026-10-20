@@ -1,6 +1,8 @@
 package il.transit.planner.ui
 
 import il.transit.core.geo.LatLon
+import il.transit.core.plan.ChainPlanner
+import il.transit.core.plan.ChainStop
 import il.transit.core.plan.TimeMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -45,8 +47,8 @@ class SavedUiPropertyTest {
             1 -> SavedUi.Sheet.Ride(rnd.nextInt(8))
             else -> SavedUi.Sheet.Stop("il-Israel-MOT_${rnd.nextInt(99999)}", pick(names))
         },
-        stops = List(rnd.nextInt(il.transit.core.plan.ChainPlanner.MAX_STOPS + 1)) {
-            il.transit.core.plan.ChainStop(point().at, if (rnd.nextInt(4) == 0) null else pick(names), rnd.nextInt(240))
+        stops = List(rnd.nextInt(ChainPlanner.MAX_STOPS + 1)) {
+            ChainStop(point().at, if (rnd.nextInt(4) == 0) null else pick(names), rnd.nextInt(240))
         },
         maxDriveMin = rnd.nextInt(60),
         maxDetourMin = rnd.nextInt(60),
