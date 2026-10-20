@@ -1,0 +1,524 @@
+{
+ "$": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.duration": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.endTime": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.id": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].agencyName": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].cancelled": {
+  "always": false,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].displayName": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].duration": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].endTime": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].from.cancelled": {
+  "always": false,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].from.departure": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.importance": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].from.lat": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].from.lon": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].from.modes": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[].from.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.name": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.scheduledDeparture": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.stopCode": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].from.stopId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].headsign": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[].intermediateStops[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].intermediateStops[].arrival": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].cancelled": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].intermediateStops[].departure": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].importance": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].intermediateStops[].lat": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].intermediateStops[].lon": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].intermediateStops[].modes": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[].intermediateStops[].modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].scheduledArrival": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].scheduledDeparture": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].stopCode": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].intermediateStops[].stopId": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].legGeometry": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].legGeometry.length": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].legGeometry.points": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].legGeometry.precision": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].mode": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].realTime": {
+  "always": false,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].routeLongName": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].routeShortName": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].scheduledEndTime": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].scheduledStartTime": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].startTime": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].to.arrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.cancelled": {
+  "always": false,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].to.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.importance": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].to.lat": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].to.lon": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].to.modes": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[].to.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.name": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.scheduledArrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.stopCode": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].to.stopId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripShortName": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.legs[].tripTo.arrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.cancelled": {
+  "always": false,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$.legs[].tripTo.description": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.importance": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].tripTo.lat": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].tripTo.lon": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.legs[].tripTo.modes": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.legs[].tripTo.modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.name": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.parentId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.scheduledArrival": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.stopCode": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].tripTo.stopId": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.legs[].wheelchairAccessible": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$.startTime": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$.transfers": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ }
+}

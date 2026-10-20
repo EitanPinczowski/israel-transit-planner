@@ -1,0 +1,7 @@
+{
+ "fixture": "trip_bus_470",
+ "itinerary": null,
+ "seed": 7,
+ "kind": "synthetic",
+ "scenario": "sigma=10, sparse_from=0.75"
+}

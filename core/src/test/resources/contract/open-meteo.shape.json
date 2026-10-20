@@ -1,0 +1,62 @@
+{
+ "$": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$.hourly": {
+  "always": true,
+  "types": [
+   "object"
+  ]
+ },
+ "$.hourly.precipitation": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.hourly.precipitation[]": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.hourly.precipitation_probability": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.hourly.precipitation_probability[]": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.hourly.time": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$.hourly.time[]": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$.latitude": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$.longitude": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ }
+}

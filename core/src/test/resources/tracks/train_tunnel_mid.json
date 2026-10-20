@@ -1,0 +1,7 @@
+{
+ "fixture": "trip_train_bs_telaviv",
+ "itinerary": null,
+ "seed": 2,
+ "kind": "synthetic",
+ "scenario": "sigma=8, gaps=[(0.45, 0.460989010989011)]"
+}

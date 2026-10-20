@@ -1,0 +1,92 @@
+{
+ "$": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$[].areas": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$[].areas[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$[].areas[].adminLevel": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].areas[].default": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$[].areas[].matched": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$[].areas[].name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].category": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].id": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].lat": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].lon": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].name": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].score": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].type": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ }
+}

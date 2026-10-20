@@ -1,0 +1,81 @@
+name: Weekly live
+
+# Phase 11 T5: the golden trips and the contract check against the real services, once a week.
+# Never on a PR and never blocks one (owner decision 22). Transitous traffic: <= 60 + 5 requests, >= 1 s apart;
+# Open-Meteo 1, Photon 1 (skill transitous-api). A failure comments on its own issue.
+# GitHub's cron is UTC: 00:47 is Tuesday 03:47 Israel in summer time, 02:47 in winter.
+on:
+  schedule:
+    - cron: "47 0 * * 2"
+  workflow_dispatch:
+
+permissions: { contents: read, issues: write }
+
+concurrency: { group: weekly-live, cancel-in-progress: false }
+
+jobs:
+  golden:
+    name: golden trips (live)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Golden trips
+        id: golden
+        run: ./gradlew -p core goldenTrips -q
+        continue-on-error: true
+      - name: Report in the summary
+        if: always()
+        run: test -f core/build/golden/report.md && cat core/build/golden/report.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: golden-report, path: core/build/golden/report.md, retention-days: 30, if-no-files-found: ignore }
+      - name: Comment on the "golden-trips" issue
+        if: steps.golden.outcome == 'failure'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          find() { gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"golden-trips" in:title' --json number,title --jq '[.[] | select(.title == "golden-trips")][0].number'; }
+          issue=$(find)
+          if [ -z "$issue" ] || [ "$issue" = null ]; then
+            issue=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "golden-trips" --body "Failures of the weekly live golden trips (weekly-live.yml) are commented here." | grep -o '[0-9]*$')
+          fi
+          run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          { echo "The weekly golden trips failed on \`${GITHUB_SHA::7}\`: [run]($run)"; echo; grep -E '^## FAIL|^- \*\*' core/build/golden/report.md | head -60; } > "$RUNNER_TEMP/comment.md"
+          gh issue comment "$issue" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
+      - name: Fail the job when a trip failed
+        if: steps.golden.outcome == 'failure'
+        run: exit 1
+
+  contract:
+    name: contract check (live)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Contract check
+        id: contract
+        run: python tools/contract_check.py --out build/contract/report.md
+        continue-on-error: true
+      - name: Report in the summary
+        if: always()
+        run: test -f build/contract/report.md && cat build/contract/report.md >> "$GITHUB_STEP_SUMMARY" || true
+      - name: Comment on the "contract-drift" issue
+        if: steps.contract.outcome == 'failure' && hashFiles('build/contract/report.md') != ''
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          find() { gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"contract-drift" in:title' --json number,title --jq '[.[] | select(.title == "contract-drift")][0].number'; }
+          issue=$(find)
+          if [ -z "$issue" ] || [ "$issue" = null ]; then
+            issue=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "contract-drift" --body "Drift between the live services and the recorded shapes (weekly-live.yml, tools/contract_check.py) is commented here. To accept a change: re-record the fixture, then python tools/contract_check.py --update-shapes." | grep -o '[0-9]*$')
+          fi
+          run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          { echo "Contract drift on \`${GITHUB_SHA::7}\`: [run]($run)"; echo; cat build/contract/report.md; } > "$RUNNER_TEMP/comment.md"
+          gh issue comment "$issue" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
+      - name: Fail the job on drift or a transport error
+        if: steps.contract.outcome == 'failure'
+        run: exit 1

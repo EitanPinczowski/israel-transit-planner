@@ -22,10 +22,46 @@ jobs:
         run: python3 tools/kover_summary.py >> "$GITHUB_STEP_SUMMARY"
       - run: python3 tools/check_docs.py
       - run: python3 tools/check_strings.py
+      # Phase 11 T5: the contract shapes are generated from the fixtures; a fixture change must regenerate them.
+      - run: python3 tools/contract_check.py --check-shapes
       # Phase 11 T2: style. ktlint lists every finding; the gate fails on lines this change added or edited.
       - run: ./gradlew -p core ktlintCheck
       - name: ktlint on changed lines
         run: python3 tools/ktlint_gate.py | tee -a "$GITHUB_STEP_SUMMARY"; test "${PIPESTATUS[0]}" = 0
+
+  mutation:
+    # Phase 11 T5 (owner decision 20): PIT on the core classes this PR changed; fails a class that scores more
+    # than 2 points under core/mutation-baseline.json. Skipped (no Gradle, no PIT) unless core/src/main changed.
+    name: mutation (changed classes)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Changed classes
+        id: changed
+        run: echo "classes=$(python3 tools/mutation_score.py changed "origin/${{ github.base_ref }}")" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-java@v4
+        if: steps.changed.outputs.classes != ''
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.changed.outputs.classes != ''
+      # Incremental history: mutants of unchanged code that were killed are not re-run.
+      - uses: actions/cache@v4
+        if: steps.changed.outputs.classes != ''
+        with:
+          path: core/build/pit-history
+          key: pit-history-${{ github.run_id }}
+          restore-keys: pit-history-
+      - name: PIT on the changed classes
+        if: steps.changed.outputs.classes != ''
+        run: ./gradlew -p core pitest "-PpitClasses=${{ steps.changed.outputs.classes }}" --console=plain
+      - name: Gate
+        if: steps.changed.outputs.classes != ''
+        run: python3 tools/mutation_score.py gate core/build/reports/pitest/mutations.xml --only "${{ steps.changed.outputs.classes }}" | tee -a "$GITHUB_STEP_SUMMARY"; test "${PIPESTATUS[0]}" = 0
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.changed.outputs.classes != ''
+        with: { name: pitest-changed, path: core/build/reports/pitest, retention-days: 14 }
 
   android:
     name: build debug APK
