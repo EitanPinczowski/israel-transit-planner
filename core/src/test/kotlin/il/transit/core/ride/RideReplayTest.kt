@@ -45,11 +45,14 @@ class RideReplayTest {
     }
 
     /** Every `*.gpx` with its `.json`, from `tracks/` and `tracks/real/`. */
-    private fun tracks(dir: File?): List<Track> = dir?.listFiles { f -> f.extension == "gpx" }.orEmpty().sortedBy { it.name }.map { f ->
-        val meta = MotisJson.parseToJsonElement(File(f.path.removeSuffix(".gpx") + ".json").readText()).jsonObject
-        val points = fix.findAll(f.readText()).toList()
-        val fixes = points.map { m -> Fix(Instant.parse(m.groupValues[3]), LatLon(m.groupValues[1].toDouble(), m.groupValues[2].toDouble())) }
-        Track(f.nameWithoutExtension, fixes, itinerary(meta["fixture"]!!.jsonPrimitive.content, meta["itinerary"]?.jsonPrimitive?.intOrNull))
+    private fun tracks(dir: File?): List<Track> {
+        val files = dir?.listFiles { f -> f.extension == "gpx" }.orEmpty().sortedBy { it.name }
+        return files.map { f ->
+            val meta = MotisJson.parseToJsonElement(File(f.path.removeSuffix(".gpx") + ".json").readText()).jsonObject
+            val points = fix.findAll(f.readText()).toList()
+            val fixes = points.map { m -> Fix(Instant.parse(m.groupValues[3]), LatLon(m.groupValues[1].toDouble(), m.groupValues[2].toDouble())) }
+            Track(f.nameWithoutExtension, fixes, itinerary(meta["fixture"]!!.jsonPrimitive.content, meta["itinerary"]?.jsonPrimitive?.intOrNull))
+        }
     }
 
     private val synthetic by lazy { tracks(resourceDir("/tracks")) }
