@@ -116,6 +116,13 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`
   ONCE — within 120 m of the stop before yours (if MOTIS listed intermediate stops) or 400 m
   of your stop — then `Finished` at the destination or 30 min past planned arrival.
+- **Armed only on the ride** (Phase 11 R2): both location checks of a leg (the alert, and "at
+  the stop" ending the leg) wait until `now ≥ leg.start` (boarded) and `now ≥ leg.end − 20 min`
+  (`earliestAlert`). So a short first leg whose stop is near the origin stays quiet during the
+  walk, and a loop line passing your stop mid-ride does not alert at the first pass. Ending a
+  leg by time (`leg.end + 3 min`) is unchanged. Cost: a vehicle running > 20 min early, or an
+  earlier bus than planned, alerts late or not at all (the leg still ends by time). Pinned by
+  `RideTrackerArmingTest` and `prop/RideTrackerPropertyTest`.
 - **On-the-bus progress** (`RideTracker.progress`): the nearest stop-to-stop segment of the
   current leg gives "N stops left" (never moves backwards on GPS jitter); the schedule
   interpolated to that point vs now gives the delay, which shifts the arrival estimates. The
@@ -328,10 +335,8 @@ before boarding or after the vehicle arrived, never more than 15 min before the 
   fixture). Synthetic ones come from `python tools/gpx_synth.py` (seeded; `--check` verifies the committed files):
   clean train, 60 s tunnel mid-ride and just before the stop, urban-canyon jitter, stop-and-go, two 300 m jumps, a
   skipped stop (30 s fixes), a loop line, a three-bus plan. To add one, add a `SCENARIOS` entry and a test line.
-- **Known gaps (reproduced by tracks that are generated but not asserted, see the T5 PR body):** `bus_loop_line`
-  (the vehicle passes the alighting stop at 65 % of the ride: the alert fires ~31 min early, at the first pass)
-  and `plan_three_buses` (a one-minute first bus leg: the alert fires while the rider is still walking to the
-  stop, before boarding). Add the test lines to `RideReplayTest` with the fix in `RideTracker`.
+- **Former gaps, fixed in R2 and now asserted:** `bus_loop_line` (passes the alighting stop at 65 % of the ride:
+  fired ~31 min early) and `plan_three_buses` (a one-minute first bus leg: fired during the walk, before boarding).
 - **Real rides (owner decision 23):** record a bus, a train and a light-rail ride with a free GPX logger (e.g.
   OsmAnd, GPSLogger); trim 300 m off both ends (home, work); record the same trip's plan or `trip` with
   `tools/record_fixture.py` (the leg times must match the ride); commit `tracks/real/<name>.gpx` and

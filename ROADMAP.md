@@ -334,6 +334,9 @@ package. Tick only your own package's lines.
 ### R1 Restore car tabs + errands (`claude/p11-restore-tabs`, 0 requests; owner 2026-10-20)
 - [x] After process death the four car tabs and errands come back with their options, the chosen one and its sheet, at 0 requests; T7's checks blocking
 
+### R2 RideTracker alert fixes (`claude/p11-ride-alerts`, 0 requests; owner 2026-10-20)
+- [x] "Get off at the next stop" waits for boarding and fires at most 20 min before the stop: T5's `bus_loop_line` and `plan_three_buses` asserted
+
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
 - [ ] "Pay with…" opens the user's payment app or its store page
 - [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
