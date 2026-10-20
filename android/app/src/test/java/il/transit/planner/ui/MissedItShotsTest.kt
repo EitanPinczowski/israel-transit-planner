@@ -21,7 +21,9 @@ import il.transit.core.api.PlanResponse
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripResult
+import il.transit.planner.ui.screens.LocalPlaceEditor
 import il.transit.planner.ui.screens.MissedItUi
+import il.transit.planner.ui.screens.PlaceEditor
 import il.transit.planner.ui.screens.ResultsPanel
 import il.transit.planner.ui.screens.SearchCard
 import org.junit.Rule
@@ -54,7 +56,11 @@ class MissedItShotsTest(private val v: Variant) {
     @Test fun needStart() = paparazzi.snapshot("missed_it_where") {
         Frame {
             Box(Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.TopCenter) {
-                SearchCard(base.copy(editing = Field.FROM, missedIt = MissedItUi(MissedItUi.Kind.NEED_START, to)), NoActions) {}
+                val state = base.copy(editing = Field.FROM, missedIt = MissedItUi(MissedItUi.Kind.NEED_START, to))
+                // As MainScreen does: the focused From row is the (empty) text field.
+                CompositionLocalProvider(LocalPlaceEditor provides { m -> PlaceEditor(state, NoActions, m) }) {
+                    SearchCard(state, NoActions) {}
+                }
             }
         }
     }
