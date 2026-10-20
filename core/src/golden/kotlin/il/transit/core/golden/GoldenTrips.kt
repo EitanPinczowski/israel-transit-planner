@@ -5,44 +5,43 @@ import il.transit.core.api.Endpoint
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.Itinerary
-import il.transit.core.api.Preferences
 import il.transit.core.api.MotisClient
 import il.transit.core.api.Place
 import il.transit.core.api.PlanRequest
 import il.transit.core.api.PlanResponse
+import il.transit.core.api.Preferences
 import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.TransitApi
+import il.transit.core.calendar.DayKind
+import il.transit.core.calendar.Holidays
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.features.BetterStartQuery
 import il.transit.core.features.DropOffKind
 import il.transit.core.features.DropOffPlanner
 import il.transit.core.features.DropOffQuery
-import il.transit.core.calendar.DayKind
-import il.transit.core.calendar.Holidays
 import il.transit.core.features.ISRAEL
+import il.transit.core.features.Option
 import il.transit.core.features.ParkRidePlanner
 import il.transit.core.features.ParkRideQuery
-import il.transit.core.features.Option
 import il.transit.core.features.PickUpPlanner
 import il.transit.core.features.PickUpQuery
 import il.transit.core.features.paretoFront
 import il.transit.core.geo.BBox
-import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.invariants.Invariants
 import il.transit.core.plan.ChainPlanner
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.LastRideFinder
-import il.transit.core.present.DayNotice
-import il.transit.core.user.UserSettings
-import kotlinx.coroutines.delay
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.plan.TripQuery
+import il.transit.core.present.DayNotice
 import il.transit.core.present.LegKind
 import il.transit.core.present.hhmm
 import il.transit.core.present.legKind
 import il.transit.core.present.summarize
+import il.transit.core.user.UserSettings
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.time.DayOfWeek
@@ -150,7 +149,10 @@ private fun line(it: Itinerary): String {
     return "${s.depart}–${s.arrive} (${s.durationMin}′, ${s.transfers} transfers) $chips$fare"
 }
 
-private fun kinds(it: Itinerary): Set<LegKind> = it.legs.filter { l -> l.isTransit }.map { l -> legKind(l.mode) }.toSet()
+private fun kinds(it: Itinerary): Set<LegKind> = it.legs
+    .filter { l -> l.isTransit }
+    .map { l -> legKind(l.mode) }
+    .toSet()
 
 /** Invariants every itinerary must meet, whatever the trip: the shared ones, plus time and space chaining. */
 private fun Outcome.sane(tag: String, it: Itinerary, from: LatLon?, to: LatLon?) {
@@ -207,8 +209,15 @@ private suspend fun runAll(args: Array<String>): Int {
     }
 
     suspend fun trip(
-        n: Int, name: String, expect: String, from: LatLon, to: LatLon, time: Instant,
-        mode: TimeMode = TimeMode.DEPART_AT, allowEmpty: Boolean = false, extra: Outcome.(List<Itinerary>) -> Unit,
+        n: Int,
+        name: String,
+        expect: String,
+        from: LatLon,
+        to: LatLon,
+        time: Instant,
+        mode: TimeMode = TimeMode.DEPART_AT,
+        allowEmpty: Boolean = false,
+        extra: Outcome.(List<Itinerary>) -> Unit,
     ) = run(Outcome("$n. $name", expect)) {
         val r = trips.plan(TripQuery(Endpoint.Coord(from), Endpoint.Coord(to), mode, time))
         check(allowEmpty || r.itineraries.isNotEmpty()) { "no transit options" }
@@ -392,14 +401,29 @@ private suspend fun runAll(args: Array<String>): Int {
     trip(26, "Night: Tel Aviv Allenby → Bnei Brak, 01:30 after Thursday", "a night bus (busofash, the one real-time feed)", P.allenby, P.bneiBrak, at(weekday.with(TemporalAdjusters.nextOrSame(DayOfWeek.THURSDAY)).plusDays(1), 1, 30)) { its ->
         val rt = its.count { o -> o.legs.any { l -> l.realTime } }
         lines += "$rt of ${its.size} options carry real-time data"
-        check(its.first().start.atZone(ISRAEL).hour in 1..5) { "first option leaves at ${hhmm(its.first().start)}, not at night" }
+        check(
+            its
+                .first()
+                .start
+                .atZone(ISRAEL)
+                .hour in 1..5,
+        ) { "first option leaves at ${hhmm(its.first().start)}, not at night" }
     }
     val saturday = friday.plusDays(1)
     trip(27, "Saturday night after Shabbat: Be'er Sheva → Tel Aviv, 20:00", "nothing during Shabbat; service by the evening", P.bsCenter, P.savidor, at(saturday, 20)) { its ->
-        check(its.first().start.atZone(ISRAEL).let { it.toLocalDate() == saturday && it.hour < 18 }.not()) { "an option leaves in the Shabbat afternoon: ${hhmm(its.first().start)}" }
+        check(
+            its
+                .first()
+                .start
+                .atZone(ISRAEL)
+                .let { it.toLocalDate() == saturday && it.hour < 18 }
+                .not(),
+        ) { "an option leaves in the Shabbat afternoon: ${hhmm(its.first().start)}" }
     }
-    val holiday = generateSequence(today) { it.plusDays(1) }.take(DayNotice.HORIZON_DAYS.toInt() + 1)
-        .mapNotNull { d -> Holidays.day(d) }.firstOrNull { it.kind != DayKind.REDUCED }
+    val holiday = generateSequence(today) { it.plusDays(1) }
+        .take(DayNotice.HORIZON_DAYS.toInt() + 1)
+        .mapNotNull { d -> Holidays.day(d) }
+        .firstOrNull { it.kind != DayKind.REDUCED }
     if (holiday == null) {
         results += Outcome("28. Holiday or holiday eve", "service as the day's kind says").also { it.skipped = "no holiday in range (${DayNotice.HORIZON_DAYS} days): skipped" }
     } else {
@@ -414,16 +438,24 @@ private suspend fun runAll(args: Array<String>): Int {
 
     val failed = results.count { it.problems.isNotEmpty() }
     val report = buildString {
-        appendLine("# Golden trips — ${weekday} (weekday) / ${friday} (Friday)")
+        appendLine("# Golden trips — $weekday (weekday) / $friday (Friday)")
         appendLine()
         appendLine("Run ${ZonedDateTime.now(ISRAEL).toLocalDateTime().withNano(0)} Israel time · ${wire.n.get()} requests to Transitous · ${results.count { it.problems.isEmpty() && it.skipped == null }}/${results.size} pass, ${results.count { it.skipped != null }} not run, $failed fail · cap $CAP")
         appendLine()
         for (o in results) {
-            appendLine("## ${if (o.skipped != null) "SKIP" else if (o.problems.isEmpty()) "PASS" else "FAIL"} — ${o.title}")
+            appendLine(
+                "## ${if (o.skipped != null) {
+                    "SKIP"
+                } else if (o.problems.isEmpty()) {
+                    "PASS"
+                } else {
+                    "FAIL"
+                }} — ${o.title}",
+            )
             o.skipped?.let { appendLine("_${it}_") }
             appendLine("Expect: ${o.expect} · ${o.requests} requests")
             appendLine()
-            o.problems.forEach { appendLine("- **${it}**") }
+            o.problems.forEach { appendLine("- **$it**") }
             o.lines.forEach { appendLine("- $it") }
             appendLine()
         }

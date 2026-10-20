@@ -26,7 +26,6 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -46,8 +45,10 @@ class RoutingInvariantsTest {
     /** Every `plan_*` fixture, found on disk, so a newly recorded one is checked without editing this file. */
     private val planFixtures: List<String> by lazy {
         val dir = File(javaClass.getResource("/fixtures/plan_bgu_telaviv.json")!!.toURI()).parentFile
-        dir.listFiles { f -> f.name.startsWith("plan_") && f.name.endsWith(".json") }!!
-            .map { it.name.removeSuffix(".json") }.sorted()
+        dir
+            .listFiles { f -> f.name.startsWith("plan_") && f.name.endsWith(".json") }!!
+            .map { it.name.removeSuffix(".json") }
+            .sorted()
     }
 
     private val tripFixtures = listOf("trip_bus_470", "trip_train_bs_telaviv")
@@ -112,7 +113,9 @@ class RoutingInvariantsTest {
     // ---- the Pareto front --------------------------------------------------------------------------
 
     private fun <T> dominates(a: Option<T>, b: Option<T>) =
-        a.driverCostSec <= b.driverCostSec && !a.arrival.isAfter(b.arrival) && a.transfers <= b.transfers &&
+        a.driverCostSec <= b.driverCostSec &&
+            !a.arrival.isAfter(b.arrival) &&
+            a.transfers <= b.transfers &&
             (a.driverCostSec < b.driverCostSec || a.arrival.isBefore(b.arrival) || a.transfers < b.transfers)
 
     private fun <T> checkFront(where: String, front: List<Option<T>>) {
@@ -189,8 +192,15 @@ class RoutingInvariantsTest {
     }
 
     @Test fun `park and ride - drives, times, front and budget`() = runTest {
-        val drives = MotisJson.decodeFromString(ListSerializer(JsonObject.serializer()), text("one_to_many_park_ride_meitar"))
-            .map { it["duration"]?.jsonPrimitive?.content?.toDouble()?.toInt() }
+        val drives = MotisJson
+            .decodeFromString(ListSerializer(JsonObject.serializer()), text("one_to_many_park_ride_meitar"))
+            .map {
+                it["duration"]
+                    ?.jsonPrimitive
+                    ?.content
+                    ?.toDouble()
+                    ?.toInt()
+            }
         val fake = FakeTransitApi().apply {
             onOneToMany = { _, _, _ -> drives }
             onPlan = { req ->

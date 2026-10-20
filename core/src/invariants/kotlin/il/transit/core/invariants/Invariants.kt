@@ -92,8 +92,11 @@ object Invariants {
         val free = FareEstimator.estimate(it, FareProfile.FREE)
         if (it.legs.none { l -> l.isTransit }) return if (regular == null) emptyList() else listOf("$where: fare without a ride")
         val bad = mutableListOf<String>()
-        if (regular == null || regular.agorot < 0) bad += "$where: fare < 0 (${regular?.agorot})"
-        else if (half == null || half.agorot !in 0..regular.agorot) bad += "$where: half fare dearer than full"
+        if (regular == null || regular.agorot < 0) {
+            bad += "$where: fare < 0 (${regular?.agorot})"
+        } else if (half == null || half.agorot !in 0..regular.agorot) {
+            bad += "$where: half fare dearer than full"
+        }
         if (free?.agorot != 0) bad += "$where: free fare ${free?.agorot}"
         return bad
     }
@@ -106,11 +109,31 @@ object Invariants {
             if (gap > maxGapM) bad += "$where: legs ${i + 1}→${i + 2} jump %.0f m".format(gap)
         }
         if (from != null && it.legs.isNotEmpty()) {
-            val d = Geo.distanceM(from, LatLon(it.legs.first().from.lat, it.legs.first().from.lon))
+            val d = Geo.distanceM(
+                from,
+                LatLon(
+                    it.legs
+                        .first()
+                        .from.lat,
+                    it.legs
+                        .first()
+                        .from.lon,
+                ),
+            )
             if (d > endM) bad += "$where: starts %.0f m from the origin".format(d)
         }
         if (to != null && it.legs.isNotEmpty()) {
-            val d = Geo.distanceM(to, LatLon(it.legs.last().to.lat, it.legs.last().to.lon))
+            val d = Geo.distanceM(
+                to,
+                LatLon(
+                    it.legs
+                        .last()
+                        .to.lat,
+                    it.legs
+                        .last()
+                        .to.lon,
+                ),
+            )
             if (d > endM) bad += "$where: ends %.0f m from the destination".format(d)
         }
         return bad
@@ -126,14 +149,18 @@ object Invariants {
     fun <T> front(where: String, front: List<Option<T>>): List<String> {
         val bad = mutableListOf<String>()
         fun dominates(a: Option<T>, b: Option<T>) =
-            a.driverCostSec <= b.driverCostSec && !a.arrival.isAfter(b.arrival) && a.transfers <= b.transfers &&
+            a.driverCostSec <= b.driverCostSec &&
+                !a.arrival.isAfter(b.arrival) &&
+                a.transfers <= b.transfers &&
                 (a.driverCostSec < b.driverCostSec || a.arrival.isBefore(b.arrival) || a.transfers < b.transfers)
         front.forEach { o ->
             if (o.driverCostSec < 0) bad += "$where: driver cost ${o.driverCostSec} < 0"
             if (o.transfers < 0) bad += "$where: transfers < 0"
         }
-        for (a in front) for (b in front) {
-            if (a !== b && dominates(a, b)) bad += "$where: ${b.driverCostSec}s/${b.arrival}/${b.transfers} is dominated"
+        for (a in front) {
+            for (b in front) {
+                if (a !== b && dominates(a, b)) bad += "$where: ${b.driverCostSec}s/${b.arrival}/${b.transfers} is dominated"
+            }
         }
         if (front.map { it.arrival } != front.sortedBy { it.arrival }.map { it.arrival }) bad += "$where: not sorted by arrival"
         return bad
