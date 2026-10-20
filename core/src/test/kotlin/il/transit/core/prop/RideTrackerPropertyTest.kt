@@ -96,8 +96,9 @@ class RideTrackerPropertyTest {
             val trip = build(hs, early)
             val transit = trip.legs.filter { it.isTransit }
             val tracker = RideTracker(trip)
-            val first = trip.legs.first().start.minusSeconds(early * 60L)
-            val last = trip.legs.last().end.minusSeconds(early * 60L).plusSeconds(60)
+            val lead = Duration.ofMinutes(early.toLong())
+            val first = trip.start.minus(lead)
+            val last = trip.end.minus(lead).plusSeconds(60)
             val alerts = mutableListOf<Pair<Instant, RideEvent.Approaching>>()
             var now = first
             while (!now.isAfter(last)) {
