@@ -22,8 +22,8 @@ import java.time.Instant
  *
  * Tracks: the `.gpx` files in `tracks/` are synthetic (`tools/gpx_synth.py`: jitter, a 60 s tunnel, stop-and-go, a 300 m
  * jump, a skipped stop, a loop line, a three-bus plan); the ones in `tracks/real/` are rides the owner recorded
- * (skill reminders-offline). Two generated tracks, `bus_loop_line` and `plan_three_buses`, are NOT asserted:
- * they reproduce two [RideTracker] bugs outside this package's files (PR body, T5); add them here when fixed.
+ * (skill reminders-offline). `bus_loop_line` and `plan_three_buses` reproduced two [RideTracker] bugs found by
+ * T5 (a loop line passing the stop early, an alert during the walk to a short first leg), fixed in R2.
  * Each track has a `.json` beside it naming the fixture (and plan itinerary).
  */
 class RideReplayTest {
@@ -105,6 +105,10 @@ class RideReplayTest {
     @Test fun `a skipped stop with sparse fixes still alerts before the stop`() = assertAlertsOnce(track("bus_skipped_stop"), 60.0)
 
     @Test fun `a train with walks around it alerts once`() = assertAlertsOnce(track("plan_train_walks"), 80.0)
+
+    @Test fun `a loop line passing the stop early alerts only on the last pass`() = assertAlertsOnce(track("bus_loop_line"), 60.0)
+
+    @Test fun `a one-minute first bus near the origin does not alert during the walk`() = assertAlertsOnce(track("plan_three_buses"), 60.0)
 
     @Test fun `every real recorded ride alerts once`() {
         real.forEach { assertAlertsOnce(it, 100.0) }

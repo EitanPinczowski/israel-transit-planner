@@ -41,6 +41,11 @@ sealed interface RideEvent {
  *  - within [passedStopM] of the stop before it (when MOTIS listed intermediate stops) —
  *    "your stop is next" is what people on Israeli buses actually need.
  * A leg is done once you are at its stop, or its planned end is [legGrace] behind you.
+ *
+ * Both location checks wait until the leg is [armed]: boarded (its start reached) and at most
+ * [earliestAlert] before its end. A short first leg whose stop is near the origin then stays quiet
+ * during the walk to it, and a loop line that passes your stop mid-ride (bus 470 around the
+ * station) does not alert, or end the leg, at the first pass (R2).
  */
 class RideTracker(
     itinerary: Itinerary,
@@ -49,6 +54,7 @@ class RideTracker(
     private val atStopM: Double = 80.0,
     private val legGrace: Duration = Duration.ofMinutes(3),
     private val tripGrace: Duration = Duration.ofMinutes(30),
+    private val earliestAlert: Duration = Duration.ofMinutes(20),
 ) {
     private val legs: List<Leg> = itinerary.legs.filter { it.isTransit }
     private val destination: LatLon = itinerary.legs.last().to.latLon
@@ -67,11 +73,12 @@ class RideTracker(
         while (index < legs.size) {
             val leg = legs[index]
             val toStop = Geo.distanceM(pos, leg.to.latLon)
-            if (!alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
+            val armed = armed(leg, now)
+            if (armed && !alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
                 alerted = true
                 return RideEvent.Approaching(index, leg.to.name, isLastLeg = index == legs.size - 1)
             }
-            val legOver = toStop <= atStopM || now.isAfter(leg.end.plus(legGrace))
+            val legOver = (armed && toStop <= atStopM) || now.isAfter(leg.end.plus(legGrace))
             if (!legOver) return null
             index++
             alerted = false
@@ -134,6 +141,9 @@ class RideTracker(
         val closest = LatLon(a.lat + by * f, a.lon + (bx * f) / k)
         return Geo.distanceM(p, closest) to f
     }
+
+    /** Boarded, and no more than [earliestAlert] before the vehicle is due at the stop. */
+    private fun armed(leg: Leg, now: Instant): Boolean = !now.isBefore(leg.start) && !now.isBefore(leg.end.minus(earliestAlert))
 
     private fun passedPenultimate(leg: Leg, pos: LatLon): Boolean {
         val before = leg.intermediateStops.lastOrNull() ?: return false
