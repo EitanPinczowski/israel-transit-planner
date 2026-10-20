@@ -547,7 +547,8 @@ class JourneysTest {
             val label = d.str(R.string.missed_it_action)
             fun hasMissedIt(id: Int): Boolean {
                 val n = nm.activeNotifications.firstOrNull { it.id == id } ?: return false
-                return n.notification.actions.orEmpty().any { "${it.title}" == label }
+                val actions = n.notification.actions ?: return false
+                return actions.any { "${it.title}" == label }
             }
             assertTrue("J14: no \"$label\" on the countdown", hasMissedIt(1001))
             Notifications.changed(d.app, r)
