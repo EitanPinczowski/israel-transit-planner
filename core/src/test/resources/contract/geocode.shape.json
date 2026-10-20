@@ -1,0 +1,122 @@
+{
+ "$": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$[].areas": {
+  "always": true,
+  "types": [
+   "array"
+  ]
+ },
+ "$[].areas[]": {
+  "always": false,
+  "types": [
+   "object"
+  ]
+ },
+ "$[].areas[].adminLevel": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].areas[].default": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$[].areas[].matched": {
+  "always": true,
+  "types": [
+   "boolean"
+  ]
+ },
+ "$[].areas[].name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].category": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].houseNumber": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].id": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].importance": {
+  "always": false,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].lat": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].lon": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].modes": {
+  "always": false,
+  "types": [
+   "array"
+  ]
+ },
+ "$[].modes[]": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].name": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].score": {
+  "always": true,
+  "types": [
+   "number"
+  ]
+ },
+ "$[].street": {
+  "always": false,
+  "types": [
+   "string"
+  ]
+ },
+ "$[].type": {
+  "always": true,
+  "types": [
+   "string"
+  ]
+ }
+}
