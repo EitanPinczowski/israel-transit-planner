@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.kover)
+    alias(libs.plugins.pitest)
 }
 
 group = "il.transit"
@@ -112,4 +113,30 @@ kover {
             }
         }
     }
+}
+
+// Mutation testing (Phase 11 T5): PIT on the pure packages. Weekly: all of them (mutation.yml); on a PR that
+// changes core/src/main: only the changed classes (-PpitClasses=a.B*,c.D*), with the history cached, and
+// tools/mutation_score.py fails a class that scores more than 2 points under core/mutation-baseline.json.
+// Kotlin's generated null checks (Intrinsics) are not worth killing, so calls to them are not mutated.
+pitest {
+    pitestVersion.set(libs.versions.pitestEngine.get())
+    val packages = listOf("present", "fare", "features", "remind", "ride", "calendar")
+    targetClasses.set(
+        (findProperty("pitClasses") as String?)?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
+            ?: (packages.map { "il.transit.core.$it.*" } + "il.transit.core.plan.TripPages*"),
+    )
+    // Generated data tables are not logic.
+    excludedClasses.set(listOf("*Data", "*Data$*"))
+    targetTests.set(listOf("il.transit.core.*"))
+    avoidCallsTo.set(listOf("kotlin.jvm.internal", "kotlin.collections.CollectionsKt"))
+    threads.set(Runtime.getRuntime().availableProcessors())
+    outputFormats.set(listOf("XML", "HTML"))
+    timestampedReports.set(false)
+    timeoutConstInMillis.set(10_000)
+    enableDefaultIncrementalAnalysis.set(true)
+    historyInputLocation.set(layout.buildDirectory.file("pit-history/history.bin"))
+    historyOutputLocation.set(layout.buildDirectory.file("pit-history/history.bin"))
+    jvmArgs.set(listOf("-Dtransit.offline=true"))
+    failWhenNoMutations.set(false)
 }

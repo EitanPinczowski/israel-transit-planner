@@ -108,6 +108,21 @@ Cloud sessions have no Android SDK: the Lint and APK gates can only be proven by
   real bug, fix it (small, in core) and keep the case as a plain test, so it does not depend on the seed.
 - The Android JVM tests have no kotest dependency: `SavedUiPropertyTest` uses a seeded `java.util.Random`.
 
+## Mutation testing (Phase 11 T5, owner decision 20)
+PIT (Apache-2.0, JUnit 4, plugin `info.solidsoft.pitest`) on the pure packages `present/`, `fare/`, `features/`,
+`remind/`, `ride/`, `calendar/` and `plan/TripPages`; Kotlin's generated null checks are not mutated (`avoidCallsTo`),
+generated `*Data` tables are excluded. `./gradlew -p core pitest` (all; ~45 min) or
+`-PpitClasses='il.transit.core.fare.*'` (one package took 1.5 min). Report: `core/build/reports/pitest/index.html`
+(survivors per line) and `mutations.xml`. Score = detected / all mutations of a class, inner classes included.
+- **Weekly** (`mutation.yml`, Sunday night): the full run; it raises `core/mutation-baseline.json` (a class only goes
+  up; new classes are added) and commits it (a protected `main` refuses: the run's log and artifact hold it).
+  `workflow_dispatch` with `write_baseline` writes the first baseline.
+- **PR gate** (the `mutation` job in `ci.yml`, only when a file under `core/src/main/.../{present,fare,features,remind,ride,calendar}`
+  or `plan/TripPages.kt` changes): PIT on those classes only (history cached), then `python3 tools/mutation_score.py gate`
+  **fails a changed class that scores more than 2 points under its baseline**. Fix it by killing the surviving
+  mutants with a test. A PR that must lower a class says why in its body and edits the baseline by hand; the owner accepts.
+- Local first aid: `python3 tools/mutation_score.py gate core/build/reports/pitest/mutations.xml` prints the table.
+
 ## ViewModel state tests and Android coverage (Phase 11 T3)
 - **Where:** `android/app/src/test/.../ui/vm/`. Plain JVM, in the `screenshots` job (it already runs the app's unit tests).
   `VmTest` is the base class: Main is a virtual-time `UnconfinedTestDispatcher`, so a ViewModel's coroutines run the moment
