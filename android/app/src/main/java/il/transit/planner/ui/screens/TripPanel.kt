@@ -480,7 +480,8 @@ internal fun ResultsPanel(
                         }
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
-                            transferBufferMin = state.settings.transferBufferMin, fewerStops = i in rememberFewerStops(state.options),
+                            transferBufferMin = state.settings.transferBufferMin,
+                                fewerStops = i in rememberFewerStops(state.options), // ktlint's indent (this block sits 4 short)
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
                             extra = { UsualLine(state, itin); BigStopRow(state, vm); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }

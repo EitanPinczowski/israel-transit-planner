@@ -38,7 +38,6 @@ import org.junit.runners.Parameterized
  */
 @RunWith(Parameterized::class)
 class LegLabelsShotsTest(private val v: Variant) {
-
     class Variant(val name: String, val device: DeviceConfig, val dark: Boolean, val rtl: Boolean) {
         override fun toString() = name
     }

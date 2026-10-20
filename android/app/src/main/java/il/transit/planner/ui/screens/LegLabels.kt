@@ -39,8 +39,11 @@ import il.transit.planner.R
 internal fun trainText(t: TrainLabel, withStops: Boolean): String {
     val head = t.to?.let { stringResource(R.string.train_to, t.number, it) } ?: stringResource(R.string.train_number, t.number)
     if (!withStops) return head
-    val stops = if (t.stopsBetween == 0) stringResource(R.string.train_no_stops)
-    else pluralStringResource(R.plurals.train_stops_between, t.stopsBetween, t.stopsBetween)
+    val stops = if (t.stopsBetween == 0) {
+        stringResource(R.string.train_no_stops)
+    } else {
+        pluralStringResource(R.plurals.train_stops_between, t.stopsBetween, t.stopsBetween)
+    }
     return stringResource(R.string.train_label, head, stops)
 }
 
@@ -92,7 +95,8 @@ internal fun AccessibleBadgeRow(leg: Leg, accessibleRoutes: Boolean) {
 
 /** Material's "Accessible" symbol (the core icon set has none). A real-world sign: never mirrored. */
 private val Wheelchair: ImageVector by lazy {
-    ImageVector.Builder("Wheelchair", 24.dp, 24.dp, 24f, 24f).addPath(
+    val builder = ImageVector.Builder("Wheelchair", 24.dp, 24.dp, 24f, 24f)
+    builder.addPath(
         addPathNodes(
             "M12,4m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" +
                 "M19,13v-2c-1.54,0.02 -3.09,-0.75 -4.07,-1.83l-1.29,-1.43c-0.17,-0.19 -0.38,-0.34 -0.61,-0.45 " +
@@ -102,5 +106,6 @@ private val Wheelchair: ImageVector by lazy {
                 "c-2.28,0.46 -4,2.48 -4,4.9 0,2.76 2.24,5 5,5 2.42,0 4.44,-1.72 4.9,-4h-2.07z",
         ),
         fill = SolidColor(Color.Black),
-    ).build()
+    )
+    builder.build()
 }
