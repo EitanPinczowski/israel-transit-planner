@@ -6,9 +6,7 @@ import android.os.SystemClock
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasScrollToNodeAction
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performScrollToNode
@@ -123,32 +121,19 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     }
 
     /**
-     * Brings [target] into view in the open Settings dialog's list. Both the tree reads and the
-     * scroll run ON THE UI THREAD (`runOnUiThread`), with the semantics `ScrollBy` action, not a
-     * touch drag. The failures ("Detected multithreaded access to SnapshotStateObserver", frame
-     * `LayoutNode.getCollapsedSemantics` on the `Instr:` thread; `s15_settings_bottom` twice,
-     * `j15`, and again with `performScrollToNode`) are the test thread reading the semantics tree
-     * while the UI thread recomposes the dialog: that read computes the node's semantics lazily
-     * and observes snapshot reads from the wrong thread. `waitForIdle` only helps at one instant,
-     * and `performScrollToNode`/`fetchSemanticsNodes` read from the caller's thread, so neither is
-     * used here. Idle between steps lets each scroll settle before the next read.
+     * Brings [target] into view in the open Settings dialog's list with the list's own
+     * scroll-to-node action, not touch swipes. Tree reads must stay on the test thread: every one
+     * starts with `waitForIdle` (`getRoots`), which throws if nested in `runOnUiThread`.
+     * Residual flake (`s15_settings_bottom`, "multithreaded access to SnapshotStateObserver",
+     * frame `LayoutNode.getCollapsedSemantics` on the `Instr:` thread, API 35) is not closed by
+     * this: see PR #96.
      */
-    fun scrollSettingsTo(target: SemanticsMatcher, maxSteps: Int = 40) {
-        val list = hasScrollAction() and hasAnyAncestor(isDialog())
+    fun scrollSettingsTo(target: SemanticsMatcher) {
+        val list = hasScrollToNodeAction() and hasAnyAncestor(isDialog())
         awaitNode(list)
-        repeat(maxSteps) {
-            compose.waitForIdle()
-            val found = compose.runOnUiThread { compose.onAllNodes(target).fetchSemanticsNodes().isNotEmpty() }
-            if (found) {
-                awaitNode(target)
-                return
-            }
-            compose.runOnUiThread {
-                val node = compose.onAllNodes(list).onFirst().fetchSemanticsNode()
-                node.config[SemanticsActions.ScrollBy].action?.invoke(0f, node.size.height * 0.6f)
-            }
-        }
-        awaitNode(target) // names the missing node if the list never reached it
+        compose.onAllNodes(list).onFirst().performScrollToNode(target)
+        compose.waitForIdle()
+        awaitNode(target)
     }
 
     /**
