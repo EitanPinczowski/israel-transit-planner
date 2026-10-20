@@ -66,7 +66,7 @@ class TrainLabelTest {
     }
 
     @Test
-    fun `0 stops between, and a terminus not on the route name falls back to the last stop`() {
+    fun `0 stops between (shown as nothing), and a terminus not on the route name falls back to the last stop`() {
         val t = train("24", 0, 0).copy(routeLongName = null, tripTo = station("חיפה מרכז"))
         assertEquals(TrainLabel("24", "חיפה מרכז", 0), trainLabel(t))
         assertNull(trainLabel(train("24", 0, 0).copy(tripTo = null, routeLongName = null))!!.to)
@@ -107,12 +107,59 @@ class TrainLabelTest {
     }
 
     @Test
-    fun `Hebrew word order - the number between FSI and PDI after the word, the town after it`() {
+    fun `boundaries - 2 fewer gets the chip, exactly 30 min apart still does, 30 min 1 s does not`() {
+        assertEquals(setOf(FewerStops(0, 0)), fewerStops(listOf(itinerary(train("24", 0, 3)), itinerary(train("26", 20, 5)))))
+        assertEquals(setOf(FewerStops(0, 0)), fewerStops(listOf(itinerary(train("24", 0, 3)), itinerary(train("26", 30, 6)))))
+        val late = train("26", 30, 6).let { it.copy(startTime = it.start.plusSeconds(1).toString()) }
+        assertTrue(fewerStops(listOf(itinerary(train("24", 0, 3)), itinerary(late))).isEmpty())
+    }
+
+    @Test
+    fun `a train after a change, two trains in one option, the same trip twice`() {
+        val bus = leg("BUS", station("בית"), bsNorth, NOON.minusSeconds(1200), NOON.minusSeconds(300))
+        // The fast train is the option's second leg: the chip points at that leg.
+        assertEquals(setOf(FewerStops(0, 1)), fewerStops(listOf(itinerary(bus, train("24", 0, 3)), itinerary(train("26", 10, 6)))))
+        // Two trains in one option are never compared with each other.
+        val haifa = station("חיפה")
+        val two = itinerary(train("24", 0, 3), train("90", 80, 6, from = telAviv, to = haifa))
+        assertTrue(fewerStops(listOf(two)).isEmpty())
+        // ...but each is compared with the other options' trains on its own stations.
+        assertEquals(setOf(FewerStops(1, 0)), fewerStops(listOf(two, itinerary(train("92", 70, 2, from = telAviv, to = haifa)))))
+        // The same trip in two options has the same stops: no chip.
+        val same = train("24", 0, 3).copy(tripId = "t24")
+        assertTrue(fewerStops(listOf(itinerary(same), itinerary(same))).isEmpty())
+    }
+
+    @Test
+    fun `a parent station on the getting-off side only, and a train with no stops listed never wins`() {
+        val platform = station("תל אביב מרכז", id = "p3", parent = telAviv.stopId)
+        assertEquals(setOf(FewerStops(0, 0)), fewerStops(listOf(itinerary(train("24", 0, 3, to = platform)), itinerary(train("26", 10, 6)))))
+        assertTrue(fewerStops(listOf(itinerary(train("24", 0, 0)), itinerary(train("26", 10, 6)))).isEmpty())
+    }
+
+    @Test
+    fun `route names - no arrow falls back to the last stop, a station with a hyphen still matches`() {
+        assertEquals("נהריה", trainLabel(train("24", 0, 3).copy(routeLongName = "נהריה - באר שבע"))!!.to)
+        val hyphen = train("24", 0, 3).copy(
+            routeLongName = "באר שבע מרכז-באר שבע<->תל אביב-יפו ההגנה-תל אביב יפו",
+            tripTo = station("תל אביב-יפו ההגנה"),
+        )
+        assertEquals("תל אביב יפו", trainLabel(hyphen)!!.to)
+    }
+
+    /** The UI only joins these strings; rendered the way Android does (`String.format`), in both languages. */
+    @Test
+    fun `word order - the number and a Hebrew town are isolated, the dot never ends a line`() {
         val res = File("../android/app/src/main/res")
-        fun string(dir: String, key: String) =
-            Regex("""<string name="$key">([^<]*)</string>""").find(File(res, "$dir/strings_leg_labels.xml").readText())!!.groupValues[1]
-        assertEquals("רכבת ⁨%1\$s⁩ ל%2\$s", string("values-iw", "train_to"))
-        assertEquals("Train %1\$s to %2\$s", string("values", "train_to"))
-        assertEquals("%1\$s · %2\$s", string("values-iw", "train_label"))
+        fun xml(dir: String) = File(res, "$dir/strings_leg_labels.xml").readText()
+        fun string(dir: String, key: String) = Regex("""<string name="$key">([^<]*)</string>""").find(xml(dir))!!.groupValues[1]
+        fun plural(dir: String, q: String): String {
+            val items = Regex("""<plurals name="train_stops_between">(.*?)</plurals>""", RegexOption.DOT_MATCHES_ALL).find(xml(dir))!!
+            return Regex("""<item quantity="$q">([^<]*)</item>""").find(items.groupValues[1])!!.groupValues[1]
+        }
+        fun render(dir: String) = string(dir, "train_label").format(string(dir, "train_to").format("406", "כרמיאל"), plural(dir, "other").format(4))
+        // English: "Train 406 to ⁨כרמיאל⁩ · 4 stops…": the Hebrew town cannot pull "· 4" into its RTL run.
+        assertEquals("Train 406 to \u2068כרמיאל\u2069\u00a0·\u00a04 stops on the way", render("values"))
+        assertEquals("רכבת \u2068406\u2069 ל\u2068כרמיאל\u2069\u00a0·\u00a0\u20684\u2069 עצירות בדרך", render("values-iw"))
     }
 }

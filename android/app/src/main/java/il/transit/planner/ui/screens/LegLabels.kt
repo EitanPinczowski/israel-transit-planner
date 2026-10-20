@@ -38,12 +38,9 @@ import il.transit.planner.R
 @Composable
 internal fun trainText(t: TrainLabel, withStops: Boolean): String {
     val head = t.to?.let { stringResource(R.string.train_to, t.number, it) } ?: stringResource(R.string.train_number, t.number)
-    if (!withStops) return head
-    val stops = if (t.stopsBetween == 0) {
-        stringResource(R.string.train_no_stops)
-    } else {
-        pluralStringResource(R.plurals.train_stops_between, t.stopsBetween, t.stopsBetween)
-    }
+    // 0 says nothing: no stops listed may also mean none were sent (core `TrainLabel.stopsBetween`).
+    if (!withStops || t.stopsBetween == 0) return head
+    val stops = pluralStringResource(R.plurals.train_stops_between, t.stopsBetween, t.stopsBetween)
     return stringResource(R.string.train_label, head, stops)
 }
 

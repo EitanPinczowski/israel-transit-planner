@@ -67,6 +67,9 @@ class LegLabelsShotsTest(private val v: Variant) {
     /** Accessible routes on: bus 455, the amber "may not be wheelchair accessible" line. */
     @Test fun busNotAccessible() = sheet("leg_labels_bus_not_accessible", rahat.itineraries[1].legs[1], accessible = true)
 
+    /** Accessible routes off (the default): the same bus 8 shows no badge at all. */
+    @Test fun busAccessibleOff() = sheet("leg_labels_bus_setting_off", rahat.itineraries[1].legs[3], accessible = false)
+
     private fun sheet(name: String, leg: Leg, accessible: Boolean) = paparazzi.snapshot(name) {
         Frame {
             val sheet = TripSheet(leg, tripDetails(leg, null, leg.start.minusSeconds(600)), legOnly = true)

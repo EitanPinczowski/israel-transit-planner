@@ -15,7 +15,11 @@ data class TrainLabel(
     val number: String,
     /** The town at the end of the route the train runs towards; null when the data has none. */
     val to: String?,
-    /** Stops between boarding and getting off (neither counted); 0 = none on the way. */
+    /**
+     * Stops between boarding and getting off (neither counted). 0 is shown as nothing: MOTIS sends an
+     * empty `intermediateStops` both for adjacent stations (train 123, Tel Aviv Center → HaShalom) and
+     * would decode to the same empty list if a server ever left the field out.
+     */
     val stopsBetween: Int,
 )
 
@@ -45,9 +49,8 @@ internal fun terminusTown(leg: Leg): String? {
         .split("<->")
         .map { it.trim() }
     if (end != null && sides.size == 2) {
-        sides.firstOrNull { side -> side.substringBefore('-').trim() == end }?.let { side ->
-            return side.substringAfter('-', side).trim().ifEmpty { end }
-        }
+        // "station-town": the station may itself hold a '-', so match the whole station as a prefix.
+        sides.firstOrNull { it.startsWith("$end-") }?.let { side -> return side.removePrefix("$end-").trim().ifEmpty { end } }
     }
     return end
 }
@@ -74,7 +77,8 @@ object TrainCompare {
  * Between the options of one answer: a train leg that rides between the same two stations as a
  * train leg of another option, leaving within [TrainCompare.WINDOW_SEC] of it, with at least
  * [TrainCompare.MIN_FEWER] fewer stops on the way. Never "express" or "direct": the operator's own
- * label is not in the data.
+ * label is not in the data. A train with no stops listed never wins: an empty list cannot be told
+ * from a missing one.
  */
 fun fewerStops(options: List<Itinerary>): Set<FewerStops> {
     val trains = options.flatMapIndexed { o, itin ->
@@ -84,6 +88,7 @@ fun fewerStops(options: List<Itinerary>): Set<FewerStops> {
         sameStation(a.from, b.from) &&
             sameStation(a.to, b.to) &&
             kotlin.math.abs(a.start.epochSecond - b.start.epochSecond) <= TrainCompare.WINDOW_SEC &&
+            a.intermediateStops.isNotEmpty() &&
             a.intermediateStops.size <= b.intermediateStops.size - TrainCompare.MIN_FEWER
     return trains
         .filter { (o, _, a) -> trains.any { (p, _, b) -> p != o && beats(a, b) } }

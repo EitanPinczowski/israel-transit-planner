@@ -68,7 +68,9 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
   phone. A screen never reads `isSystemInDarkTheme()` itself: `AppTheme(dark)` is set once.
 - **Leg labels** (Phase 11 E3, `screens/LegLabels.kt`, `strings_leg_labels.xml`): the train chip says
   "Train 24" / "רכבת 24" (number in FSI/PDI); the ride line and trip sheet "Train 24 to Nahariya · 3 stops
-  on the way" / "רכבת 24 לנהריה · 3 עצירות בדרך" (0: "No stops on the way"); never "express" or "direct".
+  on the way" / "רכבת 24 לנהריה · 3 עצירות בדרך" (0 stops: no count); never "express" or "direct". The
+  town is in FSI/PDI in both languages (a Hebrew town in English text otherwise swallows "· 4"), and the
+  " · " is glued with no-break spaces so the dot never ends a line (`TrainLabelTest` renders both).
   "Fewer stops" is a `secondaryContainer` chip. With Accessible routes on, a bus header gets a
   `primaryContainer` badge (wheelchair symbol, never mirrored, plus the words "Accessible bus"; the icon
   alone is never enough) or the amber warning-chip line "⚠ This bus may not be wheelchair accessible".

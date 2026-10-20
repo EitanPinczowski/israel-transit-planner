@@ -463,6 +463,7 @@ internal fun ResultsPanel(
             // Every results list carries the sort chips (and the Trip list the rain note) as its first
             // items (D11 designer review): fixed above it, on a 360 dp phone they left no room for a card.
             val showSort = state.showSortChips()
+                val fewerStops = rememberFewerStops(state.options) // Phase 11 E3 (ktlint's indent: this block sits 4 short)
             when {
                 state.loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 state.error != null -> ErrorRow(state.error, vm)
@@ -481,7 +482,7 @@ internal fun ResultsPanel(
                         ItineraryCard(
                             itin, selected = i == state.selected, fareProfile = state.settings.fareProfile, searchedAt = state.time,
                             transferBufferMin = state.settings.transferBufferMin,
-                                fewerStops = i in rememberFewerStops(state.options), // ktlint's indent (this block sits 4 short)
+                                fewerStops = i in fewerStops, // ktlint's indent (this block sits 4 short)
                             onLeg = { li -> actions.openLeg(itin.legs[li]) },
                             extra = { UsualLine(state, itin); BigStopRow(state, vm); if (state.canPage()) MissLine(state, vm) },
                         ) { vm.select(i) }
