@@ -33,7 +33,10 @@ class RestoreTabsStateTest : VmTest() {
 
     private val soroka = LatLon(31.2589, 34.7992)
 
-    private fun tabFile(): File = tmp.newFile("tab_cache.json").also { it.delete() }
+    private var files = 0
+
+    /** A fresh cache file per search (a test may run several), not there yet. */
+    private fun tabFile(): File = tmp.newFile("tab_cache_${files++}.json").also { it.delete() }
 
     private fun read(handle: SavedStateHandle) = SavedUi.read { k -> handle.get<Any?>(k) }
 
@@ -46,9 +49,17 @@ class RestoreTabsStateTest : VmTest() {
         } else {
             vm.setMode(mode)
             vm.setTime(TimeMode.DEPART_AT, NOW)
-            vm.choose(Field.FROM, "Meitar", MEITAR)
-            if (mode == AppMode.DROP_OFF) vm.choose(Field.DRIVER_TO, "Ramat Gan", RAMAT_GAN)
-            vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
+            // Limits at which the replay offers options, not only the baseline.
+            vm.setMaxDrive(20)
+            vm.setMaxPickUpDrive(30)
+            if (mode == AppMode.PICK_UP) {
+                vm.choose(Field.FROM, "Tel Aviv", TEL_AVIV)
+                vm.choose(Field.TO, "Meitar", MEITAR)
+            } else {
+                vm.choose(Field.FROM, "Meitar", MEITAR)
+                if (mode == AppMode.DROP_OFF) vm.choose(Field.DRIVER_TO, "Ramat Gan", RAMAT_GAN)
+                vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
+            }
         }
         val found = vm.state.value.options
         assertTrue("$mode found something", found.isNotEmpty())
@@ -119,7 +130,7 @@ class RestoreTabsStateTest : VmTest() {
     @Test fun `options that left meanwhile are dropped, the rest come back`() {
         val handle = SavedStateHandle()
         val file = tabFile()
-        val before = shown(AppMode.PARK_RIDE, handle, file)
+        val before = shown(AppMode.PICK_UP, handle, file)
         val boards = before.options.mapNotNull { o -> o.firstTransitLeg?.let { parseTime(it.startTime) } }.sorted()
         assertTrue("needs two departures: $boards", boards.size >= 2 && boards.first() < boards.last())
         val later = Clock.fixed(boards.first().plusSeconds(TripPlanner.DEPARTED_GRACE_SEC + 1), ZoneOffset.UTC)

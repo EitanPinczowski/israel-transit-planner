@@ -128,6 +128,9 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             place(vm, Field.TO, a.TEL_AVIV)
         } else {
             vm.setMode(AppMode.valueOf(tab))
+            // R1: limits at which the replay offers options, not only the baseline.
+            vm.setMaxDrive(20)
+            vm.setMaxPickUpDrive(30)
             when (tab) {
                 "DROP_OFF" -> { place(vm, Field.FROM, a.MEITAR); place(vm, Field.DRIVER_TO, a.TEL_AVIV); place(vm, Field.TO, a.REHOVOT) }
                 "PICK_UP" -> { place(vm, Field.FROM, a.TEL_AVIV); place(vm, Field.TO, a.MEITAR) }
@@ -137,8 +140,8 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
         val s = withTimeoutOrNull(20_000) { vm.state.first { !it.loading && (it.hasResults || it.error != null) } }
         if (s == null || !s.hasResults) { Log.e(TAG, "setup $tab: no results"); return }
         vm.select(if (s.options.size > 1) 1 else 0)
-        val itin = vm.state.value.selectedItinerary ?: return
-        itin.legs.firstOrNull { it.isTransit }?.let { leg -> trip.open(leg, LegPalette.colorOf(itin.legs, leg)) }
+        val itin = vm.state.value.selectedItinerary
+        itin?.legs?.firstOrNull { it.isTransit }?.let { leg -> trip.open(leg, LegPalette.colorOf(itin.legs, leg)) }
         delay(2_000) // the Activity reports the open sheet to the ViewModel, which saves it
         Log.i(TAG, "ready ${tabLine(vm.state.value, trip)}")
     }
