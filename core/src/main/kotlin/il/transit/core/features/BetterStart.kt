@@ -1,3 +1,5 @@
+@file:kotlinx.serialization.UseSerializers(il.transit.core.plan.InstantIso::class)
+
 package il.transit.core.features
 
 import il.transit.core.api.Endpoint
@@ -38,6 +40,7 @@ data class BetterStartQuery(
     val language: String = "he",
 )
 
+@kotlinx.serialization.Serializable
 data class BetterStartOption(
     val itinerary: Itinerary,
     /** Drive time with the traffic factor applied. */
@@ -53,6 +56,7 @@ data class BetterStartOption(
     val leaveAt: Instant,
 )
 
+@kotlinx.serialization.Serializable
 data class BetterStartResult(
     val baseline: Itinerary?,
     val options: List<Option<BetterStartOption>>,

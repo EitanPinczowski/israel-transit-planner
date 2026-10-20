@@ -58,21 +58,27 @@ class PlanCache<T>(private val capacity: Int = CAPACITY) {
     }
 }
 
-/** On-disk form of the Trip tab's cache. Unreadable data restores as empty, never crashes. */
-object TripCacheJson {
+/**
+ * On-disk form of a [PlanCache] whose values [values] can encode. Unreadable data restores as
+ * empty, never crashes. The Trip tab's is [TripCacheJson]; the car tabs' and errands' is [TabCacheJson].
+ */
+class CacheJson<T>(values: kotlinx.serialization.KSerializer<T>) {
     @kotlinx.serialization.Serializable
-    private data class Row(val key: String, val savedAtEpoch: Long, val result: TripResult, val night: Boolean? = null)
+    private data class Row<T>(val key: String, val savedAtEpoch: Long, val result: T, val night: Boolean? = null)
 
     private val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true; explicitNulls = false }
-    private val rows = kotlinx.serialization.builtins.ListSerializer(Row.serializer())
+    private val rows = kotlinx.serialization.builtins.ListSerializer(Row.serializer(values))
 
-    fun encode(entries: List<PlanCache.Entry<TripResult>>): String =
+    fun encode(entries: List<PlanCache.Entry<T>>): String =
         json.encodeToString(rows, entries.map { Row(it.key, it.savedAt.epochSecond, it.value, it.night.takeIf { n -> n }) })
 
-    fun decode(s: String?): List<PlanCache.Entry<TripResult>> =
+    fun decode(s: String?): List<PlanCache.Entry<T>> =
         s?.let { runCatching { json.decodeFromString(rows, it) }.getOrNull() }.orEmpty()
             .map { PlanCache.Entry(it.key, Instant.ofEpochSecond(it.savedAtEpoch), it.result, it.night == true) }
 }
+
+/** On-disk form of the Trip tab's cache. */
+val TripCacheJson: CacheJson<TripResult> = CacheJson(TripResult.serializer())
 
 /**
  * A saved result as the offline Trip view shows it at [now]: options whose vehicle has

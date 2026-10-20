@@ -192,14 +192,15 @@ abstract class VmTest {
         api: TransitApi,
         clock: Clock = CLOCK,
         store: UserStore = UserStore(MemoryPrefs()),
-        planCache: PlanCacheStore? = null,
+        planCache: PlanCacheStore<il.transit.core.plan.TripResult>? = null,
         weather: GuardedWeather? = null,
         updates: UpdateChecker? = null,
         saved: SavedStateHandle? = null,
         rides: il.transit.planner.Rides? = null,
         reminders: il.transit.planner.Reminders? = null,
+        tabCache: PlanCacheStore<il.transit.core.plan.TabResult>? = null,
     ): MainViewModel =
-        track(MainViewModel(api, store, { "en" }, planCache = planCache, reminders = reminders, rides = rides, updates = updates, clock = clock, weather = weather, saved = saved))
+        track(MainViewModel(api, store, { "en" }, planCache = planCache, reminders = reminders, rides = rides, updates = updates, clock = clock, weather = weather, saved = saved, tabCache = tabCache))
             .also { it.locationProvider = { fix } }
 
     /** Every distinct [phase] the ViewModel's state goes through, from now on (the current one first). */

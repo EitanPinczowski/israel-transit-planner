@@ -98,7 +98,7 @@ class TripHomeViewModelTest {
             store.setPlaces(listOf(homePlace))
             store.setSettings(UserSettings(homePlace = "Home"))
         }
-        val cache = PlanCacheStore(tmp.newFile("trip_cache.json").also { it.delete() }, clock)
+        val cache = PlanCacheStore.trips(tmp.newFile("trip_cache.json").also { it.delete() }, clock)
         if (cached) cache.put(PlanCache.key("TRIP-NOW", bs, homePlace.latLon), recordedResult)
         MainViewModel(api, store, { "en" }, planCache = cache, clock = clock).also { it.locationProvider = { fix }; vms += it }
     }

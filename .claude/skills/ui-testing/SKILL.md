@@ -169,9 +169,10 @@ is a finding (`::notice::finding:` + the job summary).
   holds `plan` 4 s), (2) with the trip sheet open, (3) during a leave countdown: same options, same
   selected one, no request beyond one plain search (`app.replay.calls`).
 - *Process death in every tab*: `ProcessDeathProbe` with `--es uitest_process_death_tab BETTER_START|
-  DROP_OFF|PICK_UP|PARK_RIDE|ERRANDS`. Only what `SavedUi` keeps (tab, places) is a promise; results and
-  errand stops are printed after `|` and become findings when they differ. The Trip check stays in
-  `ui_behaviour_run.sh` on every API level.
+  DROP_OFF|PICK_UP|PARK_RIDE|ERRANDS`: the second option, its first ride's trip sheet. Blocking since
+  Phase 11 R1: tab, places, errand stops, option count, the selected option, its sheet and the car path
+  must all come back, with `requests=0` (the reopened sheet's `trip` left out, `ReplayTransitApi.tripCalls`).
+  The Trip check stays in `ui_behaviour_run.sh` on every API level.
 - *Location revoked mid-ride*: `--ez uitest_ride_setup true` starts a ride on the mock GPS, `pm revoke`
   kills the process, the restart must not crash or leave the ride active. Then the shell sends the
   intent the "Missed it" action carries (the notification died with the process): without the location

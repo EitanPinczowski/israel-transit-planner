@@ -1,3 +1,5 @@
+@file:kotlinx.serialization.UseSerializers(il.transit.core.plan.InstantIso::class)
+
 package il.transit.core.features
 
 import il.transit.core.api.Endpoint
@@ -33,6 +35,7 @@ data class PickUpQuery(
     val language: String = "he",
 )
 
+@kotlinx.serialization.Serializable
 data class PickUpOption(
     val itinerary: Itinerary,
     val pickUpStopName: String,
@@ -46,6 +49,7 @@ data class PickUpOption(
     val driverLeavesAt: Instant,
 )
 
+@kotlinx.serialization.Serializable
 data class PickUpResult(
     /** All the way home by transit — what you'd do with nobody to collect you. */
     val baseline: Itinerary?,

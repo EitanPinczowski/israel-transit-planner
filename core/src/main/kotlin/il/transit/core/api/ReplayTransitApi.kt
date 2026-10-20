@@ -39,6 +39,12 @@ class ReplayTransitApi(
     /** Calls answered, all kinds. Tests pin request counts with it. */
     val calls = AtomicInteger()
 
+    /** `trip` calls among [calls]: a reopened trip sheet asks its one (Phase 11 R1's probe leaves it out). */
+    val tripCalls = AtomicInteger()
+
+    /** `stoptimes` calls among [calls]: a reopened stop sheet fetches its departures (R1's probe leaves them out too). */
+    val stopTimesCalls = AtomicInteger()
+
     override suspend fun plan(req: PlanRequest): PlanResponse {
         hit()
         val car = StreetModes.CAR_LIKE
@@ -89,6 +95,7 @@ class ReplayTransitApi(
     }
 
     override suspend fun stopTimes(stopId: String, time: Instant?, n: Int, language: String, pageCursor: String?): StopTimesResponse {
+        stopTimesCalls.incrementAndGet()
         hit()
         val raw = MotisJson.parseToJsonElement(load("stoptimes_beersheva_north"))
         val recorded = MotisJson.decodeFromJsonElement(StopTimesResponse.serializer(), raw)
@@ -102,6 +109,7 @@ class ReplayTransitApi(
     /** A train's trip for a train leg of the recorded plans, the bus 470's for anything else;
      *  moved so it leaves 5 min from [clock]'s now. */
     override suspend fun trip(tripId: String, language: String): Itinerary {
+        tripCalls.incrementAndGet()
         hit()
         val name = if (tripId in railTripIds) "trip_train_bs_telaviv" else "trip_bus_470"
         val raw = MotisJson.parseToJsonElement(load(name))

@@ -331,6 +331,9 @@ package. Tick only your own package's lines.
 - [x] GPS-replay tests of `RideTracker` (synthetic tracks now, the owner's real ones later)
 - [x] Mutation testing: weekly report + a ratcheting gate on changed core classes
 
+### R1 Restore car tabs + errands (`claude/p11-restore-tabs`, 0 requests; owner 2026-10-20)
+- [x] After process death the four car tabs and errands come back with their options, the chosen one and its sheet, at 0 requests; T7's checks blocking
+
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
 - [ ] "Pay with…" opens the user's payment app or its store page
 - [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch

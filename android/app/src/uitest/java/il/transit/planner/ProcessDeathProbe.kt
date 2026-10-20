@@ -33,9 +33,11 @@ import kotlinx.coroutines.withTimeoutOrNull
  *     logs `restored …` with what came back. The script compares the two lines.
  * Phase 11 T7 adds two more setups, driven by `tools/ui_system_run.sh` (logs under [SYSTEM_TAG]):
  *  - [EXTRA_TAB] = a tab name (`BETTER_START`, `DROP_OFF`, `PICK_UP`, `PARK_RIDE`, `ERRANDS`): the
- *    same round trip for that tab; the `ready` / `restored` lines then read
- *    `<tab> mode=… from=… to=… driverTo=… | stops=… results=…`, and only the part before `|` is a
- *    promise (what `SavedUi` keeps); the part after is reported, not enforced;
+ *    same round trip for that tab (the second option, its first ride's trip sheet); the `ready` /
+ *    `restored` lines then read `mode=… from=… to=… driverTo=… stops=… options=… selected=… option=…
+ *    sheet=… carPath=…`, all of it a promise since Phase 11 R1 (the tab cache brings the options
+ *    back), and `requests=` counts what the restore asked: 0 plan requests is the promise; a reopened
+ *    trip sheet's `trip` and a reopened stop sheet's `stoptimes` are left out by name;
  *  - [EXTRA_RIDE]: starts a ride on the mock location, so the script can revoke the location
  *    permission under it; after the restart `ride-after …` says what is left.
  * uitest build only; tag [TAG].
@@ -81,7 +83,7 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             if (what == "setup" && ride) {
                 rideSetup(main, vm)
             } else if (what == "setup" && tab != null) {
-                tabSetup(vm, tab!!)
+                tabSetup(vm, trip, tab!!)
             } else if (what == "setup") {
                 val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
                 vm.startEditing(Field.FROM)
@@ -98,11 +100,17 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 Log.i(TAG, "ready ${line(vm.state.value, trip, marker.exists())}")
             } else {
                 val before = app.replay.calls.get()
+                val tripsBefore = app.replay.tripCalls.get()
+                val stopTimesBefore = app.replay.stopTimesCalls.get()
                 val tabbed = marker.exists()
-                if (tabbed) delay(4_000) else withTimeoutOrNull(10_000) { vm.state.first { it.results != null } }
+                withTimeoutOrNull(10_000) { vm.state.first { if (tabbed) it.hasResults else it.results != null } }
                 delay(2_000) // the trip sheet reopens once its option is back
+                // R1's promise is 0 plan requests. Left out by name: a reopened trip sheet's one `trip`, and a
+                // reopened stop sheet's `stoptimes` (it fetches its departures again, as Trip's always did).
+                val sheets = (app.replay.tripCalls.get() - tripsBefore) + (app.replay.stopTimesCalls.get() - stopTimesBefore)
+                val asked = if (tabbed) (app.replay.calls.get() - before) - sheets else app.replay.calls.get() - before
                 // saved=false: this Activity did not come back from a saved state (the script says why).
-                Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip, marker.exists())} requests=${app.replay.calls.get() - before}")
+                Log.i(TAG, "restored saved=$saved ${line(vm.state.value, trip, marker.exists())} requests=$asked")
                 rideAfter(main)
                 missedAfter(vm, app.replay.calls.get() - before)
             }
@@ -116,7 +124,7 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     }
 
     /** One tab's search, as a user would set it up (places the replay's fixtures answer). */
-    private suspend fun tabSetup(vm: MainViewModel, tab: String) {
+    private suspend fun tabSetup(vm: MainViewModel, trip: TripDetailsViewModel, tab: String) {
         val a = UiTestApp
         if (tab == "ERRANDS") {
             place(vm, Field.FROM, a.BGU)
@@ -124,15 +132,22 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             place(vm, Field.TO, a.TEL_AVIV)
         } else {
             vm.setMode(AppMode.valueOf(tab))
+            // R1: limits at which the replay offers options, not only the baseline.
+            vm.setMaxDrive(20)
+            vm.setMaxPickUpDrive(30)
             when (tab) {
                 "DROP_OFF" -> { place(vm, Field.FROM, a.MEITAR); place(vm, Field.DRIVER_TO, a.TEL_AVIV); place(vm, Field.TO, a.REHOVOT) }
                 "PICK_UP" -> { place(vm, Field.FROM, a.TEL_AVIV); place(vm, Field.TO, a.MEITAR) }
                 else -> { place(vm, Field.FROM, a.MEITAR); place(vm, Field.TO, a.TEL_AVIV) }
             }
         }
-        withTimeoutOrNull(20_000) { vm.state.first { !it.loading && (it.hasResults || it.error != null) } }
-        delay(2_000)
-        Log.i(TAG, "ready ${tabLine(vm.state.value)}")
+        val s = withTimeoutOrNull(20_000) { vm.state.first { !it.loading && (it.hasResults || it.error != null) } }
+        if (s == null || !s.hasResults) { Log.e(TAG, "setup $tab: no results"); return }
+        vm.select(if (s.options.size > 1) 1 else 0)
+        val itin = vm.state.value.selectedItinerary
+        itin?.legs?.firstOrNull { it.isTransit }?.let { leg -> trip.open(leg, LegPalette.colorOf(itin.legs, leg)) }
+        delay(2_000) // the Activity reports the open sheet to the ViewModel, which saves it
+        Log.i(TAG, "ready ${tabLine(vm.state.value, trip)}")
     }
 
     /** A ride on the mock GPS, started the way the button does; the script then revokes location. */
@@ -193,17 +208,21 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
         Log.i(SYSTEM_TAG, "missed-it kind=${s.missedIt?.kind} editing=${s.editing} requests=$requests")
     }
 
-    private fun tabLine(s: UiState): String =
-        "mode=${s.mode} from=${s.from} to=${s.to} driverTo=${s.driverTo} | stops=${s.chainStops.size} results=${s.hasResults}"
+    private fun tabLine(s: UiState, trip: TripDetailsViewModel): String =
+        "mode=${s.mode} from=${s.from} to=${s.to} driverTo=${s.driverTo} stops=${s.chainStops.size} options=${s.options.size} " +
+            "${optionLine(s, trip)} carPath=${s.selectedCarPath.size}"
 
-    private fun line(s: UiState, trip: TripDetailsViewModel, tabbed: Boolean): String {
-        if (tabbed) return tabLine(s)
+    /** The selected option and the open trip sheet's leg in it. */
+    private fun optionLine(s: UiState, trip: TripDetailsViewModel): String {
         val itin = s.selectedItinerary
         val leg = trip.sheet.value
             ?.leg
             ?.let { l -> itin?.legs?.indexOf(l) }
-        return "mode=${s.mode} selected=${s.selected} option=${MainViewModel.optionId(itin)} sheet=$leg"
+        return "selected=${s.selected} option=${MainViewModel.optionId(itin)} sheet=$leg"
     }
+
+    private fun line(s: UiState, trip: TripDetailsViewModel, tabbed: Boolean): String =
+        if (tabbed) tabLine(s, trip) else "mode=${s.mode} ${optionLine(s, trip)}"
 
     override fun onActivityStarted(activity: Activity) = Unit
     override fun onActivityPaused(activity: Activity) = Unit
