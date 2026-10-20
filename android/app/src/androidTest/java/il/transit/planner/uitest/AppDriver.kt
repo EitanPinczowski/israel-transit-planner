@@ -118,7 +118,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * then races the same observer, so it also waits for the UI to go idle.
      */
     fun awaitNode(m: SemanticsMatcher, timeoutMs: Long = 5_000) {
-        compose.waitUntil(timeoutMs) { compose.runOnUiThread { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() } }
+        compose.waitUntil(timeoutMs) { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() }
         compose.waitForIdle()
     }
 
