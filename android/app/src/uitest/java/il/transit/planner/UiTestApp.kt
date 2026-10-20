@@ -102,6 +102,7 @@ class UiTestApp : TransitApp() {
         store.setReminder(null)
         history.clear()
         planCache.clear()
+        tabCache.clear()
     }
 
     companion object {

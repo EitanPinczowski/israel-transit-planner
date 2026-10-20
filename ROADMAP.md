@@ -336,6 +336,8 @@ package. Tick only your own package's lines.
 
 ### R2 RideTracker alert fixes (`claude/p11-ride-alerts`, 0 requests; owner 2026-10-20)
 - [x] "Get off at the next stop" waits for boarding and fires at most 20 min before the stop: T5's `bus_loop_line` and `plan_three_buses` asserted
+- [x] Review: an earlier bus than planned (or a second bus caught early) alerts on time, armed by its listed stops passed in order
+- [ ] Follow-up (pre-existing, not R2): ride alert: extend `legGrace` while the rider is still on the route (a bus > 3 min late loses its alert)
 
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
 - [ ] "Pay with…" opens the user's payment app or its store page

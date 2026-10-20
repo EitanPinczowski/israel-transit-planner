@@ -63,6 +63,7 @@ class RestoreTabsStateTest : VmTest() {
                 vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
             }
         }
+        settle { vm.state.value.options.isNotEmpty() }
         val found = vm.state.value.options
         assertTrue("$mode found something", found.isNotEmpty())
         settle { read(handle)?.cacheKey != null && file.exists() }

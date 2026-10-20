@@ -116,15 +116,20 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - Tracker is pure and tested with synthetic tracks: per transit leg it fires `Approaching`
   ONCE — within 120 m of the stop before yours (if MOTIS listed intermediate stops) or 400 m
   of your stop — then `Finished` at the destination or 30 min past planned arrival.
-- **Armed only on the ride** (Phase 11 R2): both location checks of a leg (the alert, and "at
-  the stop" ending the leg) wait until `now ≥ leg.start` (boarded) and `now ≥ leg.end − 20 min`
-  (`earliestAlert`). So a short first leg whose stop is near the origin stays quiet during the
-  walk, and a loop line passing your stop mid-ride does not alert at the first pass. Ending a
-  leg by time (`leg.end + 3 min`) is unchanged. Cost: a vehicle running > 20 min early, or an
-  earlier bus than planned, alerts late or not at all (the leg still ends by time). Pinned by
-  `RideTrackerArmingTest` and `prop/RideTrackerPropertyTest`. The uitest clock is frozen before the
-  train boards, so journey J12 moves it to 5 min before the train is due (`UiTestApp.clockShift`,
-  reset by `reset()`) before it feeds the fixes.
+- **Armed only on the ride** (Phase 11 R2): both location checks of a leg (the alert, and "at the stop"
+  ending the leg) wait until the leg is armed, by either of:
+  - **stop progress** (legs listing ≥ 3 intermediate stops): the rider passed them in order, within
+    150 m, at most one skipped per fix, never backwards, up to the third from last. An earlier bus than
+    planned alerts on time; a loop passing your stop mid-ride cannot jump the order, so stays quiet;
+  - **time**: `now ≥ leg.start` (boarded) and `now ≥ leg.end − 20 min` (`earliestAlert`). A short first leg
+    whose stop is near the origin stays quiet during the walk.
+  When the next leg is armed by stop progress the tracker moves on to it, so a second bus caught early is
+  not held behind the first. Ending a leg by time (`leg.end + 3 min`) is unchanged. Cost: on a leg listing
+  < 3 stops, a bus more than the leg's length early (or > 20 min) alerts late, at its stop, or not at all;
+  a bus > 3 min late loses its alert (pre-existing, ROADMAP follow-up). Pinned by `RideTrackerArmingTest`
+  and `prop/RideTrackerPropertyTest` (safety on stopless legs; liveness for a whole trip ridden 0–20 min
+  early). The uitest clock is frozen before the train boards, so journey J12 moves it to 5 min before the
+  train is due (`UiTestApp.clockShift`, reset by `reset()`) before it feeds the fixes.
 - **On-the-bus progress** (`RideTracker.progress`): the nearest stop-to-stop segment of the
   current leg gives "N stops left" (never moves backwards on GPS jitter); the schedule
   interpolated to that point vs now gives the delay, which shifts the arrival estimates. The
