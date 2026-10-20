@@ -51,6 +51,8 @@ class UserDataSampleGen {
             transferBufferMin = null, //@since 0.8.6 //@until 0.8.6
             transferBufferMin = 5, //@since 0.9.0
             rainAware = false, //@since 0.9.0
+            passEndsOn = "2026-11-01", //@since 0.9.1
+            reminderCheckHintShown = true, //@since 0.9.1
         )
         val history = listOf(
             TripRecord(
