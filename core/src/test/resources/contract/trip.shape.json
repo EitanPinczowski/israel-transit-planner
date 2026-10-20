@@ -1,6 +1,6 @@
 {
  "$": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
@@ -36,49 +36,49 @@
   ]
  },
  "$.legs[].agencyName": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].cancelled": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
  },
  "$.legs[].displayName": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].duration": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].endTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].from": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.legs[].from.cancelled": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
  },
  "$.legs[].from.departure": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
@@ -90,25 +90,25 @@
   ]
  },
  "$.legs[].from.importance": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].from.lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].from.lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].from.modes": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -120,7 +120,7 @@
   ]
  },
  "$.legs[].from.name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
@@ -132,31 +132,31 @@
   ]
  },
  "$.legs[].from.scheduledDeparture": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].from.stopCode": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].from.stopId": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].headsign": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].intermediateStops": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -258,85 +258,85 @@
   ]
  },
  "$.legs[].legGeometry": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.legs[].legGeometry.length": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].legGeometry.points": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].legGeometry.precision": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].mode": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].realTime": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
  },
  "$.legs[].routeLongName": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].routeShortName": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].scheduledEndTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].scheduledStartTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].startTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].to": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.legs[].to.arrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].to.cancelled": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
@@ -348,25 +348,25 @@
   ]
  },
  "$.legs[].to.importance": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].to.lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].to.lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].to.modes": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -378,7 +378,7 @@
   ]
  },
  "$.legs[].to.name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
@@ -390,49 +390,49 @@
   ]
  },
  "$.legs[].to.scheduledArrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].to.stopCode": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].to.stopId": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripId": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripShortName": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripTo": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.legs[].tripTo.arrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripTo.cancelled": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
@@ -444,25 +444,25 @@
   ]
  },
  "$.legs[].tripTo.importance": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].tripTo.lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].tripTo.lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.legs[].tripTo.modes": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -474,7 +474,7 @@
   ]
  },
  "$.legs[].tripTo.name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
@@ -486,25 +486,25 @@
   ]
  },
  "$.legs[].tripTo.scheduledArrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripTo.stopCode": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].tripTo.stopId": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.legs[].wheelchairAccessible": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]

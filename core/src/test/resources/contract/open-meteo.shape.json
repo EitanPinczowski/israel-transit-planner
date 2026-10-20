@@ -1,6 +1,6 @@
 {
  "$": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
@@ -12,7 +12,7 @@
   ]
  },
  "$.hourly.precipitation": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -24,7 +24,7 @@
   ]
  },
  "$.hourly.precipitation_probability": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -36,7 +36,7 @@
   ]
  },
  "$.hourly.time": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]

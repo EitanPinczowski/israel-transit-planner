@@ -1,6 +1,6 @@
 {
  "$": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
@@ -18,25 +18,25 @@
   ]
  },
  "$.direct[].duration": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].endTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].id": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -48,115 +48,115 @@
   ]
  },
  "$.direct[].legs[].distance": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].duration": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].endTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].from": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.direct[].legs[].from.departure": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].from.lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].from.lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].from.name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].from.scheduledDeparture": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].legGeometry": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.direct[].legs[].legGeometry.length": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].legGeometry.points": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].legGeometry.precision": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].mode": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].realTime": {
-  "always": true,
+  "always": false,
   "types": [
    "boolean"
   ]
  },
  "$.direct[].legs[].scheduledEndTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].scheduledStartTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].startTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].steps": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -210,49 +210,49 @@
   ]
  },
  "$.direct[].legs[].to": {
-  "always": true,
+  "always": false,
   "types": [
    "object"
   ]
  },
  "$.direct[].legs[].to.arrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].to.lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].to.lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$.direct[].legs[].to.name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].legs[].to.scheduledArrival": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].startTime": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$.direct[].transfers": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]

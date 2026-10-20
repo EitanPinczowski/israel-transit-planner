@@ -1,6 +1,6 @@
 {
  "$": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -12,7 +12,7 @@
   ]
  },
  "$[].areas": {
-  "always": true,
+  "always": false,
   "types": [
    "array"
   ]
@@ -48,43 +48,43 @@
   ]
  },
  "$[].category": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$[].id": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$[].lat": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$[].lon": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$[].name": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]
  },
  "$[].score": {
-  "always": true,
+  "always": false,
   "types": [
    "number"
   ]
  },
  "$[].type": {
-  "always": true,
+  "always": false,
   "types": [
    "string"
   ]

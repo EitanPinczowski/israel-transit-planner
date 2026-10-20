@@ -36,6 +36,7 @@ IL = ZoneInfo("Asia/Jerusalem")
 TRANSITOUS, OPEN_METEO, PHOTON = "https://api.transitous.org", "https://api.open-meteo.com", "https://photon.komoot.io"
 CAPS = {"transitous": 5, "open-meteo": 1, "photon": 1}
 STREET = {"WALK", "BIKE", "CAR", "CAR_DROPOFF", "CAR_PARKING", "CAR_PICKUP", "RENTAL", "FLEX", "ODM"}
+MIN_SAMPLE = 8  # a path is "always there" only if its parent object was recorded at least this often
 ACCESSIBLE = {"ACCESSIBLE", "NOT_ACCESSIBLE", "UNKNOWN"}
 
 # endpoint -> (the Kotlin files naming what the app reads, the fixtures recorded from it)
@@ -122,7 +123,9 @@ def build_shape(endpoint: str) -> dict:
     for p, m in sorted(merged.items()):
         par = parent(p)
         always = p == "$" or (not p.endswith("[]") and counts[p] == counts.get(par, -1))
-        shape[p] = {"types": sorted(m["types"]), "always": bool(always)}
+        # "In every object" is only believed when the recordings held enough objects to say so.
+        always = bool(always) and (par == "$" or counts.get(par, 0) >= MIN_SAMPLE)
+        shape[p] = {"types": sorted(m["types"]), "always": always}
     return shape
 
 

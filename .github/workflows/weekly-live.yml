@@ -40,8 +40,7 @@ jobs:
           find() { gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"golden-trips" in:title' --json number,title --jq '[.[] | select(.title == "golden-trips")][0].number'; }
           issue=$(find)
           if [ -z "$issue" ] || [ "$issue" = null ]; then
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "golden-trips" --body "Failures of the weekly live golden trips (weekly-live.yml) are commented here." >/dev/null
-            issue=$(find)
+            issue=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "golden-trips" --body "Failures of the weekly live golden trips (weekly-live.yml) are commented here." | grep -o '[0-9]*$')
           fi
           run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           { echo "The weekly golden trips failed on \`${GITHUB_SHA::7}\`: [run]($run)"; echo; grep -E '^## FAIL|^- \*\*' core/build/golden/report.md | head -60; } > "$RUNNER_TEMP/comment.md"
@@ -72,8 +71,7 @@ jobs:
           find() { gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"contract-drift" in:title' --json number,title --jq '[.[] | select(.title == "contract-drift")][0].number'; }
           issue=$(find)
           if [ -z "$issue" ] || [ "$issue" = null ]; then
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "contract-drift" --body "Drift between the live services and the recorded shapes (weekly-live.yml, tools/contract_check.py) is commented here. To accept a change: re-record the fixture, then python tools/contract_check.py --update-shapes." >/dev/null
-            issue=$(find)
+            issue=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "contract-drift" --body "Drift between the live services and the recorded shapes (weekly-live.yml, tools/contract_check.py) is commented here. To accept a change: re-record the fixture, then python tools/contract_check.py --update-shapes." | grep -o '[0-9]*$')
           fi
           run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           { echo "Contract drift on \`${GITHUB_SHA::7}\`: [run]($run)"; echo; cat build/contract/report.md; } > "$RUNNER_TEMP/comment.md"
