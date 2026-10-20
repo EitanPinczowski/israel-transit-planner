@@ -4,28 +4,32 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-19, 19:40 Israel time)
+## State (2026-10-20, 05:40 Israel time)
 - **Released:** v0.9.0 (2026-10-13). Next proposed: v0.9.1 after Phase 11 Wave 4 (ask the owner first).
+- **Boss:** session `session_011tJH15m5mUzgr2G4vFCaKt` (took over 2026-10-19 19:35).
 - **Phase 11** (`docs/agents/phase11.md`, all 31 owner decisions "as proposed"; E7 added by the owner 2026-10-18):
-  - Merged: plan #78 (+ E7 #81), T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9, over budget: 4-day weekly-limit
-    pause + fix round), API-36 j14 fix #85 ($4.5; cause: Android 16 drops notifications whose `when` is > 14 days
-    old, the uitest fixture clock had aged), licence exception for guava listenablefuture #86 (boss-made,
-    reported to the owner; he may revert).
-  - Open: **T3 #84** (ViewModel tests, session `session_01AnaLPosPaeqWace6fxCo4B`, Sonnet): green except API 36,
-    merging main now. **E7 #82** (Pick a day, `session_0147oE4BQDF62Rx1AcMBVmLU`, Opus, ~$36 so far): designer +
-    tester review done (2 blocking test gaps + 6 nits), fix round in progress. Its scope grew on 2026-10-18:
-    "past time → ask Tomorrow?", departed-options filter in `TripPlanner.plan`/`more`, `HORIZON_DAYS` 8 → 21.
-    The reminder re-check stays unfiltered (boss call). Both: verify every check, then merge.
-  - Next: Wave 3 = E2 (I missed it, Opus) + T7 (system + chaos journeys, Sonnet). Then Wave 4 (E3, T5) → v0.9.1.
+  - **Waves 1–3 merged.** Plan #78 (+ E7 #81), T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9), j14 API-36 fix #85
+    ($4.5), licence exception #86, T3 #84 ($11), E7 #82 (~$47: long context), E2 #88 ($26.5: $15.3 implementer +
+    $0.6 review + $10.6 fresh-session fix round), T7 #89 ($4.6).
+  - **Next: Wave 4 = E3 (leg labels, Opus) + T5 (routing correctness, Sonnet)** → then ask the owner about v0.9.1.
     T5 must also fix the stale golden-trip-12 check (ignores the 10-min window) and `tools/plan_summary.py`'s
-    hard-coded +03:00.
-- **Owner decisions this round:** pick-a-day package E7 (2026-10-18); 21-day timetable notice (2026-10-18);
+    hard-coded +03:00 (Israel is UTC+2 from 25 Oct).
+  - **Open owner question:** T7 found that after process death the 4 car tabs restore mode + places but not their
+    results, and errands lose their stop (`SavedUi` keeps neither; notices in the `system` job). Boss proposed a
+    small Opus fix package after Wave 3; waiting for the owner.
+  - **Flakes seen (flake-log rule: twice in 14 days → fix package):** `s15_settings_bottom` twice on #82 (due a fix
+    package); once each on #88's f2a93e0: j01 permission dialog (API 33), j02 suggestion (API 35), j15 test alarm
+    > 90 s late (API 33), j05 timeout (API 33). T7's "CI flake log" issue records them from now on.
+  - T7's nightly (`nightly-ui.yml`) runs for the first time now it is on main; read the "nightly" issue. T7 guessed
+    `vm.savePlace` may crash on a failed DataStore write under low storage (unverified).
+- **Owner decisions this round:** "merge when green" re-confirmed in the boss session (2026-10-19 21:1x; the auto-mode
+  classifier blocks merges until the owner says it in the session itself); pick-a-day package E7 (2026-10-18); 21-day timetable notice (2026-10-18);
   API keys allowed on a $0, no-card plan (2026-10-13, in CLAUDE.md); **"when green merge and continue"**
   (2026-10-18): the boss merges each package after green + review + fix round, without asking; still ask
   before any release or new owner decision.
 - **Open owner to-dos:** uninstall the Gemini GitHub app; delete branches `claude/geocoder-check`,
   `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`,
-  `scratch/p11-*`, `scratch/t3-deps-probe`.
+  `scratch/p11-*`, `scratch/t3-deps-probe`; set up the Test Lab Spark project (T7 skipped it).
 - **Lessons this round (follow them):**
   - **Never run 3 agents at once.** Twice, 3 concurrent sessions burned the shared 5-hour limit in ~20 min.
     Keep to 2, and a short review counts.
@@ -33,6 +37,10 @@ decisions already recorded.
     on a big session, prefer a fresh focused session with a precise brief.
   - **When a limit hits, schedule the resume yourself** (`send_later` at resetsAt + 5 min, for every stalled
     session). A check scheduled before the limit fires late, because the boss is limited too.
+  - **Two green PRs that touch the same files are not green together.** After merging the first, have the second
+    merge `main` and re-run CI before merging it (#82 on top of #84 broke six T3 tests through E7's departed filter).
+  - **A fix round in a fresh session works:** E2's fresh fix session ($10.6) found and fixed a bug the 400k-token
+    implementer had missed.
   - **Verify the head after merging a PR into main:** a PR green on its branch can still break main (E1 → j14 on
     API 36 was actually a time bomb in the test fixture, but it surfaced right after a merge).
   - A docs-only plan change that adds a package is fine to merge when green after the owner asked for it.
