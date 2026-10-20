@@ -122,7 +122,9 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   walk, and a loop line passing your stop mid-ride does not alert at the first pass. Ending a
   leg by time (`leg.end + 3 min`) is unchanged. Cost: a vehicle running > 20 min early, or an
   earlier bus than planned, alerts late or not at all (the leg still ends by time). Pinned by
-  `RideTrackerArmingTest` and `prop/RideTrackerPropertyTest`.
+  `RideTrackerArmingTest` and `prop/RideTrackerPropertyTest`. The uitest clock is frozen before the
+  train boards, so journey J12 moves it to 5 min before the train is due (`UiTestApp.clockShift`,
+  reset by `reset()`) before it feeds the fixes.
 - **On-the-bus progress** (`RideTracker.progress`): the nearest stop-to-stop segment of the
   current leg gives "N stops left" (never moves backwards on GPS jitter); the schedule
   interpolated to that point vs now gives the delay, which shifts the arrival estimates. The

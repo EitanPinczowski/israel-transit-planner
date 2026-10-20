@@ -9,7 +9,9 @@ import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.data.UpdateChecker
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZoneOffset
 
 /**
@@ -21,7 +23,14 @@ import java.time.ZoneOffset
  * Everything else — stores, alarms, the ride service — is the real app.
  */
 class UiTestApp : TransitApp() {
-    override val clock: Clock = Clock.fixed(NOW, ZoneOffset.UTC)
+    /** Moves "now" past [NOW] (J12 rides on the train's last stretch: the get-off alert waits for it, R2); reset to 0. */
+    @Volatile var clockShift: Duration = Duration.ZERO
+
+    override val clock: Clock = object : Clock() {
+        override fun getZone(): ZoneId = ZoneOffset.UTC
+        override fun withZone(zone: ZoneId): Clock = this
+        override fun instant(): Instant = NOW.plus(clockShift)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -84,6 +93,7 @@ class UiTestApp : TransitApp() {
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
         planDelayMs = 0
+        clockShift = Duration.ZERO
         latestRelease = null
         // Journeys start past the first-run welcome tour (C6).
         store.setSettings(UserSettings(tourSeen = true))
