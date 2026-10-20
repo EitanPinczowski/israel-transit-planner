@@ -124,6 +124,7 @@ private fun Header(d: TripDetails, leg: Leg, accessibleRoutes: Boolean) {
             Spacer(Modifier.width(8.dp))
             Text(legTitle(leg, d.headsign), style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
+        legStops(leg)?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         AccessibleBadgeRow(leg, accessibleRoutes)
     }
 }

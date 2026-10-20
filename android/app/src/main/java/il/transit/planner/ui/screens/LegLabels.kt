@@ -31,18 +31,13 @@ import il.transit.core.present.trainLabel
 import il.transit.planner.R
 
 /**
- * Leg labels (Phase 11 E3): the train number ("Train 24 to Nahariya · 3 stops on the way"), the
+ * Leg labels (Phase 11 E3): the train number ("Train 24 to Nahariya", then "3 stops on the way"), the
  * "Fewer stops" chip and the accessible-bus badge. Every decision is in core
  * (`present/TrainLabel.kt`, `present/AccessibleBadge.kt`); this file only joins strings.
  */
 @Composable
-internal fun trainText(t: TrainLabel, withStops: Boolean): String {
-    val head = t.to?.let { stringResource(R.string.train_to, t.number, it) } ?: stringResource(R.string.train_number, t.number)
-    // 0 says nothing: no stops listed may also mean none were sent (core `TrainLabel.stopsBetween`).
-    if (!withStops || t.stopsBetween == 0) return head
-    val stops = pluralStringResource(R.plurals.train_stops_between, t.stopsBetween, t.stopsBetween)
-    return stringResource(R.string.train_label, head, stops)
-}
+internal fun trainText(t: TrainLabel): String =
+    t.to?.let { stringResource(R.string.train_to, t.number, it) } ?: stringResource(R.string.train_number, t.number)
 
 /** The card's leg chip, with the number on a train ("Train 24") instead of the kind alone. */
 @Composable
@@ -64,10 +59,21 @@ internal fun FewerStopsChip() {
     }
 }
 
-/** The trip sheet's title: a train's label with its stops, else the vehicle's destination. */
+/** The trip sheet's title: a train's label, else the vehicle's destination. */
 @Composable
 internal fun legTitle(leg: Leg, headsign: String): String =
-    remember(leg) { trainLabel(leg) }?.let { trainText(it, withStops = true) } ?: headsign
+    remember(leg) { trainLabel(leg) }?.let { trainText(it) } ?: headsign
+
+/**
+ * The line under a train's title: "3 stops on the way". Its own line, so a long town never pushes it
+ * off a small phone. 0 says nothing: no stops listed may also mean none were sent (core
+ * `TrainLabel.stopsBetween`).
+ */
+@Composable
+internal fun legStops(leg: Leg): String? {
+    val n = remember(leg) { trainLabel(leg) }?.stopsBetween?.takeIf { it > 0 } ?: return null
+    return pluralStringResource(R.plurals.train_stops_between, n, n)
+}
 
 /**
  * Under a bus leg's header, with Accessible routes on: the badge with its words (never the icon

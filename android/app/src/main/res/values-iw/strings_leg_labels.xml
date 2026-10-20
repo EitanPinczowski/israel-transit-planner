@@ -3,8 +3,6 @@
 <resources>
     <string name="train_number">רכבת ⁨%1$s⁩</string>
     <string name="train_to">רכבת ⁨%1$s⁩ ל⁨%2$s⁩</string>
-    <!-- "רכבת 24 לנהריה · 3 עצירות בדרך" -->
-    <string name="train_label">%1$s · %2$s</string>
     <plurals name="train_stops_between">
         <item quantity="one">עצירה אחת בדרך</item>
         <item quantity="two">⁨%d⁩ עצירות בדרך</item>

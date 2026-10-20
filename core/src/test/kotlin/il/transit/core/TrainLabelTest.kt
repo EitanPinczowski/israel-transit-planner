@@ -149,7 +149,7 @@ class TrainLabelTest {
 
     /** The UI only joins these strings; rendered the way Android does (`String.format`), in both languages. */
     @Test
-    fun `word order - the number and a Hebrew town are isolated, the dot never ends a line`() {
+    fun `word order - the number and a Hebrew town are isolated`() {
         val res = File("../android/app/src/main/res")
         fun xml(dir: String) = File(res, "$dir/strings_leg_labels.xml").readText()
         fun string(dir: String, key: String) = Regex("""<string name="$key">([^<]*)</string>""").find(xml(dir))!!.groupValues[1]
@@ -157,9 +157,11 @@ class TrainLabelTest {
             val items = Regex("""<plurals name="train_stops_between">(.*?)</plurals>""", RegexOption.DOT_MATCHES_ALL).find(xml(dir))!!
             return Regex("""<item quantity="$q">([^<]*)</item>""").find(items.groupValues[1])!!.groupValues[1]
         }
-        fun render(dir: String) = string(dir, "train_label").format(string(dir, "train_to").format("406", "כרמיאל"), plural(dir, "other").format(4))
-        // English: "Train 406 to ⁨כרמיאל⁩ · 4 stops…": the Hebrew town cannot pull "· 4" into its RTL run.
-        assertEquals("Train 406 to \u2068כרמיאל\u2069\u00a0·\u00a04 stops on the way", render("values"))
-        assertEquals("רכבת \u2068406\u2069 ל\u2068כרמיאל\u2069\u00a0·\u00a0\u20684\u2069 עצירות בדרך", render("values-iw"))
+        // English: "Train 406 to ⁨כרמיאל⁩": the Hebrew town cannot pull what follows into its RTL run.
+        assertEquals("Train 406 to \u2068כרמיאל\u2069", string("values", "train_to").format("406", "כרמיאל"))
+        assertEquals("רכבת \u2068406\u2069 ל\u2068כרמיאל\u2069", string("values-iw", "train_to").format("406", "כרמיאל"))
+        // The stops are the sheet's second line, on their own (no separator to strand at a line end).
+        assertEquals("4 stops on the way", plural("values", "other").format(4))
+        assertEquals("\u20684\u2069 עצירות בדרך", plural("values-iw", "other").format(4))
     }
 }
