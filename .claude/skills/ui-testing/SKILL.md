@@ -150,3 +150,46 @@ Fix: `useSpecializedLocationLayer(true)` (native `LocationIndicatorLayer`, no Ge
   runner ("lost communication", run 38355318297).
 - A new native abort: read the `System.err` / exception lines of the evidence dump for the pending
   Java exception, then find which MapLibre callback (or MapLibre-internal Java) threw it.
+
+## System and chaos journeys (Phase 11 T7)
+
+What the phone does to the app, as opposed to what the user taps. Everything answers from the
+replay (0 requests); a step prints what it saw and fails only on a broken promise, anything else
+is a finding (`::notice::finding:` + the job summary).
+
+**PR time: the `system` job** (`tools/ui_system_run.sh`, API 34 `google_apis`, `SystemJourneysTest`,
+≤ 17 min). Steps that outlive the test process are driven from the shell, the rest are tests:
+- *Doze*: `SystemJourneysTest#arm_test_reminder` arms E1's test alarm, the shell `force-idle`s the
+  phone and polls `dumpsys notification` (key `|<pkg>|1005|`): posted within 2 min of its time.
+- *Reboot*: `#arm_trip_state` (a leave reminder + a pass date), `adb reboot`, then `dumpsys alarm`
+  lists the `LEAVE` and `PASS_EXPIRY` actions again and `dumpsys activity services` has no `RideService`.
+- *Airplane*: `#airplane_mode` flips the real switch; the replay is not the network, so "no signal"
+  is `replay.failing` as in J8. The switch itself must not hurt the app.
+- *Mid-flow*: `#mid_flow_rotation|theme|language`, each (1) while a search loads (`UiTestApp.planDelayMs`
+  holds `plan` 4 s), (2) with the trip sheet open, (3) during a leave countdown: same options, same
+  selected one, no request beyond one plain search (`app.replay.calls`).
+- *Process death in every tab*: `ProcessDeathProbe` with `--es uitest_process_death_tab BETTER_START|
+  DROP_OFF|PICK_UP|PARK_RIDE|ERRANDS`. Only what `SavedUi` keeps (tab, places) is a promise; results and
+  errand stops are printed after `|` and become findings when they differ. The Trip check stays in
+  `ui_behaviour_run.sh` on every API level.
+- *Location revoked mid-ride*: `--ez uitest_ride_setup true` starts a ride on the mock GPS, `pm revoke`
+  kills the process, the restart must not crash or leave the ride active. Then the shell sends the
+  intent the "Missed it" action carries (the notification died with the process): without the location
+  permission it must ask for the start (`kind=NEED_START editing=FROM`) with 0 requests.
+
+**Nightly** (`nightly-ui.yml`, 01:47 Israel winter time, only when `main` changed since the last good
+run; a failure comments on the open issue "nightly"; `ui_chaos_run.sh chaos|monkey`, API 35, root):
+app standby (`rare` rings: blocking; `restricted`: recorded, and E1's check must report it), time zone
+(`Europe/London` and back: LEAVE alarm not lost, not doubled, same absolute time) and the 25 Oct 2026 DST
+change (test alarm across it rings once), clock skew (+3 h, −1 day), low storage (`fallocate` to < 50 MB
+free: saving a place and a search must not crash, the places file still decodes), a freeform window
+resized three times (alive; the layout audit does not run there: `ActivityScenario` can't pick a
+windowing mode), pseudolocales en-XA and ar-XB on P1 and P5 (`ScreensTest`, whose blocking rules R1/R7/R8
+apply; R3 stays a finding) and the long monkey (3 seeds × 20 000 events, seeds in the log).
+`isPseudoLocalesEnabled` is on in the `uitest` build type only.
+
+**Flake log.** `ui_instrument.sh` writes every retry **and every failed test** (assertion or error, with its
+class#test) to `flake.log` next to its output; the last step of
+each UI job (`tools/ui_flake_log.sh`) comments on the open issue "CI flake log" (created once) with the
+run link, API, test and kind, and also for a job re-run (`run_attempt > 1`). **A test that flakes twice
+in 14 days gets a fix package, never a skip.** `issues: write` is given to those jobs for that step only.

@@ -54,6 +54,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions: { contents: read, issues: write } # issues: the flake log step only
     strategy:
       fail-fast: false
       matrix:
@@ -89,12 +90,18 @@ jobs:
           name: layout-${{ matrix.shard }}
           path: out/
           retention-days: 7
+      - if: always()
+        name: Flake log
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/ui_flake_log.sh out "screens shard ${{ matrix.shard }}"
 
   behaviour:
     name: journeys on API ${{ matrix.api }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions: { contents: read, issues: write } # issues: the flake log step only
     strategy:
       fail-fast: false
       matrix:
@@ -137,6 +144,54 @@ jobs:
           name: behaviour-${{ matrix.api }}
           path: out/
           retention-days: 7
+      - if: always()
+        name: Flake log
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/ui_flake_log.sh out "journeys API ${{ matrix.api }}"
+
+  # Phase 11 T7: what the phone does to the app (Doze, reboot, airplane, rotation / theme / language
+  # mid-flow, location revoked mid-ride, process death in every tab). One API 34 emulator, parallel
+  # to the shards. The slow and root-only chaos steps run nightly (nightly-ui.yml).
+  system:
+    name: system journeys on API 34
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: { contents: read, issues: write } # issues: the flake log step only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: uitest-apks, path: apks }
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Cache the emulator system image
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/system-images/android-34
+          key: sysimg-34-google_apis-x86_64-v1
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none
+          script: bash tools/ui_system_run.sh 34 apks out/system-34
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-34
+          path: out/
+          retention-days: 7
+      - if: always()
+        name: Flake log
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/ui_flake_log.sh out "system API 34"
 
   report:
     name: report → ci-screens

@@ -31,7 +31,19 @@ class UiTestApp : TransitApp() {
     val replay: ReplayTransitApi by lazy {
         ReplayTransitApi(clock) { name -> assets.open("fixtures/$name.json").bufferedReader().use { it.readText() } }
     }
-    override val api: TransitApi get() = replay
+
+    /** Holds every `plan` this long before answering, so a search can be caught while it loads (Phase 11 T7); 0 = off. */
+    @Volatile var planDelayMs: Long = 0
+
+    private val slowReplay: TransitApi by lazy {
+        object : TransitApi by replay {
+            override suspend fun plan(req: il.transit.core.api.PlanRequest): il.transit.core.api.PlanResponse {
+                if (planDelayMs > 0) kotlinx.coroutines.delay(planDelayMs)
+                return replay.plan(req)
+            }
+        }
+    }
+    override val api: TransitApi get() = slowReplay
 
     /** No outside geocoder in UI tests: they never touch the network. */
     override val backupGeocoder: BackupGeocoder? = null
@@ -44,7 +56,10 @@ class UiTestApp : TransitApp() {
         il.transit.core.weather.GuardedWeather(
             { _ ->
                 il.transit.core.weather.RainForecast(
-                    (-2L until 60L).map { h -> il.transit.core.weather.RainHour(NOW.plusSeconds(h * 3600), 70, 0.3) },
+                    (-2L until 60L).map { h ->
+                        il.transit.core.weather
+                            .RainHour(NOW.plusSeconds(h * 3600), 70, 0.3)
+                    },
                 )
             },
             clock,
@@ -68,6 +83,7 @@ class UiTestApp : TransitApp() {
     /** A clean slate: the saved places below, nothing else saved, replay answering. */
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
+        planDelayMs = 0
         latestRelease = null
         // Journeys start past the first-run welcome tour (C6).
         store.setSettings(UserSettings(tourSeen = true))

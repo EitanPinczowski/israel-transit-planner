@@ -316,9 +316,9 @@ package. Tick only your own package's lines.
 - [x] "Missed it? Plan from here" in the ride, countdown and trip-changed notifications and the trip sheet
 
 ### T7 — System + chaos journeys (`claude/p11-system-chaos`, Sonnet, 0 requests)
-- [ ] PR-time `system` job: Doze, reboot re-arm, airplane mode, rotation / theme / language mid-flow, permission revoked mid-ride, process death in every tab
-- [ ] Nightly: app standby, time zone + DST, clock skew, low storage, split screen, pseudolocales, long monkey
-- [ ] CI flake log issue (quarantine-free; two flakes in 14 days → a fix package)
+- [x] PR-time `system` job: Doze, reboot re-arm, airplane mode, rotation / theme / language mid-flow, permission revoked mid-ride, process death in every tab
+- [x] Nightly: app standby, time zone + DST, clock skew, low storage, split screen, pseudolocales, long monkey
+- [x] CI flake log issue (quarantine-free; two flakes in 14 days → a fix package)
 
 ### E3 — Leg labels (`claude/p11-leg-labels`, 0 requests, ≤ 10 recordings)
 - [ ] Train number and "Fewer stops" from `headsign`
