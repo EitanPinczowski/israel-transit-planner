@@ -28,6 +28,8 @@ uiautomator = "2.3.0"
 atf = "4.1.1"
 # Screenshot tests without an emulator. 1.3.5: Compose 1.7 / AGP 8.4+, like this build.
 paparazzi = "1.3.5"
+# Paparazzi brings Guava 33.3.1 onto the unit-test classpath: GHSA-xxph-c9ww-hj94 (CVSS 8.2), fixed in 33.7.2.
+guavaTest = "33.7.2-jre"
 # Night refresh (Phase 9 C2). 2.9.1: compileSdk 34+, like this build.
 work = "2.9.1"
 # Style gate (Phase 11 T2, owner decision 17): ktlint via its Gradle plugin; findings are gated per changed line (tools/ktlint_gate.py).
@@ -68,6 +70,7 @@ espresso-accessibility = { module = "androidx.test.espresso:espresso-accessibili
 uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 accessibility-test-framework = { module = "com.google.android.apps.common.testing.accessibility.framework:accessibility-test-framework", version.ref = "atf" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+guava-test = { module = "com.google.guava:guava", version.ref = "guavaTest" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playLocation" }
 

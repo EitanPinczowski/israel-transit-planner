@@ -130,6 +130,9 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    constraints {
+        testImplementation(libs.guava.test) { because("GHSA-xxph-c9ww-hj94 in the Guava Paparazzi brings (deps.yml)") }
+    }
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
