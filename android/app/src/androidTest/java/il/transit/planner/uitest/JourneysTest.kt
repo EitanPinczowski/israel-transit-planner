@@ -18,11 +18,6 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
-import androidx.compose.ui.test.swipe
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
@@ -249,21 +244,13 @@ class JourneysTest {
         d.tapMenuItem(R.string.settings)
         compose.waitForIdle()
         assertTrue("J10: Settings can't be tapped while results are open", d.vm.state.value.showSettings)
-        // The saved rows sit at the end of the settings list: swipe there first (a lazy list
-        // only composes what is on screen). One swipe at a time, the list found again and the UI
-        // idle before each: the list is longer since "Save my current location", and a long
-        // performScrollToNode raced its layout ("multithreaded access to SnapshotStateObserver",
-        // API 33). Trips come before places, so the first Delete is the trip's.
-        val list = hasScrollAction() and hasAnyAncestor(isDialog())
+        // The saved rows sit at the end of the settings list (a lazy list only composes what is
+        // on screen): scroll there by the list's own action, see AppDriver.scrollSettingsTo.
+        // Trips come before places, so the first Delete is the trip's.
         val trip = hasText("↗ עבודה") and hasAnyAncestor(isDialog())
-        repeat(8) {
-            if (compose.onAllNodes(trip).fetchSemanticsNodes().isNotEmpty()) return@repeat
-            d.awaitNode(list)
-            compose.onAllNodes(list).onFirst().performTouchInput { swipeUp() }
-            compose.waitForIdle()
-        }
+        d.scrollSettingsTo(trip)
         d.awaitNode(trip)
-        // Its click action, not a touch: the row may be only partly on screen after the last swipe.
+        // Its click action, not a touch: the row may be only partly on screen after the scroll.
         compose.onAllNodes(hasContentDescription(d.str(R.string.delete)) and hasAnyAncestor(isDialog())).onFirst()
             .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitUntil(5_000) { d.vm.state.value.savedTrips.isEmpty() }
@@ -617,18 +604,8 @@ class JourneysTest {
         try {
             d.tapMenuItem(R.string.settings)
             compose.waitUntil(5_000) { d.vm.state.value.showSettings }
-            val list = hasScrollAction() and hasAnyAncestor(isDialog())
             val row = hasTestTag("check_reminders")
-            // The row is in the middle of the list: slow, short drags (a fling would pass it by).
-            repeat(30) {
-                if (compose.onAllNodes(row).fetchSemanticsNodes().isNotEmpty()) return@repeat
-                d.awaitNode(list)
-                compose.onAllNodes(list).onFirst().performTouchInput {
-                    val step = height / 6f
-                    swipe(Offset(centerX, centerY + step), Offset(centerX, centerY - step), 600)
-                }
-                compose.waitForIdle()
-            }
+            d.scrollSettingsTo(row)
             d.awaitNode(row)
             compose.onNode(row).performSemanticsAction(SemanticsActions.OnClick)
             d.awaitNode(hasTestTag("check_test"))
