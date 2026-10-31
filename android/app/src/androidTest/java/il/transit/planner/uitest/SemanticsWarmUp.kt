@@ -2,8 +2,12 @@
 
 package il.transit.planner.uitest
 
+import android.os.Build
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.inspector.WindowInspector
 import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.test.IdlingResource
@@ -28,7 +32,6 @@ import java.util.WeakHashMap
  * settled and before the test thread reads.
  */
 internal class SemanticsWarmUp private constructor() : IdlingResource {
-    private val roots: MutableSet<ViewRootForTest> = Collections.newSetFromMap(WeakHashMap())
     private var told = false
 
     override val isIdleNow: Boolean
@@ -39,12 +42,8 @@ internal class SemanticsWarmUp private constructor() : IdlingResource {
                 Log.i(TAG, "idling check on the main thread: $onMain") // the warm-up only helps there
             }
             if (!onMain) return true
-            val live = synchronized(roots) { roots.toList() }
-            for (root in live) {
-                if (!root.view.isAttachedToWindow) continue
-                runCatching { warm(root.semanticsOwner.unmergedRootSemanticsNode) }
-                    .onFailure { Log.w(TAG, "semantics warm-up: $it") }
-            }
+            runCatching { composeRoots().forEach { warm(it.semanticsOwner.unmergedRootSemanticsNode) } }
+                .onFailure { Log.w(TAG, "semantics warm-up: $it") }
             return true
         }
 
@@ -53,23 +52,38 @@ internal class SemanticsWarmUp private constructor() : IdlingResource {
         for (child in node.children) warm(child)
     }
 
+    /**
+     * Every Compose root in this process's windows (Activity, dialogs, popups). Found from the windows, not
+     * through `ViewRootForTest.onViewCreatedCallback`: the test rule checks that callback is its own.
+     */
+    private fun composeRoots(): List<ViewRootForTest> {
+        val out = ArrayList<ViewRootForTest>()
+        fun walk(v: View) {
+            if (v is ViewRootForTest && v.isAttachedToWindow) out += v
+            if (v is ViewGroup) for (i in 0 until v.childCount) walk(v.getChildAt(i))
+        }
+        windowViews().forEach(::walk)
+        return out
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun windowViews(): List<View> =
+        if (Build.VERSION.SDK_INT >= 29) {
+            WindowInspector.getGlobalWindowViews()
+        } else {
+            val global = Class.forName("android.view.WindowManagerGlobal")
+            val instance = global.getMethod("getInstance").invoke(null)
+            val field = global.getDeclaredField("mViews").apply { isAccessible = true }
+            synchronized(instance!!) { ArrayList(field.get(instance) as List<View>) }
+        }
+
     companion object {
         private const val TAG = "SemanticsWarmUp"
         private val installed: MutableSet<ComposeTestRule> = Collections.newSetFromMap(WeakHashMap())
 
-        /**
-         * Once per test rule, after the rule set itself up: the roots the app creates from now on (Activity,
-         * dialogs, popups) are kept, the rule's own root registry still hears of them.
-         */
+        /** Once per test rule. */
         fun install(compose: ComposeTestRule) {
-            if (!installed.add(compose)) return
-            val warmUp = SemanticsWarmUp()
-            val before = ViewRootForTest.onViewCreatedCallback
-            ViewRootForTest.onViewCreatedCallback = { root ->
-                before?.invoke(root)
-                synchronized(warmUp.roots) { warmUp.roots += root }
-            }
-            compose.registerIdlingResource(warmUp)
+            if (installed.add(compose)) compose.registerIdlingResource(SemanticsWarmUp())
         }
     }
 }
