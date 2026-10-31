@@ -12,7 +12,6 @@ import il.transit.planner.remind.ReminderCheck
 import il.transit.planner.ui.Field
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -97,7 +96,11 @@ class ChaosJourneysTest {
         }
         say("storage: places before=${before.size} after=${after.size}")
         assertTrue("the old places no longer decode: $before -> $after", before.all { b -> after.any { it.name == b.name } })
-        assertEquals("a half-written file", true, after.isNotEmpty())
+        // A full disk may refuse the write (the old file stays whole) or take it; never half of it.
+        val refused = after.map { it.name } == before.map { it.name }
+        val taken = after.any { it.name == "Chaos" } && after.size == before.size + (if (before.any { it.name == "Chaos" }) 0 else 1)
+        say("storage: the save was ${if (taken) "taken" else "refused"}")
+        assertTrue("a half-written file: $before -> $after", refused || taken)
     }
 
     private companion object {
