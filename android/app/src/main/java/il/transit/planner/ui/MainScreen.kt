@@ -240,7 +240,8 @@ fun MainScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     LaunchedEffect(state.notSaved) {
         if (state.notSaved) {
-            android.widget.Toast.makeText(context, R.string.not_saved_storage_full, android.widget.Toast.LENGTH_SHORT).show()
+            val toast = android.widget.Toast.makeText(context, R.string.not_saved_storage_full, android.widget.Toast.LENGTH_SHORT)
+            toast.show()
             vm.notSavedShown()
         }
     }

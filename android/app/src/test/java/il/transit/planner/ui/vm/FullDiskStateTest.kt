@@ -60,7 +60,8 @@ class FullDiskStateTest : VmTest() {
         advance(0)
         vm.savePlace("Chaos", TEL_AVIV)
         advance(0)
-        assertTrue("no place shows as saved", vm.state.value.savedPlaces.isEmpty())
+        val shown = vm.state.value
+        assertTrue("no place shows as saved", shown.savedPlaces.isEmpty())
         assertTrue("the user is told", vm.state.value.notSaved)
         vm.notSavedShown()
         assertFalse(vm.state.value.notSaved)
@@ -68,7 +69,8 @@ class FullDiskStateTest : VmTest() {
         disk.full = false
         vm.savePlace("Chaos", TEL_AVIV)
         advance(0)
-        assertEquals(listOf("Chaos"), vm.state.value.savedPlaces.map { it.name })
+        val after = vm.state.value
+        assertEquals(listOf("Chaos"), after.savedPlaces.map { it.name })
         assertFalse("a save that worked says nothing", vm.state.value.notSaved)
     }
 
