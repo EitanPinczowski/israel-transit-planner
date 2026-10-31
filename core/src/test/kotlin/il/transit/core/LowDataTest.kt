@@ -41,15 +41,12 @@ class LowDataTest {
 
     @Test fun `stops - only the tiles under the view, never the half-screen around it`() {
         val v = view(32.08, 34.78, 16.0)
-        val normal = LowData.stopsFetchBox(v, false)
-        val low = LowData.stopsFetchBox(v, true)
-        assertEquals(StopsViewport.fetchBox(v), normal)
-        assertEquals(StopTiles.tilesCovering(v).toSet(), StopTiles.tilesCovering(low).filter { t ->
-            // bboxOf's far edges touch the next tile: count only tiles the box really covers
-            StopTiles.tilesCovering(v).contains(t)
-        }.toSet())
-        assertTrue(StopTiles.tilesIn(StopTiles.tilesCovering(v)).size < StopTiles.tilesCovering(normal).size)
-        assertTrue(low.min.lat <= v.min.lat && low.max.lat >= v.max.lat && low.min.lon <= v.min.lon && low.max.lon >= v.max.lon)
+        assertEquals(StopsViewport.fetchBox(v), LowData.stopsFetchBox(v, false))
+        val low = StopTiles.tilesCovering(LowData.stopsFetchBox(v, true))
+        val normal = StopTiles.tilesCovering(LowData.stopsFetchBox(v, false))
+        assertEquals(StopTiles.tilesCovering(v), low)
+        assertTrue(normal.containsAll(low))
+        assertTrue(low.size < normal.size)
     }
 
     /** Replays a viewport walk through the app's own rule and tile cache, counting what is fetched. */

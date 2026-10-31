@@ -1,7 +1,6 @@
 package il.transit.core.user
 
 import il.transit.core.geo.BBox
-import il.transit.core.geo.StopTiles
 import il.transit.core.geo.StopsViewport
 
 /**
@@ -24,11 +23,11 @@ object LowData {
 
     /**
      * The box the stops layer asks for. Normal: the view plus half a screen around it. Low data: the
-     * whole tiles under the view only (a tile is what the cache holds, so this asks for no stop the
-     * screen does not touch).
+     * view itself; the tile cache rounds it to the whole tiles under it, and asks only for those it
+     * lacks. (A tile-aligned box would not do: its far edge lies on the next tile and pulls in an
+     * extra row and column.)
      */
-    fun stopsFetchBox(view: BBox, on: Boolean): BBox =
-        if (on) StopTiles.bboxOf(StopTiles.tilesCovering(view)) else StopsViewport.fetchBox(view)
+    fun stopsFetchBox(view: BBox, on: Boolean): BBox = if (on) view else StopsViewport.fetchBox(view)
 
     /** The stops whose board the night refresh saves: none in low-data mode. */
     fun nightStops(stops: List<String>, on: Boolean): List<String> = if (on) emptyList() else stops
