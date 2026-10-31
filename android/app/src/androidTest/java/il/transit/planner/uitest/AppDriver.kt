@@ -60,6 +60,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     init {
         runBlocking { app.reset(places) }
+        SemanticsWarmUp.install(compose)
     }
 
     /** The Activity's own ViewModel (it exists once onCreate ran). */
@@ -125,8 +126,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * scroll-to-node action, not touch swipes. Tree reads must stay on the test thread: every one
      * starts with `waitForIdle` (`getRoots`), which throws if nested in `runOnUiThread`.
      * The swipes were not the cause of "multithreaded access to SnapshotStateObserver" (F1, PR #96):
-     * Compose 1.7 computed semantics lazily on the reading thread; Compose 1.8+ does it on the main
-     * thread (Phase 11 F2, `libs.versions.toml`).
+     * see [SemanticsWarmUp] (Phase 11 F2).
      */
     fun scrollSettingsTo(target: SemanticsMatcher) {
         val list = hasScrollToNodeAction() and hasAnyAncestor(isDialog())
