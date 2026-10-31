@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
@@ -13,6 +14,8 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import il.transit.core.api.Itinerary
 import il.transit.core.history.TripRecord
@@ -189,8 +192,14 @@ class ScreensTest {
 
     @Test fun s15_settings_bottom() = screen("15-settings-bottom") {
         onMain { it.showSettings(true) }
-        // The last row of the list (the save-my-location help): one scroll action, no swipes.
-        scrollSettingsTo(hasText(str(R.string.save_here_help)))
+        val scrollable = hasScrollAction() and hasAnyAncestor(isDialog())
+        repeat(4) {
+            // Found again before each swipe: the list (longer since "Save my current location")
+            // may be re-laid out between swipes, and a node fetched before that is gone (seen on P1 and P8).
+            awaitNode(scrollable)
+            compose.onAllNodes(scrollable).onFirst().performTouchInput { swipeUp() }
+            compose.waitForIdle()
+        }
     }
 
     @Test fun s16_history() = screen("16-history") {

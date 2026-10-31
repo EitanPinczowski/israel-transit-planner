@@ -12,7 +12,6 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -118,21 +117,6 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     fun awaitNode(m: SemanticsMatcher, timeoutMs: Long = 5_000) {
         compose.waitUntil(timeoutMs) { compose.onAllNodes(m).fetchSemanticsNodes().isNotEmpty() }
         compose.waitForIdle()
-    }
-
-    /**
-     * Brings [target] into view in the open Settings dialog's list with the list's own
-     * scroll-to-node action, not touch swipes. Tree reads must stay on the test thread: every one
-     * starts with `waitForIdle` (`getRoots`), which throws if nested in `runOnUiThread`.
-     * The swipes were not the cause of "multithreaded access to SnapshotStateObserver" (F1, PR #96); the
-     * race is still open (Phase 11 F2: see the ui-testing skill, flake section).
-     */
-    fun scrollSettingsTo(target: SemanticsMatcher) {
-        val list = hasScrollToNodeAction() and hasAnyAncestor(isDialog())
-        awaitNode(list)
-        compose.onAllNodes(list).onFirst().performScrollToNode(target)
-        compose.waitForIdle()
-        awaitNode(target)
     }
 
     /**
