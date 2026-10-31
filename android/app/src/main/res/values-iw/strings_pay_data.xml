@@ -16,6 +16,7 @@
     <string name="data_today">היום</string>
     <plurals name="data_transitous">
         <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
+        <item quantity="two">⁨%1$d⁩ בקשות ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
         <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
     </plurals>
     <string name="data_weather">מזג אוויר: ⁨%1$d⁩</string>
@@ -23,6 +24,7 @@
     <string name="data_map_cache">זיכרון המפה: ⁨%1$s MB⁩</string>
     <plurals name="data_night">
         <item quantity="one">רענון לילי: ⁨%1$s⁩ (בקשה ⁨%2$d⁩)</item>
+        <item quantity="two">רענון לילי: ⁨%1$s⁩ (⁨%2$d⁩ בקשות)</item>
         <item quantity="other">רענון לילי: ⁨%1$s⁩ (⁨%2$d⁩ בקשות)</item>
     </plurals>
     <string name="data_night_none">רענון לילי: לא ב-24 השעות האחרונות</string>
