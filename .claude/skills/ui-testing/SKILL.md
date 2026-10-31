@@ -199,10 +199,12 @@ in 14 days gets a fix package, never a skip.** `issues: write` is given to those
 - **"multithreaded access to SnapshotStateObserver"** (Settings dialog, ~1 run in 12): Compose 1.7 computed a
   node's semantics lazily, under the owner's snapshot observer, on whichever thread read it first. The test
   thread did (`fetchOneOrThrow` → `printToString` after every fetch) while the main thread's accessibility /
-  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. Current Compose
-  computes semantics on the main thread when they change, but Compose 1.9 broke Paparazzi 1.3.5 (and every golden,
-  +2.8 % APK). So `uitest/SemanticsWarmUp` (installed by `AppDriver`) is an idling resource that walks every root's
-  semantics on the main thread at each `waitForIdle`: the test thread then reads only cached semantics.
+  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. **Still open.**
+  Ruled out: Compose BOM 2025.08.00 (1.9; upstream computes semantics on the main thread) breaks Paparazzi 1.3.5
+  (620 shots error even when recording) and grows the APK 2.8 %; an idling resource that walks every root's
+  semantics on the main thread at each `waitForIdle` (the race still hit the first fetch after idle, run
+  41234918862: the main thread composes/reads after idle, e.g. lazy prefetch or the a11y checker). Next: Compose
+  1.8+ together with Paparazzi 2.x and re-recorded goldens, as its own package.
 - **Nightly chaos**, red every night (not flakes): `low_storage` was a real app crash (DataStore ENOSPC out of
   `viewModelScope.launch`; `UserStore` now drops the write); en-XA on P5 squeezed the map (the credit chip wraps
   at font 2.0; the sheet cap uses its measured height); DST "rang 4 times" counted the lines of one record in

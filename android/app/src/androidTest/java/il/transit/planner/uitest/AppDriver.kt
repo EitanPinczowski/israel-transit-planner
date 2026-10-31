@@ -60,7 +60,6 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     init {
         runBlocking { app.reset(places) }
-        SemanticsWarmUp.install(compose)
     }
 
     /** The Activity's own ViewModel (it exists once onCreate ran). */
@@ -125,8 +124,8 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * Brings [target] into view in the open Settings dialog's list with the list's own
      * scroll-to-node action, not touch swipes. Tree reads must stay on the test thread: every one
      * starts with `waitForIdle` (`getRoots`), which throws if nested in `runOnUiThread`.
-     * The swipes were not the cause of "multithreaded access to SnapshotStateObserver" (F1, PR #96):
-     * see [SemanticsWarmUp] (Phase 11 F2).
+     * The swipes were not the cause of "multithreaded access to SnapshotStateObserver" (F1, PR #96); the
+     * race is still open (Phase 11 F2: see the ui-testing skill, flake section).
      */
     fun scrollSettingsTo(target: SemanticsMatcher) {
         val list = hasScrollToNodeAction() and hasAnyAncestor(isDialog())
