@@ -113,9 +113,10 @@ if [[ $API == 35 ]]; then
   adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION || true
   adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
   # Seeded, so a crash it finds reproduces with the same seed.
-  adb shell monkey -p "$PKG" --pct-syskeys 0 --throttle 60 -s 4242 -v 6000 > "$OUT/monkey.txt" 2>&1
+  adb shell monkey -p "$PKG" --pct-syskeys 0 --ignore-crashes --ignore-timeouts --throttle 60 -s 4242 -v 6000 > "$OUT/monkey.txt" 2>&1
   tail -5 "$OUT/monkey.txt"
-  grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey.txt" && { echo "::error::monkey found a crash/ANR (seed 4242)"; failed=1; }
+  ui_monkey_verdict "$OUT/monkey.txt" || { echo "::error::monkey found an app crash/ANR (seed 4242)"; failed=1; ui_monkey_evidence "$OUT/monkey.txt"; }
+  grep -q "Events injected: 6000" "$OUT/monkey.txt" || { echo "::error::monkey stopped early (seed 4242): $(tail -1 "$OUT/monkey.txt")"; failed=1; }
   echo "::endgroup::"
 fi
 
