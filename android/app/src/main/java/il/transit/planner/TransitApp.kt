@@ -39,7 +39,20 @@ import java.time.Clock
  * Open so the `uitest` build (src/uitest) can swap in recorded answers, a fixed clock and a
  * blank map: UI tests, monkey runs and Test Lab crawlers then never reach Transitous.
  */
-open class TransitApp : Application() {
+open class TransitApp :
+    Application(),
+    androidx.work.Configuration.Provider {
+    /**
+     * WorkManager (night refresh, last-trip check) keeps its own database. On a full disk opening it fails
+     * with SQLiteFullException on WorkManager's thread at start-up, which ended the app (nightly chaos
+     * `low_storage`, Phase 11 F2). Routed here instead: the background jobs wait for a later start.
+     */
+    override val workManagerConfiguration: androidx.work.Configuration
+        get() = androidx.work.Configuration
+            .Builder()
+            .setInitializationExceptionHandler { e -> android.util.Log.w("TransitApp", "WorkManager could not start: $e") }
+            .build()
+
     /** Local crash log (Settings → Share crash log). Installed first, so it sees every crash. */
     val crashLog: CrashLogStore by lazy { CrashLogStore(File(filesDir, "crash_log.txt"), BuildConfig.VERSION_NAME) }
 

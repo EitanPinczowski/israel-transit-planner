@@ -31,7 +31,9 @@ paparazzi = "1.3.5"
 # Paparazzi brings Guava 33.3.1 onto the unit-test classpath: GHSA-xxph-c9ww-hj94 (CVSS 8.2), fixed in 33.7.2.
 guavaTest = "33.7.2-jre"
 # Night refresh (Phase 9 C2). 2.9.1: compileSdk 34+, like this build.
-work = "2.9.1"
+# 2.10.5 (Phase 11 F2): a full disk makes WorkManager's own database throw SQLiteFullException at start-up;
+# TransitApp routes it to an initialization exception handler instead of ending the app.
+work = "2.10.5"
 # Style gate (Phase 11 T2, owner decision 17): ktlint via its Gradle plugin; findings are gated per changed line (tools/ktlint_gate.py).
 ktlintPlugin = "12.1.2"
 # Core test foundation (Phase 11 T1): line-coverage gate on core; property tests (standalone, from JUnit 4).
