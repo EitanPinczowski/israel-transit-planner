@@ -357,8 +357,10 @@ fun MainScreen(
                     .onGloballyPositioned { bottomEdge = it.boundsInRoot().top.roundToInt() },
             ) {
                 AttributionChip(
-                    Modifier.onSizeChanged { creditHeight = it.height }
-                        .windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp),
+                    Modifier
+                        .onSizeChanged { creditHeight = it.height }
+                        .windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal))
+                        .padding(8.dp),
                 )
                 if (panelShown) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
