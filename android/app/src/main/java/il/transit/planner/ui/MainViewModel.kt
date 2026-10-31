@@ -1008,15 +1008,16 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
-        if (zoom < StopsViewport.MIN_ZOOM) {
+        val lowData = _state.value.settings.lowData // Phase 11 E4: from zoom 16, only the tiles on screen
+        if (zoom < il.transit.core.user.LowData.stopsMinZoom(lowData)) {
             if (loadedStops != null) {
                 loadedStops = null
                 _stops.value = MapData.EMPTY
             }
             return
         }
-        if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
-        val box = StopsViewport.fetchBox(view)
+        if (!il.transit.core.user.LowData.stopsNeedFetch(view, zoom, loadedStops, lowData)) return
+        val box = il.transit.core.user.LowData.stopsFetchBox(view, lowData)
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {

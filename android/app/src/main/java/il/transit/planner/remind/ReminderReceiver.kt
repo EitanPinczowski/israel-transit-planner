@@ -125,7 +125,7 @@ class ReminderReceiver : BroadcastReceiver() {
         internal suspend fun passAlarm(app: TransitApp, post: Boolean = true) {
             val s = app.store.settings.first()
             val step = PassExpiry.step(s.passEndsOn, java.time.Instant.now(), post)
-            step.post?.let { Notifications.pass(app, it) }
+            step.post?.let { Notifications.pass(app, it, s.paymentApp) }
             ReminderScheduler.armPass(app, step.armAt)
             if (step.clear) app.store.setSettings(s.copy(passEndsOn = null))
         }

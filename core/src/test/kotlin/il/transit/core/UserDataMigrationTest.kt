@@ -61,6 +61,9 @@ class UserDataMigrationTest {
         // v0.9.1 added the Rav-Kav pass date (Off = null) and the "check reminders" hint flag (default false).
         passEndsOn = if (atLeast(v, "0.9.1")) "2026-11-01" else null,
         reminderCheckHintShown = atLeast(v, "0.9.1"),
+        // v0.10.0 adds "My payment app" (None = null) and low-data mode (off) (Phase 11 E4).
+        paymentApp = if (atLeast(v, "0.10.0")) "com.tranzmate" else null,
+        lowData = atLeast(v, "0.10.0"),
     )
 
     private fun expectedHistory(v: String) = listOf(

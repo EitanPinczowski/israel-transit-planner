@@ -340,8 +340,8 @@ package. Tick only your own package's lines.
 - [ ] Follow-up (pre-existing, not R2): ride alert: extend `legGrace` while the rider is still on the route (a bus > 3 min late loses its alert)
 
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
-- [ ] "Pay with…" opens the user's payment app or its store page
-- [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
+- [x] "Pay with…" opens the user's payment app or its store page (Rav-Kav Online, Rav-Pass, Moovit; ANY WAY ended in 2022)
+- [x] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
 
 ### T4 — Network-fault matrix (`claude/p11-fault-matrix`, 0 requests, local mock server)
 - [ ] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator

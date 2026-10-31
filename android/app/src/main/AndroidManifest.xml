@@ -27,6 +27,10 @@
         <intent>
             <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
         </intent>
+        <!-- "Pay with…" (Phase 11 E4): whether each payment app is installed, to open it (core PayApps). -->
+        <package android:name="com.pcentra.ravkavonlinemobile" />
+        <package android:name="co.hopon.client" />
+        <package android:name="com.tranzmate" />
     </queries>
 
     <application

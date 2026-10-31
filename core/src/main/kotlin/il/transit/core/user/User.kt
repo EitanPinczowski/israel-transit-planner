@@ -130,6 +130,10 @@ data class UserSettings(
     val passEndsOn: String? = null,
     /** "Check that reminders will ring on this phone" was offered after the first reminder (Phase 11 E1). */
     val reminderCheckHintShown: Boolean = false,
+    /** "My payment app" (Phase 11 E4): a package name from [il.transit.core.present.PayApps]; null = None, "Pay with…" asks. */
+    val paymentApp: String? = null,
+    /** Low-data mode (Phase 11 E4, owner decision 2), off by default; see [LowData]. */
+    val lowData: Boolean = false,
 ) {
     fun preferences() = Preferences(
         transitModes = modeFilter.transitModes,

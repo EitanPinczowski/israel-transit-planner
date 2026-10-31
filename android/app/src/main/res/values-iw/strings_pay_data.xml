@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E4: תשלום, כרטיס הנתונים והסוללה, מצב חיסכון בנתונים. -->
+<resources>
+    <string name="pay_with">תשלום באמצעות…</string>
+    <string name="pay_with_app">תשלום באמצעות ⁨%1$s⁩</string>
+    <string name="pay_disclaimer">פותח את האפליקציה האחרת. האפליקציה הזו לא גובה תשלום.</string>
+    <string name="pay_installed">מותקנת</string>
+    <string name="pay_get">להורדה מ-Google Play</string>
+    <string name="pay_open_failed">לא הצלחנו לפתוח את האפליקציה או את הדף שלה בחנות.</string>
+    <string name="pay_settings_title">תשלום על נסיעות</string>
+    <string name="pay_my_app">אפליקציית התשלום שלי</string>
+    <string name="pay_none">ללא</string>
+    <string name="pay_settings_help">כפתור התשלום בגיליון התחנות של נסיעה וההתראה על סיום מנוי רב־קו פותחים את האפליקציה הזו, או את הדף שלה בחנות. ב„ללא” הכפתור שואל באיזו אפליקציה.</string>
+
+    <string name="data_title">נתונים וסוללה</string>
+    <string name="data_today">היום</string>
+    <plurals name="data_transitous">
+        <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
+        <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
+    </plurals>
+    <string name="data_weather">מזג אוויר: ⁨%1$d⁩</string>
+    <string name="data_address">גיבוי כתובות: ⁨%1$d⁩</string>
+    <string name="data_map_cache">זיכרון המפה: ⁨%1$s MB⁩</string>
+    <plurals name="data_night">
+        <item quantity="one">רענון לילי: ⁨%1$s⁩ (בקשה ⁨%2$d⁩)</item>
+        <item quantity="other">רענון לילי: ⁨%1$s⁩ (⁨%2$d⁩ בקשות)</item>
+    </plurals>
+    <string name="data_night_none">רענון לילי: לא ב-24 השעות האחרונות</string>
+    <string name="data_ride_gps">GPS בנסיעה: ⁨%1$d⁩ דק׳</string>
+    <string name="data_empty">עוד לא נשלח דבר היום.</string>
+    <string name="data_help">נספר בטלפון בלבד: מספרים ושעות, אף פעם לא מקומות או חיפושים. נשמר 7 ימים.</string>
+    <string name="low_data_toggle">מצב חיסכון בנתונים</string>
+    <string name="low_data_help">תחנות במפה רק בזום קרוב יותר, ורק למה שעל המסך. בלי לוחות תחנות ברענון הלילי. המפה הלא מקוונת שואלת קודם כשאין Wi-Fi. תכנון, חיפוש, תזכורות והתראת הגשם לא משתנים.</string>
+    <string name="low_data_ask_title">להוריד את המפה הלא מקוונת?</string>
+    <string name="low_data_ask_text">אין חיבור Wi-Fi ומצב חיסכון בנתונים פועל. אזור מפה יכול לתפוס עשרות MB.</string>
+</resources>

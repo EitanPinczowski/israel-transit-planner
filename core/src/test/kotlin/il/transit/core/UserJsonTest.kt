@@ -42,4 +42,17 @@ class UserJsonTest {
         assertEquals(false, old.reminderCheckHintShown)
         assertEquals(20, old.maxWalkMin)
     }
+
+    @Test
+    fun `the payment app and low data round-trip, and older files load them as None and off`() {
+        val s = UserSettings(paymentApp = "com.tranzmate", lowData = true)
+        val json = UserJson.encodeSettings(s)
+        assert("\"paymentApp\":\"com.tranzmate\"" in json) { json }
+        assert("\"lowData\":true" in json) { json }
+        assertEquals(s, UserJson.decodeSettings(json))
+        val old = UserJson.decodeSettings("""{"maxWalkMin":20,"passEndsOn":"2026-11-01"}""")
+        assertEquals(null, old.paymentApp)
+        assertEquals(false, old.lowData)
+        assertEquals("2026-11-01", old.passEndsOn)
+    }
 }

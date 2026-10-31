@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E4: Pay with…, the data and battery card, low-data mode. Hebrew in values-iw/. -->
+<resources>
+    <string name="pay_with">Pay with…</string>
+    <string name="pay_with_app">Pay with %1$s</string>
+    <string name="pay_disclaimer">Opens the other app. This app doesn\'t take payments.</string>
+    <string name="pay_installed">Installed</string>
+    <string name="pay_get">Get it on Google Play</string>
+    <string name="pay_open_failed">Couldn\'t open the app or its store page.</string>
+    <string name="pay_settings_title">Paying for rides</string>
+    <string name="pay_my_app">My payment app</string>
+    <string name="pay_none">None</string>
+    <string name="pay_settings_help">The Pay button on a ride\'s stops sheet and the Rav-Kav pass notice open this app, or its store page. With None, the button asks which app.</string>
+
+    <string name="data_title">Data &amp; battery</string>
+    <string name="data_today">Today</string>
+    <plurals name="data_transitous">
+        <item quantity="one">%1$d request to Transitous (%2$d answered from the cache)</item>
+        <item quantity="other">%1$d requests to Transitous (%2$d answered from the cache)</item>
+    </plurals>
+    <string name="data_weather">Weather: %1$d</string>
+    <string name="data_address">Address backup: %1$d</string>
+    <string name="data_map_cache">Map cache: %1$s MB</string>
+    <plurals name="data_night">
+        <item quantity="one">Night refresh: %1$s (%2$d request)</item>
+        <item quantity="other">Night refresh: %1$s (%2$d requests)</item>
+    </plurals>
+    <string name="data_night_none">Night refresh: not in the last 24 hours</string>
+    <string name="data_ride_gps">Ride GPS: %1$d min</string>
+    <string name="data_empty">Nothing sent today yet.</string>
+    <string name="data_help">Counted on this phone only: numbers and times, never places or searches. Kept for 7 days.</string>
+    <string name="low_data_toggle">Low-data mode</string>
+    <string name="low_data_help">Map stops only when zoomed in closer, and only for what\'s on screen. No stop boards in the night refresh. The offline map asks first when you\'re not on Wi-Fi. Planning, search, reminders and the rain note stay the same.</string>
+    <string name="low_data_ask_title">Download the offline map?</string>
+    <string name="low_data_ask_text">You\'re not on Wi-Fi and low-data mode is on. A map area can take tens of MB.</string>
+</resources>
