@@ -15,9 +15,9 @@
     <string name="data_title">נתונים וסוללה</string>
     <string name="data_today">היום</string>
     <plurals name="data_transitous">
-        <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
-        <item quantity="two">⁨%1$d⁩ בקשות ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
-        <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous (⁨%2$d⁩ נענו מהזיכרון)</item>
+        <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
+        <item quantity="two">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
+        <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
     </plurals>
     <string name="data_weather">מזג אוויר: ⁨%1$d⁩</string>
     <string name="data_address">גיבוי כתובות: ⁨%1$d⁩</string>
