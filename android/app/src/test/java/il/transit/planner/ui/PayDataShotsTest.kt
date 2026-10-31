@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection as ComposeDirection
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -38,6 +37,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.time.Instant
+import androidx.compose.ui.unit.LayoutDirection as ComposeDirection
 
 /**
  * Pay with… and the data and battery card (Phase 11 E4): English and Hebrew, light and dark, and the
@@ -112,8 +112,14 @@ class PayDataShotsTest(private val v: Variant) {
 
         /** 02:14 Israel time on 27 Oct 2026 (UTC+2). */
         private val busy = UsageSummary(
-            transitous = 14, transitousCache = 6, transitousRetries = 1, weather = 1, address = 0,
-            nightAt = Instant.parse("2026-10-27T00:14:00Z"), nightRequests = 4, rideGpsMin = 12,
+            transitous = 14,
+            transitousCache = 6,
+            transitousRetries = 1,
+            weather = 1,
+            address = 0,
+            nightAt = Instant.parse("2026-10-27T00:14:00Z"),
+            nightRequests = 4,
+            rideGpsMin = 12,
         )
 
         private val phone = DeviceConfig.PIXEL_5
