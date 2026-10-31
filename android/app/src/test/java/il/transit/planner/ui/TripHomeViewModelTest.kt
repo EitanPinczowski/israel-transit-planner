@@ -21,12 +21,12 @@ import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.UserStore
+import il.transit.planner.ui.vm.cancelAndJoin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -86,8 +86,7 @@ class TripHomeViewModelTest {
     private val vms = mutableListOf<MainViewModel>()
 
     @After fun tearDown() {
-        vms.forEach { it.viewModelScope.cancel() }
-        io.cancel()
+        cancelAndJoin(vms.map { it.viewModelScope } + io) // see VmSupport.cancelAndJoin
         Dispatchers.resetMain()
         main.close()
     }
