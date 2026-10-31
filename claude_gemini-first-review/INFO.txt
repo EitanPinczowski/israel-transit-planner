@@ -1,0 +1,2 @@
+commit a2ccc23b4e8a2a06c9869751600d2536a9a61af3
+run https://github.com/EitanPinczowski/israel-transit-planner/actions/runs/38180955423
