@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection as ComposeDirection
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -95,7 +96,7 @@ class PayDataShotsTest(private val v: Variant) {
 
     @Composable
     private fun Frame(align: Alignment, content: @Composable () -> Unit) {
-        val direction = if (v.rtl) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr
+        val direction = if (v.rtl) ComposeDirection.Rtl else ComposeDirection.Ltr
         CompositionLocalProvider(LocalLayoutDirection provides direction) {
             AppTheme(dark = v.dark) {
                 Box(Modifier.fillMaxSize().background(if (v.dark) Color(0xFF2B2E33) else Color(0xFFEDEAE4)), contentAlignment = align) {

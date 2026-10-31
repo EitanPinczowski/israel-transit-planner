@@ -22,6 +22,7 @@ import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UpdateChecker
+import il.transit.planner.data.UsageStore
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
@@ -91,7 +92,7 @@ open class TransitApp :
     open val api: TransitApi by lazy { GuardedTransitApi(MotisClient(), usage = usage) }
 
     /** Today's requests, cache hits, night refresh and ride GPS for Settings → Data & battery (Phase 11 E4). */
-    val usage: il.transit.planner.data.UsageStore by lazy { il.transit.planner.data.UsageStore(File(filesDir, il.transit.planner.data.UsageStore.FILE)) }
+    val usage: UsageStore by lazy { UsageStore(File(filesDir, UsageStore.FILE)) }
 
     /**
      * Asked only when Transitous has no street match (search fix S3): the phone's own Geocoder

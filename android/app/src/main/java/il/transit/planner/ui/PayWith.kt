@@ -14,7 +14,10 @@ import il.transit.core.present.PayApps
  */
 object PayWith {
     fun installed(context: Context): Set<String> =
-        PayApps.ALL.map { it.packageName }.filter { context.packageManager.getLaunchIntentForPackage(it) != null }.toSet()
+        PayApps.ALL
+            .map { it.packageName }
+            .filter { context.packageManager.getLaunchIntentForPackage(it) != null }
+            .toSet()
 
     /** The intent that opens [app]: the app itself, or its store page. */
     fun intent(context: Context, app: PayApp): Intent =

@@ -6,6 +6,7 @@ import il.transit.core.api.UsageDay
 import il.transit.core.api.UsageLog
 import il.transit.core.api.UsageOutcome
 import il.transit.core.api.UsageService
+import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.search.GuardedGeocoder
 import il.transit.core.weather.GuardedWeather
@@ -46,8 +47,8 @@ class UsageLogTest {
         val log = UsageLog(clock)
         val inner = FaultyTransitApi(Fault.Http(429))
         val api = GuardedTransitApi(inner, clock, backoff = Duration.ofMillis(1), usage = log)
-        api.stops(il.transit.core.geo.BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1)), null, "he") // 429, then answered
-        api.stops(il.transit.core.geo.BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1)), null, "he") // cache
+        api.stops(BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1)), null, "he") // 429, then answered
+        api.stops(BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1)), null, "he") // cache
         assertEquals(2, inner.calls)
         val day = log.days().single()
         assertEquals(mapOf("transitous.stops.net" to 1, "transitous.stops.retry" to 1, "transitous.stops.cache" to 1), day.counts)
@@ -87,7 +88,7 @@ class UsageLogTest {
     @Test fun `counting never changes what is sent`() = runTest {
         val plain = FaultyTransitApi(Fault.Http(429))
         val counted = FaultyTransitApi(Fault.Http(429))
-        val box = il.transit.core.geo.BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1))
+        val box = BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1))
         GuardedTransitApi(plain, backoff = Duration.ofMillis(1)).let { it.stops(box, null, "he"); it.stops(box, null, "he") }
         GuardedTransitApi(counted, backoff = Duration.ofMillis(1), usage = UsageLog()).let { it.stops(box, null, "he"); it.stops(box, null, "he") }
         assertEquals(plain.calls, counted.calls)

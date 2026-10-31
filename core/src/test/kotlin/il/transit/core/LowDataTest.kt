@@ -8,6 +8,7 @@ import il.transit.core.geo.StopsViewport
 import il.transit.core.plan.NightRefresh
 import il.transit.core.plan.NightRefresher
 import il.transit.core.plan.StopsTileCache
+import il.transit.core.user.FavoriteLine
 import il.transit.core.user.LowData
 import il.transit.core.user.UserSettings
 import kotlinx.coroutines.runBlocking
@@ -129,15 +130,18 @@ class LowDataTest {
         assertEquals(emptyList<String>(), LowData.nightStops(stops, true))
         // Through the real refresher: low data sends no stoptimes.
         val now = Instant.parse("2026-10-27T21:30:00Z") // 23:30 Israel, in the window
+        val favorites = listOf(FavoriteLine(stops[0], "a", "470", "x"), FavoriteLine(stops[1], "b", "369", "y"))
         fun run(on: Boolean): FakeTransitApi {
             val api = FakeTransitApi()
+            val boards = LowData.nightStops(NightRefresh.stops(favorites), on)
             runBlocking {
                 NightRefresher(api).run(
-                    jobs = { emptyList() }, lastRunDay = null, now = now, settings = UserSettings(lowData = on), language = "he",
-                    stops = LowData.nightStops(NightRefresh.stops(listOf(
-                        il.transit.core.user.FavoriteLine(stops[0], "a", "470", "x"),
-                        il.transit.core.user.FavoriteLine(stops[1], "b", "369", "y"),
-                    )), on),
+                    jobs = { emptyList() },
+                    lastRunDay = null,
+                    now = now,
+                    settings = UserSettings(lowData = on),
+                    language = "he",
+                    stops = boards,
                     save = { _, _ -> },
                 )
             }

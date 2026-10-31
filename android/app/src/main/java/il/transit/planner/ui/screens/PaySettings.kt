@@ -114,7 +114,11 @@ internal fun PayChooserContent(installed: Set<String>, onPick: (PayApp) -> Unit)
         PayApps.chooserOrder(installed).forEach { a ->
             val has = a.packageName in installed
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Button) { onPick(a) }.padding(horizontal = 4.dp, vertical = 6.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
+                    .clickable(role = Role.Button) { onPick(a) }
+                    .padding(horizontal = 4.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {

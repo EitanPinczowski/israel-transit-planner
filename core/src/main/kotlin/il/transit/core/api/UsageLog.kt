@@ -117,7 +117,8 @@ class UsageLog(private val clock: Clock = Clock.systemUTC(), restored: List<Usag
 
     @Synchronized fun summary(now: Instant = clock.instant()): UsageSummary {
         val today = days[dayOf(now)] ?: UsageDay(dayOf(now))
-        val night = days.values.mapNotNull { d -> d.nightAt?.let { Instant.ofEpochSecond(it) to d.nightRequests } }
+        val night = days.values
+            .mapNotNull { d -> d.nightAt?.let { Instant.ofEpochSecond(it) to d.nightRequests } }
             .filter { (at, _) -> !at.isAfter(now) && Duration.between(at, now) <= NIGHT_RECENT }
             .maxByOrNull { it.first }
         return UsageSummary(

@@ -38,6 +38,7 @@ import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.user.FavoriteLine
+import il.transit.core.user.LowData
 import il.transit.core.user.PlaceRoutine
 import il.transit.core.ride.RideProgress
 import il.transit.core.user.Routines
@@ -1009,15 +1010,15 @@ class MainViewModel(
 
     fun onViewport(view: BBox, zoom: Double) {
         val lowData = _state.value.settings.lowData // Phase 11 E4: from zoom 16, only the tiles on screen
-        if (zoom < il.transit.core.user.LowData.stopsMinZoom(lowData)) {
+        if (zoom < LowData.stopsMinZoom(lowData)) {
             if (loadedStops != null) {
                 loadedStops = null
                 _stops.value = MapData.EMPTY
             }
             return
         }
-        if (!il.transit.core.user.LowData.stopsNeedFetch(view, zoom, loadedStops, lowData)) return
-        val box = il.transit.core.user.LowData.stopsFetchBox(view, lowData)
+        if (!LowData.stopsNeedFetch(view, zoom, loadedStops, lowData)) return
+        val box = LowData.stopsFetchBox(view, lowData)
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {

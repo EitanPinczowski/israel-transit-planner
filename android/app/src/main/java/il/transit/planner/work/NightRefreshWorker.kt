@@ -11,6 +11,7 @@ import androidx.work.WorkerParameters
 import il.transit.core.plan.NightRefresh
 import il.transit.core.plan.NightRefresher
 import il.transit.core.user.Home
+import il.transit.core.user.LowData
 import il.transit.planner.TransitApp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
@@ -44,7 +45,7 @@ class NightRefreshWorker(context: Context, params: WorkerParameters) : Coroutine
                 settings = settings,
                 language = app.language,
                 // Low-data mode (Phase 11 E4): trips only, no stop boards.
-                stops = il.transit.core.user.LowData.nightStops(NightRefresh.stops(app.store.favorites.first()), settings.lowData),
+                stops = LowData.nightStops(NightRefresh.stops(app.store.favorites.first()), settings.lowData),
                 saveBoard = { stopId, board -> app.timetables.put(stopId, board) },
                 save = app.planCache::putNight,
             )

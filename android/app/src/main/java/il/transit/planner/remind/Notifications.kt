@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import il.transit.core.plan.LastTripAlert
 import il.transit.core.plan.LastTripHome
 import il.transit.core.plan.MissedIt
+import il.transit.core.present.PayApps
 import il.transit.core.remind.Countdown
 import il.transit.core.remind.LiveProgress
 import il.transit.core.remind.PassExpiry
@@ -24,6 +25,7 @@ import il.transit.core.remind.Reminder
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import il.transit.planner.tile.NextTripTile
+import il.transit.planner.ui.PayWith
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.format.TextStyle
@@ -87,8 +89,8 @@ object Notifications {
             PassExpiry.Kind.LAST_DAY -> context.getString(R.string.pass_ends_today, date)
         }
         // Phase 11 E4: the chosen payment app (or its store page); with none chosen, Settings.
-        val pay = il.transit.core.present.PayApps.chosen(paymentApp)?.let { app ->
-            il.transit.planner.ui.PayWith.intent(context, app).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val pay = PayApps.chosen(paymentApp)?.let { app ->
+            PayWith.intent(context, app).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         val open = PendingIntent.getActivity(
             context,

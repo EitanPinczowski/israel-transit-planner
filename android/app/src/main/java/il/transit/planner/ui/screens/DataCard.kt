@@ -54,8 +54,9 @@ internal val NO_USAGE = UsageSummary(0, 0, 0, 0, 0, null, 0, 0)
 internal fun DataBatterySection(s: UserSettings, set: (UserSettings) -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as? TransitApp
-    val tick = app?.usage?.changes?.collectAsState()?.value
-    val summary = remember(tick) { app?.usage?.summary() } ?: NO_USAGE
+    val usage = app?.usage
+    val tick = usage?.changes?.collectAsState()?.value
+    val summary = remember(tick) { usage?.summary() } ?: NO_USAGE
     val mapMb by produceState<Double?>(null, app) {
         value = if (app == null) null else withContext(Dispatchers.IO) { mapCacheMb(app) }
     }
