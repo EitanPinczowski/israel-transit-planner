@@ -194,3 +194,17 @@ class#test) to `flake.log` next to its output; the last step of
 each UI job (`tools/ui_flake_log.sh`) comments on the open issue "CI flake log" (created once) with the
 run link, API, test and kind, and also for a job re-run (`run_attempt > 1`). **A test that flakes twice
 in 14 days gets a fix package, never a skip.** `issues: write` is given to those jobs for that step only.
+
+## Phase 11 F2: root causes of three CI flakes
+- **"multithreaded access to SnapshotStateObserver"** (Settings dialog, ~1 run in 12): Compose 1.7 computed a
+  node's semantics lazily, under the owner's snapshot observer, on whichever thread read it first. The test
+  thread did (`fetchOneOrThrow` → `printToString` after every fetch) while the main thread's accessibility /
+  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. Compose 1.8+
+  computes the semantics configuration on the main thread when it changes. Fixed by the BOM bump (2025.08.00).
+- **Nightly chaos**, red every night (not flakes): `low_storage` was a real app crash (DataStore ENOSPC out of
+  `viewModelScope.launch`; `UserStore` now drops the write); en-XA on P5 squeezed the map (the credit chip wraps
+  at font 2.0; the sheet cap uses its measured height); DST "rang 4 times" counted the lines of one record in
+  `dumpsys notification` (now `notification_enqueue` events).
+- **Monkey**: `ui_monkey_evidence` prints the monkey's CRASH/ANR block and the device evidence into the job
+  log, because artifacts can't be read from a cloud session.
+
