@@ -74,9 +74,28 @@ class LowDataTest {
         }
     }
 
-    @Test fun `stops - a walk of pans and zooms never downloads more tiles in low data`() {
+    @Test fun `stops - one view never costs more in low data, at any zoom`() {
         val rnd = Random(4)
         val now = Instant.parse("2026-10-27T08:00:00Z")
+        repeat(500) {
+            val zoom = 14.0 + rnd.nextDouble() * 4
+            val v = view(31.2 + rnd.nextDouble() * 1.5, 34.7 + rnd.nextDouble() * 0.5, zoom)
+            val normal = Walk(false).also { it.at(v, zoom, now) }
+            val low = Walk(true).also { it.at(v, zoom, now) }
+            assertTrue(low.requests <= normal.requests)
+            assertTrue("tiles: low ${low.tiles} vs normal ${normal.tiles}", low.tiles <= normal.tiles)
+        }
+    }
+
+    /**
+     * Over a walk, low data can now and then ask again for tiles normal had fetched ahead (no
+     * prefetch), so a single walk is not always smaller; over many walks it downloads less.
+     */
+    @Test fun `stops - over 200 walks of pans and zooms, low data downloads fewer tiles`() {
+        val rnd = Random(4)
+        val now = Instant.parse("2026-10-27T08:00:00Z")
+        var lowTiles = 0
+        var normalTiles = 0
         repeat(200) {
             val normal = Walk(false)
             val low = Walk(true)
@@ -90,8 +109,10 @@ class LowDataTest {
                 normal.at(v, zoom, now)
                 low.at(v, zoom, now)
             }
-            assertTrue("tiles: low ${low.tiles} vs normal ${normal.tiles}", low.tiles <= normal.tiles)
+            lowTiles += low.tiles
+            normalTiles += normal.tiles
         }
+        assertTrue("tiles: low $lowTiles vs normal $normalTiles", lowTiles < normalTiles)
     }
 
     @Test fun `stops - one view at zoom 15 to 16 is 0 requests in low data, 1 in normal`() {
