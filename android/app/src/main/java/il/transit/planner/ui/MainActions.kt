@@ -45,6 +45,9 @@ interface MainActions {
     fun closeStop()
     fun showSettings(show: Boolean)
 
+    /** The one-time "Not saved: phone storage is full" was shown ([UiState.notSaved]). */
+    fun notSavedShown() = Unit
+
     /** Phase 11 E1: the reminder check, or its one-time hint. */
     fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView)
     fun showHistory(show: Boolean)
@@ -121,6 +124,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun checkLastRideBack() { vm.checkLastRideBack() }
     override fun closeStop() { vm.closeStop() }
     override fun showSettings(show: Boolean) { vm.showSettings(show) }
+    override fun notSavedShown() { vm.notSavedShown() }
     override fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView) { vm.reminderCheck(view) }
     override fun showHistory(show: Boolean) { vm.showHistory(show) }
     override fun updateSettings(s: UserSettings) { vm.updateSettings(s) }

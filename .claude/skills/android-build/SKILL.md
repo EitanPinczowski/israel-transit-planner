@@ -62,6 +62,13 @@ To re-record (needed whenever your PR changes how a screen looks, or adds a shot
 3. Look at the listed new/changed images (raw URLs below), then commit them **in the same
    PR** as the change. The next run is green.
 
+`verifyPaparazziDebug` runs **every** app unit test, so the step "what failed in verify" sorts its failures
+by class (a class that renders with Paparazzi = a golden; anything else = a unit test, named in the error).
+A red job that says "unit test (not a golden)" is a test to fix, not a picture to re-record (Phase 11 F2).
+VM tests must end their coroutines before Main is reset: `VmTest` / the `*ViewModelTest`s call
+`cancelAndJoin` (a coroutine still inside `withContext(Dispatchers.IO)` otherwise resumes through the next
+test's Main: "Dispatchers.Main is used concurrently with setting it").
+
 Re-record in the PR that changes the screen, never in someone else's. Don't raise
 `maxPercentDifference` to make a diff go away, and don't read a time from the clock in a
 screen that has a shot (pass `now` in, like `HistoryContent`): the goldens would rot.
