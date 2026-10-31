@@ -66,6 +66,16 @@ _ui_dump_evidence() { # $1 = label
   echo "::endgroup::"
 }
 
+# A monkey run that stopped early: its own CRASH / ANR block and the events before it, then the device
+# evidence. The artifacts can't be read from a cloud session, so the log has to say what crashed.
+ui_monkey_evidence() { # $1 = monkey output file
+  echo "::group::monkey evidence: $(basename "$1")"
+  echo "--- the monkey's last events and its crash/ANR block"
+  grep -n -B 25 -A 60 -E "^// (CRASH|NOT RESPONDING)" "$1" | head -150
+  echo "::endgroup::"
+  _ui_dump_evidence "after the monkey ($(basename "$1"))"
+}
+
 # The app (same process as the test) died for its own reasons: Java crash, ANR, or a native crash.
 _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"

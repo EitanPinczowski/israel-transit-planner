@@ -115,7 +115,7 @@ if [[ $API == 35 ]]; then
   # Seeded, so a crash it finds reproduces with the same seed.
   adb shell monkey -p "$PKG" --pct-syskeys 0 --throttle 60 -s 4242 -v 6000 > "$OUT/monkey.txt" 2>&1
   tail -5 "$OUT/monkey.txt"
-  grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey.txt" && { echo "::error::monkey found a crash/ANR (seed 4242)"; failed=1; }
+  grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey.txt" && { echo "::error::monkey found a crash/ANR (seed 4242)"; failed=1; ui_monkey_evidence "$OUT/monkey.txt"; }
   echo "::endgroup::"
 fi
 

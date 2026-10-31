@@ -53,7 +53,8 @@ if [[ $MODE == monkey ]]; then
     echo "::group::monkey seed $seed"
     adb shell monkey -p "$PKG" --pct-syskeys 0 --throttle 40 -s "$seed" -v 20000 > "$OUT/monkey-$seed.txt" 2>&1
     tail -5 "$OUT/monkey-$seed.txt"
-    grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey-$seed.txt" && fail "monkey found a crash/ANR (seed $seed)"
+    grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey-$seed.txt" && { fail "monkey found a crash/ANR (seed $seed)"; ui_monkey_evidence "$OUT/monkey-$seed.txt"; }
+    adb logcat -d -b crash >> "$OUT/crash.txt"; adb logcat -c # each seed's evidence on its own
     echo "::endgroup::"
     echo "- monkey seed $seed: $(grep -c . "$OUT/monkey-$seed.txt") lines" >> "$OUT/findings.txt"
   done
