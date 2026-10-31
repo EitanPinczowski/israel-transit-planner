@@ -50,6 +50,7 @@ import il.transit.planner.remind.MissedItAction
 import il.transit.planner.MainActivity
 import il.transit.core.plan.MissedIt
 import android.os.ParcelFileDescriptor
+import il.transit.planner.UiTestApp
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.MEITAR
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
@@ -369,6 +370,8 @@ class JourneysTest {
                         "--- dumpsys activity services ---\n$services\n--- logcat ---\n$log",
                 )
             }
+            // The alert is armed only on the ride's last 20 min (R2): ride at 5 min before the train is due.
+            d.app.clockShift = java.time.Duration.between(UiTestApp.NOW, leg.end.minusSeconds(300))
             val from = leg.from.latLon
             val to = leg.to.latLon
             val total = Geo.distanceM(from, to)
@@ -402,6 +405,7 @@ class JourneysTest {
             }
         } finally {
             d.onMain { it.stopRide() }
+            d.app.clockShift = java.time.Duration.ZERO
             runCatching { lm.removeTestProvider(gps) }
         }
     }
