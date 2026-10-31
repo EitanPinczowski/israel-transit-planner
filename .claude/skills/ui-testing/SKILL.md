@@ -206,7 +206,7 @@ in 14 days gets a fix package, never a skip.** `issues: write` is given to those
   41234918862: the main thread composes/reads after idle, e.g. lazy prefetch or the a11y checker). Next: Compose
   1.8+ together with Paparazzi 2.x and re-recorded goldens, as its own package.
 - **Nightly chaos**, red every night (not flakes): `low_storage` was a real app crash (DataStore ENOSPC out of
-  `viewModelScope.launch`; `UserStore` now drops the write); en-XA on P5 squeezed the map (the credit chip wraps
+  `viewModelScope.launch`; `UserStore` now drops the write, returns false and the screen says "Not saved: phone storage is full"); en-XA on P5 squeezed the map (the credit chip wraps
   at font 2.0; the sheet cap uses its measured height); DST "rang 4 times" counted the lines of one record in
   `dumpsys notification` (now `notification_enqueue` events).
 - **Monkey**: `ui_monkey_evidence` prints the monkey's CRASH/ANR block and the device evidence into the job

@@ -46,12 +46,17 @@ open class TransitApp :
      * WorkManager (night refresh, last-trip check) keeps its own database. On a full disk opening it fails
      * with SQLiteFullException on WorkManager's thread at start-up, which ended the app (nightly chaos
      * `low_storage`, Phase 11 F2). Routed here instead: the background jobs wait for a later start.
+     * Not rethrown (a crash at start-up is worse), but written to the crash log too, so a failure that
+     * is not a full disk shows in Settings → Crash log. Built once.
      */
-    override val workManagerConfiguration: androidx.work.Configuration
-        get() = androidx.work.Configuration
+    override val workManagerConfiguration: androidx.work.Configuration by lazy {
+        androidx.work.Configuration
             .Builder()
-            .setInitializationExceptionHandler { e -> android.util.Log.w("TransitApp", "WorkManager could not start: $e") }
-            .build()
+            .setInitializationExceptionHandler { e ->
+                runCatching { android.util.Log.w("TransitApp", "WorkManager could not start: $e") }
+                runCatching { crashLog.append(e, Thread.currentThread().name) }
+            }.build()
+    }
 
     /** Local crash log (Settings → Share crash log). Installed first, so it sees every crash. */
     val crashLog: CrashLogStore by lazy { CrashLogStore(File(filesDir, "crash_log.txt"), BuildConfig.VERSION_NAME) }

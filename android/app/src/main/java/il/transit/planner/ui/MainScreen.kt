@@ -236,6 +236,14 @@ fun MainScreen(
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
     LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
+    // A save the phone refused (full storage): one short message, then cleared.
+    val context = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(state.notSaved) {
+        if (state.notSaved) {
+            android.widget.Toast.makeText(context, R.string.not_saved_storage_full, android.widget.Toast.LENGTH_SHORT).show()
+            vm.notSavedShown()
+        }
+    }
 
     // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
     // (The trip sheet has its own handler, composed later, so it closes first.) Screenshot
@@ -419,8 +427,12 @@ private val SHADOW_ROOM = 4.dp
 /** Of a phone's height, at least this much stays map while a sheet is open (layout rule R7: 25%). */
 private const val MAP_SHARE = 0.3f
 
-/** The Transitous credit chip above the sheet, with its padding, on one line (the least it takes). */
-private val CREDIT_ROOM = 48.dp
+/**
+ * The Transitous credit chip above the sheet on one line, the least it takes: `Surface(onClick)` keeps a
+ * 48 dp touch target, plus 8 dp padding above and below. Used until the chip is measured, so the first
+ * frame's sheet does not jump.
+ */
+private val CREDIT_ROOM = 64.dp
 
 /** A sheet is never squeezed below its header and one row. */
 private val MIN_SHEET = 160.dp
