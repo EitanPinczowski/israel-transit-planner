@@ -77,7 +77,7 @@ class UserDataMigrationTest {
 
     @Test fun `there is a sample for every released version we promise to migrate`() {
         val names = samples().map(::version)
-        for (v in listOf("0.8.0", "0.8.6", "0.9.0", "0.9.1")) assertTrue("missing fixtures/userdata/$v.json in $names", v in names)
+        for (v in listOf("0.8.0", "0.8.6", "0.9.0", "0.9.1", "0.9.2")) assertTrue("missing fixtures/userdata/$v.json in $names", v in names)
     }
 
     @Test fun `every released version's saved data decodes to what the user had`() {
