@@ -4,24 +4,31 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-20, 05:40 Israel time)
-- **Released:** v0.9.0 (2026-10-13). Next proposed: v0.9.1 after Phase 11 Wave 4 (ask the owner first).
-- **Boss:** session `session_011tJH15m5mUzgr2G4vFCaKt` (took over 2026-10-19 19:35).
-- **Phase 11** (`docs/agents/phase11.md`, all 31 owner decisions "as proposed"; E7 added by the owner 2026-10-18):
-  - **Waves 1–3 merged.** Plan #78 (+ E7 #81), T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9), j14 API-36 fix #85
-    ($4.5), licence exception #86, T3 #84 ($11), E7 #82 (~$47: long context), E2 #88 ($26.5: $15.3 implementer +
-    $0.6 review + $10.6 fresh-session fix round), T7 #89 ($4.6).
-  - **Next: Wave 4 = E3 (leg labels, Opus) + T5 (routing correctness, Sonnet)** → then ask the owner about v0.9.1.
-    T5 must also fix the stale golden-trip-12 check (ignores the 10-min window) and `tools/plan_summary.py`'s
-    hard-coded +03:00 (Israel is UTC+2 from 25 Oct).
-  - **Open owner question:** T7 found that after process death the 4 car tabs restore mode + places but not their
-    results, and errands lose their stop (`SavedUi` keeps neither; notices in the `system` job). Boss proposed a
-    small Opus fix package after Wave 3; waiting for the owner.
-  - **Flakes seen (flake-log rule: twice in 14 days → fix package):** `s15_settings_bottom` twice on #82 (due a fix
-    package); once each on #88's f2a93e0: j01 permission dialog (API 33), j02 suggestion (API 35), j15 test alarm
-    > 90 s late (API 33), j05 timeout (API 33). T7's "CI flake log" issue records them from now on.
-  - T7's nightly (`nightly-ui.yml`) runs for the first time now it is on main; read the "nightly" issue. T7 guessed
-    `vm.savePlace` may crash on a failed DataStore write under low storage (unverified).
+## State (2026-10-21, 00:25 Israel time)
+- **Released:** **v0.9.1 (2026-10-20 23:08)**: E1, E7, E2, E3, R1. Saved-data sample 0.9.1 merged (#99).
+  Next: **v0.9.2 = R2 (ride-alert fix); ask the owner first** (asked 2026-10-21 00:22, no answer yet).
+- **Boss:** handing over from `session_011tJH15m5mUzgr2G4vFCaKt` (context 422k) on 2026-10-21.
+- **Phase 11:** Waves 1–4 merged: T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9), T3 #84 ($11), E7 #82 (~$47),
+  E2 #88 ($26.5), T7 #89 ($4.6), T5 #93 ($4.3), E3 #91 ($16), plus owner-approved fix packages R1 #95
+  (restore car tabs + errands after process death, ~$14 + $0.6 review + fresh fix round) and the 0.9.1 sample #99 ($2).
+  - **In flight: R2, PR #98** (`session_01N31TZYDzer5aTUXHQkq8Pd`, Opus, ~$8, ctx ~294k): the RideTracker get-off-alert
+    fix. The review found the first version's time gate broke the early-bus case (blocking); the fix round adds
+    ordered-stop progress arming (`matched ≥ n−3`, bounded ±2 matching) with the time gate as fallback, a liveness
+    property and early-bus tests. It was waiting on a re-run of `s01_home_empty`. Merge when green and all review
+    items are handled, then ask about v0.9.2.
+  - **Parked: F1, PR #96** (`session_01VjnDAbmjEnxTcfcNi88ENU`, stood down): a `performScrollToNode` helper for the
+    Settings dialog; the "multithreaded access to SnapshotStateObserver" race is still open (~1 in 12; stack
+    `LayoutNode.getCollapsedSemantics` on the test thread). Don't merge: its push run had a monkey failure and one
+    Paparazzi run was red on the same head.
+  - **Next Opus package: F2, CI stability.** (1) the SnapshotStateObserver race, starting from F1's branch and report
+    (Compose BOM 2024.12.01 / Compose 1.7.x, Espresso 3.6.1; try a BOM bump); (2) monkey "System appears to have
+    crashed at event 1797 of 6000, seed 4242" on API 35, seen 3 times (#82, F1 ×2); (3) Paparazzi red on the PR run
+    and green on the push run of the same head (F1 0d12e92). Flake-log issue #92 lists the one-offs.
+  - **Then Wave 5 (E4 + T4)** per phase11.md. The 7-day limit reads allowed_warning until **Sun 25 Oct 17:00
+    Israel**: one Opus + one Sonnet at a time.
+  - Later, from R2's review: a late bus (> 3 min) loses its alert (pre-existing; ROADMAP line).
+  - **Stall lesson:** at 08:16 UTC on 20 Oct the 5-hour limit stopped every session including the boss; nothing
+    resumed for 11 h until the owner wrote. A boss `send_later` can't fire while the boss is limited.
 - **Owner decisions this round:** "merge when green" re-confirmed in the boss session (2026-10-19 21:1x; the auto-mode
   classifier blocks merges until the owner says it in the session itself); pick-a-day package E7 (2026-10-18); 21-day timetable notice (2026-10-18);
   API keys allowed on a $0, no-card plan (2026-10-13, in CLAUDE.md); **"when green merge and continue"**
