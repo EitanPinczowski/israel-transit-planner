@@ -146,7 +146,8 @@ jobs:
               out.write(f"golden={len(golden)}\nother={len(other)}\n")
           for l in golden: print(f"::error::golden: {l}")
           for l in other: print(f"::error::unit test (not a golden): {l}")
-          PY for looking at (and for re-recording): light/dark, he/en, every shape.
+          PY
+      # Fresh pictures for looking at (and for re-recording): light/dark, he/en, every shape.
       - run: ./gradlew -p android :app:recordPaparazziDebug
       # Phase 11 T3: the ViewModel / state tests (ui/vm/ and the other plain-JVM ones) under Kover; line coverage
       # of ui/ without the Compose screens is gated (minValue in android/app/build.gradle.kts; it only ratchets up).
