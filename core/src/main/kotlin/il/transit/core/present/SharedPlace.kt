@@ -58,6 +58,8 @@ sealed interface SharedPlace {
         fun parse(shared: String?): SharedPlace {
             val text = shared?.take(MAX_SHARED)?.replace(BIDI, "")?.trim().orEmpty()
             if (text.isEmpty()) return Unreadable
+            // A geo: URI is never searched as words, even an empty or broken one ("geo:").
+            if (text.startsWith("geo:", ignoreCase = true) && text.none(Char::isWhitespace)) return geo(text.substring(4))
             var short = false
             for (m in URL.findAll(text)) {
                 when (val p = link(trimUrl(m.groupValues[1]))) {
