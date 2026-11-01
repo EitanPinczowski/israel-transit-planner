@@ -291,7 +291,7 @@ class IntentFuzzTest {
      * starts nothing and the reminder stays; through the alias it starts the ride and uses the reminder up.
      * Both sent to the open Activity (onNewIntent), as a tap with the app running does.
      */
-    @Test fun start_ride_only_through_the_alias() = AppDriver(compose).launch().use { d ->
+    @Test fun start_ride_only_through_the_alias(): Unit = AppDriver(compose).launch().use { d ->
         val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
         d.onMain { vm ->
             vm.startEditing(Field.FROM)
