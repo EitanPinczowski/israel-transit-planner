@@ -10,6 +10,12 @@ API=$1
 APKS=$2
 OUT=$3
 PKG=il.transit.planner.uitest
+RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
+CLASS=il.transit.planner.uitest.FaultMatrixTest
+# Every test is one screen and runs every fault: a run that saw fewer cases did not test them.
+SRC="$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/FaultMatrixTest.kt"
+SCREENS=$(grep -c "@Test fun" "$SRC")
+FAULTS=9
 mkdir -p "$OUT"
 : > "$OUT/crash.txt"
 failed=0
@@ -28,16 +34,21 @@ adb shell input keyevent KEYCODE_WAKEUP >/dev/null 2>&1 || true
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
 adb emu geo fix 34.8013 31.2622 >/dev/null
 sleep 5
+adb logcat -G 16M >/dev/null 2>&1 || true # the case lines must outlive a 10-min run
 adb logcat -c
 
 echo "::group::fault matrix"
-ui_instrument il.transit.planner.uitest.FaultMatrixTest "$OUT/instrument-faults.txt" -e profile "api$API" -e locale device -e theme light \
+ui_instrument "$CLASS" "$OUT/instrument-faults.txt" -e profile "api$API" -e locale device -e theme light \
   || fail "the fault matrix failed on API $API"
 echo "::endgroup::"
 # What each case saw: "<screen> <fault> -> <outcome> sent=<n> cap=<n> server=<counts per endpoint>".
 echo "::group::cases"
 adb logcat -d -s FaultMatrix:I | tr -d '\r' | grep -- " -> " | sed 's/^.*FaultMatrix: //' | tee "$OUT/cases.txt"
 echo "::endgroup::"
+cases=$(wc -l < "$OUT/cases.txt")
+echo "$cases cases ($SCREENS screens x $FAULTS faults expected)"
+[[ $cases -ge $((SCREENS * FAULTS)) ]] || fail "the fault matrix ran $cases of $((SCREENS * FAULTS)) cases"
+grep -q "^OK ($SCREENS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fail "not all $SCREENS fault-matrix tests passed"
 {
   echo "### Network-fault matrix (API $API)"
   echo '```'

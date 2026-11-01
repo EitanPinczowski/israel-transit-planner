@@ -47,7 +47,8 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
     /** The server's root URL; moved when the test restarts the server after "offline". */
     @Volatile var base: String = base.trimEnd('/')
 
-    private val http = OkHttpClient.Builder()
+    private val http = OkHttpClient
+        .Builder()
         .connectTimeout(TIMEOUT_S, TimeUnit.SECONDS)
         .readTimeout(TIMEOUT_S, TimeUnit.SECONDS)
         .build()
@@ -106,6 +107,7 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
     }
 
     @Volatile private var guard: TransitApi = GuardedTransitApi(wire, clock)
+
     @Volatile private var geocoder: BackupGeocoder = photon()
 
     /**

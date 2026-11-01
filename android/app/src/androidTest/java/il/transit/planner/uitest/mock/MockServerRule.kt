@@ -65,7 +65,10 @@ class MockServerRule : ExternalResource() {
     private var server: MockWebServer? = null
     private var airplane = false
 
-    val app: UiTestApp get() = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as UiTestApp
+    val app: UiTestApp get() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        return context.applicationContext as UiTestApp
+    }
 
     /** The server's root, for [UiTestApp.useMockServer]. */
     val url: String get() = requireNotNull(server).url("/").toString()
@@ -122,7 +125,8 @@ class MockServerRule : ExternalResource() {
     }
 
     private fun shell(cmd: String) {
-        val pfd = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(cmd)
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        val pfd = automation.executeShellCommand(cmd)
         ParcelFileDescriptor.AutoCloseInputStream(pfd).use { it.readBytes() } // runs as it is drained
     }
 
@@ -146,7 +150,8 @@ class MockServerRule : ExternalResource() {
             Fault.EMPTY_OBJECT -> MockResponse().setHeader("Content-Type", "application/json").setBody("{}")
             Fault.CUT -> normal(endpoint, path).apply {
                 // Long enough to be cut in the middle, whatever the normal answer was.
-                val body = getBody()?.readUtf8().orEmpty().ifEmpty { "[" + "{\"name\":\"x\"},".repeat(200) + "{}]" }
+                val normal = getBody()?.readUtf8().orEmpty()
+                val body = normal.ifEmpty { "[" + "{\"name\":\"x\"},".repeat(200) + "{}]" }
                 setBody(body).setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY)
             }
             Fault.RETRY_THEN_OK -> {
@@ -157,13 +162,19 @@ class MockServerRule : ExternalResource() {
         }
     }
 
-    private fun refuse(code: Int) = MockResponse().setResponseCode(code).setHeader("Retry-After", "1").setBody("{\"error\":\"busy\"}")
+    private fun refuse(code: Int): MockResponse {
+        val busy = MockResponse().setResponseCode(code)
+        return busy.setHeader("Retry-After", "1").setBody("{\"error\":\"busy\"}")
+    }
 
     private fun normal(endpoint: String, path: String): MockResponse {
         val body = bodies[endpoint] ?: when (endpoint) {
             "photon" -> fixture("photon_rager")
             "meteo" -> fixture("openmeteo_rain_telaviv")
-            else -> path.substringAfter("/motis/").substringBefore('/').toLongOrNull()?.let { app.network?.answer(it) }
+            else -> {
+                val id = path.substringAfter("/motis/").substringBefore('/')
+                id.toLongOrNull()?.let { app.network?.answer(it) }
+            }
         }
         return if (body == null) {
             MockResponse().setResponseCode(500).setBody("no answer for $path")
@@ -172,7 +183,10 @@ class MockServerRule : ExternalResource() {
         }
     }
 
-    private fun fixture(name: String): String = app.assets.open("fixtures/$name.json").bufferedReader().use { it.readText() }
+    private fun fixture(name: String): String {
+        val file = app.assets.open("fixtures/$name.json")
+        return file.bufferedReader().use { it.readText() }
+    }
 
     companion object {
         const val TAG = "FaultMatrix"

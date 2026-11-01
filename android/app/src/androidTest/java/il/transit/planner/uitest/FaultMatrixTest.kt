@@ -29,7 +29,6 @@ import il.transit.planner.UiTestApp.Companion.REHOVOT
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
-import il.transit.planner.ui.Suggestion
 import il.transit.planner.ui.TimetableAction
 import il.transit.planner.ui.TripDetailsViewModel
 import il.transit.planner.ui.UiError
@@ -172,7 +171,11 @@ class FaultMatrixTest {
 
     /** Sets the places once (the last one starts the search); afterwards the same search again. */
     private fun planAct(vararg places: Pair<Field, SavedPlace>): (Ctx) -> Unit = { c ->
-        if (c.s.to == null) places.forEach { (f, p) -> c.place(f, p) } else c.d.onMain { it.plan() }
+        if (c.s.to == null) {
+            places.forEach { (f, p) -> c.place(f, p) }
+        } else {
+            c.d.onMain { it.plan() }
+        }
     }
 
     private val planOutcome: (Ctx) -> Outcome? = { c ->
@@ -193,7 +196,11 @@ class FaultMatrixTest {
     /** The error row's Retry when it shows; the offline copy has none (the refresh asks again). */
     private val retryButton: (Ctx) -> Unit = { c ->
         val button = compose.onAllNodes(hasText(c.d.str(R.string.retry)))
-        if (button.fetchSemanticsNodes().isNotEmpty()) button.onFirst().performClick() else c.d.onMain { it.plan() }
+        if (button.fetchSemanticsNodes().isNotEmpty()) {
+            button.onFirst().performClick()
+        } else {
+            c.d.onMain { it.plan() }
+        }
     }
 
     private fun planScreen(name: String, mode: AppMode, budget: Int, endpoints: Set<String>, vararg places: Pair<Field, SavedPlace>) = Screen(
@@ -227,7 +234,14 @@ class FaultMatrixTest {
             budget = 1,
             prepare = { c -> c.tripResults() },
             act = { c -> c.d.onMain { it.later() } },
-            outcome = { c -> c.s.pages.let { p -> if (p.loading != null) null else if (p.failed) Outcome.FAILED else Outcome.OK } },
+            outcome = { c ->
+                val p = c.s.pages
+                when {
+                    p.loading != null -> null
+                    p.failed -> Outcome.FAILED
+                    else -> Outcome.OK
+                }
+            },
             message = { c -> c.d.str(R.string.page_failed) },
             retry = { c -> c.d.onMain { it.later() } },
         ),
@@ -238,10 +252,7 @@ class FaultMatrixTest {
     )
 
     @Test fun drop_off() = matrix(
-        planScreen(
-            "Drop-off", AppMode.DROP_OFF, DropOffPlanner.BUDGET, setOf("plan", "one-to-many"),
-            Field.FROM to MEITAR, Field.DRIVER_TO to TEL_AVIV, Field.TO to REHOVOT,
-        ),
+        planScreen("Drop-off", AppMode.DROP_OFF, DropOffPlanner.BUDGET, setOf("plan", "one-to-many"), Field.FROM to MEITAR, Field.DRIVER_TO to TEL_AVIV, Field.TO to REHOVOT),
     )
 
     @Test fun pick_up() = matrix(
@@ -312,7 +323,8 @@ class FaultMatrixTest {
             prepare = { c ->
                 c.d.onMain { it.openStop(STOP_ID, "תחנה מרכזית") }
                 compose.waitUntil(WAIT_MS) { c.s.stopSheet?.loading == false }
-                c.row = c.s.stopSheet?.rows?.firstOrNull()
+                val sheet = c.s.stopSheet
+                c.row = sheet?.rows?.firstOrNull()
                 assertTrue("no departures to open a timetable from", c.row != null)
             },
             act = { c -> c.d.onMain { it.timetable(TimetableAction.Open(c.row!!)) } },
@@ -343,7 +355,8 @@ class FaultMatrixTest {
                 budget = 1,
                 prepare = { c ->
                     c.tripResults()
-                    c.leg = c.s.options.flatMap { it.legs }.first { it.isTransit }
+                    val options = c.s.options
+                    c.leg = options.flatMap { it.legs }.first { it.isTransit }
                 },
                 act = open,
                 outcome = { c ->
@@ -372,7 +385,14 @@ class FaultMatrixTest {
                 budget = 1,
                 act = { c -> c.d.onMain { it.onViewport(box(c.seq), 16.0) } },
                 // Stops are decoration: a failure leaves the layer as it was. Done once the request had its time.
-                outcome = { c -> if (c.elapsed < SILENT_MS) null else if (c.vm.stops.value.contains("\"Feature\"")) Outcome.OK else Outcome.FAILED },
+                outcome = { c ->
+                    val layer = c.vm.stops.value
+                    when {
+                        c.elapsed < SILENT_MS -> null
+                        layer.contains("\"Feature\"") -> Outcome.OK
+                        else -> Outcome.FAILED
+                    }
+                },
                 repeat = { c -> c.d.onMain { it.onViewport(box(c.seq), 16.0) } },
                 keepsOld = true,
             ),
