@@ -16,6 +16,7 @@ PKG=il.transit.planner.uitest
 ACT=$PKG/il.transit.planner.MainActivity
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$OUT"
+echo "$MODE report on API $API, started $(date -u +%FT%TZ)" > "$OUT/started.txt" # so a failed run still uploads something
 failed=0
 # shellcheck source=ui_instrument.sh
 source "$(dirname "$0")/ui_instrument.sh"
@@ -31,54 +32,111 @@ adb emu geo fix 34.8013 31.2622 >/dev/null
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS >/dev/null 2>&1 || true
 adb logcat -c
 
-ready() { # $1 = kind: wait for the probe's "ready" line
-  for _ in $(seq 1 40); do
-    adb logcat -d -s PerfProbe:I PerfProbe:E | tr -d '\r' | grep -q "ready kind=$1" && return 0; sleep 1
+# What the phone was doing when the probe never answered (the artifacts of a failed run can't be read from a cloud session).
+diag() {
+  echo "::group::why the probe did not answer"
+  echo "--- PerfProbe, crashes, ANRs, the app's own errors"
+  adb logcat -d | tr -d '\r' | grep -E " PerfProbe|AndroidRuntime|FATAL EXCEPTION|ANR in|MapGuard|Fatal signal" | tail -30
+  echo "--- crash buffer"; adb logcat -d -b crash | tail -40
+  echo "--- resumed activity / focus"
+  adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity" | head -3
+  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3
+  echo "--- process"; adb shell pidof "$PKG" || echo "app not running"
+  adb exec-out screencap -p > "$OUT/screen.png" 2>/dev/null || true
+  echo "::endgroup::"
+}
+
+start_probe() { # $1 = map | ride: start the app with the probe's extra
+  adb logcat -c
+  adb shell am start -S -W -n "$ACT" --es uitest_perf "$1" | tr -d '\r' | grep -E "Status|TotalTime|Error|Exception" || true
+}
+
+ready() { # $1 = kind: wait for the probe's "ready" line (the first start on a fresh emulator can take a minute)
+  for _ in $(seq 1 120); do
+    adb logcat -d -s PerfProbe:I | tr -d '\r' | grep -q "ready kind=$1" && return 0; sleep 1
   done
-  adb logcat -d -s PerfProbe:I PerfProbe:E | tr -d '\r' | tail -3
+  diag
   return 1
 }
 
+# The first launch of an installed app pays for dexopt, the welcome tour and the map's first style load: do it once, then stop the app,
+# so the measured run starts the way every later one does.
+adb shell am start -W -n "$ACT" >/dev/null 2>&1 || true
+sleep 10
+adb shell am force-stop "$PKG"
+
 if [[ $MODE == jank ]]; then
-  adb shell am start -S -W -n "$ACT" --es uitest_perf map >/dev/null
+  adb shell wm density 420 # a phone-sized layout on the 1080x2400 skin (set before the app starts)
+  start_probe map
   ready map || { fail "the route was not drawn (PerfProbe never said ready)"; exit 1; }
   sleep 4
   size=$(adb shell wm size | tr -d '\r' | grep -o '[0-9]*x[0-9]*' | tail -1)
   w=${size%x*}; h=${size#*x}
-  x1=$((w / 4)); x2=$((w * 3 / 4)); y1=$((h / 8)); y2=$((h / 3))
+  echo "screen $size"
+  # The map is the band between the search card (top ~22 %) and the results sheet (bottom ~45 %): swipe only inside it.
+  x1=$((w / 5)); x2=$((w * 4 / 5)); y1=$((h * 27 / 100)); y2=$((h * 40 / 100)); ym=$(((y1 + y2) / 2))
   adb shell dumpsys gfxinfo "$PKG" reset >/dev/null
   # Pan in four directions, double-tap to zoom in then out, six rounds: ~1 minute of movement over Tel Aviv.
   for round in 1 2 3 4 5 6; do
     adb shell "input swipe $x1 $y2 $x2 $y1 350; input swipe $x2 $y1 $x1 $y2 350; input swipe $x1 $y1 $x2 $y2 350; input swipe $x2 $y2 $x1 $y1 350; \
-      input tap $x2 $y1; input tap $x2 $y1; sleep 1; input swipe $x1 $y2 $x2 $y1 250; input swipe $x2 $y1 $x1 $y2 250; sleep 1"
+      input tap $x2 $ym; input tap $x2 $ym; sleep 1; input swipe $x1 $y2 $x2 $y1 250; input swipe $x2 $y1 $x1 $y2 250; sleep 1"
   done
+  # The map draws on its own surface (MapLibre's GLSurfaceView), which HWUI's gfxinfo does not see: one long swipe, then SurfaceFlinger's
+  # own frame timestamps for that layer (the last 127 frames).
+  adb shell input swipe $x1 $y2 $x2 $y1 2000
+  # The listing prints "RequestedLayerState{SurfaceView[pkg/activity](BLAST)#167 parentId=166}": the layer name is the SurfaceView[...]#n part.
+  layer=$(adb shell dumpsys SurfaceFlinger --list | tr -d '\r' | grep "SurfaceView\[$PKG" | head -1 | sed -n 's/.*{\(SurfaceView[^ ]*\).*/\1/p')
+  echo "map layer: ${layer:-none}"
+  if [[ -n $layer ]]; then
+    adb shell "dumpsys SurfaceFlinger --latency '$layer'" | tr -d '\r' > "$OUT/sf-latency.txt"
+  else
+    : > "$OUT/sf-latency.txt"
+  fi
+  map_line=$(python3 -I - "$OUT/sf-latency.txt" <<'PY'
+import statistics, sys
+rows = [l.split() for l in open(sys.argv[1]).read().splitlines()[1:] if len(l.split()) == 3]
+present = [int(r[1]) for r in rows if int(r[1]) < 9 * 10**18]  # a pending frame is INT64_MAX
+gaps = [(b - a) / 1e6 for a, b in zip(present, present[1:])]
+if len(gaps) < 10:
+    print("map layer: too few frames to measure (%d)" % len(gaps)); sys.exit()
+gaps.sort()
+janky = sum(1 for g in gaps if g > 25) * 100 / len(gaps)
+print("map layer (SurfaceFlinger, last %d frames of a 2 s swipe): median gap %.1f ms, p90 %.1f ms, p99 %.1f ms, gaps over 25 ms: %.0f %%" % (
+    len(gaps), statistics.median(gaps), gaps[int(len(gaps) * 0.9) - 1], gaps[min(len(gaps) - 1, int(len(gaps) * 0.99))], janky))
+PY
+)
+  echo "$map_line"
   adb shell dumpsys gfxinfo "$PKG" > "$OUT/gfxinfo.txt"
   adb shell dumpsys gfxinfo "$PKG" framestats > "$OUT/framestats.txt"
   grep -E "Total frames rendered|Janky frames|50th|90th|95th|99th|Number (Missed|High input|Slow)" "$OUT/gfxinfo.txt" | tee "$OUT/jank.txt"
   frames=$(sed -n 's/^Total frames rendered: *//p' "$OUT/gfxinfo.txt" | head -1)
-  [[ ${frames:-0} -ge 100 ]] || fail "only ${frames:-0} frames were rendered: the pan / zoom did not move the map"
-  summary "### Map jank (API $API, uitest build, software GL)"
+  echo "$map_line" >> "$OUT/jank.txt"
+  [[ ${frames:-0} -ge 1 ]] || fail "gfxinfo saw no frame at all: the app was not drawing"
+  summary "### Map jank (API $API, uitest build, software GL; HWUI frames = the Compose UI, the map layer is measured on its own)"
   summary '```'; summary "$(cat "$OUT/jank.txt")"; summary '```'
   adb logcat -d -b crash | grep -q "Process: $PKG" && fail "the app crashed during the pan / zoom"
   exit $failed
 fi
 
 # --- ride --------------------------------------------------------------------------------------------------------------------
-python3 -I - "$ROOT/core/src/test/resources/tracks/train_clean.gpx" "$OUT/fixes.txt" <<'PY'
+python3 -I - "$ROOT/core/src/test/resources/tracks/train_clean.gpx" "$OUT/fixes.txt" "${PERF_RIDE_FIXES:-1800}" <<'PY'
 import re, sys
+fixes = int(sys.argv[3])
 pts = [tuple(map(float, m)) for m in re.findall(r'<trkpt lat="([\d.]+)" lon="([\d.]+)"', open(sys.argv[1]).read())]
 out = []
 for (la1, lo1), (la2, lo2) in zip(pts, pts[1:]):
     for k in range(10):  # the fixtures are one fix per 10 s; the phone gets one per second
         f = k / 10
         out.append(f"{lo1 + (lo2 - lo1) * f:.6f} {la1 + (la2 - la1) * f:.6f}")
-open(sys.argv[2], "w").write("\n".join(out[:1800]) + "\n")
-print(len(out[:1800]), "fixes")
+open(sys.argv[2], "w").write("\n".join(out[:fixes]) + "\n")
+print(len(out[:fixes]), "fixes")
 PY
 first=$(head -1 "$OUT/fixes.txt")
 adb emu geo fix $first >/dev/null
-adb shell am start -S -W -n "$ACT" --es uitest_perf ride >/dev/null
+start_probe ride
 ready ride || { fail "the ride did not start (PerfProbe never said ready)"; exit 1; }
+# batterystats only counts while the phone is on battery: tell the emulator it is unplugged for the ride.
+adb shell dumpsys battery unplug >/dev/null
 adb shell dumpsys batterystats --enable full-wake-history >/dev/null 2>&1 || true
 adb shell dumpsys batterystats --reset >/dev/null
 adb shell dumpsys alarm > "$OUT/alarm-before.txt"
@@ -92,20 +150,34 @@ echo "fed $(wc -l < "$OUT/fixes.txt") fixes in ${secs}s"
 adb shell dumpsys batterystats --checkin > "$OUT/batterystats-checkin.txt"
 adb shell dumpsys batterystats "$PKG" > "$OUT/batterystats-app.txt"
 adb shell dumpsys alarm > "$OUT/alarm-after.txt"
-uid=$(adb shell dumpsys package "$PKG" | tr -d '\r' | sed -n 's/.*userId=\([0-9]*\).*/\1/p' | head -1)
+adb shell dumpsys battery reset >/dev/null
+uid=$(adb shell pm list packages -U "$PKG" | tr -d '\r' | sed -n "s/^package:$PKG uid://p" | head -1)
 echo "uid $uid"
-grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" | cut -c1-220 > "$OUT/app-checkin.txt"
+grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" > "$OUT/app-checkin.txt"
+# Checkin records of the app: apk = wakeups (apk,<wakeups>,<apk>,<service>,...), wl = wake locks, sr = sensors (GPS is sensor -10000:
+# <total ms>,<count>), jb = jobs, ua = a user-activity line. The fields stay in the artifact; the summary names the ones asked for.
+wakeups=$(awk -F, '$4=="apk"{s+=$5} END{print s+0}' "$OUT/app-checkin.txt")
+wakeup_alarms=$(awk -F, '$4=="wua"' "$OUT/app-checkin.txt" | wc -l)
+gps_ms=$(awk -F, '$4=="sr" && $5=="-10000"{s+=$6} END{print s+0}' "$OUT/app-checkin.txt")
+wl_lines=$(awk -F, '$4=="wl"' "$OUT/app-checkin.txt" | wc -l)
+# The per-app text block of `batterystats`: "Uid u0a209:" down to the next blank line.
+awk "/^ *Uid u0a$((uid - 10000)):/,/^$/" "$OUT/batterystats-app.txt" > "$OUT/app-block.txt"
+alarm_stats=$(awk "/$PKG/ && /(run|alarms)/" "$OUT/alarm-after.txt" | head -5)
 {
   echo "### 30-minute simulated ride (API $API, ${secs}s of wall time for $(wc -l < "$OUT/fixes.txt") fixes)"
-  echo "RideService alive at the end: $(adb shell dumpsys activity services "$PKG" | grep -c RideService) record(s)"
+  echo "- wakeups of the app (batterystats apk records): **$wakeups**; wakeup-alarm wake locks (wua): **$wakeup_alarms**"
+  echo "- GPS-on time of the app (sensor -10000): **${gps_ms} ms**"
+  echo "- wake-lock records of the app: **$wl_lines**"
+  echo "- RideService records alive at the end: $(adb shell dumpsys activity services "$PKG" | grep -c RideService)"
   echo '```'
-  echo "# app uid $uid, batterystats --checkin lines (wl = wake locks, gps/gpsd = GPS, jb = jobs, sst/ssr = sensors)"
-  head -40 "$OUT/app-checkin.txt"
-  echo "# human-readable per-app block"
-  grep -iE "wake ?lock|wakeup|gps|alarm|sensor|foreground|Computed drain|Total cpu" "$OUT/batterystats-app.txt" | head -30
+  echo "# app uid $uid, batterystats --checkin lines of the app (apk = wakeups, wl = wake locks, sr = sensors, jb = jobs)"
+  cut -c1-200 "$OUT/app-checkin.txt" | head -30
+  echo "# the app's block in the text report"
+  cut -c1-200 "$OUT/app-block.txt" | head -30
   echo "# alarms of the app (dumpsys alarm)"
-  grep -c "$PKG" "$OUT/alarm-after.txt" | sed 's/^/entries mentioning the app: /'
+  echo "${alarm_stats:-none}"
   echo '```'
 } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}"
+[[ -n $uid ]] || fail "could not read the app's uid: the numbers above are empty"
 adb logcat -d -b crash | grep -q "Process: $PKG" && fail "the app crashed during the simulated ride"
 exit $failed

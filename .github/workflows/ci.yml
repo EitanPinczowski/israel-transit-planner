@@ -22,6 +22,8 @@ jobs:
         run: python3 tools/kover_summary.py >> "$GITHUB_STEP_SUMMARY"
       - run: python3 tools/check_docs.py
       - run: python3 tools/check_strings.py
+      # The flake log skips a cancelled job (dry run, no network).
+      - run: bash tools/test_flake_log.sh
       # Phase 11 T5: the contract shapes are generated from the fixtures; a fixture change must regenerate them.
       - run: python3 tools/contract_check.py --check-shapes
       # Phase 11 T2: style. ktlint lists every finding; the gate fails on lines this change added or edited.
