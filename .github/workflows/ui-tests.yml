@@ -90,7 +90,8 @@ jobs:
           name: layout-${{ matrix.shard }}
           path: out/
           retention-days: 7
-      - if: always()
+      # Not for a cancelled job (a newer push cancels it): its half-run tests are not failures (F3, tools/ui_flake_log.sh).
+      - if: always() && !cancelled()
         name: Flake log
         env:
           GH_TOKEN: ${{ github.token }}
@@ -144,7 +145,8 @@ jobs:
           name: behaviour-${{ matrix.api }}
           path: out/
           retention-days: 7
-      - if: always()
+      # Not for a cancelled job (a newer push cancels it): its half-run tests are not failures (F3, tools/ui_flake_log.sh).
+      - if: always() && !cancelled()
         name: Flake log
         env:
           GH_TOKEN: ${{ github.token }}
@@ -187,7 +189,8 @@ jobs:
           name: system-34
           path: out/
           retention-days: 7
-      - if: always()
+      # Not for a cancelled job (a newer push cancels it): its half-run tests are not failures (F3, tools/ui_flake_log.sh).
+      - if: always() && !cancelled()
         name: Flake log
         env:
           GH_TOKEN: ${{ github.token }}
@@ -248,7 +251,8 @@ jobs:
           name: faults-35
           path: out/
           retention-days: 7
-      - if: always()
+      # Not for a cancelled job (a newer push cancels it): its half-run tests are not failures (F3, tools/ui_flake_log.sh).
+      - if: always() && !cancelled()
         name: Flake log
         env:
           GH_TOKEN: ${{ github.token }}
@@ -299,7 +303,8 @@ jobs:
           name: release-smoke
           path: out/
           retention-days: 7
-      - if: always()
+      # Not for a cancelled job (a newer push cancels it): its half-run tests are not failures (F3, tools/ui_flake_log.sh).
+      - if: always() && !cancelled()
         name: Flake log
         env:
           GH_TOKEN: ${{ github.token }}

@@ -10,6 +10,10 @@ on:
   schedule:
     - cron: "47 22 * * *"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "perf = only the performance reports (a fix for them), all = everything"
+        default: all
 
 concurrency:
   group: nightly-ui
@@ -56,6 +60,7 @@ jobs:
   chaos:
     name: ${{ matrix.mode }} on API 35
     needs: build
+    if: github.event.inputs.only != 'perf'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -135,7 +140,7 @@ jobs:
   report:
     name: comment on the nightly issue
     needs: [chaos, perf]
-    if: failure()
+    if: failure() && github.event.inputs.only != 'perf'
     runs-on: ubuntu-latest
     permissions: { contents: read, issues: write }
     steps:

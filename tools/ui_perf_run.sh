@@ -16,6 +16,7 @@ PKG=il.transit.planner.uitest
 ACT=$PKG/il.transit.planner.MainActivity
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$OUT"
+echo "$MODE report on API $API, started $(date -u +%FT%TZ)" > "$OUT/started.txt" # so a failed run still uploads something
 failed=0
 # shellcheck source=ui_instrument.sh
 source "$(dirname "$0")/ui_instrument.sh"
@@ -31,16 +32,41 @@ adb emu geo fix 34.8013 31.2622 >/dev/null
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS >/dev/null 2>&1 || true
 adb logcat -c
 
-ready() { # $1 = kind: wait for the probe's "ready" line
-  for _ in $(seq 1 40); do
+# What the phone was doing when the probe never answered (the artifacts of a failed run can't be read from a cloud session).
+diag() {
+  echo "::group::why the probe did not answer"
+  echo "--- PerfProbe, crashes, ANRs, the app's own errors"
+  adb logcat -d | tr -d '\r' | grep -E "PerfProbe|AndroidRuntime|FATAL EXCEPTION|ANR in|MapGuard|Fatal signal|il.transit.planner" | tail -60
+  echo "--- crash buffer"; adb logcat -d -b crash | tail -40
+  echo "--- resumed activity / focus"
+  adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity" | head -3
+  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3
+  echo "--- process"; adb shell pidof "$PKG" || echo "app not running"
+  adb exec-out screencap -p > "$OUT/screen.png" 2>/dev/null || true
+  echo "::endgroup::"
+}
+
+start_probe() { # $1 = map | ride: start the app with the probe's extra
+  adb logcat -c
+  adb shell am start -S -W -n "$ACT" --es uitest_perf "$1" | tr -d '\r' | grep -E "Status|TotalTime|Error|Exception" || true
+}
+
+ready() { # $1 = kind: wait for the probe's "ready" line (the first start on a fresh emulator can take a minute)
+  for _ in $(seq 1 120); do
     adb logcat -d -s PerfProbe:I PerfProbe:E | tr -d '\r' | grep -q "ready kind=$1" && return 0; sleep 1
   done
-  adb logcat -d -s PerfProbe:I PerfProbe:E | tr -d '\r' | tail -3
+  diag
   return 1
 }
 
+# The first launch of an installed app pays for dexopt, the welcome tour and the map's first style load: do it once, then stop the app,
+# so the measured run starts the way every later one does.
+adb shell am start -W -n "$ACT" >/dev/null 2>&1 || true
+sleep 10
+adb shell am force-stop "$PKG"
+
 if [[ $MODE == jank ]]; then
-  adb shell am start -S -W -n "$ACT" --es uitest_perf map >/dev/null
+  start_probe map
   ready map || { fail "the route was not drawn (PerfProbe never said ready)"; exit 1; }
   sleep 4
   size=$(adb shell wm size | tr -d '\r' | grep -o '[0-9]*x[0-9]*' | tail -1)
@@ -77,7 +103,7 @@ print(len(out[:1800]), "fixes")
 PY
 first=$(head -1 "$OUT/fixes.txt")
 adb emu geo fix $first >/dev/null
-adb shell am start -S -W -n "$ACT" --es uitest_perf ride >/dev/null
+start_probe ride
 ready ride || { fail "the ride did not start (PerfProbe never said ready)"; exit 1; }
 adb shell dumpsys batterystats --enable full-wake-history >/dev/null 2>&1 || true
 adb shell dumpsys batterystats --reset >/dev/null
