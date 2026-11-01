@@ -78,6 +78,9 @@ class FaultMatrixTest {
     /** One run of the matrix on one screen. [seq] counts actions, so inputs can differ per action. */
     class Ctx(val d: AppDriver, val net: MockNetwork) {
         var seq = 0
+
+        /** [seq] of the last action that showed its answer: what the repeat check repeats. */
+        var okSeq = 0
         var actAt = 0L
         var leg: Leg? = null
         var row: DepartureRow? = null
@@ -112,6 +115,8 @@ class FaultMatrixTest {
         val keepsOld: Boolean = false,
         /** Success shows nothing the test can read (stops outside the recorded area): the server's count proves it. */
         val silentSuccess: Boolean = false,
+        /** The endpoints the repeat check counts (default: all of [endpoints]). */
+        val repeatEndpoints: Set<String>? = null,
         /** `{}` may read as "nothing more" (an empty page of Earlier / Later). */
         val emptyReadsOk: Boolean = false,
         /** What the test saw, for a failure message. */
@@ -140,6 +145,7 @@ class FaultMatrixTest {
             throw AssertionError("${s.name} / $label: still loading after ${WAIT_MS / 1000} s (endless spinner?) server=${mock.counts()}", e)
         }
         compose.waitForIdle()
+        if (out == Outcome.OK) c.okSeq = c.seq
         return requireNotNull(out)
     }
 
@@ -160,6 +166,7 @@ class FaultMatrixTest {
                 val cap = s.budget * (if (f.retried) 2 else 1)
                 Log.i(MockServerRule.TAG, "${s.name} $f -> $out sent=$sent cap=$cap server=${mock.counts()}")
                 assertTrue("${s.name} / $f: sent $sent requests, its cap is $cap (budget ${s.budget})", sent <= cap)
+                if (f != Fault.OFFLINE) assertTrue("${s.name} / $f: no request reached the server, the fault was not tried", sent >= 1)
                 if (f == Fault.RETRY_THEN_OK) {
                     if (!s.silentSuccess) assertEquals("${s.name} / $f: the guard's retry did not get the answer (${s.describe(c)})", Outcome.OK, out)
                     assertTrue("${s.name} / $f: no refused request then answer (sent $sent)", sent >= 2)
@@ -196,11 +203,13 @@ class FaultMatrixTest {
             // A second identical action within the cache time sends nothing.
             mock.script(emptyList(), null)
             s.repeat?.let { r ->
+                c.seq = c.okSeq
                 mock.settle(1_500)
                 val before = mock.counts()
                 run(c, s, "repeat", r)
                 mock.settle()
-                val sent = mock.count(s.endpoints) - s.endpoints.sumOf { before[it] ?: 0 }
+                val counted = s.repeatEndpoints ?: s.endpoints
+                val sent = mock.count(counted) - counted.sumOf { before[it] ?: 0 }
                 assertEquals("${s.name}: the same action again within the cache time (server before $before, after ${mock.counts()})", 0, sent)
             }
         }
@@ -285,6 +294,11 @@ class FaultMatrixTest {
             },
             message = { c -> c.d.str(R.string.page_failed) },
             retry = { c -> c.d.onMain { it.later() } },
+            // A fresh search each time: an empty `{}` page leaves no cursor to page from.
+            reset = { c ->
+                c.d.onMain { it.plan() }
+                c.d.awaitSearch()
+            },
             emptyReadsOk = true,
         ),
     )
@@ -488,12 +502,14 @@ class FaultMatrixTest {
             retry = { c -> c.seq++; type(c) },
             reset = { c -> c.d.onMain { it.cancelEditing() } },
             repeat = type,
+            // Transitous only: the repeat asks Photon once more after a 429 on it (finding, PR #106).
+            repeatEndpoints = if ("geocode" in endpoints) setOf("geocode") else null,
         )
     }
 
     @Test fun pin_name() {
-        // Steps of ~5 m around BGU: the recorded reverse geocode is there, and a name from far away is dropped.
-        fun point(seq: Int) = LatLon(BGU.lat + 0.00005 * seq, BGU.lon)
+        // Steps of ~1 m around BGU: the recorded reverse geocode is there, and a name from far away is dropped.
+        fun point(seq: Int) = LatLon(BGU.lat + 0.00001 * seq, BGU.lon)
         val press: (Ctx) -> Unit = { c -> c.d.onMain { it.onMapLongPress(point(c.seq)) } }
         matrix(
             Screen(

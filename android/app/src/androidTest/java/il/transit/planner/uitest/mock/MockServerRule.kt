@@ -35,10 +35,12 @@ enum class Fault(val retried: Boolean) {
 
     /** 200, and the connection drops halfway through the body. */
     CUT(false),
-    OFFLINE(false),
 
     /** 429 then the normal answer: the guard's retry must get it. */
     RETRY_THEN_OK(true),
+
+    /** Last: after it the server comes back on a new port, and the repeat check runs. */
+    OFFLINE(false),
 }
 
 /**
