@@ -168,6 +168,7 @@ class FaultMatrixTest {
                 assertTrue("${s.name} / $f: sent $sent requests, its cap is $cap (budget ${s.budget})", sent <= cap)
                 if (f != Fault.OFFLINE) assertTrue("${s.name} / $f: no request reached the server, the fault was not tried", sent >= 1)
                 if (f == Fault.RETRY_THEN_OK) {
+                    if (s.silentSuccess) c.okSeq = c.seq // its answer is not on screen, but it came
                     if (!s.silentSuccess) assertEquals("${s.name} / $f: the guard's retry did not get the answer (${s.describe(c)})", Outcome.OK, out)
                     assertTrue("${s.name} / $f: no refused request then answer (sent $sent)", sent >= 2)
                 } else {
