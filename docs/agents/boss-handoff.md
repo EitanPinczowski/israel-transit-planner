@@ -12,8 +12,8 @@ decisions already recorded.
 - **Merged since 21 Oct:** #100 handoff, #98 R2, #102 notes, #103 sample, #104 **F2 CI stability**
   (~$19 across F2, F2b and a Sonnet review), #106 **T4 fault matrix** (~$14; 144 cases, the `faults` job 10 min).
   #96 (F1) closed, superseded by #104.
-- **Waiting on the owner: E4, PR #105** (`session_01DH799DKAhEoxG7ys5NCvDS`, Opus, ~$12, green on
-  b482637, review round done). Two owner questions, asked 2026-11-01 ~04:10 Israel:
+- **E4, PR #105: the owner answered both 2026-11-01 ~06:20 Israel (apps confirmed on the Pixel; the low-data rule accepted)** (`session_01DH799DKAhEoxG7ys5NCvDS`, Opus, ~$12, green on
+  b482637, review round done). The two questions as asked:
   1. **The payment apps on the Pixel** (owner decision 1): Rav-Kav Online `com.pcentra.ravkavonlinemobile`,
      Rav-Pass by HopOn `co.hopon.client`, Moovit `com.tranzmate`. ANY WAY was dropped (service ended in 2022).
   2. **Low data departs from owner decision 2** ("no neighbour tiles"): stops are fetched only when a tile
@@ -21,7 +21,7 @@ decisions already recorded.
      requests (+5–13%); the new rule is ~75–80% of normal and never more (pinned in `LowDataTest`).
      The boss recommends accepting it.
   - Also asked: with no app chosen, should the pass notice open the chooser (a small follow-up) rather than Settings?
-  - **After the answers:** E4 merges `origin/main` (T4 landed; both edit the `transitous-api` skill),
+  - **Now:** E4 merges `origin/main` (T4 landed; both edit the `transitous-api` skill),
     green again, then the boss merges. Then add T4's open check, "E4 data card == server counts", as a small follow-up.
 - **Next (Wave 6: T6 + T8)** per `phase11.md`, after E4. Then E5, then (optional) E6 → v0.10.0.
 - **Fix packages owed** (flake policy, "flakes twice in 14 days"):
