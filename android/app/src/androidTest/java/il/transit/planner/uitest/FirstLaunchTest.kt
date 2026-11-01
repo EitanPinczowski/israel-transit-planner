@@ -32,7 +32,9 @@ import java.util.regex.Pattern
  */
 @RunWith(AndroidJUnit4::class)
 class FirstLaunchTest {
-    @get:Rule val compose = createEmptyComposeRule()
+    val compose = createEmptyComposeRule()
+
+    @get:Rule val leaks = Leaks.around(compose)
 
     /** Closes an "X has stopped" dialog of some other process; true if there was one. */
     private fun dismissSystemCrash(device: UiDevice): Boolean {

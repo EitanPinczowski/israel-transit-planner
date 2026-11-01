@@ -25,7 +25,9 @@ import java.time.Instant
  */
 @RunWith(AndroidJUnit4::class)
 class ChaosJourneysTest {
-    @get:Rule val compose = createEmptyComposeRule()
+    val compose = createEmptyComposeRule()
+
+    @get:Rule val leaks = Leaks.around(compose)
 
     @get:Rule val permissions = Permissions.grantAll()
 

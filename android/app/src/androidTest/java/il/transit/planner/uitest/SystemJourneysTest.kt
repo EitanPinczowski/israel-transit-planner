@@ -46,7 +46,9 @@ import java.time.ZoneId
  */
 @RunWith(AndroidJUnit4::class)
 class SystemJourneysTest {
-    @get:Rule val compose = createEmptyComposeRule()
+    val compose = createEmptyComposeRule()
+
+    @get:Rule val leaks = Leaks.around(compose)
 
     @get:Rule val permissions = Permissions.grantAll()
 

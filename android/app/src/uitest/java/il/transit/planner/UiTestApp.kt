@@ -36,6 +36,9 @@ class UiTestApp : TransitApp() {
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(ProcessDeathProbe) // the process-death journey (D11)
+        LeakConfig.install() // framework-only leak paths are library leaks, not failures (Phase 11 T8)
+        registerActivityLifecycleCallbacks(PerfProbe) // the nightly jank and ride-battery reports (Phase 11 T8)
+        registerActivityLifecycleCallbacks(UpgradeProbe) // the upgrade test reads the old build's data (Phase 11 T8)
     }
 
     val replay: ReplayTransitApi by lazy {

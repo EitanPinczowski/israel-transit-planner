@@ -233,6 +233,47 @@ the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on
   the budget constant, `act`, `outcome` (null while loading), `message`, `retry`, `reset`, `repeat`. Vary the input per
   action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
 
+
+## Release, upgrade, leaks, performance (Phase 11 T8)
+
+0 requests everywhere: the release APK runs with the emulator's network off.
+
+**Release-APK smoke: the `release-smoke` job** (`tools/ui_release_run.sh`, API 35, ≤ 10 min of emulator). The job makes a throwaway keystore with
+`keytool` (never committed, never a secret) and builds `assembleRelease` with `RELEASE_VERSION=9.9.9 -PsmokeAbi=x86_64` (the property only adds the
+emulator's ABI; a real release never sets it). Then: `aapt2 dump badging` (app id `il.transit.planner`, version 9.9.9 / code 90909, not debuggable),
+the dex holds no `UiTestApp` / probe / replay / LeakCanary string and the APK no `uitest` assets; airplane mode on (no connected network, checked
+twice); launch, skip the tour, ⋮ → Settings (found by text through `uiautomator dump`), a 500-event monkey (the app's own crash or ANR fails; other
+processes' are notices). R8 is off (`isMinifyEnabled = false`): this job is where turning it on will show.
+**Startup gate:** 10 cold starts (`am force-stop`, `am start -W`, `TotalTime`); the median against `startup-baseline.json` (`median_ms`, `tolerance`
+0.25, owner decision 24): above baseline + 25 % fails. `median_ms: null` only reports. To change the baseline, edit the file in a PR with the
+reason (a slower start is a regression to explain, not to absorb). Macrobenchmark is not used.
+
+**Upgrade test: `upgrade.yml`** (`workflow_dispatch`, weekly, PRs touching `core/.../user/**`, `history/**`, `android/**/data/**`, the manifest or
+`app/build.gradle.kts`; `tools/ui_upgrade_run.sh`, `tools/upgrade_data.py`). Builds the latest release tag's `uitest` APK (a `git worktree` of the
+tag, its own version) and HEAD's (`RELEASE_VERSION=99.0.0`, so the install is a real upgrade), both signed with the job's debug key. The old one is
+installed and launched once; `upgrade_data.py write` turns the tag's saved-data sample (`core/src/test/resources/fixtures/userdata/<ver>.json`,
+T1) into its Preferences DataStore (protobuf) and `history.json`, written with `run-as`; nightRefresh is switched on and one leave reminder added.
+The old build is launched (night refresh enqueued) and sent `BOOT_COMPLETED` as root (leave alarm armed). `adb install -r` of the new APK: the
+`LEAVE` alarm must be back **before the app is opened** (`MY_PACKAGE_REPLACED`). `UpgradeProbe` (uitest only, `am start --ez uitest_upgrade_probe true`)
+logs settings, places, trips, My lines, history, reminder, night-refresh work and channels; `upgrade_data.py compare` fails on any value the new build
+lost (new fields are fine). A release without its sample fails the job with the command to make it (skill `release-apk`).
+`release.yml` also installs the previous release's published APK, then the newly signed one, over it (`tools/release_upgrade_check.sh`).
+
+**Leaks:** LeakCanary (`leakcanary-android` in the `uitest` build only, `leakcanary-android-instrumentation` for tests; no launcher icon). `AppDriver.close()`
+closes the Activity and calls `LeakAssertions.assertNoLeaks`: a retained Activity, ViewModel, MapView or service fails the journey with the trace. If it
+fires, it is a real leak in the app (or a library): fix it or open an issue; never turn the check off (`AppDriver.detectLeaks` exists only for a test that
+holds the app open by design).
+
+**Nightly performance reports** (`nightly-ui.yml` job `perf`, `tools/ui_perf_run.sh`, uitest build, software GL: compare a number with its own history, never
+with a phone's; numbers in the job summary, the trend table is `docs/testing/perf.md`, updated by the boss at close-out; no gate until 2 weeks of numbers).
+`PerfProbe` (uitest only, `--es uitest_perf map|ride`) draws BGU → Tel Aviv. `jank`: scripted pans and double-taps for about a minute, `dumpsys gfxinfo`:
+janky-frame % and the 50th / 90th / 95th / 99th percentile frame times. `ride`: `train_clean.gpx` interpolated to one fix per second, 1 800 `adb emu geo
+fix`, a real ride on the emulator's GPS; `dumpsys batterystats --reset` before and `--checkin` after: wake locks, GPS-on time, jobs, alarms of the app.
+
+**Journey inventory:** `docs/testing/inventory.md` (feature × unit × VM × shots × journey × faults × phone). `check_docs.py` fails if it names a journey that
+does not exist or a journey test it does not name. `MoreJourneysTest` (API 34 and 35, in `ui_behaviour_run.sh`): drop-off pick and send, park & ride,
+stop sheet → day timetable, a shared `geo:` link, the monthly report export. The release checklist for real phones is `docs/testing/bug-bash.md`.
+
 ## Security and in-app update tests (Phase 11 T6)
 
 In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui_faults_run.sh`). 0 requests to the internet.
