@@ -212,3 +212,24 @@ in 14 days gets a fix package, never a skip.** `issues: write` is given to those
 - **Monkey**: `ui_monkey_evidence` prints the monkey's CRASH/ANR block and the device evidence into the job
   log, because artifacts can't be read from a cloud session.
 
+## Network-fault matrix (Phase 11 T4)
+
+**PR time: the `faults` job** (`tools/ui_faults_run.sh`, API 35 `google_apis`, `FaultMatrixTest`). 0 requests to
+the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on 127.0.0.1 inside the test process.
+- **The seam (uitest build only):** `UiTestApp.useMockServer(url)` before `launch()` sets `UiTestApp.network`
+  (`MockNetwork`): `api` becomes `GuardedTransitApi(MotisClient("<url>/motis/<id>"))`, the backup geocoder Photon at
+  `<url>/photon` (no phone Geocoder), the weather Open-Meteo at `<url>/meteo`; read timeouts 3 s. The server only decides
+  *whether and how* to answer: a normal Transitous answer is the replay's answer to that same call, as MOTIS JSON, kept under
+  `<id>`; Photon and Open-Meteo answer `photon_rager` / `openmeteo_rain_telaviv`. `reset()` clears the mode, so every other
+  test keeps the replay. Cleartext HTTP is allowed to the loopback only (`src/uitest/res/xml/uitest_network.xml`).
+- **Faults** (`Fault`): 429 twice, 503 twice (`Retry-After: 1`), no answer (timeout), HTML, empty body, `{}`, body cut
+  halfway, offline (`goOffline`: server shut down + airplane mode; `goOnline`: a new server, the app pointed at it), and
+  429 then 200 (per request: the guard's retry must get it).
+- **Each case asserts:** the screen finishes within 30 s (no endless spinner), shows its failure (the message, or the offline
+  copy; `{}` may read as "no results"; map stops and the rain note fail silently), Retry brings the answer, the server's count
+  for the screen's endpoints ≤ the budget constant (×2 for 429/503), at least 2 for "429 then 200"; then the same action
+  again sends 0. A crash fails the job (crash buffer). The job summary lists every case: `<screen> <fault> -> <outcome> sent cap`.
+- **Adding a screen:** a `Screen` in `FaultMatrixTest`: endpoints (the path after `/api/<v>/`, or `photon` / `meteo`),
+  the budget constant, `act`, `outcome` (null while loading), `message`, `retry`, `reset`, `repeat`. Vary the input per
+  action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
+
