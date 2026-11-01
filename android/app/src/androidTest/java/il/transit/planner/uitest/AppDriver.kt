@@ -19,6 +19,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.user.SavedPlace
+import leakcanary.DetectLeaksAfterTestSuccess
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import il.transit.planner.UiTestApp
@@ -56,7 +59,12 @@ object Run {
  * A retained one fails the journey with the leak trace. Known framework-only paths are in `LeakConfig` (uitest build).
  */
 object Leaks {
-    fun rule(): org.junit.rules.TestRule = leakcanary.DetectLeaksAfterTestSuccess("journey")
+    /** The leak check wrapped around [compose]: it runs once [compose] has been torn down. */
+    fun around(compose: TestRule): TestRule {
+        val leaks = DetectLeaksAfterTestSuccess("journey")
+        val chain = RuleChain.outerRule(leaks)
+        return chain.around(compose)
+    }
 }
 
 /** Starts the app on a clean slate and reaches into it the way a test needs to. */

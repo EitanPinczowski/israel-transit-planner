@@ -34,7 +34,7 @@ import java.util.regex.Pattern
 class FirstLaunchTest {
     val compose = createEmptyComposeRule()
 
-    @get:Rule val leaks = org.junit.rules.RuleChain.outerRule(Leaks.rule()).around(compose)
+    @get:Rule val leaks = Leaks.around(compose)
 
     /** Closes an "X has stopped" dialog of some other process; true if there was one. */
     private fun dismissSystemCrash(device: UiDevice): Boolean {

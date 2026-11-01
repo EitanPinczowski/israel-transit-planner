@@ -44,7 +44,7 @@ import org.junit.runner.RunWith
 class MoreJourneysTest {
     val compose = createEmptyComposeRule()
 
-    @get:Rule val leaks = org.junit.rules.RuleChain.outerRule(Leaks.rule()).around(compose)
+    @get:Rule val leaks = Leaks.around(compose)
 
     @get:Rule val permissions = Permissions.grantAll()
 
