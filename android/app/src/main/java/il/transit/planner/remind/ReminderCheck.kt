@@ -97,6 +97,11 @@ object ReminderCheck {
         return due
     }
 
+    /** No test armed, none rung (the uitest build's clean slate between journeys). */
+    fun forget(context: Context) {
+        prefs(context).edit().clear().commit()
+    }
+
     /** The receiver posted the test notification. */
     fun rang(context: Context, at: Instant) {
         prefs(context).edit().putLong(RANG, at.toEpochMilli()).apply()

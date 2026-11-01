@@ -465,7 +465,7 @@ class AppStateTest : VmTest() {
             TripPlanner(replay()).plan(TripQuery(Endpoint.Coord(BGU), Endpoint.Coord(SAVIDOR), TimeMode.NOW), NOW)
         }
         val key = PlanCache.key("TRIP-NOW", BGU, SAVIDOR)
-        val cache = PlanCacheStore.trips(tmp.newFile("trip_cache.json").also { it.delete() }, CLOCK)
+        val cache = tripCache(tmp.newFile("trip_cache.json").also { it.delete() })
         runBlocking { cache.put(key, planned) }
         return Triple(cache, sortOptions(planned, UserSettings().tripSort, false)[1], key)
     }

@@ -46,8 +46,9 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
 import org.junit.After
-import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
+import java.io.File
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -232,11 +233,27 @@ abstract class VmTest {
         scheduler.runCurrent()
     }
 
-    /** For the few steps that hop to a real IO thread (the Trip cache file): waits for [cond]. */
-    protected fun settle(timeoutMs: Long = 5_000, cond: () -> Boolean) {
-        val until = System.currentTimeMillis() + timeoutMs
-        while (!cond() && System.currentTimeMillis() < until) Thread.sleep(10)
-        assertTrue("timed out waiting", cond())
+    /**
+     * The Trip and tab cache files, their work on this test's dispatcher (never a real IO thread):
+     * the ViewModel's coroutine then never resumes off the test thread. With `Dispatchers.IO` it did:
+     * the unconfined Main resumed it on the IO thread, racing the test's reads (RestoreTabsStateTest
+     * "found something" right after [settle], Phase 11 F3).
+     */
+    protected fun tripCache(file: File, clock: Clock = CLOCK) = PlanCacheStore.trips(file, clock, dispatcher)
+
+    protected fun tabCache(file: File, clock: Clock = CLOCK) = PlanCacheStore.tabs(file, clock, dispatcher)
+
+    /**
+     * Runs what is due on the test scheduler until [cond] holds. Every coroutine (the cache files'
+     * included, see [tripCache]) runs on this test's thread, so nothing happens behind its back and
+     * there is no wall clock to wait for; [cond] may move virtual time itself ([advance]).
+     */
+    protected fun settle(cond: () -> Boolean) {
+        repeat(MAX_SETTLE_STEPS) {
+            scheduler.runCurrent()
+            if (cond()) return
+        }
+        fail("never settled: the condition is still false after $MAX_SETTLE_STEPS steps")
     }
 
     protected fun MainViewModel.choose(field: Field, name: String, at: LatLon) {
@@ -245,6 +262,8 @@ abstract class VmTest {
     }
 
     companion object {
+        private const val MAX_SETTLE_STEPS = 1_000
+
         /** Sunday 2026-10-18 08:00 in Israel (UTC+3): a plain weekday morning, no evening hint. */
         val NOW: Instant = Instant.parse("2026-10-18T05:00:00Z")
         val CLOCK: Clock = Clock.fixed(NOW, ZoneOffset.UTC)
