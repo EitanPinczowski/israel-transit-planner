@@ -144,6 +144,8 @@ dependencies {
     androidTestImplementation(libs.espresso.accessibility)
     androidTestImplementation(libs.accessibility.test.framework)
     androidTestImplementation(libs.uiautomator)
+    // Phase 11 T4: the network-fault matrix's local server (emulator loopback only, never the internet).
+    androidTestImplementation(libs.okhttp.mockwebserver)
 }
 
 // Paparazzi 1.3.5 (layoutlib Jellyfish, API 34) copies android.os.Build's inner classes from

@@ -52,16 +52,27 @@ class UiTestApp : TransitApp() {
             }
         }
     }
-    override val api: TransitApi get() = slowReplay
+    override val api: TransitApi get() = network?.api ?: slowReplay
 
-    /** No outside geocoder in UI tests: they never touch the network. */
-    override val backupGeocoder: BackupGeocoder? = null
+    /**
+     * Phase 11 T4: the network-fault mode. Set (with the local mock server's URL) before the Activity
+     * starts, the app talks HTTP to that server instead of answering from the replay; [reset] clears it.
+     */
+    @Volatile var network: MockNetwork? = null
+
+    /** Starts the fault mode against the mock server at [base] (the emulator's localhost). */
+    fun useMockServer(base: String): MockNetwork = MockNetwork(replay, clock, base).also { network = it }
+
+    /** No outside geocoder in UI tests: they never touch the network (the fault mode: Photon on the mock server). */
+    override val backupGeocoder: BackupGeocoder? get() = network?.backup
 
     /**
      * A wet morning, 0 requests (Phase 10 D9): 70% every hour around [NOW], so the rain note shows
      * on the Trip results of every phone profile in ci-screens. Trips past 48 h get no note, as live.
      */
-    override val weather: il.transit.core.weather.GuardedWeather by lazy {
+    override val weather: il.transit.core.weather.GuardedWeather get() = network?.weather ?: wetMorning
+
+    private val wetMorning: il.transit.core.weather.GuardedWeather by lazy {
         il.transit.core.weather.GuardedWeather(
             { _ ->
                 il.transit.core.weather.RainForecast(
@@ -92,6 +103,7 @@ class UiTestApp : TransitApp() {
     /** A clean slate: the saved places below, nothing else saved, replay answering. */
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
+        network = null
         planDelayMs = 0
         clockShift = Duration.ZERO
         latestRelease = null

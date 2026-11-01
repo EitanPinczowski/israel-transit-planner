@@ -232,7 +232,7 @@ transit leg, or not a string; an empty `tripShortName` on a train is expected). 
   `--update-shapes`, update the parser if the app reads the field differently, commit both.
 - `python tools/contract_check.py --out report.md` runs it live from your machine (7 requests).
 
-### What the guards do when the network misbehaves (pinned by `NetworkFaultTest`, Phase 10 D4)
+### What the guards do when the network misbehaves (pinned in core by `NetworkFaultTest`, Phase 10 D4, and on the emulator by `FaultMatrixTest`, Phase 11 T4)
 | fault | `GuardedTransitApi` / `GuardedGeocoder` | against the budget |
 |---|---|---|
 | 429 / 503, then 200 | waits `Retry-After` (else 2 s), one retry inside the same slot, answer cached | counted once |
@@ -245,7 +245,11 @@ transit leg, or not a string; an empty `tripShortName` on a train is expected). 
 | 3 at once, limit 2 | the third waits for a slot (retries stay inside their slot) | each counted |
 
 Tests inject these at the `TransitApi` / `BackupGeocoder` level (`FaultyTransitApi`, `FaultyGeocoder`) or in an OkHttp
-interceptor (`ScriptedHttp`): no socket, not even localhost. `RoutingInvariantsTest` checks times, ride details, fares,
+interceptor (`ScriptedHttp`): no socket, not even localhost. **On the emulator** (Phase 11 T4, the `faults` job of
+`ui-tests.yml`): the same faults plus "offline" over real HTTP to a `MockWebServer` on the emulator's loopback, through
+`MotisClient` / `PhotonClient` / `OpenMeteoClient` and the real guards, on every networked screen; the server counts each
+endpoint and every case is held to the feature's budget constant (×2 where a 429/503 retry is allowed), and a repeat within
+the cache time to 0 (skill `ui-testing`). `RoutingInvariantsTest` checks times, ride details, fares,
 traffic and Pareto fronts over every `plan_*` fixture and each feature's output; a new fixture is covered automatically.
 
 The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds
