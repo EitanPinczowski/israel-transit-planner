@@ -128,9 +128,13 @@ class FaultMatrixTest {
         val m = hasText(text, substring = true)
         if (runCatching { d.awaitNode(m, 1_500) }.isSuccess) return
         val inSheet = hasAnyAncestor(hasTestTag(UiTags.BOTTOM) or hasTestTag(UiTags.TOP))
-        val lists = compose.onAllNodes(hasScrollToNodeAction() and inSheet)
-        for (i in 0 until lists.fetchSemanticsNodes().size) {
-            if (runCatching { lists[i].performScrollToNode(m) }.isSuccess) break
+        // The list may still be settling (a new search just landed): scroll again until it shows, up to ~8 s.
+        repeat(8) {
+            val lists = compose.onAllNodes(hasScrollToNodeAction() and inSheet)
+            for (i in 0 until lists.fetchSemanticsNodes().size) {
+                if (runCatching { lists[i].performScrollToNode(m) }.isSuccess) break
+            }
+            if (runCatching { d.awaitNode(m, 1_000) }.isSuccess) return
         }
         d.awaitNode(m)
     }
