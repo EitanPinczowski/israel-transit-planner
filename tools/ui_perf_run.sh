@@ -81,12 +81,37 @@ if [[ $MODE == jank ]]; then
     adb shell "input swipe $x1 $y2 $x2 $y1 350; input swipe $x2 $y1 $x1 $y2 350; input swipe $x1 $y1 $x2 $y2 350; input swipe $x2 $y2 $x1 $y1 350; \
       input tap $x2 $ym; input tap $x2 $ym; sleep 1; input swipe $x1 $y2 $x2 $y1 250; input swipe $x2 $y1 $x1 $y2 250; sleep 1"
   done
+  # The map draws on its own surface (MapLibre's GLSurfaceView), which HWUI's gfxinfo does not see: one long swipe, then SurfaceFlinger's
+  # own frame timestamps for that layer (the last 127 frames).
+  adb shell input swipe $x1 $y2 $x2 $y1 2000
+  layer=$(adb shell dumpsys SurfaceFlinger --list | tr -d '\r' | grep -i "SurfaceView" | grep "$PKG" | head -1)
+  echo "map layer: ${layer:-none}"
+  if [[ -n $layer ]]; then
+    adb shell dumpsys SurfaceFlinger --latency "$layer" | tr -d '\r' > "$OUT/sf-latency.txt"
+  else
+    : > "$OUT/sf-latency.txt"
+  fi
+  map_line=$(python3 -I - "$OUT/sf-latency.txt" <<'PY'
+import statistics, sys
+rows = [l.split() for l in open(sys.argv[1]).read().splitlines()[1:] if len(l.split()) == 3]
+present = [int(r[1]) for r in rows if int(r[1]) < 9 * 10**18]  # a pending frame is INT64_MAX
+gaps = [(b - a) / 1e6 for a, b in zip(present, present[1:])]
+if len(gaps) < 10:
+    print("map layer: too few frames to measure (%d)" % len(gaps)); sys.exit()
+gaps.sort()
+janky = sum(1 for g in gaps if g > 25) * 100 / len(gaps)
+print("map layer (SurfaceFlinger, last %d frames of a 2 s swipe): median gap %.1f ms, p90 %.1f ms, p99 %.1f ms, gaps over 25 ms: %.0f %%" % (
+    len(gaps), statistics.median(gaps), gaps[int(len(gaps) * 0.9) - 1], gaps[min(len(gaps) - 1, int(len(gaps) * 0.99))], janky))
+PY
+)
+  echo "$map_line"
   adb shell dumpsys gfxinfo "$PKG" > "$OUT/gfxinfo.txt"
   adb shell dumpsys gfxinfo "$PKG" framestats > "$OUT/framestats.txt"
   grep -E "Total frames rendered|Janky frames|50th|90th|95th|99th|Number (Missed|High input|Slow)" "$OUT/gfxinfo.txt" | tee "$OUT/jank.txt"
   frames=$(sed -n 's/^Total frames rendered: *//p' "$OUT/gfxinfo.txt" | head -1)
-  [[ ${frames:-0} -ge 100 ]] || fail "only ${frames:-0} frames were rendered: the pan / zoom did not move the map"
-  summary "### Map jank (API $API, uitest build, software GL)"
+  echo "$map_line" >> "$OUT/jank.txt"
+  [[ ${frames:-0} -ge 1 ]] || fail "gfxinfo saw no frame at all: the app was not drawing"
+  summary "### Map jank (API $API, uitest build, software GL; HWUI frames = the Compose UI, the map layer is measured on its own)"
   summary '```'; summary "$(cat "$OUT/jank.txt")"; summary '```'
   adb logcat -d -b crash | grep -q "Process: $PKG" && fail "the app crashed during the pan / zoom"
   exit $failed
@@ -109,6 +134,8 @@ first=$(head -1 "$OUT/fixes.txt")
 adb emu geo fix $first >/dev/null
 start_probe ride
 ready ride || { fail "the ride did not start (PerfProbe never said ready)"; exit 1; }
+# batterystats only counts while the phone is on battery: tell the emulator it is unplugged for the ride.
+adb shell dumpsys battery unplug >/dev/null
 adb shell dumpsys batterystats --enable full-wake-history >/dev/null 2>&1 || true
 adb shell dumpsys batterystats --reset >/dev/null
 adb shell dumpsys alarm > "$OUT/alarm-before.txt"
@@ -122,6 +149,7 @@ echo "fed $(wc -l < "$OUT/fixes.txt") fixes in ${secs}s"
 adb shell dumpsys batterystats --checkin > "$OUT/batterystats-checkin.txt"
 adb shell dumpsys batterystats "$PKG" > "$OUT/batterystats-app.txt"
 adb shell dumpsys alarm > "$OUT/alarm-after.txt"
+adb shell dumpsys battery reset >/dev/null
 uid=$(adb shell pm list packages -U "$PKG" | tr -d '\r' | sed -n "s/^package:$PKG uid://p" | head -1)
 echo "uid $uid"
 grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" > "$OUT/app-checkin.txt"
