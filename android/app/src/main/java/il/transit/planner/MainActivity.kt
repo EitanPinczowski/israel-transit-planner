@@ -140,6 +140,8 @@ class MainActivity : ComponentActivity() {
      * is said here in one line.
      */
     private fun openShared(intent: Intent) {
+        // The tile and the shortcuts send VIEW without data: our own actions, not a share (no "unreadable" toast).
+        if (OwnIntents.isOurs(this, intent)) return
         val raw = when (intent.action) {
             Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)
             // Only the schemes our filters name: an explicit intent can carry any (javascript:, file:, content:), never read (T6).
