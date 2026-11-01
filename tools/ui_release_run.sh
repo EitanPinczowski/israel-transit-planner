@@ -30,7 +30,7 @@ grep -q "versionCode='$WANT_CODE'" "$OUT/badging.txt" || fail "versionCode is no
 grep -q "application-debuggable" "$OUT/badging.txt" && fail "the release APK is debuggable"
 # No test build in a release: UiTestApp, the probes, the replay assets, LeakCanary.
 unzip -p "$APK" 'classes*.dex' | strings > "$OUT/dex-strings.txt"
-for needle in "UiTestApp" "ProcessDeathProbe" "UpgradeProbe" "ReplayTransitApi" "leakcanary" "uitest_network"; do
+for needle in "UiTestApp" "ProcessDeathProbe" "UpgradeProbe" "PerfProbe" "leakcanary" "uitest_network"; do
   grep -q "$needle" "$OUT/dex-strings.txt" && fail "the release APK contains $needle"
 done
 unzip -l "$APK" | grep -qE "assets/(fixtures|uitest)/" && fail "the release APK carries the uitest assets"

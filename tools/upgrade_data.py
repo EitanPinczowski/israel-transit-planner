@@ -12,6 +12,7 @@ A field the new build added is fine; a value the old build had that is gone or d
 import json
 import re
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -45,7 +46,11 @@ def compact(o) -> str:
 
 def write(sample: Path, out: Path, now: int) -> None:
     data = json.loads(sample.read_text(encoding="utf-8"))
+    # passEndsOn: the sample's date is fixed in the past by now, and the app (rightly) drops a pass that has ended; give it one 60 days ahead.
+    ahead = (datetime.fromtimestamp(now, timezone.utc) + timedelta(days=60)).date().isoformat()
     settings = dict(data["settings"], nightRefresh=True, tourSeen=True)
+    if "passEndsOn" in settings:
+        settings["passEndsOn"] = ahead
     reminder = {
         "fromLat": 31.2437, "fromLon": 34.7976, "toLat": 31.2622, "toLon": 34.8013, "settings": settings,
         "tripId": None, "line": "470", "boardStop": "Beer Sheva North", "scheduledBoardingEpoch": now + 4 * 3600,
@@ -78,6 +83,11 @@ def missing(old, new, path="") -> list[str]:
     return [] if old == new else [f"{path}: {old!r} -> {new!r}"]
 
 
+# By design, not a loss: on Android 13+ the first launch adopts the phone's own per-app language (MainActivity.syncLocale), so
+# `settings.language` becomes the phone's. The copy of the settings inside the reminder is untouched and still compared.
+IGNORED = {"settings.language"}
+
+
 def compare(expected: Path, log: Path) -> int:
     exp = json.loads(expected.read_text(encoding="utf-8"))
     seen: dict[str, str] = {}
@@ -97,7 +107,7 @@ def compare(expected: Path, log: Path) -> int:
         except ValueError:
             problems.append(f"{key}: unreadable: {seen[key][:80]}")
             continue
-        problems += missing(exp[key], new, key)
+        problems += [m for m in missing(exp[key], new, key) if m.split(":")[0] not in IGNORED]
     if seen.get("nightRefresh") != "true":
         problems.append(f"nightRefresh: not enqueued after the upgrade ({seen.get('nightRefresh')})")
     print("channels after:", seen.get("channels", "?"))

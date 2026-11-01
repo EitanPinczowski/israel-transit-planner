@@ -44,7 +44,9 @@ sleep 5
 before=$(alarms)
 jobs_before=$(adb shell dumpsys jobscheduler | tr -d '\r' | grep -c "$PKG")
 echo "old build: LEAVE alarms=$before, scheduler entries=$jobs_before"
-adb shell dumpsys notification --noredact | tr -d '\r' | grep -o "NotificationChannel{mId='[^']*'" | sort -u | sed 's/^/  channel before: /' | tee "$OUT/channels-before.txt"
+# The app's own channels (dumpsys notification lists every package's).
+channels() { adb shell cmd notification list_channels "$PKG" 0 | tr -d '\r' | sed 's/^ *//' | grep -v '^$' | sort -u; }
+channels > "$OUT/channels-before.txt"; sed 's/^/  channel before: /' "$OUT/channels-before.txt"
 [[ $before -ge 1 ]] || fail "the old build did not arm the leave reminder (setup problem, not an upgrade loss)"
 adb shell am force-stop "$PKG"
 
@@ -68,8 +70,9 @@ done
 adb logcat -d -s UpgradeProbe:I | tr -d '\r' > "$OUT/probe.log"
 python3 "$(dirname "$0")/upgrade_data.py" compare "$OUT/data/expected.json" "$OUT/probe.log" || failed=1
 # Channels: every channel the old build had must still exist.
-adb shell dumpsys notification --noredact | tr -d '\r' | grep -o "NotificationChannel{mId='[^']*'" | sort -u > "$OUT/channels-after.txt"
-lost=$(comm -23 "$OUT/channels-before.txt" <(sed 's/^/  channel before: /' "$OUT/channels-after.txt") | wc -l)
+channels > "$OUT/channels-after.txt"
+lost=$(comm -23 "$OUT/channels-before.txt" "$OUT/channels-after.txt" | wc -l)
+echo "channels: $(wc -l < "$OUT/channels-before.txt") before, $(wc -l < "$OUT/channels-after.txt") after, $lost lost"
 [[ $lost -eq 0 ]] || fail "$lost notification channel(s) gone after the upgrade"
 {
   echo "### Upgrade test: $(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" "$OUT/data/expected.json") -> HEAD"
