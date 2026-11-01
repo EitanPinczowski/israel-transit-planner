@@ -90,3 +90,13 @@ Android version and phone, what they did, expected, happened, screenshot, option
 checkbox that the report has no home address or personal places). Blank issues are off.
 Friends without an account use Settings → Crash log → "Share crash log" over WhatsApp (owner
 decision 28). Before a release, read the open `bug` issues and say in the notes which are fixed.
+
+## The upgrade check and the bug bash (Phase 11 T8)
+- `release.yml` installs the **previous release's published APK**, then the newly signed one over it (`adb install -r`, `tools/release_upgrade_check.sh`,
+  an API 35 emulator, +~8 min) **before** it publishes: a changed key (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`) or a lower version code
+  (`INSTALL_FAILED_VERSION_DOWNGRADE`) stops the release instead of reaching friends' phones. It never launches the app. No earlier release = skipped.
+- `upgrade.yml` (weekly and on PRs that touch stored data) installs the latest tag's uitest build with its saved-data sample, upgrades to HEAD and
+  compares everything (skill `ui-testing`). Add the release's sample first (see **Checks** above), or this job fails for the new tag.
+- Before announcing a release, the owner and testers go through `docs/testing/bug-bash.md` on real phones; the boss links it in the close-out.
+- `release-smoke` (ui-tests.yml) builds the release APK with a throwaway key on every UI run: it proves the release build starts with the network off and
+  gates cold-start time against `startup-baseline.json`.

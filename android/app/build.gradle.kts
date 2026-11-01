@@ -40,7 +40,9 @@ android {
         versionName = releaseVersion
         // Real phones are ARM. The x86 copies of MapLibre only serve emulators and roughly
         // halve the APK's size; add "x86_64" back here to test on an emulator.
-        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
+        // -PsmokeAbi=x86_64 (CI's release-smoke job, Phase 11 T8) adds the emulator's ABI to a release build,
+        // so the signed-like release APK runs on the x86_64 emulator without ARM translation. Never set for a release.
+        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") + listOfNotNull(providers.gradleProperty("smokeAbi").orNull) }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -146,6 +148,10 @@ dependencies {
     androidTestImplementation(libs.uiautomator)
     // Phase 11 T4: the network-fault matrix's local server (emulator loopback only, never the internet).
     androidTestImplementation(libs.okhttp.mockwebserver)
+    // Phase 11 T8 (owner decision 25): leaks fail a journey. LeakCanary lives in the uitest build only (debug and release
+    // never see it); AppDriver.close() asks it whether the Activity, ViewModel, MapView or service it just closed is still held.
+    "uitestImplementation"(libs.leakcanary.android)
+    androidTestImplementation(libs.leakcanary.instrumentation)
 }
 
 // Paparazzi 1.3.5 (layoutlib Jellyfish, API 34) copies android.os.Build's inner classes from

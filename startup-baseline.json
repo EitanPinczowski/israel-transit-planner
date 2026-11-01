@@ -1,0 +1,1 @@
+{"_comment": "Cold-start median of the release APK on the CI emulator (API 35, x86_64), in ms. null = report only. Gate: fail above median_ms * 1.25 (owner decision 24). Raise only with a reason in the PR; the first CI run prints the number to put here.", "median_ms": null, "tolerance": 0.25}

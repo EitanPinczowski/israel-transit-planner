@@ -353,10 +353,10 @@ package. Tick only your own package's lines.
 - [ ] End-to-end update: banner → download → system installer → new version
 
 ### T8 — Release, upgrade, performance (`claude/p11-release-perf`, Sonnet, 0 requests)
-- [ ] Release-APK smoke on the emulator (network off) + startup-time gate
-- [ ] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
-- [ ] LeakCanary in every journey (uitest build); nightly map jank and 30-min ride battery reports
-- [ ] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
+- [x] Release-APK smoke on the emulator (network off) + startup-time gate
+- [x] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
+- [x] LeakCanary in every journey (uitest build); nightly map jank and 30-min ride battery reports
+- [x] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
 
 ### E5 — Accessibility (`claude/p11-accessibility`, 0 requests)
 - [ ] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)

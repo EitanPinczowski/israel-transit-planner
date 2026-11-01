@@ -56,6 +56,23 @@ def check_budgets() -> list[str]:
     return errors
 
 
+def check_inventory() -> list[str]:
+    """Phase 11 T8: docs/testing/inventory.md names every journey test, and only journeys that exist."""
+    inv = ROOT / "docs" / "testing" / "inventory.md"
+    if not inv.exists():
+        return ["docs/testing/inventory.md is missing"]
+    text = inv.read_text(encoding="utf-8")
+    src = ROOT / "android" / "app" / "src" / "androidTest" / "java" / "il" / "transit" / "planner" / "uitest"
+    existing: set[str] = set()
+    for f in sorted(src.glob("*JourneysTest.kt")) + [src / "FirstLaunchTest.kt"]:
+        if f.exists():
+            existing |= {f"{f.stem}#{m}" for m in re.findall(r"@Test fun ([A-Za-z0-9_]+)", f.read_text(encoding="utf-8"))}
+    named = set(re.findall(r"`([A-Za-z]*(?:JourneysTest|FirstLaunchTest)#[A-Za-z0-9_]+)`", text))
+    errors = [f"inventory.md names journey `{n}` but no such test exists" for n in sorted(named - existing)]
+    errors += [f"journey test `{n}` is not listed in docs/testing/inventory.md" for n in sorted(existing - named)]
+    return errors
+
+
 def main() -> int:
     text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     listed = set(re.findall(r"^\|\s*`([a-z0-9-]+)`\s*\|", text, flags=re.M))
@@ -71,6 +88,7 @@ def main() -> int:
         if not m or m.group(1).strip() != name:
             errors.append(f"skill `{name}`: frontmatter must start with name: {name} and a description")
     errors += check_budgets()
+    errors += check_inventory()
     lines = text.count("\n") + 1
     if lines > MAX_CLAUDE_MD_LINES:
         errors.append(f"CLAUDE.md is {lines} lines (max {MAX_CLAUDE_MD_LINES}); move detail into a skill")

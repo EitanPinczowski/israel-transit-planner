@@ -242,7 +242,22 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     override fun close() {
         scenario?.close()
+        scenario = null
+        if (detectLeaks) assertNoLeaks()
     }
+
+    /**
+     * Phase 11 T8 (owner decision 25): LeakCanary, run after every journey. The Activity was just closed, so a retained
+     * Activity, ViewModel, MapView or service is a leak; the failure carries the leak trace. When the journey itself
+     * failed, this error rides on it as a suppressed one (the original stays first).
+     */
+    private fun assertNoLeaks() {
+        val tag = "AppDriver:${Run.id}"
+        leakcanary.LeakAssertions.assertNoLeaks(tag)
+    }
+
+    /** Set false by a test that holds the app open by design (none today). */
+    var detectLeaks: Boolean = true
 
     companion object {
         val sdk: Int get() = Build.VERSION.SDK_INT

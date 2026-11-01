@@ -52,6 +52,8 @@ if [[ $API == 36 ]]; then
 else
   instrument il.transit.planner.uitest.FirstLaunchTest first-launch
   instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
+  # Phase 11 T8: the five gap journeys (docs/testing/inventory.md) on the two newest phones.
+  if [[ $API == 34 || $API == 35 ]]; then instrument il.transit.planner.uitest.MoreJourneysTest more-journeys; fi
 fi
 
 # Process death: leave the app, let the system kill it, come back. The uitest build's
