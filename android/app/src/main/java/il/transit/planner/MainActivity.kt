@@ -112,12 +112,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        ownActions(intent)
+        openShared(intent)
+    }
+
+    /**
+     * The app's own notification, tile and shortcut actions. Read only from an intent that came
+     * through [OwnIntents.ALIAS], which is not exported: Android starts it only for this app's own
+     * PendingIntents and shortcuts. The same extras sent to the exported MainActivity are ignored
+     * (Phase 11 F5), so another app can't start a ride or a plan from the phone's location.
+     */
+    private fun ownActions(intent: Intent) {
+        if (!OwnIntents.isOurs(intent)) return
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
+        // The Quick Settings tile (C4), and C5's alert: the trip home, planned once the store is read.
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
+        // "Start trip" on the leave-now countdown (C5).
         if (intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
         if (intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true) // Phase 11 E1: the pass notice
-        MissedItAction.target(intent)?.let(::missedIt) // Phase 11 E2
-        openShared(intent)
+        // "Missed it? Plan from here" (Phase 11 E2): the destination is in the intent, so a killed app plans too.
+        MissedItAction.target(intent)?.let(::missedIt)
     }
 
     /**
@@ -177,14 +191,7 @@ class MainActivity : ComponentActivity() {
         // Only a fresh launch: after a rotation, a theme change or a reopen from Recents the same
         // intent comes back, and acting on it again would undo whatever the user did since.
         val fresh = savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0
-        if (fresh && (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE))) pendingShortcut = intent
-        // The Quick Settings tile (C4), and C5's alert: the trip home, planned once the store is read.
-        if (fresh && intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()
-        // "Start trip" on the leave-now countdown (C5).
-        if (fresh && intent.getBooleanExtra(Notifications.EXTRA_START_RIDE, false)) startReminderRide()
-        if (fresh && intent.getBooleanExtra(Notifications.EXTRA_OPEN_SETTINGS, false)) vm.showSettings(true)
-        // "Missed it? Plan from here" (Phase 11 E2): the destination is in the intent, so a killed app plans too.
-        if (fresh) MissedItAction.target(intent)?.let(::missedIt)
+        if (fresh) ownActions(intent)
 
         vm.locationProvider = {
             map?.locationComponent?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation

@@ -40,12 +40,16 @@ import kotlinx.coroutines.withTimeoutOrNull
  *    trip sheet's `trip` and a reopened stop sheet's `stoptimes` are left out by name;
  *  - [EXTRA_RIDE]: starts a ride on the mock location, so the script can revoke the location
  *    permission under it; after the restart `ride-after …` says what is left.
+ * Phase 11 F5 adds [EXTRA_MISSED]: the probe taps "Missed it?" the way the notification does, by
+ * sending the action's own PendingIntent (the shell can't reach the non-exported alias), and logs
+ * `missed-it …` under [SYSTEM_TAG].
  * uitest build only; tag [TAG].
  */
 object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     const val EXTRA = "uitest_process_death_setup"
     const val EXTRA_TAB = "uitest_process_death_tab"
     const val EXTRA_RIDE = "uitest_ride_setup"
+    const val EXTRA_MISSED = "uitest_missed_it"
     const val TAG = "ProcessDeath"
     const val SYSTEM_TAG = "SystemProbe"
 
@@ -62,6 +66,10 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
         fromSaved = savedInstanceState != null
         tab = if (fromSaved) null else activity.intent.getStringExtra(EXTRA_TAB)
         ride = !fromSaved && activity.intent.getBooleanExtra(EXTRA_RIDE, false)
+        if (!fromSaved && activity.intent.getBooleanExtra(EXTRA_MISSED, false)) {
+            pending = "missed"
+            return
+        }
         pending = if (!fromSaved && (tab != null || ride || activity.intent.getBooleanExtra(EXTRA, false))) "setup" else "report"
     }
 
@@ -79,6 +87,10 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
             val trip = ViewModelProvider(main)[TripDetailsViewModel::class.java]
             // The tab survives the kill as a marker file, so the restart reports in the same format.
             val marker = java.io.File(main.filesDir, "uitest_death_tab")
+            if (what == "missed") {
+                missedTap(main, vm, app)
+                return@launch
+            }
             if (what == "setup") { if (tab != null) marker.writeText(tab!!) else marker.delete() }
             if (what == "setup" && ride) {
                 rideSetup(main, vm)
@@ -200,6 +212,17 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 .orEmpty()
         }
         Log.i(SYSTEM_TAG, "ride-after active=${RideService.active.value} ongoing=${ongoing.size} title=$text")
+    }
+
+    /** F5: "Missed it?" tapped through the notification action's own PendingIntent (Tel Aviv, depart now). */
+    private suspend fun missedTap(main: MainActivity, vm: MainViewModel, app: UiTestApp) {
+        val before = app.replay.calls.get()
+        val target = il.transit.core.plan.MissedIt.Target("Tel Aviv", UiTestApp.TEL_AVIV.latLon, arriveBy = false)
+        val action = il.transit.planner.remind.MissedItAction.action(main, target)
+        checkNotNull(action.actionIntent).send()
+        withTimeoutOrNull(10_000) { vm.state.first { it.missedIt != null } }
+        delay(2_000)
+        missedAfter(vm, app.replay.calls.get() - before)
     }
 
     /** E2: a "Missed it" tap with no location permission asks for the start, with no request. */

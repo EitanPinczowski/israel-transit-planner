@@ -174,9 +174,10 @@ is a finding (`::notice::finding:` + the job summary).
   must all come back, with `requests=0` (the reopened sheet's `trip` left out, `ReplayTransitApi.tripCalls`).
   The Trip check stays in `ui_behaviour_run.sh` on every API level.
 - *Location revoked mid-ride*: `--ez uitest_ride_setup true` starts a ride on the mock GPS, `pm revoke`
-  kills the process, the restart must not crash or leave the ride active. Then the shell sends the
-  intent the "Missed it" action carries (the notification died with the process): without the location
-  permission it must ask for the start (`kind=NEED_START editing=FROM`) with 0 requests.
+  kills the process, the restart must not crash or leave the ride active. Then `--ez uitest_missed_it true`
+  has the probe send the "Missed it" action's own PendingIntent (the notification died with the process,
+  and the shell can't reach the non-exported alias, F5): without the location permission it must ask for
+  the start (`kind=NEED_START editing=FROM`) with 0 requests.
 
 **Nightly** (`nightly-ui.yml`, 01:47 Israel winter time, only when `main` changed since the last good
 run; a failure comments on the open issue "nightly"; `ui_chaos_run.sh chaos|monkey`, API 35, root):

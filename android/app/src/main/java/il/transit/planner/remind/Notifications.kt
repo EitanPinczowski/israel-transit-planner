@@ -23,6 +23,7 @@ import il.transit.core.remind.PassExpiry
 import il.transit.core.remind.ReminderHealth
 import il.transit.core.remind.Reminder
 import il.transit.planner.MainActivity
+import il.transit.planner.OwnIntents
 import il.transit.planner.R
 import il.transit.planner.tile.NextTripTile
 import il.transit.planner.ui.PayWith
@@ -95,7 +96,7 @@ object Notifications {
         val open = PendingIntent.getActivity(
             context,
             3,
-            pay ?: Intent(context, MainActivity::class.java)
+            pay ?: OwnIntents.to(context)
                 .setAction(EXTRA_OPEN_SETTINGS)
                 .putExtra(EXTRA_OPEN_SETTINGS, true)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
@@ -136,7 +137,7 @@ object Notifications {
                 val start = PendingIntent.getActivity(
                     context,
                     1,
-                    Intent(context, MainActivity::class.java)
+                    OwnIntents.to(context)
                         .setAction(EXTRA_START_RIDE)
                         .putExtra(EXTRA_START_RIDE, true)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),

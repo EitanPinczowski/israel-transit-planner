@@ -7,7 +7,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import il.transit.core.user.Routines
 import il.transit.core.user.SavedPlace
-import il.transit.planner.MainActivity
+import il.transit.planner.OwnIntents
 import il.transit.planner.R
 import java.time.Instant
 
@@ -40,5 +40,5 @@ object Shortcuts {
     }
 
     private fun intent(context: Context) =
-        Intent(context, MainActivity::class.java).setAction(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        OwnIntents.to(context).setAction(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 }

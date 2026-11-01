@@ -208,12 +208,12 @@ else
   [[ -n $rafter ]] || fail "permission revoked: the app did not come back"
   [[ $rafter != *"active=true"* ]] || fail "permission revoked: the ride is still active without the location permission ($rafter)"
   [[ $rafter != *"ongoing=0"* && -n $rafter ]] && note "permission revoked: the ride notification is still there ($rafter)"
-  # E2: "Missed it" tapped now (the notification died with the process, so the shell sends the same
-  # intent the action carries) has no location permission: it asks for the start, with no request.
+  # E2: "Missed it" tapped now has no location permission: it asks for the start, with no request.
+  # The notification died with the process, and the action's door is not exported (F5), so the shell
+  # can't send it: the probe sends the action's own PendingIntent, as the notification does.
   adb shell am force-stop "$PKG"
   lc
-  adb shell am start -W -n "$ACT" -a missed_it --ez missed_it true --ed missed_it_lat 32.0839 --ed missed_it_lon 34.7983 \
-    --es missed_it_name "Tel Aviv" --ez missed_it_arrive_by false >/dev/null
+  adb shell am start -W -n "$ACT" --ez uitest_missed_it true >/dev/null
   missed=""
   for _ in $(seq 1 40); do
     missed=$(adb logcat -d -s SystemProbe:I | tr -d '\r' | grep -o "missed-it .*" | tail -1)

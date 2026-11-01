@@ -20,6 +20,7 @@ import il.transit.core.plan.MissedIt
 import il.transit.core.present.SharedPlace
 import il.transit.core.search.PlaceSearch
 import il.transit.planner.MainActivity
+import il.transit.planner.OwnIntents
 import il.transit.planner.R
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -43,7 +44,7 @@ object MissedItAction {
     private const val MAX_NAME = 120
 
     fun intent(context: Context, t: MissedIt.Target): Intent =
-        Intent(context, MainActivity::class.java)
+        OwnIntents.to(context)
             .setAction(EXTRA_MISSED_IT)
             .putExtra(EXTRA_MISSED_IT, true)
             .putExtra(EXTRA_LAT, t.at.lat)
@@ -64,7 +65,7 @@ object MissedItAction {
         if (intent?.getBooleanExtra(EXTRA_MISSED_IT, false) != true) return null
         val lat = intent.getDoubleExtra(EXTRA_LAT, Double.NaN)
         val lon = intent.getDoubleExtra(EXTRA_LON, Double.NaN)
-        // MainActivity is exported: a destination outside Israel (or NaN, 999) is refused before any request (T6).
+        // Only this app reaches the alias (F5); a broken destination (NaN, 999, outside Israel) is still refused before any request (T6).
         if (!PlaceSearch.inIsrael(LatLon(lat, lon))) return null
         val name = intent.getStringExtra(EXTRA_NAME)?.take(MAX_NAME)?.let(SharedPlace::stripBidi)
         return MissedIt.Target(name, LatLon(lat, lon), intent.getBooleanExtra(EXTRA_ARRIVE_BY, false))
