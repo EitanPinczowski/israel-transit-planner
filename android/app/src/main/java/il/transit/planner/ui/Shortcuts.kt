@@ -2,12 +2,13 @@ package il.transit.planner.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ShortcutManager
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import il.transit.core.user.Routines
 import il.transit.core.user.SavedPlace
-import il.transit.planner.MainActivity
+import il.transit.planner.OwnIntents
 import il.transit.planner.R
 import java.time.Instant
 
@@ -36,9 +37,20 @@ object Shortcuts {
                 .setIntent(intent(context).putExtra(EXTRA_PLACE, p.name))
                 .build()
         }
-        runCatching { ShortcutManagerCompat.setDynamicShortcuts(context, listOf(lines) + placeShortcuts) }
+        val all = listOf(lines) + placeShortcuts
+        val ids = all.map { it.id }.toSet()
+        val sm = context.getSystemService(ShortcutManager::class.java)
+        val pinned = runCatching { sm?.pinnedShortcuts.orEmpty() }.getOrDefault(emptyList())
+        // A pinned shortcut disabled below must be enabled before its id can be published again.
+        val back = pinned.filter { !it.isEnabled && it.id in ids }.map { it.id }
+        if (back.isNotEmpty()) runCatching { sm?.enableShortcuts(back) }
+        runCatching { ShortcutManagerCompat.setDynamicShortcuts(context, all) }
+        // F5: publishing updates a pinned shortcut with the same id. One no longer published (fewer places,
+        // or pinned from an older version) would keep its old target, so it is disabled.
+        val stale = pinned.filter { it.isEnabled && it.id !in ids }.map { it.id }
+        if (stale.isNotEmpty()) runCatching { sm?.disableShortcuts(stale) }
     }
 
     private fun intent(context: Context) =
-        Intent(context, MainActivity::class.java).setAction(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        OwnIntents.to(context).setAction(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 }

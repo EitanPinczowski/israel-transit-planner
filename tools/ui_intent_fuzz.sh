@@ -64,6 +64,22 @@ shell_case "VIEW content:// + grant" start -W -n "$ACT" -a android.intent.action
   -d content://com.android.externalstorage.documents/document/primary%3ADownload%2Fsecret.txt
 shell_case "missed it at 999,999" start -W -n "$ACT" -a missed_it --ez missed_it true --ed missed_it_lat 999 --ed missed_it_lon 999
 shell_case "missed it, NaN" start -W -n "$ACT" -a missed_it --ez missed_it true --es missed_it_lat NaN
+# F5: the app's own actions, well-formed, to the public MainActivity: the app ignores them (IntentFuzzTest
+# pins what happens inside); the non-exported alias they really use is refused to the shell outright.
+shell_case "missed it, Tel Aviv, public" start -W -n "$ACT" -a missed_it --ez missed_it true --ed missed_it_lat 32.0839 --ed missed_it_lon 34.7983
+shell_case "trip home, public" start -W -n "$ACT" -a android.intent.action.VIEW --ez trip_home true
+ALIAS=$PKG/il.transit.planner.ActionEntry
+for args in "-a missed_it --ez missed_it true --ed missed_it_lat 32.0839 --ed missed_it_lon 34.7983" \
+  "-a android.intent.action.VIEW --ez trip_home true" "-a start_reminder_ride --ez start_reminder_ride true" \
+  "-a open_settings --ez open_settings true"; do
+  # shellcheck disable=SC2086 # the arguments split on purpose
+  out=$(adb shell am start -W -n "$ALIAS" $args 2>&1 | tr -d '\r' | tr '\n' ' ')
+  if grep -qiE "Permission Denial|SecurityException|not exported" <<< "$out"; then
+    note "shell: alias ${args%% --ez*} -> refused"
+  else
+    fail "the shell reached the non-exported action alias ($args): ${out:0:200}"
+  fi
+done
 alive || fail "the app is not running after the shell intents"
 
 # The spoofed boot: BOOT_COMPLETED is a protected broadcast. The shell is refused; if it ever got through,
