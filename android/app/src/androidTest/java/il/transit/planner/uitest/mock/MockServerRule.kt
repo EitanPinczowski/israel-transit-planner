@@ -98,6 +98,23 @@ class MockServerRule : ExternalResource() {
 
     fun counts(): Map<String, Int> = counts.mapValues { it.value.get() }.toSortedMap()
 
+    /** Until no request has come in for [quietMs] (a guard's retry after `Retry-After` lands late), at most 10 s. */
+    fun settle(quietMs: Long = 700) {
+        val until = SystemClock.uptimeMillis() + 10_000
+        var last = counts()
+        var since = SystemClock.uptimeMillis()
+        while (SystemClock.uptimeMillis() < until) {
+            SystemClock.sleep(100)
+            val now = counts()
+            if (now != last) {
+                last = now
+                since = SystemClock.uptimeMillis()
+            } else if (SystemClock.uptimeMillis() - since >= quietMs) {
+                return
+            }
+        }
+    }
+
     /** [fault] on [endpoints] (null: they answer normally); every other endpoint answers normally. */
     fun script(endpoints: Collection<String>, fault: Fault?) {
         faults = if (fault == null) emptyMap() else endpoints.associateWith { fault }
@@ -121,7 +138,7 @@ class MockServerRule : ExternalResource() {
     private fun airplane(on: Boolean) {
         shell("cmd connectivity airplane-mode ${if (on) "enable" else "disable"}")
         airplane = on
-        SystemClock.sleep(1_500)
+        SystemClock.sleep(3_000) // the switch takes a moment; a request sent meanwhile may be torn down
     }
 
     private fun shell(cmd: String) {

@@ -112,6 +112,10 @@ class FaultMatrixTest {
         val keepsOld: Boolean = false,
         /** Success shows nothing the test can read (stops outside the recorded area): the server's count proves it. */
         val silentSuccess: Boolean = false,
+        /** `{}` may read as "nothing more" (an empty page of Earlier / Later). */
+        val emptyReadsOk: Boolean = false,
+        /** What the test saw, for a failure message. */
+        val describe: (Ctx) -> String = { c -> c.s.let { "loading=${it.loading} error=${it.error} offline=${it.offlineSince} results=${it.hasResults}" } },
     )
 
     /** [text] on screen: in the tree, scrolled into a list of the sheets when it is further down. */
@@ -147,6 +151,7 @@ class FaultMatrixTest {
             val c = Ctx(d, net)
             s.prepare(c)
             for (f in Fault.values()) {
+                mock.settle() // a late retry of the last case is not this case's request
                 net.clearCaches()
                 if (f == Fault.OFFLINE) mock.goOffline() else mock.script(s.endpoints, f)
                 val before = mock.count(s.endpoints)
@@ -156,7 +161,7 @@ class FaultMatrixTest {
                 Log.i(MockServerRule.TAG, "${s.name} $f -> $out sent=$sent cap=$cap server=${mock.counts()}")
                 assertTrue("${s.name} / $f: sent $sent requests, its cap is $cap (budget ${s.budget})", sent <= cap)
                 if (f == Fault.RETRY_THEN_OK) {
-                    if (!s.silentSuccess) assertEquals("${s.name} / $f: the guard's retry did not get the answer", Outcome.OK, out)
+                    if (!s.silentSuccess) assertEquals("${s.name} / $f: the guard's retry did not get the answer (${s.describe(c)})", Outcome.OK, out)
                     assertTrue("${s.name} / $f: no refused request then answer (sent $sent)", sent >= 2)
                 } else {
                     val allowed = buildSet {
@@ -166,7 +171,11 @@ class FaultMatrixTest {
                         if (s.keepsOld || s.message == null && f == Fault.EMPTY_OBJECT) add(Outcome.OK)
                         if (s.keepsOld) add(Outcome.EMPTY)
                     }
-                    assertTrue("${s.name} / $f: the user sees $out", out in allowed)
+                    if (f == Fault.EMPTY_OBJECT && s.emptyReadsOk) {
+                        assertTrue("${s.name} / $f: the user sees $out", out == Outcome.OK || out in allowed)
+                    } else {
+                        assertTrue("${s.name} / $f: the user sees $out", out in allowed)
+                    }
                     if (out == Outcome.FAILED) s.message?.let { m -> seeText(d, m(c)) }
                     if (f == Fault.OFFLINE) mock.goOnline(net)
                     mock.script(emptyList(), null)
@@ -179,7 +188,7 @@ class FaultMatrixTest {
                     val again = if (out == Outcome.EMPTY) reopen else s.retry
                     if (again != null && !s.silentSuccess) {
                         val o = run(c, s, "$f, then Retry", again)
-                        assertEquals("${s.name} / $f: Retry did not bring the answer", Outcome.OK, o)
+                        assertEquals("${s.name} / $f: Retry did not bring the answer (${s.describe(c)}, server=${mock.counts()})", Outcome.OK, o)
                     }
                 }
                 s.reset(c)
@@ -187,9 +196,12 @@ class FaultMatrixTest {
             // A second identical action within the cache time sends nothing.
             mock.script(emptyList(), null)
             s.repeat?.let { r ->
-                val before = mock.count(s.endpoints)
+                mock.settle(1_500)
+                val before = mock.counts()
                 run(c, s, "repeat", r)
-                assertEquals("${s.name}: the same action again within the cache time", 0, mock.count(s.endpoints) - before)
+                mock.settle()
+                val sent = mock.count(s.endpoints) - s.endpoints.sumOf { before[it] ?: 0 }
+                assertEquals("${s.name}: the same action again within the cache time (server before $before, after ${mock.counts()})", 0, sent)
             }
         }
     }
@@ -273,6 +285,7 @@ class FaultMatrixTest {
             },
             message = { c -> c.d.str(R.string.page_failed) },
             retry = { c -> c.d.onMain { it.later() } },
+            emptyReadsOk = true,
         ),
     )
 
@@ -479,7 +492,8 @@ class FaultMatrixTest {
     }
 
     @Test fun pin_name() {
-        fun point(seq: Int) = LatLon(31.20 + 0.01 * seq, 34.78)
+        // Steps of ~5 m around BGU: the recorded reverse geocode is there, and a name from far away is dropped.
+        fun point(seq: Int) = LatLon(BGU.lat + 0.00005 * seq, BGU.lon)
         val press: (Ctx) -> Unit = { c -> c.d.onMain { it.onMapLongPress(point(c.seq)) } }
         matrix(
             Screen(
@@ -536,6 +550,7 @@ class FaultMatrixTest {
                     }
                 },
                 repeat = search,
+                describe = { c -> c.s.let { "loading=${it.loading} error=${it.error} offline=${it.offlineSince} results=${it.hasResults} rain=${it.rain.forecast != null}" } },
             ),
         )
     }
