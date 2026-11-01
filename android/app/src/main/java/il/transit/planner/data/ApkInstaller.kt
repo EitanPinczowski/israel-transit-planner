@@ -26,12 +26,7 @@ import kotlin.coroutines.coroutineContext
  */
 open class ApkInstaller(
     private val context: Context,
-    private val http: OkHttpClient = OkHttpClient.Builder()
-        .followRedirects(false)
-        .followSslRedirects(false)
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build(),
+    private val http: OkHttpClient = client(),
 ) {
     sealed interface Download {
         data class Done(val file: File, val sha256: String) : Download
@@ -106,6 +101,15 @@ open class ApkInstaller(
         const val DIR = "updates"
         private const val SPARE_BYTES = 20L * 1024 * 1024
         private const val MAX_HOPS = 5
+
+        /** Redirects are never followed by OkHttp: [download] checks each hop. (T6's tests derive their client from this one.) */
+        fun client(): OkHttpClient = OkHttpClient
+            .Builder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
 
         /** Android's "Install unknown apps" screen for this app; the user comes back with Back. */
         fun permissionIntent(context: Context): Intent =

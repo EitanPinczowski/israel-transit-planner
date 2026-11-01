@@ -348,9 +348,9 @@ package. Tick only your own package's lines.
 - [x] Request counts asserted end to end against each feature's budget
 
 ### T6 — Security + in-app update (`claude/p11-security-update`, 0 requests, local mock server)
-- [ ] Intent fuzzing of exported components; FileProvider path checks
-- [ ] Update download refuses a wrong host, a bad digest, an off-list redirect, a cut download
-- [ ] End-to-end update: banner → download → system installer → new version
+- [x] Intent fuzzing of exported components; FileProvider path checks
+- [x] Update download refuses a wrong host, a bad digest, an off-list redirect, a cut download
+- [x] End-to-end update: banner → download → system installer → new version
 
 ### T8 — Release, upgrade, performance (`claude/p11-release-perf`, Sonnet, 0 requests)
 - [x] Release-APK smoke on the emulator (network off) + startup-time gate

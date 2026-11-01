@@ -46,6 +46,13 @@ fragments in the same commit.
   `INSTALL_FAILED_UPDATE_INCOMPATIBLE`; the banner says "App not installed: this copy is a
   different build. Uninstall it once". Never "fix" this by changing the key.
 - Failures (cut download, no space, checksum) show one line with Try again + Browser.
+- **What it refuses, pinned on the emulator** (Phase 11 T6, `UpdateFlowTest` against `FakeReleaseServer`,
+  GitHub faked on the loopback, `faults` job): an APK URL off the allowlist, plain HTTP, another port or
+  user info (never even looked up); a redirect off the allowlist (only the first hop is contacted); a digest
+  that doesn't match, isn't sha256 or is missing (the file is deleted); a download cut halfway (`NETWORK`,
+  nothing kept, the next try starts clean); a version that isn't newer (no banner). End to end on API 35:
+  the uitest APK installs the next one (`versionCode + 1`, built in the job) through the banner and
+  Android's prompt, and starts with its data. Changing `ApkInstaller` / `UpdateCheck`: keep these green.
 
 ## The signing key — the one thing that must never be lost
 - Lives in 4 **repository secrets**: `RELEASE_KEYSTORE_B64` (base64 of the .jks),
