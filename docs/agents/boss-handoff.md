@@ -4,28 +4,23 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-11-01, 06:20 Israel time)
+## State (2026-11-01, 07:35 Israel time)
 - **Released:** **v0.9.2 (2026-10-31 19:46)**: R2, the get-off alert fix. Saved-data sample 0.9.2 merged (#103).
   **No v0.9.3 (owner, 2026-11-01): the next release is v0.10.0**, with E4, F2's full-disk fix and later waves. Ask before releasing it.
-- **Boss:** `session_011uenNPuCQdDbxyhH4S3ibu` (took over 2026-10-21, context 340k at writing). **The
+- **Boss:** `session_011uenNPuCQdDbxyhH4S3ibu` (took over 2026-10-21; handing over 2026-11-01 at ~360k, no agents running). **The
   next boss must be started by the owner from claude.ai/code** (see Gotchas: lineage depth).
 - **Merged since 21 Oct:** #100 handoff, #98 R2, #102 notes, #103 sample, #104 **F2 CI stability**
   (~$19 across F2, F2b and a Sonnet review), #106 **T4 fault matrix** (~$14; 144 cases, the `faults` job 10 min).
   #96 (F1) closed, superseded by #104.
-- **E4, PR #105: the owner answered both 2026-11-01 ~06:20 Israel (apps confirmed on the Pixel; the low-data rule accepted)** (`session_01DH799DKAhEoxG7ys5NCvDS`, Opus, ~$12, green on
-  b482637, review round done). The two questions as asked:
-  1. **The payment apps on the Pixel** (owner decision 1): Rav-Kav Online `com.pcentra.ravkavonlinemobile`,
-     Rav-Pass by HopOn `co.hopon.client`, Moovit `com.tranzmate`. ANY WAY was dropped (service ended in 2022).
-  2. **Low data departs from owner decision 2** ("no neighbour tiles"): stops are fetched only when a tile
-     under the screen is missing, then the normal box. Dropping the prefetch cost more Transitous
-     requests (+5–13%); the new rule is ~75–80% of normal and never more (pinned in `LowDataTest`).
-     The boss recommends accepting it.
-  - Also asked: with no app chosen, should the pass notice open the chooser (a small follow-up) rather than Settings?
-  - **Now:** E4 merges `origin/main` (T4 landed; both edit the `transitous-api` skill),
-    green again, then the boss merges. Then add T4's open check, "E4 data card == server counts", as a small follow-up.
-- **Next (Wave 6: T6 + T8)** per `phase11.md`, after E4. Then E5, then (optional) E6 → v0.10.0.
+- **E4 merged (#105, 2026-11-01 07:02 Israel)**, ~$15.5 + $2 review. Owner decisions 1 (apps confirmed on the Pixel)
+  and 2 (the revised low-data rule) are recorded in its PR body. Main is green after it.
+  Follow-ups: T4's check "E4 data card == server counts"; optional: the pass notice opens the chooser.
+- **Wave 5 done (E4 + T4).**
+- **Next: Wave 6 (T6 Opus + T8 Sonnet)** per `phase11.md`, then F3/F4. Then E5, then (optional) E6 → v0.10.0.
 - **Fix packages owed** (flake policy, "flakes twice in 14 days"):
-  - **F3, s01_home_empty** "tab … wide/tall enough" measured mid-relayout: R2, E4 and T4 (3 times).
+  - **F3 (one package):** `s01_home_empty` "tab … wide/tall enough" measured mid-relayout (R2, E4 and T4: 3 times);
+    j14 sees E1's test-reminder notification (1005) left from an earlier journey (cleanup gap); `RestoreTabsStateTest:70`
+    "found something" right after `settle{}` on real IO.
   - **F4, the Settings race (s15)**: root cause in #104's body; the fix is Compose 1.8+ with Paparazzi 2.x and re-recorded goldens.
   - JVM flakes seen by T4: `DayNoticeViewModelTest` (ConcurrentModification), `RestoreTabsStateTest` (timeout).
 - **Bugs found by T4** (PR #106 body; not fixed):
