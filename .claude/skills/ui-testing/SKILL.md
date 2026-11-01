@@ -208,12 +208,13 @@ in 14 days gets a fix package, never a skip.** `issues: write` is given to those
 - **"multithreaded access to SnapshotStateObserver"** (Settings dialog, ~1 run in 12): Compose 1.7 computed a
   node's semantics lazily, under the owner's snapshot observer, on whichever thread read it first. The test
   thread did (`fetchOneOrThrow` → `printToString` after every fetch) while the main thread's accessibility /
-  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. **Still open.**
-  Ruled out: Compose BOM 2025.08.00 (1.9; upstream computes semantics on the main thread) breaks Paparazzi 1.3.5
-  (620 shots error even when recording) and grows the APK 2.8 %; an idling resource that walks every root's
-  semantics on the main thread at each `waitForIdle` (the race still hit the first fetch after idle, run
-  41234918862: the main thread composes/reads after idle, e.g. lazy prefetch or the a11y checker). Next: Compose
-  1.8+ together with Paparazzi 2.x and re-recorded goldens, as its own package.
+  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. **Fixed in F4**
+  by Compose 1.8.3 (BOM 2025.06.01): with `ComposeUiFlags.isSemanticAutofillEnabled` (default on) a node's
+  semantics are computed eagerly in `invalidateSemantics()` on the main thread, and a read only returns the stored
+  config. Paparazzi moved to 2.0.0-alpha02 (built on Compose 1.8.3, layoutlib API 36; so AGP 8.10.1, Kotlin 2.1.21),
+  and every golden was re-recorded. Ruled out before: Compose 1.9 with Paparazzi 1.3.5 (620 shots error); an idling
+  resource that walks every root's semantics at each `waitForIdle` (the race still hit the first fetch after idle).
+  Don't set `isSemanticAutofillEnabled = false`: that brings the lazy, racy path back.
 - **Nightly chaos**, red every night (not flakes): `low_storage` was a real app crash (DataStore ENOSPC out of
   `viewModelScope.launch`; `UserStore` now drops the write, returns false and the screen says "Not saved: phone storage is full"); en-XA on P5 squeezed the map (the credit chip wraps
   at font 2.0; the sheet cap uses its measured height); DST "rang 4 times" counted the lines of one record in

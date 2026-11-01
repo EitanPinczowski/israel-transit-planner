@@ -1,14 +1,14 @@
 {
- "bytes": 29068102,
- "entries_bytes": 28999807,
+ "bytes": 29731639,
+ "entries_bytes": 29650568,
  "folders": {
-  "META-INF/": 754,
-  "assets/": 8329,
-  "classes*.dex": 8491259,
-  "kotlin/": 10114,
+  "META-INF/": 11452,
+  "assets/": 8017,
+  "classes*.dex": 9069692,
+  "kotlin/": 11134,
   "lib/": 19631264,
-  "other": 724830,
-  "res/": 133257
+  "other": 784901,
+  "res/": 134108
  },
- "commit": "ab4e2f4c4f07912d29a8880d8d5db2f51cf90c19"
+ "commit": "8d1989f17afd8726e6b3d94ccea117cf29f506f8"
 }
