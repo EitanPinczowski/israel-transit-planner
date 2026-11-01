@@ -1,5 +1,6 @@
 package il.transit.planner.uitest
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.SystemClock
@@ -20,6 +21,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
@@ -243,9 +245,14 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * Only for runs whose configuration the shell owns (ScreensTest): journeys change it themselves.
      */
     fun awaitDeviceConfig(timeoutMs: Long = 15_000) {
-        val night = shell("cmd uimode night").let { if ("yes" in it) true else if (Regex("\\bno\\b") in it) false else null }
+        val uiMode = shell("cmd uimode night")
+        val night = when {
+            "yes" in uiMode -> true
+            Regex("\\bno\\b") in uiMode -> false
+            else -> null
+        }
         val font = shell("settings get system font_scale").trim().toFloatOrNull()
-        val dpi = Regex("density: (\\d+)").findAll(shell("wm density")).lastOrNull()?.groupValues?.get(1)?.toIntOrNull()
+        val dpi = lastNumber(Regex("density: (\\d+)"), shell("wm density"))
         val lang = Run.locale.takeIf { it == "he" || it == "en" }
         val want = "night=$night font=$font dpi=$dpi lang=$lang"
         val until = SystemClock.uptimeMillis() + timeoutMs
@@ -256,14 +263,14 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
             var ok = false
             inst.runOnMainSync {
                 val c = activity.resources.configuration
-                val isNight = (c.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                val isNight = (c.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
                 val l = c.locales[0].language.let { if (it == "iw") "he" else it }
-                has = "night=$isNight font=${c.fontScale} dpi=${c.densityDpi} lang=$l resumed=${scenarioState} laidOut=${activity.window.decorView.isLaidOut}"
+                has = "night=$isNight font=${c.fontScale} dpi=${c.densityDpi} lang=$l resumed=$scenarioState laidOut=${activity.window.decorView.isLaidOut}"
                 ok = (night == null || night == isNight) &&
                     (font == null || kotlin.math.abs(font - c.fontScale) < 0.01f) &&
                     (dpi == null || dpi == c.densityDpi) &&
                     (lang == null || lang == l) &&
-                    scenarioState == androidx.lifecycle.Lifecycle.State.RESUMED &&
+                    scenarioState == Lifecycle.State.RESUMED &&
                     activity.window.decorView.isLaidOut
             }
             if (ok) return
@@ -301,14 +308,20 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         val out = StringBuilder()
         inst.runOnMainSync {
             val decor = activity.window.decorView
-            out.append(System.identityHashCode(activity)).append(' ').append(decor.width).append('x').append(decor.height)
+            out.append("${System.identityHashCode(activity)} ${decor.width}x${decor.height}")
             fun walk(n: SemanticsNode) {
-                n.config.getOrNull(SemanticsProperties.TestTag)?.let { out.append(' ').append(it).append('=').append(n.boundsInWindow) }
+                n.config.getOrNull(SemanticsProperties.TestTag)?.let { out.append(" $it=${n.boundsInWindow}") }
                 n.children.forEach(::walk)
             }
             roots.forEach(::walk)
         }
         return out.toString()
+    }
+
+    /** The number in [re]'s group 1 at its last match in [text], if any. */
+    private fun lastNumber(re: Regex, text: String): Int? {
+        val last = re.findAll(text).lastOrNull() ?: return null
+        return last.groupValues[1].toIntOrNull()
     }
 
     /** Returns once the main thread has drawn one more frame. */

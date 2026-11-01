@@ -1,5 +1,6 @@
 package il.transit.planner
 
+import android.app.NotificationManager
 import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.TransitApi
 import il.transit.core.search.BackupGeocoder
@@ -9,6 +10,9 @@ import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.data.ApkInstaller
 import il.transit.planner.data.UpdateChecker
+import il.transit.planner.remind.ReminderCheck
+import il.transit.planner.remind.ReminderScheduler
+import kotlinx.coroutines.delay
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -140,14 +144,14 @@ class UiTestApp : TransitApp() {
     private suspend fun clearNotifications() {
         // A ride left running keeps its foreground notification, which cancelAll cannot remove.
         if (rides.active.value) runCatching { rides.stop() }
-        il.transit.planner.remind.ReminderScheduler.cancelAll(this)
-        il.transit.planner.remind.ReminderCheck.forget(this)
-        val nm = getSystemService(android.app.NotificationManager::class.java)
+        ReminderScheduler.cancelAll(this)
+        ReminderCheck.forget(this)
+        val nm = getSystemService(NotificationManager::class.java)
         nm.cancelAll()
         // cancelAll is asynchronous in the system server: wait until it is done, not for a time.
         repeat(100) {
             if (nm.activeNotifications.isEmpty()) return
-            kotlinx.coroutines.delay(50)
+            delay(50)
         }
         error("app notifications still shown after cancelAll and the ride's stop: ${nm.activeNotifications.map { it.id }}")
     }
