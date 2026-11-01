@@ -237,7 +237,7 @@ the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on
 
 In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui_faults_run.sh`). 0 requests to the internet.
 - **Intent fuzzing** (`IntentFuzzTest`, explicit intents to the exported `MainActivity`, replay mode): SEND with no / wrong-type /
-  240k-char text, VIEW with `geo:NaN`, `geo:999,999`, `javascript:`, `file://`, `content://` (+ grant flags), `intent:`, `data:`,
+  240k-char text, VIEW with `geo:NaN`, `geo:999,999`, `javascript:`, `file://`, `content://` (a grant on a file the sender can't read: Android refuses it before sending), `intent:`, `data:`,
   look-alike map hosts, markup / SQL / RLO in `geo:` queries, and our own notification / tile / shortcut extras broken. Each case:
   the Activity stays up, saved data unchanged, refused input sends **0** (`replay.calls`), searched text ≤ 1 (a typed search's).
   The shell repeats the kinds with `adb shell am`, checks the look-alike host does not resolve to us, the spoofed

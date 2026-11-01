@@ -95,8 +95,10 @@ class IntentFuzzTest {
         case("SEND no extras", check = refused, make = send(null))
         case("SEND text as an int", check = refused) { c -> send(null)(c).putExtra(Intent.EXTRA_TEXT, 42) }
         case("SEND empty", check = refused, make = send(""))
+        // A stream of our own (Android grants it on the way: a foreign one is refused before it leaves, below).
         case("SEND image/png + stream", check = refused) { c ->
-            send(null, "image/png")(c).putExtra(Intent.EXTRA_STREAM, Uri.parse("content://media/external/images/media/1"))
+            val own = Uri.parse("content://${c.packageName}.updates/updates/none.apk")
+            send(null, "image/png")(c).putExtra(Intent.EXTRA_STREAM, own)
         }
         case("no action, no data", check = refused) { c -> main(c) }
         case("unknown action with data", check = refused) { c -> main(c).setAction("il.example.EVIL").setData(Uri.parse("geo:32.08,34.79")) }
@@ -135,13 +137,21 @@ class IntentFuzzTest {
 
     /** Another app's private file, with a read grant flag on top: the app never opens a shared URI. */
     @Test fun content_uri_with_a_grant_flag() {
-        case("VIEW content:// + grant", check = refused) { c ->
-            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-            view("content://com.android.externalstorage.documents/document/primary%3ADownload%2Fsecret.txt")(c).addFlags(flags)
+        val secret = "content://com.android.externalstorage.documents/document/primary%3ADownload%2Fsecret.txt"
+        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        // A grant on a file the sender can't read is refused by Android before the intent leaves.
+        for (make in listOf<(android.content.Context) -> Intent>(
+            { c -> view(secret)(c).addFlags(flags) },
+            { c -> send(null, "image/png")(c).putExtra(Intent.EXTRA_STREAM, Uri.parse(secret)) },
+        )) {
+            AppDriver(compose).use { d ->
+                val refusedByAndroid = runCatching { d.launch(make(d.inst.targetContext)) }.exceptionOrNull()
+                assertTrue("$refusedByAndroid", refusedByAndroid is SecurityException)
+            }
         }
-        case("SEND content:// as text + grant", maxRequests = 1) { c ->
-            send("content://com.android.contacts/contacts/1")(c).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        // Without the flag it reaches the app, which never opens it.
+        case("VIEW content:// no grant", check = refused, make = view(secret))
+        case("SEND content:// as text", maxRequests = 1, make = send("content://com.android.contacts/contacts/1"))
     }
 
     /** Markup, SQL and bidi overrides are plain text: searched as typed (≤ 1 request), shown as sent, overrides dropped. */
