@@ -159,6 +159,10 @@ import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import il.transit.core.present.Speech
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 /** My lines: each pinned line's next departures at its stop, with live delays. */
 @Composable
@@ -241,16 +245,20 @@ internal fun StopPanel(
                 else -> LazyColumn(Modifier.weight(1f, fill = false).padding(end = 8.dp)) {
                     items(sheet.rows) { r ->
                         val pinned = favorites.any { it.stopId == sheet.stopId && it.matches(r) }
-                        val open = stringResource(R.string.timetable_open, r.line.ifBlank { kindName(r.kind) })
+                        val lineName = r.line.ifBlank { kindName(r.kind) }
+                        val open = stringResource(R.string.timetable_open, lineName)
+                        // Phase 11 E5: the row reads as one sentence with times as times; the ☆ says which line it pins.
+                        val said = spoken(remember(r) { Speech.departure(r) }) + r.alerts.joinToString("") { ", ⚠ ${it.header}" }
+                        val pinLabel = stringResource(if (pinned) R.string.a11y_unpin_line else R.string.a11y_pin_line, lineName)
                         // A tap anywhere on the row (≥ 48 dp tall) opens this line's day timetable at this stop.
                         Row(
                             Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClickLabel = open) { vm.timetable(TimetableAction.Open(r)) },
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Box(Modifier.weight(1f)) { DepartureView(r) }
+                            Box(Modifier.weight(1f).clearAndSetSemantics { contentDescription = said }) { DepartureView(r) }
                             // ☆ pins this line in this direction at this stop ("My lines").
-                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }) {
-                                Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary)
+                            TextButton(onClick = { vm.toggleFavorite(sheet, r) }, modifier = Modifier.semantics { contentDescription = pinLabel }) {
+                                Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.clearAndSetSemantics {})
                             }
                         }
                     }

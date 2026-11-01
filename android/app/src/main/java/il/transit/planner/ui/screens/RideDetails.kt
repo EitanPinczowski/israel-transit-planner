@@ -21,6 +21,9 @@ import il.transit.core.present.TransferWarning
 import il.transit.core.present.rideDetails
 import il.transit.core.present.tightTransfers
 import il.transit.planner.R
+import il.transit.core.present.Speech
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 
 /**
  * Ride details on an option card (Phase 10 D1): one compact line for the whole option on an
@@ -80,8 +83,10 @@ internal fun TransferChips(itin: Itinerary, bufferMin: Int?) {
                 TransferWarning.WALK_SPARE -> stringResource(R.string.transfer_walk_spare, t.walkMin, t.slackMin)
                 TransferWarning.TIGHT -> stringResource(R.string.transfer_tight)
             }
+            // Phase 11 E5: "warning: tight change at …, only 3 minutes" rather than "warning sign, change in …".
+            val said = if (w == TransferWarning.CHANGE_IN) spoken(Speech.tightChange(t.stop, t.slackMin)) else text
             Surface(color = MaterialTheme.colorScheme.tertiaryContainer, contentColor = MaterialTheme.colorScheme.onTertiaryContainer, shape = MaterialTheme.shapes.extraSmall) {
-                Text("⚠ $text", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                Text("⚠ $text", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp).clearAndSetSemantics { contentDescription = said })
             }
         }
     }

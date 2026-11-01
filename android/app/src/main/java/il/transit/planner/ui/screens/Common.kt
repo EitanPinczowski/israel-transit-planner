@@ -160,6 +160,13 @@ import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.heading
 
 internal const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
 
@@ -247,7 +254,8 @@ internal fun SheetHeader(collapsed: Boolean, onCollapse: (Boolean) -> Unit, titl
                     if (drag > threshold) onCollapse(true) else if (drag < -threshold) onCollapse(false)
                 },
             )
-            .clickable(onClickLabel = label) { onCollapse(!collapsed) },
+            .clickable(onClickLabel = label) { onCollapse(!collapsed) }
+            .semantics { heading() },
     ) {
         Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), contentAlignment = Alignment.Center) {
             Box(
@@ -287,6 +295,8 @@ internal fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
         .background(if (selected) c.primaryContainer else Color.Transparent)
         .border(1.dp, if (selected) c.primary.copy(alpha = 0.6f) else Color.Transparent, shape)
         .then(if (selected) Modifier.testTag(il.transit.planner.ui.UiTags.SELECTED) else Modifier)
+        // Phase 11 E5: TalkBack says "selected" on the option the map shows.
+        .semantics { this.selected = selected }
         .clickable(onClick = onClick)
         .padding(10.dp)
 }
@@ -309,15 +319,22 @@ internal fun FareText(f: FareEstimate?) {
 }
 
 @Composable
-internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null) {
+internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null, leg: il.transit.core.api.Leg? = null, badge: il.transit.core.present.AccessibleBadge? = null) {
     val color = parseColor(c.color)
     val text = when (c.kind) {
         LegKind.WALK, LegKind.CAR -> "${kindName(c.kind)} ${c.minutes}′"
         else -> c.label ?: kindName(c.kind)
     }.let { if (c.alert) "⚠ $it" else it } // only when an answer carries an alert
+    // Phase 11 E5: one node that says the whole leg ("Bus 47, 8:10 to 8:34, 12 stops, get off at …"),
+    // never "47"; a tappable chip grows its tap area to 48 dp without growing the chip itself.
+    val said = spoken(if (leg != null) il.transit.core.present.Speech.leg(leg, badge) else il.transit.core.present.Speech.chip(c))
     Box(
-        Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+        Modifier.then(if (onClick != null) Modifier.minimumInteractiveComponentSize() else Modifier)
+            .background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
+            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(if (c.legIndex >= 0) Modifier.testTag(legChipTag(c.legIndex)) else Modifier)
+            // Inner to `clickable`, so the tap and its role stay; the chip's own text is replaced.
+            .clearAndSetSemantics { contentDescription = said }
             .padding(horizontal = 6.dp, vertical = 2.dp),
     ) {
         val live = when {

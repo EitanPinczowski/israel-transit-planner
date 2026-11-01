@@ -54,7 +54,7 @@ class ScreensTest {
     @get:Rule val permissions = Permissions.grantAll()
 
     private fun screen(name: String, places: List<il.transit.core.user.SavedPlace> = UiTestApp.PLACES, before: (UiTestApp) -> Unit = {}, setup: AppDriver.() -> Unit) {
-        AppDriver(compose, places).use { d ->
+        AppDriver(compose, places, checkA11y = false).use { d ->
             before(d.app)
             d.launch()
             d.awaitDeviceConfig()

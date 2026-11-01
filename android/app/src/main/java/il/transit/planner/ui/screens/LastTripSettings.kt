@@ -31,6 +31,8 @@ import il.transit.core.user.Home
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /**
  * Settings → "Last trip home alert" (Phase 9 C5), off by default. Turning it on asks for
@@ -84,7 +86,7 @@ internal fun LastTripSetting(s: UserSettings, places: List<SavedPlace>, set: (Us
 @Composable
 internal fun LastTripSection(s: UserSettings, places: List<SavedPlace>, denied: Boolean, onToggle: (Boolean) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.last_trip_section), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.last_trip_section), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.last_trip_toggle), Modifier.weight(1f))
             Switch(checked = s.lastTripAlert, onCheckedChange = onToggle)

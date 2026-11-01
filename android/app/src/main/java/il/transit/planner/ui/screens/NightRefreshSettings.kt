@@ -20,6 +20,8 @@ import il.transit.core.user.Home
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /** The offline Trip banner: a night-refresh copy says when it was planned. */
 @Composable
@@ -30,7 +32,7 @@ internal fun offlineBanner(night: Boolean, time: String): String =
 @Composable
 internal fun NightRefreshSection(s: UserSettings, places: List<SavedPlace>, set: (UserSettings) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.night_refresh_title), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.night_refresh_title), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.night_refresh_toggle), Modifier.weight(1f))
             Switch(checked = s.nightRefresh, onCheckedChange = { set(s.copy(nightRefresh = it)) })

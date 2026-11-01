@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import il.transit.planner.R
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.Modifier
 
 /** What Settings needs for the local crash log: how many are kept, and the two buttons. */
 class CrashLogUi(
@@ -22,7 +25,7 @@ class CrashLogUi(
 @Composable
 internal fun CrashLogSection(log: CrashLogUi) {
     Column {
-        Text(stringResource(R.string.crash_log), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.crash_log), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Text(
             if (log.count == 0) stringResource(R.string.crash_log_none)
             else pluralStringResource(R.plurals.crash_log_count, log.count, log.count),

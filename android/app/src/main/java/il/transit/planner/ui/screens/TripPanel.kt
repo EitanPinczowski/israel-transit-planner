@@ -155,6 +155,13 @@ import java.time.Instant
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import il.transit.core.present.Speech
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
 
 @Composable
 internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -> Unit) {
@@ -511,7 +518,7 @@ internal fun ReminderRow(state: UiState, vm: MainActions) {
         Text(
             stringResource(R.string.reminder_set, hhmm(r.leaveAt)),
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
         )
         TextButton(onClick = vm::cancelReminder) { Text(stringResource(R.string.cancel)) }
     }
@@ -524,7 +531,8 @@ internal fun RideRow(state: UiState, vm: MainActions) {
     val context = LocalContext.current
     val p = state.rideProgress
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
+        // Phase 11 E5: TalkBack reads the change by itself ("2 stops left"); it changes once a stop, not every second.
+        Column(Modifier.weight(1f).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite }) {
             if (p == null) {
                 Text(stringResource(R.string.ride_active), style = MaterialTheme.typography.bodySmall)
             } else {
@@ -567,7 +575,9 @@ internal fun ItineraryCard(
 ) {
     val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
     Column(Modifier.option(selected, onClick)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Phase 11 E5: the times as times ("leave 8:21, arrive 9:46, 85 minutes, 1 transfer"), not "08:21–09:46".
+        val header = spoken(remember(itin) { Speech.option(itin.start, itin.end, s.durationMin, s.transfers) })
+        Row(Modifier.clearAndSetSemantics { contentDescription = header }, verticalAlignment = Alignment.CenterVertically) {
             // A trip on another day than the one searched (Friday → Saturday night) says so.
             val depart = s.departDay?.let { d -> stringResource(R.string.on_day, d.getDisplayName(TextStyle.SHORT, Locale.getDefault()), s.depart) } ?: s.depart
             val arrive = if (s.arriveDaysLater > 0) stringResource(R.string.next_day, s.arrive, s.arriveDaysLater) else s.arrive
@@ -578,7 +588,11 @@ internal fun ItineraryCard(
             // On the selected option a bus or train chip opens that vehicle's stops (trip sheet).
             s.chips.forEach { c ->
                 val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit
-                LegChipView(withTrainNumber(c, itin), onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null)
+                LegChipView(
+                    withTrainNumber(c, itin),
+                    onClick = if (tappable) ({ onLeg!!(c.legIndex) }) else null,
+                    leg = itin.legs.getOrNull(c.legIndex),
+                )
             }
             if (fewerStops) FewerStopsChip()
         // A tight change first, so it is above the fold on a small phone (designer pass).

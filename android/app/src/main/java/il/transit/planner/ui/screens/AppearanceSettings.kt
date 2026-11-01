@@ -10,6 +10,9 @@ import androidx.compose.ui.res.stringResource
 import il.transit.core.user.Appearance
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.Modifier
 
 /**
  * Settings → Appearance (Phase 9 C6): language, theme, and the welcome tour again. Saving
@@ -18,7 +21,7 @@ import il.transit.planner.R
 @Composable
 internal fun AppearanceSection(s: UserSettings, set: (UserSettings) -> Unit, showTour: () -> Unit) {
     Column {
-        Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+        Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.semantics { heading() })
         Section(R.string.app_language) {
             Appearance.LANGUAGES.forEach { l ->
                 val label = when (l) {

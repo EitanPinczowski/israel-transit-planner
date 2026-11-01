@@ -77,7 +77,12 @@ object Leaks {
 }
 
 /** Starts the app on a clean slate and reaches into it the way a test needs to. */
-class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestApp.PLACES) : Closeable {
+/**
+ * [checkA11y]: run Google's Accessibility Test Framework after every step (Phase 11 E5, [A11yHook]); an
+ * error fails the journey when the driver closes. Off only for `ScreensTest`, whose layout audit reports
+ * ATF (R5) per screen and profile instead.
+ */
+class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestApp.PLACES, private val checkA11y: Boolean = true) : Closeable {
     val inst = InstrumentationRegistry.getInstrumentation()
     val app = inst.targetContext.applicationContext as UiTestApp
     private var scenario: ActivityScenario<MainActivity>? = null
@@ -95,9 +100,14 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     fun launch(intent: android.content.Intent? = null): AppDriver {
         val s0 = if (intent != null) ActivityScenario.launch<MainActivity>(intent) else ActivityScenario.launch(MainActivity::class.java)
         scenario = s0.also { s -> s.onActivity { activityRef = it } }
+        if (checkA11y && a11y == null) a11y = A11yHook(this).also { compose.registerIdlingResource(it) }
         compose.waitForIdle()
         return this
     }
+
+    /** The ATF check after every step (null with [checkA11y] off, or before [launch]). */
+    var a11y: A11yHook? = null
+        private set
 
     /** Closes the Activity and starts it again (state that lives in stores survives). */
     fun relaunch(): AppDriver {
@@ -366,9 +376,22 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     }
 
     override fun close() {
+        val hook = a11y
+        if (hook != null) {
+            // The last screen too, then the hook goes: it must not keep the closed Activity alive either.
+            if (activityRef != null) runCatching { inst.runOnMainSync { hook.poll(final = true) } }
+            compose.unregisterIdlingResource(hook)
+            a11y = null
+        }
         scenario?.close()
         scenario = null
         activityRef = null // the driver itself must not be what keeps the closed Activity alive
+        if (hook != null && hook.errors.isNotEmpty()) {
+            throw AssertionError(
+                "Accessibility Test Framework errors on API $sdk (Phase 11 E5: blocking in every journey):\n" +
+                    hook.errors.values.joinToString("\n") { "- $it" },
+            )
+        }
     }
 
     companion object {

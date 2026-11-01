@@ -41,6 +41,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /** Nothing counted yet: the card's first day. */
 internal val NO_USAGE = UsageSummary(0, 0, 0, 0, 0, null, 0, 0)
@@ -71,7 +73,7 @@ internal fun mapCacheMb(context: Context): Double? =
 @Composable
 internal fun DataCardContent(u: UsageSummary, mapCacheMb: Double?, lowData: Boolean, onLowData: (Boolean) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.data_title), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.data_title), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(R.string.data_today), style = MaterialTheme.typography.titleSmall)

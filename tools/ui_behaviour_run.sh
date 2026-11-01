@@ -54,6 +54,9 @@ else
   instrument il.transit.planner.uitest.SmokeTest,il.transit.planner.uitest.JourneysTest journeys
   # Phase 11 T8: the five gap journeys (docs/testing/inventory.md) on the two newest phones.
   if [[ $API == 34 || $API == 35 ]]; then instrument il.transit.planner.uitest.MoreJourneysTest more-journeys; fi
+  # Phase 11 E5: what TalkBack would read, Hebrew and English (no TalkBack on these images; the owner
+  # checks the real one on the Pixel). The ATF check after every step runs in every journey above.
+  if [[ $API == 35 ]]; then instrument il.transit.planner.uitest.A11yJourneysTest a11y-journey; fi
 fi
 
 # Process death: leave the app, let the system kill it, come back. The uitest build's

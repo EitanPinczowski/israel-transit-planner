@@ -161,6 +161,8 @@ import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 @Composable
 internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions, onShowTour: () -> Unit = {}) {
@@ -272,7 +274,7 @@ internal fun SettingsContent(
         item { OfflineSection(actions, s.lowData) }
         item { CrashLogSection(actions.crashLog) }
         item { UpdateSettingsRow(state.updateState, vm) }
-        item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
+        item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() }) }
         item { SaveHereRow(vm) }
         if (state.savedPlaces.isNotEmpty() || state.savedTrips.isNotEmpty()) {
             item { HomeSuggestion(s, state.savedPlaces, ::set) }
@@ -361,7 +363,7 @@ internal fun OfflineSection(actions: ScreenActions, lowData: Boolean = false) {
     val o = actions.offline
     val download = rememberOfflineDownload(lowData, actions.downloadOffline) // Phase 11 E4: asks off Wi-Fi in low-data mode
     Column {
-        Text(stringResource(R.string.offline_map), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.offline_map), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         val status = when (o.status) {
             OfflineState.Status.NONE -> stringResource(R.string.offline_none)
             OfflineState.Status.DOWNLOADING -> stringResource(R.string.offline_downloading, o.percent)
@@ -384,7 +386,7 @@ internal fun OfflineSection(actions: ScreenActions, lowData: Boolean = false) {
 @Composable
 internal fun Section(titleRes: Int, chips: @Composable () -> Unit) {
     Column {
-        Text(stringResource(titleRes), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(titleRes), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) { chips() }
     }
 }
