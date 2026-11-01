@@ -204,8 +204,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: uitest-apks, path: apks }
       # Phase 11 T6: the in-app update test installs a "next version" over this one. Built here (versionCode 2,
-      # versionName 0.0.2-uitest); Android only updates an app signed with the same key, so the downloaded APKs
-      # are re-signed with this job's debug key too (a throwaway key, made by Gradle on the runner).
+      # versionName 0.0.2-uitest); Android only updates an app signed with the same key, so all three APKs
+      # (the downloaded pair and this one) are re-signed with one throwaway key made in the job.
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "17" }
       - uses: gradle/actions/setup-gradle@v4
@@ -214,9 +214,12 @@ jobs:
         run: |
           ./gradlew -p android :app:assembleUitest
           cp android/app/build/outputs/apk/uitest/app-uitest.apk apks/app-uitest-next.apk
+          # A throwaway key made here (never committed, never a secret); the three APKs must share one.
+          keytool -genkeypair -keystore "$RUNNER_TEMP/t6.jks" -storepass t6-throwaway -keypass t6-throwaway \
+            -alias t6 -keyalg RSA -keysize 2048 -validity 2 -dname "CN=T6 uitest throwaway"
           signer="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner"
-          for apk in apks/app-uitest.apk apks/app-uitest-androidTest.apk; do
-            "$signer" sign --ks ~/.android/debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android "$apk"
+          for apk in apks/app-uitest.apk apks/app-uitest-androidTest.apk apks/app-uitest-next.apk; do
+            "$signer" sign --ks "$RUNNER_TEMP/t6.jks" --ks-pass pass:t6-throwaway --ks-key-alias t6 --key-pass pass:t6-throwaway "$apk"
           done
           for apk in apks/*.apk; do echo "$apk: $("$signer" verify --print-certs "$apk" | grep -m1 SHA-256)"; done
       - name: Enable KVM

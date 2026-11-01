@@ -251,7 +251,7 @@ In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui
   port and record the host:port asked for, and trust in that cert only, so the app's real URL checks decide.
   `UiTestApp.releaseChecker` puts a real checker + installer behind the banner. What it pins: `release-apk` skill.
 - **End to end on API 35** (`UpdateInstallSteps`, run only by the script, in order): the job builds the next APK
-  (`RELEASE_VERSION=0.0.2` → `versionCode` 2) and re-signs the downloaded pair with the same debug key. Step 1: banner →
+  (`RELEASE_VERSION=0.0.2` → `versionCode` 2) and signs it and the downloaded pair with one throwaway key made by `keytool` in the job. Step 1: banner →
   download through GitHub's redirect → digest OK → Android's installer opens on `content://<pkg>.updates/updates/update.apk`.
   The script taps the installer's button (from a `uiautomator dump`: the app's process dies with the install, so the
   test can't), waits for `versionCode=2`, starts the app; step 2: the new version, places and settings kept.
