@@ -36,7 +36,7 @@ adb logcat -c
 diag() {
   echo "::group::why the probe did not answer"
   echo "--- PerfProbe, crashes, ANRs, the app's own errors"
-  adb logcat -d | tr -d '\r' | grep -E "PerfProbe|AndroidRuntime|FATAL EXCEPTION|ANR in|MapGuard|Fatal signal|il.transit.planner" | tail -60
+  adb logcat -d | tr -d '\r' | grep -E " PerfProbe|AndroidRuntime|FATAL EXCEPTION|ANR in|MapGuard|Fatal signal" | tail -30
   echo "--- crash buffer"; adb logcat -d -b crash | tail -40
   echo "--- resumed activity / focus"
   adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity" | head -3
@@ -53,7 +53,7 @@ start_probe() { # $1 = map | ride: start the app with the probe's extra
 
 ready() { # $1 = kind: wait for the probe's "ready" line (the first start on a fresh emulator can take a minute)
   for _ in $(seq 1 120); do
-    adb logcat -d -s PerfProbe:I PerfProbe:E | tr -d '\r' | grep -q "ready kind=$1" && return 0; sleep 1
+    adb logcat -d -s PerfProbe:I | tr -d '\r' | grep -q "ready kind=$1" && return 0; sleep 1
   done
   diag
   return 1
