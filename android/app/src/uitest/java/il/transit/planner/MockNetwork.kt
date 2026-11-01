@@ -74,8 +74,8 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
             motis(MotisJson.encodeToString(PlanResponse.serializer(), replay.plan(req))) { it.plan(req) }
 
         override suspend fun oneToMany(one: LatLon, many: List<LatLon>, mode: String, maxSeconds: Int, arriveBy: Boolean): List<Int?> {
-            val json = replay.oneToMany(one, many, mode, maxSeconds, arriveBy)
-                .joinToString(",", "[", "]") { d -> if (d == null) "{}" else "{\"duration\":$d}" }
+            val durations = replay.oneToMany(one, many, mode, maxSeconds, arriveBy)
+            val json = durations.joinToString(",", "[", "]") { d -> if (d == null) "{}" else "{\"duration\":$d}" }
             return motis(json) { it.oneToMany(one, many, mode, maxSeconds, arriveBy) }
         }
 
