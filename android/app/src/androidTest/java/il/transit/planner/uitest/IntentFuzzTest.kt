@@ -103,11 +103,13 @@ class IntentFuzzTest {
         case("VIEW without data", check = refused) { c -> main(c).setAction(Intent.ACTION_VIEW) }
     }
 
-    /** The most text one intent carries (a binder transaction is ~1 MB): parsed in well under a second. */
+    /** Far more text than any message: parsed in well under a second. */
     @Test fun send_huge_text() {
-        val text = "שלום ".repeat(48_000) // 240 000 chars, ~480 KB in the parcel
-        case("SEND 240k chars", check = refused, make = send(text))
-        case("SEND 240k chars after a street", maxRequests = 1, make = send("רחוב הרצל 15 תל אביב\n" + "x".repeat(240_000)))
+        // 100 000 chars (~200 KB in the parcel), 50 times the cap. Twice that made the emulator kill processes for memory:
+        // the system keeps copies of the launching intent.
+        val text = "שלום ".repeat(20_000)
+        case("SEND 100k chars", check = refused, make = send(text))
+        case("SEND 100k chars after a street", maxRequests = 1, make = send("רחוב הרצל 15 תל אביב\n" + "x".repeat(100_000)))
     }
 
     @Test fun view_broken_or_foreign_schemes() {
@@ -154,6 +156,8 @@ class IntentFuzzTest {
         }
         val rlo = '\u202E'
         val label: (AppDriver) -> Unit = { d ->
+            // A shared point waits for the first location fix before it becomes the destination (D6).
+            compose.waitUntil(15_000) { d.ui.to != null }
             val to = d.ui.to as? PlaceRef.Point
             assertNotNull("a point at Tel Aviv", to)
             assertEquals("Homegpj.exe", to!!.name)

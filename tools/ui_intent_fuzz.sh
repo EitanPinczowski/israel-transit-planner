@@ -53,7 +53,8 @@ shell_case "SEND wrong type" start -W -n "$ACT" -a android.intent.action.SEND -t
 for uri in 'geo:NaN,NaN' 'geo:999,999' "geo:0,0?q=%27%3B%20DROP%20TABLE%20places%3B--" 'geo:0,0?q=%3Cscript%3Ealert(1)%3C/script%3E' \
   'geo:0,0?q=32.08,34.79(%E2%80%AEevil)' 'javascript:alert(1)' "file:///data/data/$PKG/files/crash_log.txt" \
   'https://maps.google.com.evil.example/maps?q=32.0839,34.7983'; do
-  shell_case "VIEW $uri" start -W -n "$ACT" -a android.intent.action.VIEW -d "$uri"
+  # Quoted for the phone's shell too: "(" and ";" are its syntax.
+  shell_case "VIEW $uri" start -W -n "$ACT" -a android.intent.action.VIEW -d "'$uri'"
 done
 # Implicit: the look-alike host must not even resolve to us (our filters name the exact hosts).
 res=$(adb shell cmd package query-activities -a android.intent.action.VIEW -c android.intent.category.BROWSABLE \

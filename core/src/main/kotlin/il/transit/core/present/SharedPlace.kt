@@ -149,7 +149,8 @@ sealed interface SharedPlace {
                 if (k.isEmpty()) null else k.lowercase() to decode(kv.substringAfter('='))
             }.toMap()
 
-        private fun decode(s: String): String = runCatching { URLDecoder.decode(s, "UTF-8") }.getOrDefault(s)
+        /** Percent-decoded, and bidi controls sent encoded (%E2%80%AE) dropped as well. */
+        private fun decode(s: String): String = BIDI.replace(runCatching { URLDecoder.decode(s, "UTF-8") }.getOrDefault(s), "")
 
         /**
          * The address in a message ("נפגשים ברחוב הרצל 15 בתל אביב בשמונה"): the line with a

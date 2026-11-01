@@ -3,6 +3,7 @@ package il.transit.planner.uitest.mock
 import androidx.test.platform.app.InstrumentationRegistry
 import okhttp3.Dns
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -83,6 +84,8 @@ class FakeReleaseServer : ExternalResource() {
         tmf.init(anchors)
         trust = tmf.trustManagers.filterIsInstance<X509TrustManager>().first()
         server = MockWebServer()
+        // HTTP/1.1, as GitHub answers a plain client too: the Host header names the host the app asked for (h2 has none).
+        server.protocols = listOf(Protocol.HTTP_1_1)
         server.useHttps(tls.socketFactory, false)
         server.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {

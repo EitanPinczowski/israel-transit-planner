@@ -49,6 +49,8 @@ class SharedInputSecurityTest {
         val p = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(Home${rlo}gpj.exe)")
         assertTrue(p is SharedPlace.Point)
         assertEquals("Homegpj.exe", (p as SharedPlace.Point).label)
+        val encoded = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(Home%E2%80%AEgpj.exe)")
+        assertEquals("Homegpj.exe", (encoded as SharedPlace.Point).label)
         val t = SharedPlace.parse("geo:0,0?q=${rlo}דיזנגוף 50 תל אביב")
         assertTrue(t is SharedPlace.Text)
         assertFalse((t as SharedPlace.Text).query.any { it in '\u202A'..'\u202E' || it in '\u2066'..'\u2069' })
