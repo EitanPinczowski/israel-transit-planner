@@ -49,6 +49,16 @@ object Run {
         }
 }
 
+/**
+ * Phase 11 T8 (owner decision 25): LeakCanary after every journey. The rule runs OUTSIDE the Compose rule (RuleChain, see the
+ * journey classes), so the Activity, ViewModel, MapView or service the journey closed is looked at once the test's own Compose
+ * recomposer has been torn down too (checked inside the test body, that recomposer still held the closed Activity: first CI run).
+ * A retained one fails the journey with the leak trace. Known framework-only paths are in `LeakConfig` (uitest build).
+ */
+object Leaks {
+    fun rule(): org.junit.rules.TestRule = leakcanary.DetectLeaksAfterTestSuccess("journey")
+}
+
 /** Starts the app on a clean slate and reaches into it the way a test needs to. */
 class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestApp.PLACES) : Closeable {
     val inst = InstrumentationRegistry.getInstrumentation()
@@ -244,23 +254,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         scenario?.close()
         scenario = null
         activityRef = null // the driver itself must not be what keeps the closed Activity alive
-        if (detectLeaks) assertNoLeaks()
     }
-
-    /**
-     * Phase 11 T8 (owner decision 25): LeakCanary, run after every journey. The Activity was just closed, so a retained
-     * Activity, ViewModel, MapView or service is a leak; the failure carries the leak trace. When the journey itself
-     * failed, this error rides on it as a suppressed one (the original stays first).
-     */
-    private fun assertNoLeaks() {
-        // Android 15's InteractionJankMonitor holds the closed Activity's context in a message it runs ~2 s later (seen in
-        // the first CI run): give such framework hand-overs time to finish before the heap is looked at.
-        SystemClock.sleep(3_000)
-        leakcanary.LeakAssertions.assertNoLeaks("AppDriver:${Run.id}")
-    }
-
-    /** Set false by a test that holds the app open by design (none today). */
-    var detectLeaks: Boolean = true
 
     companion object {
         val sdk: Int get() = Build.VERSION.SDK_INT
