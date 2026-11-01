@@ -22,7 +22,7 @@ open class UpdateChecker(
     private val store: UserStore,
     val currentVersion: String,
     open val installer: ApkInstaller? = null,
-    private val http: OkHttpClient = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build(),
+    private val http: OkHttpClient = client(),
 ) {
     /** The daily check: a newer release, or null for anything else (throttled, up to date, offline). */
     open suspend fun check(now: Instant = Instant.now()): LatestRelease? {
@@ -45,5 +45,10 @@ open class UpdateChecker(
         }
         store.setLastUpdateCheck(now.epochSecond)
         return UpdateCheck.result(currentVersion, body)
+    }
+
+    companion object {
+        /** The GitHub client. (T6's tests derive theirs from this one.) */
+        fun client(): OkHttpClient = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build()
     }
 }

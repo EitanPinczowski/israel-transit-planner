@@ -56,6 +56,7 @@ grep -q "^OK ($SCREENS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || f
   echo '```'
 } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
 adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+bash "$(dirname "$0")/ui_intent_fuzz.sh" "$API" "$APKS" "$OUT/security" || fail "the security / update tests failed on API $API"
 
 adb logcat -d > "$OUT/logcat.txt" || true
 adb logcat -d -b crash >> "$OUT/crash.txt" || true
