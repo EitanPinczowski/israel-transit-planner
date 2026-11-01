@@ -103,6 +103,28 @@ class UiTestApp : TransitApp() {
         history.clear()
         planCache.clear()
         tabCache.clear()
+        clearNotifications()
+    }
+
+    /**
+     * No app notification and no app alarm left from an earlier journey (Phase 11 F3): j14 counted
+     * [1001, 1005], 1005 being j15's test reminder from earlier in the same run. The alarms go first,
+     * so nothing armed before can post after the notifications are cleared, then the test check's
+     * state, then the notifications; returns once the system lists none for the app.
+     */
+    private suspend fun clearNotifications() {
+        // A ride left running keeps its foreground notification, which cancelAll cannot remove.
+        if (rides.active.value) runCatching { rides.stop() }
+        il.transit.planner.remind.ReminderScheduler.cancelAll(this)
+        il.transit.planner.remind.ReminderCheck.forget(this)
+        val nm = getSystemService(android.app.NotificationManager::class.java)
+        nm.cancelAll()
+        // cancelAll is asynchronous in the system server: wait until it is done, not for a time.
+        repeat(100) {
+            if (nm.activeNotifications.isEmpty()) return
+            kotlinx.coroutines.delay(50)
+        }
+        error("app notifications still shown after cancelAll and the ride's stop: ${nm.activeNotifications.map { it.id }}")
     }
 
     companion object {

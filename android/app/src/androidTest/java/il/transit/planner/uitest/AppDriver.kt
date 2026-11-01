@@ -3,7 +3,12 @@ package il.transit.planner.uitest
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.SystemClock
+import android.view.Choreographer
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollToNodeAction
@@ -29,6 +34,8 @@ import il.transit.planner.ui.UiTags
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * Which device profile this run is (set by the CI script with `-e profile P4 -e locale he
@@ -206,6 +213,91 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
                 "windowFocus=${root.hasWindowFocus()}, editing=${vm.state.value.editing}"
         }
         return out
+    }
+
+    /**
+     * Until the Activity runs with the configuration the phone is set to: night mode, font scale and
+     * density as the shell set them, and the run's language. The layout script switches those just
+     * before each instrumentation (`cmd uimode night`, `font_scale`, `wm density`, per-app locale);
+     * a change that reaches the app after the Activity started restarts or re-lays it out, and a
+     * test measuring then sees a half-laid-out screen (Phase 11 F3: s01's mode tabs at 7 dp wide or
+     * 0 dp tall, each time on the first screen after such a switch: P1-he-dark, P2-he-light, P4-he-dark).
+     * Only for runs whose configuration the shell owns (ScreensTest): journeys change it themselves.
+     */
+    fun awaitDeviceConfig(timeoutMs: Long = 15_000) {
+        val night = shell("cmd uimode night").let { if ("yes" in it) true else if (Regex("\\bno\\b") in it) false else null }
+        val font = shell("settings get system font_scale").trim().toFloatOrNull()
+        val dpi = Regex("density: (\\d+)").findAll(shell("wm density")).lastOrNull()?.groupValues?.get(1)?.toIntOrNull()
+        val lang = Run.locale.takeIf { it == "he" || it == "en" }
+        val want = "night=$night font=$font dpi=$dpi lang=$lang"
+        val until = SystemClock.uptimeMillis() + timeoutMs
+        while (true) {
+            compose.waitForIdle()
+            refreshActivity()
+            var has = ""
+            var ok = false
+            inst.runOnMainSync {
+                val c = activity.resources.configuration
+                val isNight = (c.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                val l = c.locales[0].language.let { if (it == "iw") "he" else it }
+                has = "night=$isNight font=${c.fontScale} dpi=${c.densityDpi} lang=$l resumed=${scenarioState} laidOut=${activity.window.decorView.isLaidOut}"
+                ok = (night == null || night == isNight) &&
+                    (font == null || kotlin.math.abs(font - c.fontScale) < 0.01f) &&
+                    (dpi == null || dpi == c.densityDpi) &&
+                    (lang == null || lang == l) &&
+                    scenarioState == androidx.lifecycle.Lifecycle.State.RESUMED &&
+                    activity.window.decorView.isLaidOut
+            }
+            if (ok) return
+            if (SystemClock.uptimeMillis() > until) throw AssertionError("the Activity never got the phone's configuration: want $want, has $has")
+            SystemClock.sleep(50) // polling a condition, not waiting out a time
+        }
+    }
+
+    /**
+     * Until two looks at the layout one frame apart agree: the Activity, its window size and the
+     * bounds of every tagged node (Phase 11 F3). Compose idle alone is one instant: a list scrolling
+     * to the selected card, or a window still being resized, is idle between frames, and a
+     * measurement then catches it halfway (s01's tabs, s17's "only 23 of 344 dp shown").
+     */
+    fun awaitStableLayout(timeoutMs: Long = 10_000) {
+        val until = SystemClock.uptimeMillis() + timeoutMs
+        compose.waitForIdle()
+        var last = layoutSnapshot()
+        while (true) {
+            nextFrame()
+            compose.waitForIdle()
+            val now = layoutSnapshot()
+            if (now == last) return
+            if (SystemClock.uptimeMillis() > until) throw AssertionError("the layout never settled; the last two looks:\n$last\n$now")
+            last = now
+        }
+    }
+
+    /** The Activity, its window size and every tagged node's bounds, read on the main thread. */
+    private fun layoutSnapshot(): String {
+        refreshActivity()
+        // Fetched here, walked on the main thread (as LayoutAudit does): a semantics read off it
+        // races the layout ("multithreaded access to SnapshotStateObserver").
+        val roots = compose.onAllNodes(isRoot(), useUnmergedTree = true).fetchSemanticsNodes(atLeastOneRootRequired = false)
+        val out = StringBuilder()
+        inst.runOnMainSync {
+            val decor = activity.window.decorView
+            out.append(System.identityHashCode(activity)).append(' ').append(decor.width).append('x').append(decor.height)
+            fun walk(n: SemanticsNode) {
+                n.config.getOrNull(SemanticsProperties.TestTag)?.let { out.append(' ').append(it).append('=').append(n.boundsInWindow) }
+                n.children.forEach(::walk)
+            }
+            roots.forEach(::walk)
+        }
+        return out.toString()
+    }
+
+    /** Returns once the main thread has drawn one more frame. */
+    private fun nextFrame() {
+        val drawn = CountDownLatch(1)
+        inst.runOnMainSync { Choreographer.getInstance().postFrameCallback { drawn.countDown() } }
+        if (!drawn.await(5, TimeUnit.SECONDS)) throw AssertionError("no frame in 5 s")
     }
 
     /** Lets the map camera (600 ms animation) and Compose settle before a screenshot. */

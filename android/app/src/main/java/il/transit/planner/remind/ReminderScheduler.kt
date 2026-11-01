@@ -53,6 +53,12 @@ object ReminderScheduler {
         Notifications.cancelCountdown(context)
     }
 
+    /** Every alarm above, whatever armed it (the uitest build starts each journey with none). */
+    fun cancelAll(context: Context) {
+        val am = context.getSystemService(AlarmManager::class.java)
+        AlarmKind.entries.forEach { am.cancel(pending(context, it.action)) }
+    }
+
     /** "Test reminder in 1 minute": the same exact alarm a reminder uses, so it fails where they would. */
     fun scheduleTest(context: Context, at: Instant) = set(context, at, ACTION_TEST)
 

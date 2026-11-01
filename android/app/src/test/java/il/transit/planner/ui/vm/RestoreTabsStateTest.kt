@@ -44,7 +44,7 @@ class RestoreTabsStateTest : VmTest() {
 
     /** Searches [mode] with a live ViewModel and waits until its answer is kept; returns the ViewModel. */
     private fun search(mode: AppMode, handle: SavedStateHandle, file: File): MainViewModel {
-        val vm = newVm(ScriptedApi(replay()), saved = handle, tabCache = PlanCacheStore.tabs(file, CLOCK))
+        val vm = newVm(ScriptedApi(replay()), saved = handle, tabCache = tabCache(file))
         if (mode == AppMode.TRIP) {
             vm.choose(Field.TO, "Savidor", SAVIDOR)
             vm.choose(Field.STOP, "Soroka", soroka)
@@ -92,7 +92,7 @@ class RestoreTabsStateTest : VmTest() {
     /** A new process: a new store on the same file, a new ViewModel on the same saved state. */
     private fun reborn(handle: SavedStateHandle, file: File, clock: Clock = CLOCK): Pair<MainViewModel, ScriptedApi> {
         val api = ScriptedApi(replay(clock))
-        return newVm(api, clock = clock, saved = handle, tabCache = PlanCacheStore.tabs(file, clock)) to api
+        return newVm(api, clock = clock, saved = handle, tabCache = tabCache(file, clock)) to api
     }
 
     private fun backAsItWas(mode: AppMode) {

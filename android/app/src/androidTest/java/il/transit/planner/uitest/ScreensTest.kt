@@ -57,8 +57,10 @@ class ScreensTest {
         AppDriver(compose, places).use { d ->
             before(d.app)
             d.launch()
+            d.awaitDeviceConfig()
             d.setup()
             d.settle()
+            d.awaitStableLayout() // the audit measures a layout at rest, not one between frames
             val shot = d.screenshot(name)
             val found = LayoutAudit(d).run(name, shot).filter { it.rule in LayoutAudit.BLOCKING }
             // After the JSON and screenshot are written, so the report still shows them.
@@ -78,7 +80,7 @@ class ScreensTest {
     /** The owner's rule (2026-10-05): the five mode tabs on ONE line, all on screen, each a full
      *  tap target that says its name, on every profile (font 2.0 and 320 dp wide included). */
     private fun AppDriver.modeTabsOnOneLine() {
-        compose.waitForIdle()
+        awaitStableLayout() // measured mid-relayout, a tab was 7 dp wide or 0 dp tall (Phase 11 F3)
         val density = activity.resources.displayMetrics.density
         val width = activity.window.decorView.width
         val tabs = AppMode.entries.map { mode ->

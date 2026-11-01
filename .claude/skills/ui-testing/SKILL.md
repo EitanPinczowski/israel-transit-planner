@@ -99,6 +99,12 @@ new `plan`; the reopened trip sheet asks its one `trip` again.
   uitest build's Mon 2026-10-05 07:55 makes "Tomorrow" Tue 6 Oct.
 - Popups and buttons that appear after a search (the ⋮ menu items, the results' ★ Save trip)
   are composed a frame later: go through `AppDriver.tapMenuItem` / `tapSaveTrip`, which wait.
+- Measure a layout at rest (Phase 11 F3): `ScreensTest` waits for `AppDriver.awaitDeviceConfig()` (the
+  Activity has the night mode, font, density and language the shell just set) and `awaitStableLayout()`
+  (two looks one frame apart agree) before it measures. Compose idle alone is one instant between frames.
+- Each journey starts with no app notification, alarm, ride or test-check state (`UiTestApp.reset()`).
+- JVM ViewModel tests (`VmTest`) run everything on the test dispatcher, the cache files included
+  (`tripCache`/`tabCache`): no real thread, no wall clock; `settle {}` runs the scheduler, never sleeps.
 - A new fixture: record it (skill `transitous-api`), add its name to `ReplayTransitApi.FIXTURES`.
 - The fixed clock means fixture dates matter: alarms/rides use 2026-10-05.
 - The phone's own clock is today. Android 16 silently drops a notification whose `when` is over 14 days

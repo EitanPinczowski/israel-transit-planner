@@ -101,7 +101,7 @@ class TripStateTest : VmTest() {
         val planned = runBlocking {
             TripPlanner(replay()).plan(TripQuery(Endpoint.Coord(BGU), Endpoint.Coord(SAVIDOR), TimeMode.NOW), NOW)
         }
-        val cache = PlanCacheStore.trips(tmp.newFile("trip_cache.json").also { it.delete() }, CLOCK)
+        val cache = tripCache(tmp.newFile("trip_cache.json").also { it.delete() })
         runBlocking { cache.put(PlanCache.key("TRIP-NOW", BGU, SAVIDOR), planned) }
         api.fault = { kind, n -> if (kind == "plan" && n == 1) IOException("no signal") else null }
         val vm = newVm(api, planCache = cache)
