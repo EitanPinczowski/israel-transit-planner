@@ -211,11 +211,11 @@ else
   # E2: "Missed it" tapped now has no location permission: it asks for the start, with no request.
   # The notification died with the process, and the action's door is not exported (F5), so the shell
   # can't send it: the probe sends the action's own PendingIntent, as the notification does.
-  # -S and the pause: a start right after a force-stop can land on the dying Activity ("delivered to top").
+  # A new task: Android keeps the old one after a force-stop, recreates its Activity from the saved state
+  # and hands it our extra as a new intent ("delivered to top"), which the probe never sees.
   adb shell am force-stop "$PKG"
-  sleep 2
   lc
-  adb shell am start -S -W -n "$ACT" --ez uitest_missed_it true >/dev/null
+  adb shell am start -W -n "$ACT" --activity-clear-task --ez uitest_missed_it true >/dev/null
   missed=""
   for _ in $(seq 1 40); do
     missed=$(adb logcat -d -s SystemProbe:I | tr -d '\r' | grep -o "missed-it .*" | tail -1)
