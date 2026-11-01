@@ -1,8 +1,10 @@
 # One catalog for both builds (core/ and android/). Each settings.gradle.kts imports it.
 [versions]
-kotlin = "2.1.0"
-# 8.9.1: the oldest AGP androidx.core 1.17 accepts (its AAR metadata), Phase 10 D10.
-agp = "8.9.1"
+# 2.1.21 (Phase 11 F4): the Kotlin Paparazzi 2.0.0-alpha02 and Compose 1.8.3 are built with.
+kotlin = "2.1.21"
+# 8.9.1 was the oldest AGP androidx.core 1.17 accepts (Phase 10 D10). 8.10.1 (Phase 11 F4): Paparazzi 2.0.0-alpha02's
+# plugin calls AGP 8.10's sdklib (8.9.1 fails at configuration: AndroidVersion.compareTo(int, String)).
+agp = "8.10.1"
 coroutines = "1.9.0"
 serialization = "1.7.3"
 okhttp = "4.12.0"
