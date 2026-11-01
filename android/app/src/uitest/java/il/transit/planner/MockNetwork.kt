@@ -46,6 +46,9 @@ import java.util.concurrent.atomic.AtomicLong
 class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock, base: String) {
     /** The server's root URL; moved when the test restarts the server after "offline". */
     @Volatile var base: String = base.trimEnd('/')
+        set(value) {
+            field = value.trimEnd('/')
+        }
 
     private val http = OkHttpClient
         .Builder()

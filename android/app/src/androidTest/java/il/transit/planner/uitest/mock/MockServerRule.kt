@@ -131,7 +131,8 @@ class MockServerRule : ExternalResource() {
     }
 
     private fun respond(r: RecordedRequest): MockResponse {
-        val path = r.requestUrl?.encodedPath.orEmpty()
+        val raw = r.requestUrl?.encodedPath.orEmpty()
+        val path = "/" + raw.trimStart('/')
         val endpoint = when {
             path.startsWith("/photon") -> "photon"
             path.startsWith("/meteo") -> "meteo"
