@@ -11,6 +11,7 @@ import il.transit.core.plan.CacheLookup
 import il.transit.core.present.TileText
 import il.transit.core.user.Home
 import il.transit.planner.MainActivity
+import il.transit.planner.OwnIntents
 import il.transit.planner.R
 import il.transit.planner.TransitApp
 import kotlinx.coroutines.CoroutineScope
@@ -80,7 +81,8 @@ class NextTripTile : TileService() {
         const val EXTRA_TRIP_HOME = "trip_home"
 
         fun tripHomeIntent(context: Context): Intent =
-            Intent(context, MainActivity::class.java)
+            OwnIntents
+                .to(context)
                 .setAction(Intent.ACTION_VIEW)
                 .putExtra(EXTRA_TRIP_HOME, true)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

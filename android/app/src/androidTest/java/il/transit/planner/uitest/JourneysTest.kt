@@ -45,6 +45,10 @@ import il.transit.core.update.UpdateState
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
 import il.transit.planner.ui.PlaceRef
+import il.transit.planner.ui.Shortcuts
+import il.transit.planner.OwnIntents
+import android.content.ComponentName
+import android.content.pm.ShortcutManager
 import il.transit.planner.remind.Notifications
 import il.transit.planner.remind.MissedItAction
 import il.transit.planner.MainActivity
@@ -519,6 +523,36 @@ class JourneysTest {
         } finally {
             runCatching { lm.removeTestProvider(gps) }
         }
+    }
+
+    /**
+     * Phase 11 F5: the launcher shortcuts the app really publishes point at the non-exported alias,
+     * and each opens its screen. A launcher starts a shortcut as the app that published it
+     * (`LauncherApps.startShortcut` → `startActivitiesAsPackage`; AOSP: "the target activity doesn't
+     * have to be exported"), so the test, which runs as the app, starts the published intent the same way.
+     */
+    @Test fun j18_shortcuts_open_through_the_alias() = AppDriver(compose).launch().use { d ->
+        val ctx = d.app
+        val vm = d.vm
+
+        fun s() = vm.state.value
+
+        compose.waitUntil(10_000) { s().savedPlaces.isNotEmpty() }
+        Shortcuts.update(ctx, s().savedPlaces, UiTestApp.NOW)
+        val sm = ctx.getSystemService(ShortcutManager::class.java)
+        val published = sm.dynamicShortcuts
+        val alias = ComponentName(ctx, OwnIntents.ALIAS)
+        assertTrue("shortcuts published: ${published.map { it.id }}", published.size >= 2)
+        for (sc in published) assertEquals("${sc.id} opens through the alias", alias, sc.intent?.component)
+        val lines = published.first { it.id == "lines" }
+        ctx.startActivity(Intent(lines.intent).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        compose.waitUntil(15_000) { s().showFavorites }
+        d.onMain { it.showFavorites(false) }
+        val place = published.first { it.id.startsWith("place-") }
+        val name = place.intent?.getStringExtra(Shortcuts.EXTRA_PLACE)
+        assertNotNull(name)
+        ctx.startActivity(Intent(place.intent).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        compose.waitUntil(15_000) { (s().to as? PlaceRef.Point)?.name == name }
     }
 
     /**

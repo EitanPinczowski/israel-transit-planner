@@ -86,6 +86,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Phase 11 F5: the door for the app's own actions (notification buttons, the Quick Settings tile,
+             launcher shortcuts). Not exported: only this app's PendingIntents and shortcuts reach it, and
+             MainActivity acts on those extras only when they came through here (OwnIntents). -->
+        <activity-alias
+            android:name=".ActionEntry"
+            android:exported="false"
+            android:targetActivity=".MainActivity" />
+
         <!-- WorkManager starts from TransitApp's configuration (its full-disk handler), not by itself (Phase 11 F2). -->
         <provider
             android:name="androidx.startup.InitializationProvider"
