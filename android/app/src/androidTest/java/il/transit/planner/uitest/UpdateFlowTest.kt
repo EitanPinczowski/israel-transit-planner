@@ -316,9 +316,9 @@ class UpdateInstallSteps {
         ActivityScenario.launch(MainActivity::class.java).use { s ->
             compose.waitUntil(15_000) { s.state == Lifecycle.State.RESUMED }
             var places = emptyList<SavedPlace>()
-            s.onActivity { a -> places = savedPlaces(a) }
+            s.onActivity { a -> places = UpdateRig.savedPlaces(a) }
             compose.waitUntil(10_000) {
-                s.onActivity { a -> places = savedPlaces(a) }
+                s.onActivity { a -> places = UpdateRig.savedPlaces(a) }
                 MARKER in places
             }
         }
