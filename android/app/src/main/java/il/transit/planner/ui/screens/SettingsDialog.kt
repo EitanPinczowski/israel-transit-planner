@@ -266,8 +266,10 @@ internal fun SettingsContent(
         item { LastTripSetting(s, state.savedPlaces, ::set) }
         item { ReminderCheckRow { vm.reminderCheck(ReminderCheckView.OPEN) } } // Phase 11 E1
         item { PassExpirySetting(s, ::set) } // Phase 11 E1
+        item { PaySettingsSection(s, ::set) } // Phase 11 E4
+        item { DataBatterySection(s, ::set) } // Phase 11 E4
         item { QuickTileSection() }
-        item { OfflineSection(actions) }
+        item { OfflineSection(actions, s.lowData) }
         item { CrashLogSection(actions.crashLog) }
         item { UpdateSettingsRow(state.updateState, vm) }
         item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge) }
@@ -355,8 +357,9 @@ internal fun StatTile(value: String, label: String, modifier: Modifier = Modifie
 }
 
 @Composable
-internal fun OfflineSection(actions: ScreenActions) {
+internal fun OfflineSection(actions: ScreenActions, lowData: Boolean = false) {
     val o = actions.offline
+    val download = rememberOfflineDownload(lowData, actions.downloadOffline) // Phase 11 E4: asks off Wi-Fi in low-data mode
     Column {
         Text(stringResource(R.string.offline_map), style = MaterialTheme.typography.labelLarge)
         val status = when (o.status) {
@@ -368,7 +371,7 @@ internal fun OfflineSection(actions: ScreenActions) {
         }
         Text(status, style = MaterialTheme.typography.bodySmall)
         Row {
-            TextButton(onClick = actions.downloadOffline, enabled = o.status != OfflineState.Status.DOWNLOADING) {
+            TextButton(onClick = download, enabled = o.status != OfflineState.Status.DOWNLOADING) {
                 Text(stringResource(R.string.offline_download))
             }
             if (o.status == OfflineState.Status.READY) {

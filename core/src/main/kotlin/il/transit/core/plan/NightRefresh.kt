@@ -10,6 +10,7 @@ import il.transit.core.geo.LatLon
 import il.transit.core.history.TripRecord
 import il.transit.core.present.DayTimetable
 import il.transit.core.user.FavoriteLine
+import il.transit.core.user.LowData
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.SavedTrip
 import il.transit.core.user.UserSettings
@@ -196,7 +197,8 @@ class NightRefresher(private val api: TransitApi) {
         // Tomorrow's boards, under their own budget so the trips can never eat into it.
         val boardApi = BudgetedTransitApi(api, NightRefresh.MAX_STOPS)
         var boards = 0
-        for (stopId in stops.distinct()) {
+        // Low-data mode (Phase 11 E4): trips only, no stop boards.
+        for (stopId in LowData.nightStops(stops, settings.lowData).distinct()) {
             val board = try {
                 boardApi.stopTimes(stopId, DayTimetable.dayStart(day), NightRefresh.STOP_N, language)
             } catch (e: BudgetExceededException) {

@@ -23,6 +23,8 @@ class GuardedTransitApi(
     private val backoff: Duration = Duration.ofSeconds(2),
     private val planTtl: Duration = Duration.ofSeconds(60),
     private val staticTtl: Duration = Duration.ofDays(1),
+    /** Counts every request for the data card (Phase 11 E4); counting never changes what is sent. */
+    private val usage: UsageMeter = UsageMeter.NONE,
 ) : TransitApi {
     private val permits = Semaphore(maxConcurrent)
     private val cache = ConcurrentHashMap<String, Pair<Instant, Any>>()
@@ -60,8 +62,20 @@ class GuardedTransitApi(
     @Suppress("UNCHECKED_CAST")
     private suspend fun <T : Any> cached(key: String, ttl: Duration, call: suspend () -> T): T {
         val now = clock.instant()
-        cache[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value as T }
-        val value = permits.withPermit { withRetry(call) }
+        val kind = key.substringBefore(':')
+        cache[key]?.let { (expires, value) ->
+            if (now.isBefore(expires)) {
+                usage.count(UsageService.TRANSITOUS, kind, UsageOutcome.CACHE)
+                return value as T
+            }
+        }
+        var sent = 0
+        val value = permits.withPermit {
+            withRetry {
+                usage.count(UsageService.TRANSITOUS, kind, if (sent++ == 0) UsageOutcome.NETWORK else UsageOutcome.RETRY)
+                call()
+            }
+        }
         cache[key] = now.plus(ttl) to value
         return value
     }

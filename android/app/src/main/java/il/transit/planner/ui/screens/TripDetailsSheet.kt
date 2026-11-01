@@ -63,7 +63,7 @@ import il.transit.planner.ui.TripSheet
  * [onMissedIt]: "Missed it? Plan from here" (Phase 11 E2), from where the phone is to the trip's destination.
  */
 @Composable
-internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape, onMissedIt: (() -> Unit)? = null, accessibleRoutes: Boolean = false) {
+internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: Modifier, shape: Shape, onMissedIt: (() -> Unit)? = null, accessibleRoutes: Boolean = false, paymentApp: String? = null) {
     // No dispatcher in screenshot tests; on a phone there always is one.
     if (LocalOnBackPressedDispatcherOwner.current != null) BackHandler(onBack = onClose)
     val d = sheet.details
@@ -88,6 +88,7 @@ internal fun TripDetailsSheet(sheet: TripSheet, onClose: () -> Unit, modifier: M
                 Note(stringResource(if (v.realTime) R.string.trip_live_position else R.string.trip_scheduled_position))
             }
             onMissedIt?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.missed_it_action)) } }
+            PayWithButton(paymentApp) // Phase 11 E4
             val list = rememberLazyListState()
             // A long ride is folded (Phase 10 D1); each opened fold is remembered by its first row.
             var opened by rememberSaveable(d.tripId) { mutableStateOf(listOf<Int>()) }

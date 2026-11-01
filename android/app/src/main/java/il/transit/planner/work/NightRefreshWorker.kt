@@ -43,11 +43,12 @@ class NightRefreshWorker(context: Context, params: WorkerParameters) : Coroutine
                 now = Instant.now(),
                 settings = settings,
                 language = app.language,
-                stops = NightRefresh.stops(app.store.favorites.first()),
+                stops = NightRefresh.stops(app.store.favorites.first()), // low-data mode drops them inside (Phase 11 E4)
                 saveBoard = { stopId, board -> app.timetables.put(stopId, board) },
                 save = app.planCache::putNight,
             )
             if (out != null) runCatching { dayFile.writeText(out.day.toString()) }
+            if (out != null) app.usage.nightRefresh(Instant.now(), out.requests + out.stopRequests) // Phase 11 E4
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

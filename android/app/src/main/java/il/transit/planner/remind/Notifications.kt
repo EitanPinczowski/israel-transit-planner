@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import il.transit.core.plan.LastTripAlert
 import il.transit.core.plan.LastTripHome
 import il.transit.core.plan.MissedIt
+import il.transit.core.present.PayApps
 import il.transit.core.remind.Countdown
 import il.transit.core.remind.LiveProgress
 import il.transit.core.remind.PassExpiry
@@ -24,6 +25,7 @@ import il.transit.core.remind.Reminder
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import il.transit.planner.tile.NextTripTile
+import il.transit.planner.ui.PayWith
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.format.TextStyle
@@ -43,7 +45,7 @@ object Notifications {
     private const val ID_PASS = 1004
     private const val ID_TEST = 1005
 
-    /** A tap on the pass notice opens Settings (E4 points it at the payment app). */
+    /** A tap on the pass notice opens the user's payment app (Phase 11 E4), else Settings, where "My payment app" is. */
     const val EXTRA_OPEN_SETTINGS = "open_settings"
 
     /** "Start trip" on the countdown: [MainActivity] starts the reminder's ride, as the in-app button does. */
@@ -80,16 +82,20 @@ object Notifications {
     }
 
     /** "Your Rav-Kav pass ends on Sun 1 Nov" (3 days before) / "… ends today, Sun 1 Nov". Nothing about prices. */
-    fun pass(context: Context, n: PassExpiry.Notice) {
+    fun pass(context: Context, n: PassExpiry.Notice, paymentApp: String? = null) {
         val date = PassExpiry.dateLabel(n.endsOn, context.resources.configuration.locales[0])
         val text = when (n.kind) {
             PassExpiry.Kind.SOON -> context.getString(R.string.pass_ends_on, date)
             PassExpiry.Kind.LAST_DAY -> context.getString(R.string.pass_ends_today, date)
         }
+        // Phase 11 E4: the chosen payment app (or its store page); with none chosen, Settings.
+        val pay = PayApps.chosen(paymentApp)?.let { app ->
+            PayWith.intent(context, app).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         val open = PendingIntent.getActivity(
             context,
             3,
-            Intent(context, MainActivity::class.java)
+            pay ?: Intent(context, MainActivity::class.java)
                 .setAction(EXTRA_OPEN_SETTINGS)
                 .putExtra(EXTRA_OPEN_SETTINGS, true)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),

@@ -193,6 +193,19 @@ is missing from the test's "constant" column or from this table. **A package tha
 | Typing search: Transitous geocode; phone Geocoder + Photon | 1; 1 | `PlaceSearch.BACKUP_PER_SEARCH` |
 | Stop code · pin name (twice at a point) | 0 · 1 | – |
 | Rain on the walks (Open-Meteo, not Transitous): per 0.1° cell per hour | 1 | `GuardedWeather.cell` |
+| Low-data mode (Phase 11 E4): stops from zoom 16, asked only when a tile under the screen is missing (`LowData.loadStops`); no night boards. Never more requests than normal: `LowDataTest` replays 200 mixed and 200 pan-only walks through both rules | 0 extra | – |
+
+### Usage counter (Phase 11 E4, Settings → Data & battery)
+Every guard counts what it is asked, through one `UsageMeter` (`core/api/UsageLog.kt`, app `data/UsageStore.kt`,
+`TransitApp.usage`): `GuardedTransitApi` per kind (`plan`, `stops`, `geo`, `st`, `trip`, `mt`…), `GuardedGeocoder`
+(the phone's Geocoder and Photon: "address backup") and `GuardedWeather`, each as **net** (sent), **cache** (answered
+from the guard's cache, nothing sent) or **retry** (the second try after a 429/503: sent too). Counting never changes
+what is sent (`UsageLogTest`). Per Israel day (midnight Israel time), 7 days kept, in `filesDir/usage.json`: only fixed
+keys (`transitous.plan.net`), counts and times, never a place or a query (a kind that is not a code word is stored
+as `other`). The card: "14 requests to Transitous (6 answered from the cache)" = net + retry + cache; weather and
+address backup count only what was sent. The night refresh adds its time and request count, `RideService` the ride's
+GPS minutes; the map cache is the size of MapLibre's `mbgl-offline.db` (read, never changed). T4's mock server can
+check these counts against its own.
 
 ### Weekly CI traffic and the contract check (Phase 11 T5)
 `.github/workflows/weekly-live.yml`, Tuesdays 00:47 UTC (03:47 Israel in summer time), never on a PR:

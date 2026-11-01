@@ -5,6 +5,8 @@ import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisClient
 import il.transit.core.api.retryWait
 import il.transit.core.api.TransitHttpException
+import il.transit.core.api.UsageOutcome
+import il.transit.core.api.UsageService
 import il.transit.core.geo.LatLon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Semaphore
@@ -211,6 +213,8 @@ class GuardedGeocoder(
     private val backoff: Duration = Duration.ofSeconds(2),
     private val ttl: Duration = Duration.ofDays(1),
     private val emptyTtl: Duration = Duration.ofMinutes(2),
+    /** Counts every request for the data card (Phase 11 E4). */
+    private val usage: il.transit.core.api.UsageMeter = il.transit.core.api.UsageMeter.NONE,
 ) : BackupGeocoder {
     private val permits = Semaphore(maxConcurrent)
     private val cache = ConcurrentHashMap<String, Pair<Instant, List<GeocodeMatch>>>()
@@ -218,12 +222,14 @@ class GuardedGeocoder(
     override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
         val key = "$text:$language:$near:$max"
         val now = clock.instant()
-        cache[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value }
+        cache[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value.also { count(UsageOutcome.CACHE) } }
         val value = permits.withPermit {
             try {
+                count(UsageOutcome.NETWORK)
                 inner.search(text, language, near, max)
             } catch (e: TransitHttpException) {
                 delay((retryWait(e, backoff) ?: throw e).toMillis())
+                count(UsageOutcome.RETRY)
                 inner.search(text, language, near, max)
             }
         }
@@ -233,11 +239,16 @@ class GuardedGeocoder(
 
     private val names = ConcurrentHashMap<String, Pair<Instant, String?>>()
 
+    private fun count(outcome: UsageOutcome, kind: String = "search") = usage.count(UsageService.ADDRESS, kind, outcome)
+
     override suspend fun reverseName(at: LatLon, language: String): String? {
         val key = "$at:$language"
         val now = clock.instant()
-        names[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value }
-        val value = permits.withPermit { inner.reverseName(at, language) }
+        names[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value.also { count(UsageOutcome.CACHE, "reverse") } }
+        val value = permits.withPermit {
+            count(UsageOutcome.NETWORK, "reverse")
+            inner.reverseName(at, language)
+        }
         if (value != null) names[key] = now.plus(ttl) to value // a miss may be offline: ask again next time
         return value
     }

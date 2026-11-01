@@ -330,6 +330,16 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - **Offline map** (`ui/OfflineMap.kt`): one MapLibre offline region, the current view,
   zoom 10–14 (OpenFreeMap vector tiles overzoom past 14), refused above 0.5° span (~55 km).
   Keep it city-sized: OpenFreeMap is free and donation-run.
+- **Low-data mode** (Phase 11 E4, owner decision 2; `core/user/LowData.kt`, `UserSettings.lowData`, off by
+  default; Settings → Data & battery): the night refresh plans the trips but saves **no stop boards**
+  (`LowData.nightStops` inside `NightRefresher.run`: 6 requests at most, not 6 + 3); Download in Offline map
+  **asks first unless the phone is on Wi-Fi** (`rememberOfflineDownload`, `LowData.askBeforeOfflineDownload`);
+  the map's stops load from zoom 16, asked only when a tile under the screen is missing (never more
+  requests than normal; `LowData.loadStops`, `StopsStore.loadLowData`). Reminders, their re-check, planning,
+  search and the rain note are unchanged (`LowDataTest`). The night refresh still needs Wi-Fi + charging.
+- **Data & battery card** (Phase 11 E4, `ui/screens/DataCard.kt`): the night refresh writes its time and
+  requests to `TransitApp.usage` ("night refresh 02:14 (4 requests)", shown for 24 h), `RideService` the
+  ride's GPS minutes (from the first fix request to `onDestroy`, wall clock). See `transitous-api`.
 - Stops are cached in memory only (GuardedTransitApi, 1 day). A disk cache is an open
   roadmap item, not a bug.
 

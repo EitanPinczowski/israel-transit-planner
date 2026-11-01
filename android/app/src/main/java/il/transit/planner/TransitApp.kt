@@ -22,6 +22,7 @@ import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UpdateChecker
+import il.transit.planner.data.UsageStore
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
@@ -88,7 +89,10 @@ open class TransitApp :
 
     /** "Now" for searches and labels. */
     open val clock: Clock = Clock.systemUTC()
-    open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
+    open val api: TransitApi by lazy { GuardedTransitApi(MotisClient(), usage = usage) }
+
+    /** Today's requests, cache hits, night refresh and ride GPS for Settings → Data & battery (Phase 11 E4). */
+    val usage: UsageStore by lazy { UsageStore(File(filesDir, UsageStore.FILE)) }
 
     /**
      * Asked only when Transitous has no street match (search fix S3): the phone's own Geocoder
@@ -96,11 +100,11 @@ open class TransitApp :
      * phone's Geocoder also names long-pressed pins and saved locations first.
      */
     open val backupGeocoder: BackupGeocoder? by lazy {
-        val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this)) else null
-        FallbackGeocoder(device, GuardedGeocoder(PhotonClient()))
+        val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this), usage = usage) else null
+        FallbackGeocoder(device, GuardedGeocoder(PhotonClient(), usage = usage))
     }
     /** Rain on the walks (Phase 10 D9): Open-Meteo, told only the rounded start. */
-    open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock) }
+    open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock, usage = usage) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore<il.transit.core.plan.TripResult> by lazy { PlanCacheStore.trips(File(filesDir, "trip_cache.json"), clock) }
 

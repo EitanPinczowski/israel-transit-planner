@@ -38,6 +38,7 @@ import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.user.FavoriteLine
+import il.transit.core.user.LowData
 import il.transit.core.user.PlaceRoutine
 import il.transit.core.ride.RideProgress
 import il.transit.core.user.Routines
@@ -1008,19 +1009,27 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
-        if (zoom < StopsViewport.MIN_ZOOM) {
+        // Phase 11 E4: low data shows stops from zoom 16 and asks only when a tile under the screen is missing.
+        val lowData = _state.value.settings.lowData
+        if (zoom < LowData.stopsMinZoom(lowData)) {
             if (loadedStops != null) {
                 loadedStops = null
                 _stops.value = MapData.EMPTY
             }
             return
         }
-        if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
+        val cache = stopsCache
+        if (!lowData || cache == null) {
+            if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
+        }
         val box = StopsViewport.fetchBox(view)
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {
-                val found = stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                val found = when {
+                    lowData && cache != null -> cache.loadLowData(view) { b -> api.stops(b, null, language) }
+                    else -> stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                }
                 loadedStops = box
                 _stops.value = MapData.stops(found)
             } catch (e: CancellationException) {
