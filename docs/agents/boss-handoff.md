@@ -4,53 +4,36 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-10-21, 00:25 Israel time)
-- **Released:** **v0.9.1 (2026-10-20 23:08)**: E1, E7, E2, E3, R1. Saved-data sample 0.9.1 merged (#99).
-  Next: **v0.9.2 = R2 (ride-alert fix); ask the owner first** (asked 2026-10-21 00:22, no answer yet).
-- **Boss:** handing over from `session_011tJH15m5mUzgr2G4vFCaKt` (context 422k) on 2026-10-21.
-- **Phase 11:** Waves 1–4 merged: T1 #79 ($5.5), T2 #80 ($4.3), E1 #83 ($23.9), T3 #84 ($11), E7 #82 (~$47),
-  E2 #88 ($26.5), T7 #89 ($4.6), T5 #93 ($4.3), E3 #91 ($16), plus owner-approved fix packages R1 #95
-  (restore car tabs + errands after process death, ~$14 + $0.6 review + fresh fix round) and the 0.9.1 sample #99 ($2).
-  - **In flight: R2, PR #98** (`session_01N31TZYDzer5aTUXHQkq8Pd`, Opus, ~$8, ctx ~294k): the RideTracker get-off-alert
-    fix. The review found the first version's time gate broke the early-bus case (blocking); the fix round adds
-    ordered-stop progress arming (`matched ≥ n−3`, bounded ±2 matching) with the time gate as fallback, a liveness
-    property and early-bus tests. It was waiting on a re-run of `s01_home_empty`. Merge when green and all review
-    items are handled, then ask about v0.9.2.
-  - **Parked: F1, PR #96** (`session_01VjnDAbmjEnxTcfcNi88ENU`, stood down): a `performScrollToNode` helper for the
-    Settings dialog; the "multithreaded access to SnapshotStateObserver" race is still open (~1 in 12; stack
-    `LayoutNode.getCollapsedSemantics` on the test thread). Don't merge: its push run had a monkey failure and one
-    Paparazzi run was red on the same head.
-  - **Next Opus package: F2, CI stability.** (1) the SnapshotStateObserver race, starting from F1's branch and report
-    (Compose BOM 2024.12.01 / Compose 1.7.x, Espresso 3.6.1; try a BOM bump); (2) monkey "System appears to have
-    crashed at event 1797 of 6000, seed 4242" on API 35, seen 3 times (#82, F1 ×2); (3) Paparazzi red on the PR run
-    and green on the push run of the same head (F1 0d12e92). Flake-log issue #92 lists the one-offs.
-  - **Then Wave 5 (E4 + T4)** per phase11.md. The 7-day limit reads allowed_warning until **Sun 25 Oct 17:00
-    Israel**: one Opus + one Sonnet at a time.
-  - Later, from R2's review: a late bus (> 3 min) loses its alert (pre-existing; ROADMAP line).
-  - **Stall lesson:** at 08:16 UTC on 20 Oct the 5-hour limit stopped every session including the boss; nothing
-    resumed for 11 h until the owner wrote. A boss `send_later` can't fire while the boss is limited.
-- **Owner decisions this round:** "merge when green" re-confirmed in the boss session (2026-10-19 21:1x; the auto-mode
-  classifier blocks merges until the owner says it in the session itself); pick-a-day package E7 (2026-10-18); 21-day timetable notice (2026-10-18);
-  API keys allowed on a $0, no-card plan (2026-10-13, in CLAUDE.md); **"when green merge and continue"**
-  (2026-10-18): the boss merges each package after green + review + fix round, without asking; still ask
-  before any release or new owner decision.
-- **Open owner to-dos:** uninstall the Gemini GitHub app; delete branches `claude/geocoder-check`,
-  `corpus-run/search-fix`, `claude/a8-back-diag`, `claude/ci-emu-twin-1`, `claude/ci-emu-twin-2`,
-  `scratch/p11-*`, `scratch/t3-deps-probe`; set up the Test Lab Spark project (T7 skipped it).
-- **Lessons this round (follow them):**
-  - **Never run 3 agents at once.** Twice, 3 concurrent sessions burned the shared 5-hour limit in ~20 min.
-    Keep to 2, and a short review counts.
-  - **Long agent contexts are the real cost.** E7 reached ~730k tokens; every turn re-reads it. For a fix round
-    on a big session, prefer a fresh focused session with a precise brief.
-  - **When a limit hits, schedule the resume yourself** (`send_later` at resetsAt + 5 min, for every stalled
-    session). A check scheduled before the limit fires late, because the boss is limited too.
-  - **Two green PRs that touch the same files are not green together.** After merging the first, have the second
-    merge `main` and re-run CI before merging it (#82 on top of #84 broke six T3 tests through E7's departed filter).
-  - **A fix round in a fresh session works:** E2's fresh fix session ($10.6) found and fixed a bug the 400k-token
-    implementer had missed.
-  - **Verify the head after merging a PR into main:** a PR green on its branch can still break main (E1 → j14 on
-    API 36 was actually a time bomb in the test fixture, but it surfaced right after a merge).
-  - A docs-only plan change that adds a package is fine to merge when green after the owner asked for it.
+## State (2026-11-01, 06:20 Israel time)
+- **Released:** **v0.9.2 (2026-10-31 19:46)**: R2, the get-off alert fix. Saved-data sample 0.9.2 merged (#103).
+  The next release waits for the owner (after E4; F2's full-disk fix is app code too).
+- **Boss:** `session_011uenNPuCQdDbxyhH4S3ibu` (took over 2026-10-21, context 340k at writing). **The
+  next boss must be started by the owner from claude.ai/code** (see Gotchas: lineage depth).
+- **Merged since 21 Oct:** #100 handoff, #98 R2, #102 notes, #103 sample, #104 **F2 CI stability**
+  (~$19 across F2, F2b and a Sonnet review), #106 **T4 fault matrix** (~$14; 144 cases, the `faults` job 10 min).
+  #96 (F1) closed, superseded by #104.
+- **Waiting on the owner: E4, PR #105** (`session_01DH799DKAhEoxG7ys5NCvDS`, Opus, ~$12, green on
+  b482637, review round done). Two owner questions, asked 2026-11-01 ~04:10 Israel:
+  1. **The payment apps on the Pixel** (owner decision 1): Rav-Kav Online `com.pcentra.ravkavonlinemobile`,
+     Rav-Pass by HopOn `co.hopon.client`, Moovit `com.tranzmate`. ANY WAY was dropped (service ended in 2022).
+  2. **Low data departs from owner decision 2** ("no neighbour tiles"): stops are fetched only when a tile
+     under the screen is missing, then the normal box. Dropping the prefetch cost more Transitous
+     requests (+5–13%); the new rule is ~75–80% of normal and never more (pinned in `LowDataTest`).
+     The boss recommends accepting it.
+  - Also asked: with no app chosen, should the pass notice open the chooser (a small follow-up) rather than Settings?
+  - **After the answers:** E4 merges `origin/main` (T4 landed; both edit the `transitous-api` skill),
+    green again, then the boss merges. Then add T4's open check, "E4 data card == server counts", as a small follow-up.
+- **Next (Wave 6: T6 + T8)** per `phase11.md`, after E4. Then E5, then (optional) E6 → v0.10.0.
+- **Fix packages owed** (flake policy, "flakes twice in 14 days"):
+  - **F3, s01_home_empty** "tab … wide/tall enough" measured mid-relayout: R2, E4 and T4 (3 times).
+  - **F4, the Settings race (s15)**: root cause in #104's body; the fix is Compose 1.8+ with Paparazzi 2.x and re-recorded goldens.
+  - JVM flakes seen by T4: `DayNoticeViewModelTest` (ConcurrentModification), `RestoreTabsStateTest` (timeout).
+- **Bugs found by T4** (PR #106 body; not fixed):
+  - Park & ride plans from `Instant.now()`, not `clock` (`ParkRideState.kt:45`), so a repeat search sends 4 requests instead of 0.
+  - Photon is asked again after a 429 (not traced).
+  - The rain note once sent nothing on the first search after offline (unconfirmed).
+- **Open owner to-dos:** uninstall the Gemini GitHub app; delete the stale branches (listed in #100's State);
+  set up the Test Lab Spark project.
 
 ## Owner standing orders
 - **Usage limits, the boss handles them alone (owner, 2026-10-06):** the owner should never have
@@ -78,6 +61,14 @@ decisions already recorded.
   nothing else for the project. The old `team` / `phase8` tags were moved over on 2026-10-12.
 
 ## Gotchas learned
+- **Lineage depth (limit 8).** This boss is depth 7, so its agents are depth 8: they **can't use
+  `send_later`**, and a boss it started couldn't create sessions. Agents poll CI in a blocking
+  `gh run list` loop (say so in every brief), and the boss does the check-ins. The owner starts
+  each new boss from claude.ai/code (depth 1).
+- **The cloud proxy blocks Actions log and artifact downloads** (`gh run view --log`, blob hosts).
+  Use the GitHub MCP `get_job_logs` with `return_content: true`. It works.
+- **Maven Central answers 429** to Gradle in cloud containers at times. Rely on CI for builds.
+- **Check an agent's claimed head** against `git ls-remote` before merging (E4 reported a typo'd sha).
 - **Agents go idle on red CI.** PR events don't reach agent sessions. The briefs now tell agents
   to self-check once per push; if one still sits idle on a red PR, wake it with the failing job
   and log line.
