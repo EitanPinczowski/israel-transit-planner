@@ -4,15 +4,15 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inspector.WindowInspector
 import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import il.transit.planner.ui.screens.DayTags
-import android.view.inspector.WindowInspector
 import com.google.android.apps.common.testing.accessibility.framework.AccessibilityCheckResult.AccessibilityCheckResultType
 import com.google.android.apps.common.testing.accessibility.framework.AccessibilityViewCheckResult
 import com.google.android.apps.common.testing.accessibility.framework.integrations.espresso.AccessibilityValidator
+import il.transit.planner.ui.screens.DayTags
 
 /**
  * Google's Accessibility Test Framework over the windows a user can reach now: the main window, or

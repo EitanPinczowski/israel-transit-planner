@@ -252,10 +252,14 @@ internal fun StopPanel(
                         val pinLabel = stringResource(if (pinned) R.string.a11y_unpin_line else R.string.a11y_pin_line, lineName)
                         // A tap anywhere on the row (≥ 48 dp tall) opens this line's day timetable at this stop.
                         Row(
-                            Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClickLabel = open) { vm.timetable(TimetableAction.Open(r)) },
+                            Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp)
+                                .semantics { contentDescription = said }
+                                .clickable(onClickLabel = open) { vm.timetable(TimetableAction.Open(r)) },
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Box(Modifier.weight(1f).clearAndSetSemantics { contentDescription = said }) { DepartureView(r) }
+                            Box(Modifier.weight(1f)) { DepartureView(r) }
                             // ☆ pins this line in this direction at this stop ("My lines").
                             TextButton(onClick = { vm.toggleFavorite(sheet, r) }, modifier = Modifier.semantics { contentDescription = pinLabel }) {
                                 Text(if (pinned) "★" else "☆", color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.clearAndSetSemantics {})

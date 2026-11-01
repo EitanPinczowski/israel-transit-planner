@@ -249,6 +249,7 @@ internal fun SheetHeader(collapsed: Boolean, onCollapse: (Boolean) -> Unit, titl
     val label = stringResource(if (collapsed) R.string.panel_expand else R.string.panel_collapse)
     Column(
         Modifier.fillMaxWidth()
+            .semantics { heading() }
             .draggable(
                 rememberDraggableState { drag += it },
                 Orientation.Vertical,
@@ -257,8 +258,7 @@ internal fun SheetHeader(collapsed: Boolean, onCollapse: (Boolean) -> Unit, titl
                     if (drag > threshold) onCollapse(true) else if (drag < -threshold) onCollapse(false)
                 },
             )
-            .clickable(onClickLabel = label) { onCollapse(!collapsed) }
-            .semantics { heading() },
+            .clickable(onClickLabel = label) { onCollapse(!collapsed) },
     ) {
         Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), contentAlignment = Alignment.Center) {
             Box(
@@ -332,7 +332,8 @@ internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null, leg: Leg? = 
     // never "47"; a tappable chip grows its tap area to 48 dp without growing the chip itself.
     val said = spoken(if (leg != null) Speech.leg(leg, badge) else Speech.chip(c))
     Box(
-        Modifier.then(if (onClick != null) Modifier.minimumInteractiveComponentSize() else Modifier)
+        Modifier
+            .then(if (onClick != null) Modifier.minimumInteractiveComponentSize() else Modifier)
             .background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .then(if (c.legIndex >= 0) Modifier.testTag(legChipTag(c.legIndex)) else Modifier)

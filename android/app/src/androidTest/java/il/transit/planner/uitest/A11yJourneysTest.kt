@@ -161,7 +161,8 @@ class A11yJourneysTest {
             compose.waitForIdle()
             var now = ""
             inst.runOnMainSync {
-                val code = activity.resources.configuration.locales[0].language
+                val locales = activity.resources.configuration.locales
+                val code = locales[0].language
                 now = if (code == "iw") "he" else code
             }
             if (now == lang) return
