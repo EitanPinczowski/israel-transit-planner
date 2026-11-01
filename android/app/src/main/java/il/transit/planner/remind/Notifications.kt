@@ -96,7 +96,8 @@ object Notifications {
         val open = PendingIntent.getActivity(
             context,
             3,
-            pay ?: OwnIntents.to(context)
+            pay ?: OwnIntents
+                .to(context)
                 .setAction(EXTRA_OPEN_SETTINGS)
                 .putExtra(EXTRA_OPEN_SETTINGS, true)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
@@ -137,7 +138,8 @@ object Notifications {
                 val start = PendingIntent.getActivity(
                     context,
                     1,
-                    OwnIntents.to(context)
+                    OwnIntents
+                        .to(context)
                         .setAction(EXTRA_START_RIDE)
                         .putExtra(EXTRA_START_RIDE, true)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),

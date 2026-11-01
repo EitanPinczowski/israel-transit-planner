@@ -81,7 +81,8 @@ class NextTripTile : TileService() {
         const val EXTRA_TRIP_HOME = "trip_home"
 
         fun tripHomeIntent(context: Context): Intent =
-            OwnIntents.to(context)
+            OwnIntents
+                .to(context)
                 .setAction(Intent.ACTION_VIEW)
                 .putExtra(EXTRA_TRIP_HOME, true)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

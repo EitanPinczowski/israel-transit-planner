@@ -10,8 +10,10 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import il.transit.core.plan.MissedIt
 import il.transit.core.present.LegPalette
 import il.transit.core.user.SavedPlace
+import il.transit.planner.remind.MissedItAction
 import il.transit.planner.ride.RideService
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
@@ -217,8 +219,8 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
     /** F5: "Missed it?" tapped through the notification action's own PendingIntent (Tel Aviv, depart now). */
     private suspend fun missedTap(main: MainActivity, vm: MainViewModel, app: UiTestApp) {
         val before = app.replay.calls.get()
-        val target = il.transit.core.plan.MissedIt.Target("Tel Aviv", UiTestApp.TEL_AVIV.latLon, arriveBy = false)
-        val action = il.transit.planner.remind.MissedItAction.action(main, target)
+        val target = MissedIt.Target("Tel Aviv", UiTestApp.TEL_AVIV.latLon, arriveBy = false)
+        val action = MissedItAction.action(main, target)
         checkNotNull(action.actionIntent).send()
         withTimeoutOrNull(10_000) { vm.state.first { it.missedIt != null } }
         delay(2_000)

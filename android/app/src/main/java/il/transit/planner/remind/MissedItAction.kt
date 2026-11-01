@@ -44,7 +44,8 @@ object MissedItAction {
     private const val MAX_NAME = 120
 
     fun intent(context: Context, t: MissedIt.Target): Intent =
-        OwnIntents.to(context)
+        OwnIntents
+            .to(context)
             .setAction(EXTRA_MISSED_IT)
             .putExtra(EXTRA_MISSED_IT, true)
             .putExtra(EXTRA_LAT, t.at.lat)

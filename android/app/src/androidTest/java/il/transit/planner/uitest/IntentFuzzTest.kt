@@ -230,6 +230,7 @@ class IntentFuzzTest {
     @Test fun own_actions_only_through_the_alias() {
         val tel = LatLon(UiTestApp.TEL_AVIV.lat, UiTestApp.TEL_AVIV.lon)
         val target = MissedIt.Target("Tel Aviv", tel)
+
         // The very intent the notification carries, re-pointed at the public component.
         fun public(c: android.content.Context, own: Intent) = Intent(own).setComponent(ComponentName(c, MainActivity::class.java))
         val nothing: (AppDriver) -> Unit = { d ->
