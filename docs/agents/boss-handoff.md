@@ -6,7 +6,7 @@ decisions already recorded.
 
 ## State (2026-11-01, 06:20 Israel time)
 - **Released:** **v0.9.2 (2026-10-31 19:46)**: R2, the get-off alert fix. Saved-data sample 0.9.2 merged (#103).
-  The next release waits for the owner (after E4; F2's full-disk fix is app code too).
+  **No v0.9.3 (owner, 2026-11-01): the next release is v0.10.0**, with E4, F2's full-disk fix and later waves. Ask before releasing it.
 - **Boss:** `session_011uenNPuCQdDbxyhH4S3ibu` (took over 2026-10-21, context 340k at writing). **The
   next boss must be started by the owner from claude.ai/code** (see Gotchas: lineage depth).
 - **Merged since 21 Oct:** #100 handoff, #98 R2, #102 notes, #103 sample, #104 **F2 CI stability**
