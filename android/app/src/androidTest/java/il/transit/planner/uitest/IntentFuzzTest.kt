@@ -78,10 +78,17 @@ class IntentFuzzTest {
     }
 
     private fun send(text: String?, type: String = "text/plain"): (android.content.Context) -> Intent = { c ->
-        main(c).setAction(Intent.ACTION_SEND).setType(type).apply { if (text != null) putExtra(Intent.EXTRA_TEXT, text) }
+        main(c)
+            .setAction(Intent.ACTION_SEND)
+            .setType(type)
+            .apply { if (text != null) putExtra(Intent.EXTRA_TEXT, text) }
     }
 
-    private fun view(uri: String): (android.content.Context) -> Intent = { c -> main(c).setAction(Intent.ACTION_VIEW).setData(Uri.parse(uri)) }
+    private fun view(uri: String): (android.content.Context) -> Intent = { c ->
+        main(c)
+            .setAction(Intent.ACTION_VIEW)
+            .setData(Uri.parse(uri))
+    }
 
     @Test fun send_without_text_or_with_the_wrong_type() {
         case("SEND no extras", check = refused, make = send(null))
@@ -150,7 +157,10 @@ class IntentFuzzTest {
     @Test fun own_extras_broken() {
         val tel = LatLon(UiTestApp.TEL_AVIV.lat, UiTestApp.TEL_AVIV.lon)
         fun missed(c: android.content.Context, lat: Double, lon: Double) =
-            MissedItAction.intent(c, il.transit.core.plan.MissedIt.Target("x", tel)).putExtra("missed_it_lat", lat).putExtra("missed_it_lon", lon)
+            MissedItAction
+                .intent(c, il.transit.core.plan.MissedIt.Target("x", tel))
+                .putExtra("missed_it_lat", lat)
+                .putExtra("missed_it_lon", lon)
         for ((lat, lon) in listOf(999.0 to 999.0, Double.NaN to 34.79, 0.0 to 0.0, 48.85 to 2.35, Double.POSITIVE_INFINITY to 34.8)) {
             case("missed it at $lat,$lon", check = refused) { c -> missed(c, lat, lon) }
         }

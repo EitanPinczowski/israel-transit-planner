@@ -92,7 +92,11 @@ internal object UpdateRig {
     fun tapUpdate(compose: ComposeTestRule, d: AppDriver) {
         compose.waitUntil(15_000) { d.vm.state.value.update != null }
         d.awaitNode(hasText(d.str(R.string.update_action)) and hasClickAction())
-        compose.onAllNodes(hasText(d.str(R.string.update_action)) and hasClickAction()).onFirst().performClick()
+        val button = hasText(d.str(R.string.update_action)) and hasClickAction()
+        compose
+            .onAllNodes(button)
+            .onFirst()
+            .performClick()
     }
 }
 
@@ -223,7 +227,8 @@ class UpdateFlowTest {
                 SystemClock.sleep(1_000)
                 compose.waitForIdle()
                 assertEquals(tag, null, d.vm.state.value.update)
-                assertTrue(tag, compose.onAllNodes(hasText(d.str(R.string.update_action))).fetchSemanticsNodes().isEmpty())
+                val buttons = compose.onAllNodes(hasText(d.str(R.string.update_action))).fetchSemanticsNodes()
+                assertTrue(tag, buttons.isEmpty())
             }
             fake.clear()
         }

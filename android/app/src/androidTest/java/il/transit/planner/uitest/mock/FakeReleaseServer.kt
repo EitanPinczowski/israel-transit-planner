@@ -71,15 +71,17 @@ class FakeReleaseServer : ExternalResource() {
 
     override fun before() {
         val ks = KeyStore.getInstance("PKCS12")
-        InstrumentationRegistry.getInstrumentation().context.assets.open("fake_release_server.p12").use { ks.load(it, PASSWORD) }
+        val assets = InstrumentationRegistry.getInstrumentation().context.assets
+        assets.open("fake_release_server.p12").use { ks.load(it, PASSWORD) }
         val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).apply { init(ks, PASSWORD) }
         tls = SSLContext.getInstance("TLS").apply { init(kmf.keyManagers, null, null) }
         val anchors = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
             load(null, null)
             setCertificateEntry("fake-github", ks.getCertificate("server"))
         }
-        trust = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply { init(anchors) }
-            .trustManagers.filterIsInstance<X509TrustManager>().first()
+        val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        tmf.init(anchors)
+        trust = tmf.trustManagers.filterIsInstance<X509TrustManager>().first()
         server = MockWebServer()
         server.useHttps(tls.socketFactory, false)
         server.dispatcher = object : Dispatcher() {
@@ -87,10 +89,14 @@ class FakeReleaseServer : ExternalResource() {
                 val path = request.path.orEmpty()
                 requests += "${request.getHeader("Host")}$path"
                 return when {
-                    path.endsWith("/releases/latest") -> MockResponse().setBody(latestJson).setHeader("Content-Type", "application/json")
+                    path.endsWith("/releases/latest") -> MockResponse()
+                        .setBody(latestJson)
+                        .setHeader("Content-Type", "application/json")
                     path == APK_PATH -> when (apkMode) {
                         ApkMode.SERVE -> apkResponse()
-                        ApkMode.REDIRECT -> MockResponse().setResponseCode(302).setHeader("Location", redirectTo)
+                        ApkMode.REDIRECT -> MockResponse()
+                            .setResponseCode(302)
+                            .setHeader("Location", redirectTo)
                         // The full length announced, half the bytes sent, then the connection drops.
                         ApkMode.CUT -> apkResponse().setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY)
                     }
@@ -163,7 +169,10 @@ class FakeReleaseServer : ExternalResource() {
         const val ASSET_PATH = "/assets/israel-transit-planner.apk"
         const val APK_URL = "https://github.com$APK_PATH"
 
-        fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+        fun sha256(bytes: ByteArray): String {
+            val digest = MessageDigest.getInstance("SHA-256").digest(bytes)
+            return digest.joinToString("") { "%02x".format(it) }
+        }
 
         /** A GitHub `releases/latest` answer: [tag], one APK asset at [apkUrl] with [digest] ("sha256:<hex>", or null). */
         fun release(tag: String, apkUrl: String = APK_URL, digest: String?): String {

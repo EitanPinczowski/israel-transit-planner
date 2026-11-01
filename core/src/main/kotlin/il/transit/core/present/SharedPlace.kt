@@ -44,6 +44,7 @@ sealed interface SharedPlace {
         private val COORDS = Regex("""^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)""")
         private val ONLY_COORDS = Regex("""^\s*-?\d{1,3}(?:\.\d+)?\s*,\s*-?\d{1,3}(?:\.\d+)?\s*(?:\(.*\))?\s*$""")
         private val SHORT_HOSTS = listOf("maps.app.goo.gl", "goo.gl", "g.co", "waze.to")
+
         // google.com, google.co.il, google.com.au, google.de: Google's own country domains, not "google.com.evil.example" (T6).
         private val MAP_HOSTS = Regex("""(?i)^(?:www\.|maps\.)?(?:google\.(?:com|co)(?:\.[a-z]{2})?|google\.[a-z]{2}|waze\.com)$""")
 
@@ -56,7 +57,7 @@ sealed interface SharedPlace {
 
         /** [shared]: an intent's data URI or its `EXTRA_TEXT`. */
         fun parse(shared: String?): SharedPlace {
-            val text = shared?.take(MAX_SHARED)?.replace(BIDI, "")?.trim().orEmpty()
+            val text = BIDI.replace(shared.orEmpty().take(MAX_SHARED), "").trim()
             if (text.isEmpty()) return Unreadable
             // A geo: URI is never searched as words, even an empty or broken one ("geo:").
             if (text.startsWith("geo:", ignoreCase = true) && text.none(Char::isWhitespace)) return geo(text.substring(4))
