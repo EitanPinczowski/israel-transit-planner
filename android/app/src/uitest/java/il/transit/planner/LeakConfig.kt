@@ -13,8 +13,8 @@ import shark.ReferencePattern
  *    (seen on API 35 with every closed MainActivity, a `com.android.internal.jank` runnable on the main looper);
  *  - `TextToSpeech$Connection$1.this$1` / `TextToSpeech$SystemConnection$1.this$1`: the binder callback of a TextToSpeech that
  *    `RideService` has already `shutdown()`; the system TTS service drops it when it likes (a JNI global), holding the service until then;
- *  - `LocationManager$ListenerTransport.mListener` (Android 8): the transport of a listener `RideService.onDestroy` has already
- *    removed (`removeUpdates`) stays in the framework until a GC of its binder.
+ *  - `LocationManager$ListenerTransport.mListener` / `.this$0` (Android 8 to 10): the transport of a listener `RideService.onDestroy`
+ *    has already removed (`removeUpdates`) stays in the framework (a JNI global) until its binder is collected.
  */
 object LeakConfig {
     fun install() {
@@ -27,6 +27,10 @@ object LeakConfig {
                 LibraryLeakReferenceMatcher(
                     pattern = ReferencePattern.InstanceFieldPattern("android.speech.tts.TextToSpeech\$SystemConnection\$1", "this\$1"),
                     description = "The binder callback of a shut-down TextToSpeech (system connection) stays registered in the TTS service.",
+                ),
+                LibraryLeakReferenceMatcher(
+                    pattern = ReferencePattern.InstanceFieldPattern("android.location.LocationManager\$ListenerTransport", "this\$0"),
+                    description = "The transport of a removed location listener keeps its LocationManager (and that its service) until its binder is collected.",
                 ),
                 LibraryLeakReferenceMatcher(
                     pattern = ReferencePattern.InstanceFieldPattern("android.location.LocationManager\$ListenerTransport", "mListener"),
