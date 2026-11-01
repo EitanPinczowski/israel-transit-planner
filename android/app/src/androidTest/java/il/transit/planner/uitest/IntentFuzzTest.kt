@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import il.transit.core.geo.LatLon
@@ -27,7 +28,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
 
 /**
  * Phase 11 T6: hostile intents to the exported `MainActivity` (its SEND and VIEW filters, and the extras
@@ -112,7 +112,11 @@ class IntentFuzzTest {
 
     @Test fun view_broken_or_foreign_schemes() {
         for (uri in listOf(
-            "geo:NaN,NaN", "geo:999,999", "geo:-91,200", "geo:", "geo:0,0",
+            "geo:NaN,NaN",
+            "geo:999,999",
+            "geo:-91,200",
+            "geo:",
+            "geo:0,0",
             "javascript:alert(document.cookie)",
             "file:///data/data/il.transit.planner.uitest/files/crash_log.txt",
             "file:///sdcard/Download/x.html",

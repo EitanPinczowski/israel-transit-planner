@@ -48,7 +48,7 @@ class FileProviderTest {
 
     @Test fun only_the_updates_and_reports_folders_are_served() {
         val apk = File(ctx.cacheDir, "${ApkInstaller.DIR}/update.apk").apply { parentFile!!.mkdirs(); writeText("apk") }
-        val report = File(ctx.cacheDir, "${REPORTS}/t6.csv").apply { parentFile!!.mkdirs(); writeText("csv") }
+        val report = File(ctx.cacheDir, "$REPORTS/t6.csv").apply { parentFile!!.mkdirs(); writeText("csv") }
         assertEquals("content://$authority/updates/update.apk", uri(apk).toString())
         assertEquals("content://$authority/reports/t6.csv", uri(report).toString())
 
@@ -86,7 +86,7 @@ class FileProviderTest {
     @Test fun another_app_cannot_read_without_a_grant() {
         val secret = "T6-NOT-FOR-THE-SHELL-${SystemClock.elapsedRealtime()}"
         val apk = File(ctx.cacheDir, "${ApkInstaller.DIR}/update.apk").apply { parentFile!!.mkdirs(); writeText(secret) }
-        val report = File(ctx.cacheDir, "${REPORTS}/t6.csv").apply { parentFile!!.mkdirs(); writeText(secret) }
+        val report = File(ctx.cacheDir, "$REPORTS/t6.csv").apply { parentFile!!.mkdirs(); writeText(secret) }
         try {
             for (f in listOf(apk, report)) {
                 val out = shell("content read --uri ${uri(f)}")
