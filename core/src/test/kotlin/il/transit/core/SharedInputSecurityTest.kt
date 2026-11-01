@@ -62,4 +62,24 @@ class SharedInputSecurityTest {
         val long = SharedPlace.parse("geo:0,0?q=" + "x".repeat(10_000))
         assertTrue(long is SharedPlace.Unreadable || (long as SharedPlace.Text).query.length <= SharedPlace.MAX_QUERY)
     }
+
+    @Test fun a_geo_uri_first_is_read_whole() {
+        assertEquals(SharedPlace.Text("הרצל 15 תל אביב"), SharedPlace.parse("geo:0,0?q=הרצל 15 תל אביב"))
+        assertTrue(SharedPlace.parse("geo:32.0853,34.7818 see you there") is SharedPlace.Point)
+        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("GEO:"))
+    }
+
+    @Test fun a_geo_uri_inside_a_message_is_still_found() {
+        val p = SharedPlace.parse("נפגשים כאן: geo:32.0853,34.7818.")
+        assertTrue("$p", p is SharedPlace.Point)
+        assertEquals(32.0853, (p as SharedPlace.Point).at.lat, 1e-6)
+        assertEquals(SharedPlace.Text("הרצל 15"), SharedPlace.parse("here geo:0,0?q=%D7%94%D7%A8%D7%A6%D7%9C%2015 thanks"))
+        assertEquals(SharedPlace.OutsideIsrael, SharedPlace.parse("look geo:48.8584,2.2945"))
+    }
+
+    @Test fun text_past_the_cap_is_not_read() {
+        val address = "רחוב הרצל 15 תל אביב"
+        assertTrue(SharedPlace.parse("x".repeat(100) + "\n" + address) is SharedPlace.Text)
+        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("x".repeat(SharedPlace.MAX_SHARED) + "\n" + address))
+    }
 }
