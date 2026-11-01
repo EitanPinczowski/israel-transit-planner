@@ -66,17 +66,20 @@ sleep 10
 adb shell am force-stop "$PKG"
 
 if [[ $MODE == jank ]]; then
+  adb shell wm density 420 # a phone-sized layout on the 1080x2400 skin (set before the app starts)
   start_probe map
   ready map || { fail "the route was not drawn (PerfProbe never said ready)"; exit 1; }
   sleep 4
   size=$(adb shell wm size | tr -d '\r' | grep -o '[0-9]*x[0-9]*' | tail -1)
   w=${size%x*}; h=${size#*x}
-  x1=$((w / 4)); x2=$((w * 3 / 4)); y1=$((h / 8)); y2=$((h / 3))
+  echo "screen $size"
+  # The map is the band between the search card (top ~22 %) and the results sheet (bottom ~45 %): swipe only inside it.
+  x1=$((w / 5)); x2=$((w * 4 / 5)); y1=$((h * 27 / 100)); y2=$((h * 40 / 100)); ym=$(((y1 + y2) / 2))
   adb shell dumpsys gfxinfo "$PKG" reset >/dev/null
   # Pan in four directions, double-tap to zoom in then out, six rounds: ~1 minute of movement over Tel Aviv.
   for round in 1 2 3 4 5 6; do
     adb shell "input swipe $x1 $y2 $x2 $y1 350; input swipe $x2 $y1 $x1 $y2 350; input swipe $x1 $y1 $x2 $y2 350; input swipe $x2 $y2 $x1 $y1 350; \
-      input tap $x2 $y1; input tap $x2 $y1; sleep 1; input swipe $x1 $y2 $x2 $y1 250; input swipe $x2 $y1 $x1 $y2 250; sleep 1"
+      input tap $x2 $ym; input tap $x2 $ym; sleep 1; input swipe $x1 $y2 $x2 $y1 250; input swipe $x2 $y1 $x1 $y2 250; sleep 1"
   done
   adb shell dumpsys gfxinfo "$PKG" > "$OUT/gfxinfo.txt"
   adb shell dumpsys gfxinfo "$PKG" framestats > "$OUT/framestats.txt"
@@ -90,16 +93,17 @@ if [[ $MODE == jank ]]; then
 fi
 
 # --- ride --------------------------------------------------------------------------------------------------------------------
-python3 -I - "$ROOT/core/src/test/resources/tracks/train_clean.gpx" "$OUT/fixes.txt" <<'PY'
+python3 -I - "$ROOT/core/src/test/resources/tracks/train_clean.gpx" "$OUT/fixes.txt" "${PERF_RIDE_FIXES:-1800}" <<'PY'
 import re, sys
+fixes = int(sys.argv[3])
 pts = [tuple(map(float, m)) for m in re.findall(r'<trkpt lat="([\d.]+)" lon="([\d.]+)"', open(sys.argv[1]).read())]
 out = []
 for (la1, lo1), (la2, lo2) in zip(pts, pts[1:]):
     for k in range(10):  # the fixtures are one fix per 10 s; the phone gets one per second
         f = k / 10
         out.append(f"{lo1 + (lo2 - lo1) * f:.6f} {la1 + (la2 - la1) * f:.6f}")
-open(sys.argv[2], "w").write("\n".join(out[:1800]) + "\n")
-print(len(out[:1800]), "fixes")
+open(sys.argv[2], "w").write("\n".join(out[:fixes]) + "\n")
+print(len(out[:fixes]), "fixes")
 PY
 first=$(head -1 "$OUT/fixes.txt")
 adb emu geo fix $first >/dev/null
@@ -118,20 +122,32 @@ echo "fed $(wc -l < "$OUT/fixes.txt") fixes in ${secs}s"
 adb shell dumpsys batterystats --checkin > "$OUT/batterystats-checkin.txt"
 adb shell dumpsys batterystats "$PKG" > "$OUT/batterystats-app.txt"
 adb shell dumpsys alarm > "$OUT/alarm-after.txt"
-uid=$(adb shell dumpsys package "$PKG" | tr -d '\r' | sed -n 's/.*userId=\([0-9]*\).*/\1/p' | head -1)
+uid=$(adb shell pm list packages -U "$PKG" | tr -d '\r' | sed -n "s/^package:$PKG uid://p" | head -1)
 echo "uid $uid"
-grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" | cut -c1-220 > "$OUT/app-checkin.txt"
+grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" > "$OUT/app-checkin.txt"
+# Checkin records of the app: apk = wakeups (apk,<wakeups>,<apk>,<service>,...), wl = wake locks, sr = sensors (GPS is sensor -10000:
+# <total ms>,<count>), jb = jobs, ua = a user-activity line. The fields stay in the artifact; the summary names the ones asked for.
+wakeups=$(awk -F, '$4=="apk"{s+=$5} END{print s+0}' "$OUT/app-checkin.txt")
+gps_ms=$(awk -F, '$4=="sr" && $5=="-10000"{s+=$6} END{print s+0}' "$OUT/app-checkin.txt")
+wl_lines=$(awk -F, '$4=="wl"' "$OUT/app-checkin.txt" | wc -l)
+# The per-app text block of `batterystats`: "Uid u0a209:" down to the next blank line.
+awk "/^ *Uid u0a$((uid - 10000)):/,/^$/" "$OUT/batterystats-app.txt" > "$OUT/app-block.txt"
+alarm_stats=$(awk "/$PKG/ && /(run|alarms)/" "$OUT/alarm-after.txt" | head -5)
 {
   echo "### 30-minute simulated ride (API $API, ${secs}s of wall time for $(wc -l < "$OUT/fixes.txt") fixes)"
-  echo "RideService alive at the end: $(adb shell dumpsys activity services "$PKG" | grep -c RideService) record(s)"
+  echo "- wakeups of the app (batterystats apk records): **$wakeups**"
+  echo "- GPS-on time of the app (sensor -10000): **${gps_ms} ms**"
+  echo "- wake-lock records of the app: **$wl_lines**"
+  echo "- RideService records alive at the end: $(adb shell dumpsys activity services "$PKG" | grep -c RideService)"
   echo '```'
-  echo "# app uid $uid, batterystats --checkin lines (wl = wake locks, gps/gpsd = GPS, jb = jobs, sst/ssr = sensors)"
-  head -40 "$OUT/app-checkin.txt"
-  echo "# human-readable per-app block"
-  grep -iE "wake ?lock|wakeup|gps|alarm|sensor|foreground|Computed drain|Total cpu" "$OUT/batterystats-app.txt" | head -30
+  echo "# app uid $uid, batterystats --checkin lines of the app (apk = wakeups, wl = wake locks, sr = sensors, jb = jobs)"
+  cut -c1-200 "$OUT/app-checkin.txt" | head -30
+  echo "# the app's block in the text report"
+  cut -c1-200 "$OUT/app-block.txt" | head -30
   echo "# alarms of the app (dumpsys alarm)"
-  grep -c "$PKG" "$OUT/alarm-after.txt" | sed 's/^/entries mentioning the app: /'
+  echo "${alarm_stats:-none}"
   echo '```'
 } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}"
+[[ -n $uid ]] || fail "could not read the app's uid: the numbers above are empty"
 adb logcat -d -b crash | grep -q "Process: $PKG" && fail "the app crashed during the simulated ride"
 exit $failed

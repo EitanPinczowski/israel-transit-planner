@@ -14,6 +14,9 @@ on:
       only:
         description: "perf = only the performance reports (a fix for them), all = everything"
         default: all
+      ride_fixes:
+        description: "perf ride: how many 1-second GPS fixes to feed (1800 = the real 30 minutes; fewer to try the numbers)"
+        default: "1800"
 
 concurrency:
   group: nightly-ui
@@ -123,12 +126,14 @@ jobs:
           path: /usr/local/lib/android/sdk/system-images/android-35
           key: sysimg-35-google_apis-x86_64-v1
       - uses: reactivecircus/android-emulator-runner@v2
+        env:
+          PERF_RIDE_FIXES: ${{ github.event.inputs.ride_fixes || '1800' }}
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -skin 1080x2400
           script: bash tools/ui_perf_run.sh ${{ matrix.mode }} 35 apks out/perf-${{ matrix.mode }}
       - if: always()
         uses: actions/upload-artifact@v4
