@@ -2,7 +2,14 @@ package il.transit.planner.uitest
 
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.compose.ui.node.RootForTest
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import il.transit.planner.ui.screens.DayTags
+import android.view.inspector.WindowInspector
 import com.google.android.apps.common.testing.accessibility.framework.AccessibilityCheckResult.AccessibilityCheckResultType
 import com.google.android.apps.common.testing.accessibility.framework.AccessibilityViewCheckResult
 import com.google.android.apps.common.testing.accessibility.framework.integrations.espresso.AccessibilityValidator
@@ -37,10 +44,24 @@ object Atf {
         return out
     }
 
+    /**
+     * Errors that are not ours to fix, reported as warnings with the reason (Phase 11 E5: "listed in the
+     * PR with the reason"): the ATF check, the test tag of the node they sit in, why.
+     */
+    private val KNOWN = listOf(
+        Triple(
+            "EditableContentDescCheck",
+            DayTags.CLOCK,
+            "Material 3's TimeInput gives its own hour and minute fields a contentDescription (\"for hour\"); the app can't reach them",
+        ),
+    )
+
     /** ATF over the reachable windows. Main thread only. */
     fun run(d: AppDriver, screenshots: Boolean): List<Finding> {
         val out = mutableListOf<Finding>()
-        for (root in reachableRoots(d)) {
+        val roots = reachableRoots(d)
+        val known = KNOWN.flatMap { (check, tag, why) -> taggedOnScreen(roots, tag).map { Triple(check, it, why) } }
+        for (root in roots) {
             val validator = AccessibilityValidator()
                 .setRunChecksFromRootView(true)
                 .setCaptureScreenshots(screenshots)
@@ -48,10 +69,40 @@ object Atf {
             for (r in validator.checkAndReturnResults(root)) {
                 if (r.type != AccessibilityCheckResultType.ERROR && r.type != AccessibilityCheckResultType.WARNING) continue
                 if (r.sourceCheckClass.simpleName == "TouchTargetSizeCheck") continue
-                out += Finding(r.type == AccessibilityCheckResultType.ERROR, r.sourceCheckClass.simpleName, r.message.toString().replace("\n", " "), where(r))
+                val check = r.sourceCheckClass.simpleName
+                val message = r.message.toString().replace("\n", " ")
+                val excused = known.firstOrNull { (c, rect, _) -> c == check && r.element?.boundsInScreen?.let { b -> inside(b.left, b.top, b.right, b.bottom, rect) } == true }
+                out += if (excused != null) {
+                    Finding(false, check, "known, not blocking: ${excused.third}. $message", where(r))
+                } else {
+                    Finding(r.type == AccessibilityCheckResultType.ERROR, check, message, where(r))
+                }
             }
         }
         return out
+    }
+
+    private fun inside(l: Int, t: Int, r: Int, b: Int, box: android.graphics.Rect) = l >= box.left - 2 && t >= box.top - 2 && r <= box.right + 2 && b <= box.bottom + 2
+
+    /** Screen bounds of the Compose nodes tagged [tag] in [roots]. Main thread only. */
+    private fun taggedOnScreen(roots: List<View>, tag: String): List<android.graphics.Rect> {
+        val out = mutableListOf<android.graphics.Rect>()
+        fun walk(n: SemanticsNode) {
+            if (n.config.getOrNull(SemanticsProperties.TestTag) == tag) {
+                val p = n.positionOnScreen
+                out += android.graphics.Rect(p.x.toInt(), p.y.toInt(), p.x.toInt() + n.size.width, p.y.toInt() + n.size.height)
+            }
+            n.children.forEach(::walk)
+        }
+        roots.forEach { root -> composeRoots(root).forEach { walk(it.semanticsOwner.unmergedRootSemanticsNode) } }
+        return out
+    }
+
+    /** The Compose roots under [v] (an AndroidComposeView is one). */
+    fun composeRoots(v: View): List<RootForTest> {
+        if (v is RootForTest) return listOf(v)
+        if (v !is ViewGroup) return emptyList()
+        return (0 until v.childCount).flatMap { composeRoots(v.getChildAt(it)) }
     }
 
     /** What the finding is about: its class, bounds and words, so a CI log alone can find it. */
@@ -86,7 +137,7 @@ object Atf {
     /** Every window root of this process: public on API 29+, the window manager's own list before. */
     @Suppress("UNCHECKED_CAST")
     private fun windowRoots(main: View): List<View> {
-        if (Build.VERSION.SDK_INT >= 29) return android.view.inspector.WindowInspector.getGlobalWindowViews()
+        if (Build.VERSION.SDK_INT >= 29) return WindowInspector.getGlobalWindowViews()
         return runCatching {
             val global = Class.forName("android.view.WindowManagerGlobal")
             val instance = global.getMethod("getInstance").invoke(null)

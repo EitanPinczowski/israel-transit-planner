@@ -161,7 +161,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 
 @Composable
 internal fun SearchCard(state: UiState, vm: MainActions, onSavePlace: (LatLon) -> Unit) {
@@ -369,8 +368,10 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
 
 @Composable
 internal fun SuggestionRow(title: String, detail: String?, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+    // Phase 11 E5: the row says its own words, so a row half hidden by the keyboard still has a label.
+    val said = listOfNotNull(title, detail).joinToString(", ")
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 10.dp),
+        Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics { contentDescription = said }.clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)

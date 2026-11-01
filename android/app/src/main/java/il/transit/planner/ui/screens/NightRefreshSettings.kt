@@ -22,6 +22,9 @@ import il.transit.core.user.UserSettings
 import il.transit.planner.R
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.heading
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.layout.heightIn
 
 /** The offline Trip banner: a night-refresh copy says when it was planned. */
 @Composable
@@ -33,9 +36,13 @@ internal fun offlineBanner(night: Boolean, time: String): String =
 internal fun NightRefreshSection(s: UserSettings, places: List<SavedPlace>, set: (UserSettings) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(stringResource(R.string.night_refresh_title), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // The whole row is the switch: one TalkBack control that says its name (Phase 11 E5).
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = s.nightRefresh, role = Role.Switch, onValueChange = { set(s.copy(nightRefresh = it)) }),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(stringResource(R.string.night_refresh_toggle), Modifier.weight(1f))
-            Switch(checked = s.nightRefresh, onCheckedChange = { set(s.copy(nightRefresh = it)) })
+            Switch(checked = s.nightRefresh, onCheckedChange = null)
         }
         Text(stringResource(R.string.night_refresh_help, NightRefresh.MAX_TRIPS), style = MaterialTheme.typography.bodySmall)
         if (s.nightRefresh && Home.of(s, places) == null) {

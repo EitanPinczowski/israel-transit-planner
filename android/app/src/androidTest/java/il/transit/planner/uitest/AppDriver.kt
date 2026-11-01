@@ -76,8 +76,9 @@ object Leaks {
     }
 }
 
-/** Starts the app on a clean slate and reaches into it the way a test needs to. */
 /**
+ * Starts the app on a clean slate and reaches into it the way a test needs to.
+ *
  * [checkA11y]: run Google's Accessibility Test Framework after every step (Phase 11 E5, [A11yHook]); an
  * error fails the journey when the driver closes. Off only for `ScreensTest`, whose layout audit reports
  * ATF (R5) per screen and profile instead.

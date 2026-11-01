@@ -1,9 +1,6 @@
 package il.transit.planner.uitest
 
 import android.os.Looper
-import android.view.View
-import android.view.ViewGroup
-import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
@@ -65,7 +62,7 @@ class A11yHook(private val d: AppDriver) : IdlingResource {
     private fun signature(): String? {
         val roots = runCatching { Atf.reachableRoots(d) }.getOrNull() ?: return null
         val sb = StringBuilder()
-        for (r in roots) composeRoots(r).forEach { walk(it.semanticsOwner.rootSemanticsNode, sb) }
+        for (r in roots) Atf.composeRoots(r).forEach { walk(it.semanticsOwner.rootSemanticsNode, sb) }
         return sb.toString()
     }
 
@@ -75,11 +72,5 @@ class A11yHook(private val d: AppDriver) : IdlingResource {
         val b = n.boundsInWindow
         if (text != null || desc != null) sb.append("$text|$desc@${b.left.toInt() / 8},${b.top.toInt() / 8};")
         n.children.forEach { walk(it, sb) }
-    }
-
-    private fun composeRoots(v: View): List<RootForTest> {
-        if (v is RootForTest) return listOf(v)
-        if (v !is ViewGroup) return emptyList()
-        return (0 until v.childCount).flatMap { composeRoots(v.getChildAt(it)) }
     }
 }

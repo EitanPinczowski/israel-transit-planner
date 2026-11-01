@@ -56,6 +56,7 @@ class A11yJourneysTest {
     val compose = createEmptyComposeRule()
 
     @get:Rule val leaks = Leaks.around(compose)
+
     @get:Rule val permissions = Permissions.grantAll()
 
     @Test fun a11y_journey_hebrew() = journey("he")
@@ -109,7 +110,7 @@ class A11yJourneysTest {
 
             // Stop sheet.
             d.onMain { it.openStop(FaultMatrixTest.STOP_ID, "תחנה מרכזית") }
-            compose.waitUntil(10_000) { d.vm.state.value.stopSheet?.loading == false }
+            compose.waitUntil(10_000) { d.ui.stopSheet?.loading == false }
             d.step("stop sheet", rtl)
             d.onMain { it.closeStop() }
             compose.waitForIdle()
@@ -139,6 +140,8 @@ class A11yJourneysTest {
         }
     }
 
+    private val AppDriver.ui get() = vm.state.value
+
     private fun AppDriver.tapRow(labelRes: Int) =
         compose.onNode(hasText(str(labelRes)) and hasClickAction() and hasAnyAncestor(hasTestTag(UiTags.TOP))).performClick()
 
@@ -157,7 +160,10 @@ class A11yJourneysTest {
             refreshActivity()
             compose.waitForIdle()
             var now = ""
-            inst.runOnMainSync { now = activity.resources.configuration.locales[0].language.let { if (it == "iw") "he" else it } }
+            inst.runOnMainSync {
+                val code = activity.resources.configuration.locales[0].language
+                now = if (code == "iw") "he" else code
+            }
             if (now == lang) return
             assertTrue("the app never switched to $lang (has $now)", SystemClock.uptimeMillis() < until)
         }
@@ -207,7 +213,8 @@ class A11yJourneysTest {
                 if (n.boundsInWindow.width > 0f && n.boundsInWindow.height > 0f) out += n
                 n.children.forEach(::walk)
             }
-            (dialogs.ifEmpty { roots }).forEach(::walk)
+            // The topmost dialog only (roots come in the order their windows opened): the one TalkBack reaches.
+            (dialogs.lastOrNull()?.let { listOf(it) } ?: roots).forEach(::walk)
         }
         return out
     }
