@@ -45,13 +45,13 @@ class SharedInputSecurityTest {
     }
 
     @Test fun bidi_overrides_never_reach_the_screen() {
-        val rlo = '‮'
+        val rlo = '\u202E'
         val p = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(Home${rlo}gpj.exe)")
         assertTrue(p is SharedPlace.Point)
         assertEquals("Homegpj.exe", (p as SharedPlace.Point).label)
         val t = SharedPlace.parse("geo:0,0?q=${rlo}דיזנגוף 50 תל אביב")
         assertTrue(t is SharedPlace.Text)
-        assertFalse((t as SharedPlace.Text).query.any { it in '‪'..'‮' || it in '⁦'..'⁩' })
+        assertFalse((t as SharedPlace.Text).query.any { it in '\u202A'..'\u202E' || it in '\u2066'..'\u2069' })
     }
 
     @Test fun markup_and_sql_stay_plain_text_of_bounded_length() {

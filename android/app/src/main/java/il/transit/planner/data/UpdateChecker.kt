@@ -24,7 +24,6 @@ open class UpdateChecker(
     open val installer: ApkInstaller? = null,
     private val http: OkHttpClient = client(),
 ) {
-
     /** The daily check: a newer release, or null for anything else (throttled, up to date, offline). */
     open suspend fun check(now: Instant = Instant.now()): LatestRelease? {
         val last = store.lastUpdateCheck.first()?.let(Instant::ofEpochSecond)

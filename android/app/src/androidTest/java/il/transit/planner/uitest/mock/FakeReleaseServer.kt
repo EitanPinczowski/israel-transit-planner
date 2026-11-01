@@ -135,16 +135,16 @@ class FakeReleaseServer : ExternalResource() {
             private fun unsupported(): Socket = throw UnsupportedOperationException("OkHttp connects unconnected sockets")
         }
         val clientTls = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trust), null) }
-        return base.newBuilder()
+        val dns = object : Dns {
+            override fun lookup(hostname: String): List<InetAddress> {
+                lookups += hostname
+                return listOf(InetAddress.getByAddress(hostname, byteArrayOf(127, 0, 0, 1)))
+            }
+        }
+        return base
+            .newBuilder()
             .proxy(Proxy.NO_PROXY)
-            .dns(
-                object : Dns {
-                    override fun lookup(hostname: String): List<InetAddress> {
-                        lookups += hostname
-                        return listOf(InetAddress.getByAddress(hostname, byteArrayOf(127, 0, 0, 1)))
-                    }
-                },
-            )
+            .dns(dns)
             .socketFactory(sockets)
             .sslSocketFactory(clientTls.socketFactory, trust)
             .build()
@@ -177,11 +177,9 @@ class FakeReleaseServer : ExternalResource() {
         /** A GitHub `releases/latest` answer: [tag], one APK asset at [apkUrl] with [digest] ("sha256:<hex>", or null). */
         fun release(tag: String, apkUrl: String = APK_URL, digest: String?): String {
             val d = digest?.let { "\"digest\": \"$it\"," } ?: ""
-            return """
-                {"tag_name": "$tag", "html_url": "https://github.com/EitanPinczowski/israel-transit-planner/releases/tag/$tag",
-                 "draft": false, "prerelease": false,
-                 "assets": [{"name": "israel-transit-planner.apk", $d "browser_download_url": "$apkUrl"}]}
-            """.trimIndent()
+            val page = "https://github.com/EitanPinczowski/israel-transit-planner/releases/tag/$tag"
+            val asset = "{\"name\": \"israel-transit-planner.apk\", $d \"browser_download_url\": \"$apkUrl\"}"
+            return "{\"tag_name\": \"$tag\", \"html_url\": \"$page\", \"draft\": false, \"prerelease\": false, \"assets\": [$asset]}"
         }
     }
 }

@@ -8,10 +8,13 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import il.transit.core.geo.LatLon
+import il.transit.core.plan.MissedIt
 import il.transit.core.remind.Reminder
+import il.transit.core.user.UserSettings
 import il.transit.planner.MainActivity
 import il.transit.planner.UiTestApp
 import il.transit.planner.remind.MissedItAction
+import il.transit.planner.remind.Notifications
 import il.transit.planner.tile.NextTripTile
 import il.transit.planner.ui.PlaceRef
 import il.transit.planner.ui.Shortcuts
@@ -51,19 +54,19 @@ class IntentFuzzTest {
      */
     private fun case(name: String, maxRequests: Int = 0, check: (AppDriver) -> Unit = {}, make: (android.content.Context) -> Intent) {
         AppDriver(compose).use { d ->
-            val before = d.app.replay.calls.get()
-            val places = runBlocking { d.app.store.places.first() }
+            val before = d.requests()
+            val places = d.places()
             val started = SystemClock.elapsedRealtime()
             d.launch(make(d.inst.targetContext))
             // Past the typing pause (350 ms) and a geocode's answer.
             SystemClock.sleep(2_000)
             compose.waitForIdle()
             val ms = SystemClock.elapsedRealtime() - started
-            val sent = d.app.replay.calls.get() - before
-            Log.i(TAG, "$name -> sent=$sent cap=$maxRequests ${ms}ms to=${d.vm.state.value.to} query=${d.vm.state.value.query.take(40)}")
+            val sent = d.requests() - before
+            Log.i(TAG, "$name -> sent=$sent cap=$maxRequests ${ms}ms to=${d.ui.to} query=${d.ui.query.take(40)}")
             assertEquals("$name: the Activity is up", Lifecycle.State.RESUMED, d.scenarioState)
             assertTrue("$name: $sent requests (cap $maxRequests)", sent <= maxRequests)
-            assertEquals("$name: saved places unchanged", places, runBlocking { d.app.store.places.first() })
+            assertEquals("$name: saved places unchanged", places, d.places())
             // A hung main thread would have kept the Activity from settling: 15 s is far past a normal start.
             assertTrue("$name: took $ms ms", ms < 15_000)
             check(d)
@@ -72,7 +75,7 @@ class IntentFuzzTest {
 
     /** Refused: no destination set, nothing searched. */
     private val refused: (AppDriver) -> Unit = { d ->
-        val s = d.vm.state.value
+        val s = d.ui
         assertEquals(null, s.to)
         assertEquals("", s.query)
     }
@@ -85,9 +88,7 @@ class IntentFuzzTest {
     }
 
     private fun view(uri: String): (android.content.Context) -> Intent = { c ->
-        main(c)
-            .setAction(Intent.ACTION_VIEW)
-            .setData(Uri.parse(uri))
+        main(c).setAction(Intent.ACTION_VIEW).setData(Uri.parse(uri))
     }
 
     @Test fun send_without_text_or_with_the_wrong_type() {
@@ -129,8 +130,8 @@ class IntentFuzzTest {
     /** Another app's private file, with a read grant flag on top: the app never opens a shared URI. */
     @Test fun content_uri_with_a_grant_flag() {
         case("VIEW content:// + grant", check = refused) { c ->
-            view("content://com.android.externalstorage.documents/document/primary%3ADownload%2Fsecret.txt")(c)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+            view("content://com.android.externalstorage.documents/document/primary%3ADownload%2Fsecret.txt")(c).addFlags(flags)
         }
         case("SEND content:// as text + grant", maxRequests = 1) { c ->
             send("content://com.android.contacts/contacts/1")(c).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -140,27 +141,32 @@ class IntentFuzzTest {
     /** Markup, SQL and bidi overrides are plain text: searched as typed (≤ 1 request), shown as sent, overrides dropped. */
     @Test fun geo_with_markup_sql_and_rtl_override() {
         for (q in listOf("'; DROP TABLE places;--", "<script>alert(1)</script>", "<b>הרצל</b> 15")) {
-            case("geo q=$q", maxRequests = 1, check = { d -> assertEquals(q, d.vm.state.value.query) }, make = view("geo:0,0?q=" + Uri.encode(q)))
+            case(
+                "geo q=$q",
+                maxRequests = 1,
+                check = { d -> assertEquals(q, d.ui.query) },
+                make = view("geo:0,0?q=" + Uri.encode(q)),
+            )
         }
-        val rlo = '‮'
-        case("geo label with RLO", check = { d ->
-            val to = d.vm.state.value.to as? PlaceRef.Point
+        val rlo = '\u202E'
+        val label: (AppDriver) -> Unit = { d ->
+            val to = d.ui.to as? PlaceRef.Point
             assertNotNull("a point at Tel Aviv", to)
             assertEquals("Homegpj.exe", to!!.name)
-        }, make = view("geo:0,0?q=" + Uri.encode("32.0839,34.7983(Home${rlo}gpj.exe)")))
-        case("geo query with RLO", maxRequests = 1, check = { d ->
-            assertFalse(d.vm.state.value.query.any { it in '‪'..'‮' || it in '⁦'..'⁩' })
-        }, make = view("geo:0,0?q=" + Uri.encode("${rlo}דיזנגוף 50")))
+        }
+        case("geo label with RLO", check = label, make = view("geo:0,0?q=" + Uri.encode("32.0839,34.7983(Home${rlo}gpj.exe)")))
+        val plain: (AppDriver) -> Unit = { d -> assertFalse(d.ui.query.any { it in '\u202A'..'\u202E' || it in '\u2066'..'\u2069' }) }
+        case("geo query with RLO", maxRequests = 1, check = plain, make = view("geo:0,0?q=" + Uri.encode("${rlo}דיזנגוף 50")))
     }
 
     /** The extras of our own notifications, tile and shortcuts, sent by someone else, broken. */
     @Test fun own_extras_broken() {
         val tel = LatLon(UiTestApp.TEL_AVIV.lat, UiTestApp.TEL_AVIV.lon)
         fun missed(c: android.content.Context, lat: Double, lon: Double) =
-            MissedItAction
-                .intent(c, il.transit.core.plan.MissedIt.Target("x", tel))
-                .putExtra("missed_it_lat", lat)
-                .putExtra("missed_it_lon", lon)
+            MissedItAction.intent(c, MissedIt.Target("x", tel)).apply {
+                putExtra("missed_it_lat", lat)
+                putExtra("missed_it_lon", lon)
+            }
         for ((lat, lon) in listOf(999.0 to 999.0, Double.NaN to 34.79, 0.0 to 0.0, 48.85 to 2.35, Double.POSITIVE_INFINITY to 34.8)) {
             case("missed it at $lat,$lon", check = refused) { c -> missed(c, lat, lon) }
         }
@@ -169,20 +175,35 @@ class IntentFuzzTest {
         AppDriver(compose).use { d ->
             val at = UiTestApp.NOW.epochSecond
             val r = Reminder(
-                fromLat = UiTestApp.BGU.lat, fromLon = UiTestApp.BGU.lon, toLat = tel.lat, toLon = tel.lon,
-                settings = il.transit.core.user.UserSettings(tourSeen = true), tripId = null, line = "T6",
-                boardStop = "T6", scheduledBoardingEpoch = at + 3_900, leaveAtEpoch = at + 3_600,
+                fromLat = UiTestApp.BGU.lat,
+                fromLon = UiTestApp.BGU.lon,
+                toLat = tel.lat,
+                toLon = tel.lon,
+                settings = UserSettings(tourSeen = true),
+                tripId = null,
+                line = "T6",
+                boardStop = "T6",
+                scheduledBoardingEpoch = at + 3_900,
+                leaveAtEpoch = at + 3_600,
             )
             runBlocking { d.app.store.setReminder(r) }
             d.launch(missed(d.inst.targetContext, 999.0, 999.0))
             SystemClock.sleep(1_000)
-            assertEquals(r, runBlocking { d.app.store.reminder.first() })
+            assertEquals(r, d.reminder())
         }
-        case("start ride, no reminder") { c -> main(c).putExtra(il.transit.planner.remind.Notifications.EXTRA_START_RIDE, true) }
+        case("start ride, no reminder") { c -> main(c).putExtra(Notifications.EXTRA_START_RIDE, true) }
         case("trip home flag as a string") { c -> main(c).putExtra(NextTripTile.EXTRA_TRIP_HOME, "true") }
         case("shortcut to an unknown place", check = refused) { c -> main(c).putExtra(Shortcuts.EXTRA_PLACE, "x".repeat(100_000)) }
         case("shortcut with an unknown name", check = refused) { c -> main(c).putExtra(Shortcuts.EXTRA_SHORTCUT, "../../evil") }
     }
+
+    private val AppDriver.ui get() = vm.state.value
+
+    private fun AppDriver.requests() = app.replay.calls.get()
+
+    private fun AppDriver.places() = runBlocking { app.store.places.first() }
+
+    private fun AppDriver.reminder() = runBlocking { app.store.reminder.first() }
 
     companion object {
         const val TAG = "IntentFuzz"

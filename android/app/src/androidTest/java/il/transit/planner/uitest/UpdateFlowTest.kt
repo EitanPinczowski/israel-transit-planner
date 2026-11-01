@@ -11,6 +11,7 @@ import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
@@ -26,11 +27,13 @@ import il.transit.core.update.UpdateFailure
 import il.transit.core.update.UpdateFlow
 import il.transit.core.update.UpdateState
 import il.transit.core.user.SavedPlace
+import il.transit.core.user.WalkSpeed
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import il.transit.planner.UiTestApp
 import il.transit.planner.data.ApkInstaller
 import il.transit.planner.data.UpdateChecker
+import il.transit.planner.ui.MainViewModel
 import il.transit.planner.uitest.mock.FakeReleaseServer
 import il.transit.planner.uitest.mock.FakeReleaseServer.ApkMode
 import kotlinx.coroutines.flow.first
@@ -45,6 +48,12 @@ import org.junit.runner.RunWith
 import java.io.File
 import java.util.regex.Pattern
 
+/** The banner's state. */
+internal val AppDriver.updateState: UpdateState get() = vm.state.value.updateState
+
+/** The release the banner shows (null: none). */
+internal val AppDriver.release get() = vm.state.value.update
+
 /** What the update tests share: the fake server wired into a real [UpdateChecker] and [ApkInstaller]. */
 internal object UpdateRig {
     val ctx get() = InstrumentationRegistry.getInstrumentation().targetContext
@@ -53,6 +62,8 @@ internal object UpdateRig {
 
     /** The version the app pretends to be: the uitest build's own ("0.0.0-dev-uitest") never asks for updates. */
     const val CURRENT = "0.0.1"
+
+    fun savedPlaces(a: MainActivity): List<SavedPlace> = ViewModelProvider(a)[MainViewModel::class.java].state.value.savedPlaces
 
     fun leftovers(): List<File> = updatesDir.listFiles()?.toList().orEmpty()
 
@@ -84,19 +95,16 @@ internal object UpdateRig {
     }
 
     fun awaitState(compose: ComposeTestRule, d: AppDriver, timeoutMs: Long = 20_000, what: (UpdateState) -> Boolean) {
-        compose.waitUntil(timeoutMs) { what(d.vm.state.value.updateState) }
+        compose.waitUntil(timeoutMs) { what(d.updateState) }
         compose.waitForIdle()
     }
 
     /** The banner's Update button, once the check has found the release. */
     fun tapUpdate(compose: ComposeTestRule, d: AppDriver) {
-        compose.waitUntil(15_000) { d.vm.state.value.update != null }
+        compose.waitUntil(15_000) { d.release != null }
         d.awaitNode(hasText(d.str(R.string.update_action)) and hasClickAction())
         val button = hasText(d.str(R.string.update_action)) and hasClickAction()
-        compose
-            .onAllNodes(button)
-            .onFirst()
-            .performClick()
+        compose.onAllNodes(button).onFirst().performClick()
     }
 }
 
@@ -198,7 +206,7 @@ class UpdateFlowTest {
         UpdateRig.launch(compose, fake, FakeReleaseServer.release("v0.0.2", digest = "sha256:$sha")).use { d ->
             UpdateRig.tapUpdate(compose, d)
             UpdateRig.awaitState(compose, d) { it is UpdateState.Failed }
-            assertEquals(UpdateFailure.NETWORK, (d.vm.state.value.updateState as UpdateState.Failed).reason)
+            assertEquals(UpdateFailure.NETWORK, (d.updateState as UpdateState.Failed).reason)
             d.awaitNode(hasText(d.str(R.string.update_failed_network)))
             assertTrue("left ${UpdateRig.leftovers()}", UpdateRig.leftovers().isEmpty())
         }
@@ -210,7 +218,7 @@ class UpdateFlowTest {
             UpdateRig.launch(compose, fake, FakeReleaseServer.release("v0.0.2", digest = digest)).use { d ->
                 UpdateRig.tapUpdate(compose, d)
                 UpdateRig.awaitState(compose, d) { it is UpdateState.Failed }
-                assertEquals("$digest", UpdateFailure.CHECKSUM, (d.vm.state.value.updateState as UpdateState.Failed).reason)
+                assertEquals("$digest", UpdateFailure.CHECKSUM, (d.updateState as UpdateState.Failed).reason)
                 d.awaitNode(hasText(d.str(R.string.update_failed_checksum)))
                 compose.waitUntil(5_000) { UpdateRig.leftovers().isEmpty() }
                 assertEquals("the APK was fetched once", 1, fake.requests.count { it.contains(".apk") })
@@ -226,7 +234,7 @@ class UpdateFlowTest {
                 compose.waitUntil(15_000) { fake.requests.any { it.endsWith("/releases/latest") } }
                 SystemClock.sleep(1_000)
                 compose.waitForIdle()
-                assertEquals(tag, null, d.vm.state.value.update)
+                assertEquals(tag, null, d.release)
                 val buttons = compose.onAllNodes(hasText(d.str(R.string.update_action))).fetchSemanticsNodes()
                 assertTrue(tag, buttons.isEmpty())
             }
@@ -265,10 +273,11 @@ class UpdateInstallSteps {
             // Through GitHub's redirect to its asset host, as a real release is served.
             fake.apkMode = ApkMode.REDIRECT
             UpdateRig.launch(compose, fake, FakeReleaseServer.release("v0.0.2", digest = "sha256:$sha"), UiTestApp.PLACES + MARKER).use { d ->
-                runBlocking { d.app.store.setSettings(d.app.store.settings.first().copy(walkSpeed = MARKER_SPEED)) }
+                val store = d.app.store
+                runBlocking { store.setSettings(store.settings.first().copy(walkSpeed = MARKER_SPEED)) }
                 UpdateRig.tapUpdate(compose, d)
                 UpdateRig.awaitState(compose, d, 60_000) { it is UpdateState.Ready || it is UpdateState.Failed }
-                val st = d.vm.state.value.updateState
+                val st = d.updateState
                 assertTrue("$st", st is UpdateState.Ready)
                 assertEquals(sha, FakeReleaseServer.sha256(File((st as UpdateState.Ready).file).readBytes()))
                 // UpdateLaunchers opens Android's prompt by itself, with a read grant on our provider's URI.
@@ -283,7 +292,7 @@ class UpdateInstallSteps {
                     ),
                 )
                 assertEquals(listOf("api.github.com", "github.com", FakeReleaseServer.ASSET_HOST), fake.requests.map { it.substringBefore('/') })
-                Log.i(TAG, "installer open for ${d.vm.state.value.update?.version}; leaving it to the script")
+                Log.i(TAG, "installer open for ${d.release?.version}; leaving it to the script")
                 // Give the installer time to copy the APK before this test (and its process) ends.
                 SystemClock.sleep(3_000)
             }
@@ -294,6 +303,7 @@ class UpdateInstallSteps {
 
     @Test fun step2_after_install() {
         val pm = UpdateRig.ctx.packageManager
+
         @Suppress("DEPRECATION") // API 35 only, but one call for every level
         val info = pm.getPackageInfo(UpdateRig.ctx.packageName, 0)
         Log.i(TAG, "after: ${info.versionName} (${info.longVersionCode})")
@@ -306,9 +316,9 @@ class UpdateInstallSteps {
         ActivityScenario.launch(MainActivity::class.java).use { s ->
             compose.waitUntil(15_000) { s.state == Lifecycle.State.RESUMED }
             var places = emptyList<SavedPlace>()
-            s.onActivity { a -> places = androidx.lifecycle.ViewModelProvider(a)[il.transit.planner.ui.MainViewModel::class.java].state.value.savedPlaces }
+            s.onActivity { a -> places = savedPlaces(a) }
             compose.waitUntil(10_000) {
-                s.onActivity { a -> places = androidx.lifecycle.ViewModelProvider(a)[il.transit.planner.ui.MainViewModel::class.java].state.value.savedPlaces }
+                s.onActivity { a -> places = savedPlaces(a) }
                 MARKER in places
             }
         }
@@ -319,6 +329,6 @@ class UpdateInstallSteps {
         const val NEXT_APK = "/data/local/tmp/t6-next.apk"
         const val NEXT_CODE = 2L
         val MARKER = SavedPlace("T6 עדכון", 31.2622, 34.8013)
-        val MARKER_SPEED = il.transit.core.user.WalkSpeed.SLOW
+        val MARKER_SPEED = WalkSpeed.SLOW
     }
 }

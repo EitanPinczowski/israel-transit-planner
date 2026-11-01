@@ -103,7 +103,8 @@ open class ApkInstaller(
         private const val MAX_HOPS = 5
 
         /** Redirects are never followed by OkHttp: [download] checks each hop. (T6's tests derive their client from this one.) */
-        fun client(): OkHttpClient = OkHttpClient.Builder()
+        fun client(): OkHttpClient = OkHttpClient
+            .Builder()
             .followRedirects(false)
             .followSslRedirects(false)
             .connectTimeout(15, TimeUnit.SECONDS)
