@@ -128,7 +128,8 @@ class MainActivity : ComponentActivity() {
     private fun openShared(intent: Intent) {
         val raw = when (intent.action) {
             Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)
-            Intent.ACTION_VIEW -> intent.dataString
+            // Only the schemes our filters name: an explicit intent can carry any (javascript:, file:, content:), never read (T6).
+            Intent.ACTION_VIEW -> intent.data?.takeIf { it.scheme?.lowercase() in SHARED_SCHEMES }?.toString()
             else -> return
         }
         val place = SharedPlace.parse(raw)
@@ -279,7 +280,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val openSheet = tripSheet
                 val sheetUi: (@Composable (Modifier, Shape) -> Unit)? =
-                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null, accessibleRoutes = state.settings.accessible) }) else null
+                    if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null, accessibleRoutes = state.settings.accessible, paymentApp = state.settings.paymentApp) }) else null
                 CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
                     MainScreen(state, ui, actions, tripSheet = sheetUi) {
                         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
@@ -531,6 +532,9 @@ class MainActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); mapView.onSaveInstanceState(outState) }
 
     companion object {
+        /** The schemes a shared place may come in (the VIEW filters): `geo:` and map links. */
+        private val SHARED_SCHEMES = setOf("geo", "https", "http")
+
         private val BEER_SHEVA = LatLng(31.2622, 34.8013)
 
         /** OpenFreeMap: free, no key, allowed in apps. */

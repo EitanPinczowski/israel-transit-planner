@@ -17,6 +17,8 @@ import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.MissedIt
+import il.transit.core.present.SharedPlace
+import il.transit.core.search.PlaceSearch
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -36,6 +38,9 @@ object MissedItAction {
 
     /** Its own request code: the other PendingIntents to [MainActivity] use 0–2. */
     private const val REQUEST = 3
+
+    /** A place name, not a page: a longer one from another app is cut. */
+    private const val MAX_NAME = 120
 
     fun intent(context: Context, t: MissedIt.Target): Intent =
         Intent(context, MainActivity::class.java)
@@ -59,8 +64,10 @@ object MissedItAction {
         if (intent?.getBooleanExtra(EXTRA_MISSED_IT, false) != true) return null
         val lat = intent.getDoubleExtra(EXTRA_LAT, Double.NaN)
         val lon = intent.getDoubleExtra(EXTRA_LON, Double.NaN)
-        if (lat.isNaN() || lon.isNaN()) return null
-        return MissedIt.Target(intent.getStringExtra(EXTRA_NAME), LatLon(lat, lon), intent.getBooleanExtra(EXTRA_ARRIVE_BY, false))
+        // MainActivity is exported: a destination outside Israel (or NaN, 999) is refused before any request (T6).
+        if (!PlaceSearch.inIsrael(LatLon(lat, lon))) return null
+        val name = intent.getStringExtra(EXTRA_NAME)?.take(MAX_NAME)?.let(SharedPlace::stripBidi)
+        return MissedIt.Target(name, LatLon(lat, lon), intent.getBooleanExtra(EXTRA_ARRIVE_BY, false))
     }
 
     /** The phone's location for one tap: [MissedIt.Fixes] on the platform `LocationManager`, read only when asked. */

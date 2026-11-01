@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A save the phone refused because its storage is full (Phase 11 F2). Shown as a short toast. -->
+    <string name="not_saved_storage_full">לא נשמר: אחסון הטלפון מלא</string>
+</resources>

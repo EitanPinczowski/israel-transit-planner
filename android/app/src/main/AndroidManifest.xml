@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -26,6 +27,10 @@
         <intent>
             <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
         </intent>
+        <!-- "Pay with…" (Phase 11 E4): whether each payment app is installed, to open it (core PayApps). -->
+        <package android:name="com.pcentra.ravkavonlinemobile" />
+        <package android:name="co.hopon.client" />
+        <package android:name="com.tranzmate" />
     </queries>
 
     <application
@@ -80,6 +85,15 @@
                 <data android:scheme="https" android:host="www.waze.com" android:pathPrefix="/ul" />
             </intent-filter>
         </activity>
+
+        <!-- WorkManager starts from TransitApp's configuration (its full-disk handler), not by itself (Phase 11 F2). -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data android:name="androidx.work.WorkManagerInitializer" android:value="androidx.startup" tools:node="remove" />
+        </provider>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -200,3 +200,105 @@ class#test) to `flake.log` next to its output; the last step of
 each UI job (`tools/ui_flake_log.sh`) comments on the open issue "CI flake log" (created once) with the
 run link, API, test and kind, and also for a job re-run (`run_attempt > 1`). **A test that flakes twice
 in 14 days gets a fix package, never a skip.** `issues: write` is given to those jobs for that step only.
+
+## Phase 11 F2: root causes of three CI flakes
+- **"multithreaded access to SnapshotStateObserver"** (Settings dialog, ~1 run in 12): Compose 1.7 computed a
+  node's semantics lazily, under the owner's snapshot observer, on whichever thread read it first. The test
+  thread did (`fetchOneOrThrow` → `printToString` after every fetch) while the main thread's accessibility /
+  content-capture checker (every 100 ms after a change, outside Compose's idle tracking) did too. **Still open.**
+  Ruled out: Compose BOM 2025.08.00 (1.9; upstream computes semantics on the main thread) breaks Paparazzi 1.3.5
+  (620 shots error even when recording) and grows the APK 2.8 %; an idling resource that walks every root's
+  semantics on the main thread at each `waitForIdle` (the race still hit the first fetch after idle, run
+  41234918862: the main thread composes/reads after idle, e.g. lazy prefetch or the a11y checker). Next: Compose
+  1.8+ together with Paparazzi 2.x and re-recorded goldens, as its own package.
+- **Nightly chaos**, red every night (not flakes): `low_storage` was a real app crash (DataStore ENOSPC out of
+  `viewModelScope.launch`; `UserStore` now drops the write, returns false and the screen says "Not saved: phone storage is full"); en-XA on P5 squeezed the map (the credit chip wraps
+  at font 2.0; the sheet cap uses its measured height); DST "rang 4 times" counted the lines of one record in
+  `dumpsys notification` (now `notification_enqueue` events).
+- **Monkey**: `ui_monkey_evidence` prints the monkey's CRASH/ANR block and the device evidence into the job
+  log, because artifacts can't be read from a cloud session.
+
+## Network-fault matrix (Phase 11 T4)
+
+**PR time: the `faults` job** (`tools/ui_faults_run.sh`, API 35 `google_apis`, `FaultMatrixTest`). 0 requests to
+the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on 127.0.0.1 inside the test process.
+- **The seam (uitest build only):** `UiTestApp.useMockServer(url)` before `launch()` sets `UiTestApp.network`
+  (`MockNetwork`): `api` becomes `GuardedTransitApi(MotisClient("<url>/motis/<id>"))`, the backup geocoder Photon at
+  `<url>/photon` (no phone Geocoder), the weather Open-Meteo at `<url>/meteo`; read timeouts 3 s. The server only decides
+  *whether and how* to answer: a normal Transitous answer is the replay's answer to that same call, as MOTIS JSON, kept under
+  `<id>`; Photon and Open-Meteo answer `photon_rager` / `openmeteo_rain_telaviv`. `reset()` clears the mode, so every other
+  test keeps the replay. Cleartext HTTP is allowed to the loopback only (`src/uitest/res/xml/uitest_network.xml`).
+- **Faults** (`Fault`): 429 twice, 503 twice (`Retry-After: 1`), no answer (timeout), HTML, empty body, `{}`, body cut
+  halfway, offline (`goOffline`: server shut down + airplane mode; `goOnline`: a new server, the app pointed at it), and
+  429 then 200 (per request: the guard's retry must get it).
+- **Each case asserts:** the screen finishes within 30 s (no endless spinner), shows its failure (the message, or the offline
+  copy; `{}` may read as "no results"; map stops and the rain note fail silently), Retry brings the answer, the server's count
+  for the screen's endpoints ≤ the budget constant (×2 for 429/503), at least 2 for "429 then 200"; then the same action
+  again sends 0. A crash fails the job (crash buffer). The job summary lists every case: `<screen> <fault> -> <outcome> sent cap`.
+- **Adding a screen:** a `Screen` in `FaultMatrixTest`: endpoints (the path after `/api/<v>/`, or `photon` / `meteo`),
+  the budget constant, `act`, `outcome` (null while loading), `message`, `retry`, `reset`, `repeat`. Vary the input per
+  action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
+
+
+## Release, upgrade, leaks, performance (Phase 11 T8)
+
+0 requests everywhere: the release APK runs with the emulator's network off.
+
+**Release-APK smoke: the `release-smoke` job** (`tools/ui_release_run.sh`, API 35, ≤ 10 min of emulator). The job makes a throwaway keystore with
+`keytool` (never committed, never a secret) and builds `assembleRelease` with `RELEASE_VERSION=9.9.9 -PsmokeAbi=x86_64` (the property only adds the
+emulator's ABI; a real release never sets it). Then: `aapt2 dump badging` (app id `il.transit.planner`, version 9.9.9 / code 90909, not debuggable),
+the dex holds no `UiTestApp` / probe / replay / LeakCanary string and the APK no `uitest` assets; airplane mode on (no connected network, checked
+twice); launch, skip the tour, ⋮ → Settings (found by text through `uiautomator dump`), a 500-event monkey (the app's own crash or ANR fails; other
+processes' are notices). R8 is off (`isMinifyEnabled = false`): this job is where turning it on will show.
+**Startup gate:** 10 cold starts (`am force-stop`, `am start -W`, `TotalTime`); the median against `startup-baseline.json` (`median_ms`, `tolerance`
+0.25, owner decision 24): above baseline + 25 % fails. `median_ms: null` only reports. To change the baseline, edit the file in a PR with the
+reason (a slower start is a regression to explain, not to absorb). Macrobenchmark is not used.
+
+**Upgrade test: `upgrade.yml`** (`workflow_dispatch`, weekly, PRs touching `core/.../user/**`, `history/**`, `android/**/data/**`, the manifest or
+`app/build.gradle.kts`; `tools/ui_upgrade_run.sh`, `tools/upgrade_data.py`). Builds the latest release tag's `uitest` APK (a `git worktree` of the
+tag, its own version) and HEAD's (`RELEASE_VERSION=99.0.0`, so the install is a real upgrade), both signed with the job's debug key. The old one is
+installed and launched once; `upgrade_data.py write` turns the tag's saved-data sample (`core/src/test/resources/fixtures/userdata/<ver>.json`,
+T1) into its Preferences DataStore (protobuf) and `history.json`, written with `run-as`; nightRefresh is switched on and one leave reminder added.
+The old build is launched (night refresh enqueued) and sent `BOOT_COMPLETED` as root (leave alarm armed). `adb install -r` of the new APK: the
+`LEAVE` alarm must be back **before the app is opened** (`MY_PACKAGE_REPLACED`). `UpgradeProbe` (uitest only, `am start --ez uitest_upgrade_probe true`)
+logs settings, places, trips, My lines, history, reminder, night-refresh work and channels; `upgrade_data.py compare` fails on any value the new build
+lost (new fields are fine). A release without its sample fails the job with the command to make it (skill `release-apk`).
+`release.yml` also installs the previous release's published APK, then the newly signed one, over it (`tools/release_upgrade_check.sh`).
+
+**Leaks:** LeakCanary (`leakcanary-android` in the `uitest` build only, `leakcanary-android-instrumentation` for tests; no launcher icon). `AppDriver.close()`
+closes the Activity and calls `LeakAssertions.assertNoLeaks`: a retained Activity, ViewModel, MapView or service fails the journey with the trace. If it
+fires, it is a real leak in the app (or a library): fix it or open an issue; never turn the check off (`AppDriver.detectLeaks` exists only for a test that
+holds the app open by design).
+
+**Nightly performance reports** (`nightly-ui.yml` job `perf`, `tools/ui_perf_run.sh`, uitest build, software GL: compare a number with its own history, never
+with a phone's; numbers in the job summary, the trend table is `docs/testing/perf.md`, updated by the boss at close-out; no gate until 2 weeks of numbers).
+`PerfProbe` (uitest only, `--es uitest_perf map|ride`) draws BGU → Tel Aviv. `jank`: scripted pans and double-taps for about a minute, `dumpsys gfxinfo`:
+janky-frame % and the 50th / 90th / 95th / 99th percentile frame times. `ride`: `train_clean.gpx` interpolated to one fix per second, 1 800 `adb emu geo
+fix`, a real ride on the emulator's GPS; `dumpsys batterystats --reset` before and `--checkin` after: wake locks, GPS-on time, jobs, alarms of the app.
+
+**Journey inventory:** `docs/testing/inventory.md` (feature × unit × VM × shots × journey × faults × phone). `check_docs.py` fails if it names a journey that
+does not exist or a journey test it does not name. `MoreJourneysTest` (API 34 and 35, in `ui_behaviour_run.sh`): drop-off pick and send, park & ride,
+stop sheet → day timetable, a shared `geo:` link, the monthly report export. The release checklist for real phones is `docs/testing/bug-bash.md`.
+
+## Security and in-app update tests (Phase 11 T6)
+
+In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui_faults_run.sh`). 0 requests to the internet.
+- **Intent fuzzing** (`IntentFuzzTest`, explicit intents to the exported `MainActivity`, replay mode): SEND with no / wrong-type /
+  240k-char text, VIEW with `geo:NaN`, `geo:999,999`, `javascript:`, `file://`, `content://` (a grant on a file the sender can't read: Android refuses it before sending), `intent:`, `data:`,
+  look-alike map hosts, markup / SQL / RLO in `geo:` queries, and our own notification / tile / shortcut extras broken. Each case:
+  the Activity stays up, saved data unchanged, refused input sends **0** (`replay.calls`), searched text ≤ 1 (a typed search's).
+  The shell repeats the kinds with `adb shell am`, checks the look-alike host does not resolve to us, the spoofed
+  `BOOT_COMPLETED` (refused to the shell; `BootReceiver` ignores other actions), the tile (System UI only), the provider.
+- **FileProvider** (`FileProviderTest`): only `cache/updates` and `cache/reports` get URIs (not `filesDir`, DataStore, the
+  crash log, a look-alike folder, `..`); crafted `..` URIs don't open; the shell can't read without a grant; a report older
+  than a day is deleted at start.
+- **Update** (`UpdateFlowTest`, `mock/FakeReleaseServer`): GitHub Releases on the loopback over TLS (a test-only
+  self-signed cert, `androidTest/assets/fake_release_server.p12`). The app's own clients (`ApkInstaller.client()`,
+  `UpdateChecker.client()`) get a DNS that answers 127.0.0.1 and records every name, sockets that land on the server's
+  port and record the host:port asked for, and trust in that cert only, so the app's real URL checks decide.
+  `UiTestApp.releaseChecker` puts a real checker + installer behind the banner. What it pins: `release-apk` skill.
+- **End to end on API 35** (`UpdateInstallSteps`, run only by the script, in order): the job builds the next APK
+  (`RELEASE_VERSION=0.0.2` → `versionCode` 2) and signs it and the downloaded pair with one throwaway key made by `keytool` in the job. Step 1: banner →
+  download through GitHub's redirect → digest OK → Android's installer opens on `content://<pkg>.updates/updates/update.apk`.
+  The script taps the installer's button (from a `uiautomator dump`: the app's process dies with the install, so the
+  test can't), waits for `versionCode=2`, starts the app; step 2: the new version, places and settings kept.

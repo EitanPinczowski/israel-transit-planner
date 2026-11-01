@@ -66,6 +66,28 @@ _ui_dump_evidence() { # $1 = label
   echo "::endgroup::"
 }
 
+# A monkey run that stopped early: its own CRASH / ANR block and the events before it, then the device
+# evidence. The artifacts can't be read from a cloud session, so the log has to say what crashed.
+ui_monkey_evidence() { # $1 = monkey output file
+  echo "::group::monkey evidence: $(basename "$1")"
+  echo "--- the monkey's last events and its crash/ANR block"
+  grep -n -B 25 -A 60 -E "^// (CRASH|NOT RESPONDING)" "$1" | head -150
+  echo "::endgroup::"
+  _ui_dump_evidence "after the monkey ($(basename "$1"))"
+}
+
+# Which crashes/ANRs of a monkey run are the app's. The monkey reports every process: on the CI emulator
+# (2400x2400, so the launcher draws a taskbar; CPU pressure ~90 %) system_server and the launcher time out
+# on input ("ANR in system ... stylus-handwriting-event-receiver", "ANR in ...nexuslauncher ... Taskbar
+# Overlay", nightly 2026-10-31). Those are findings; only the app's own fail. Returns 1 if the app's.
+# Run the monkey with --ignore-crashes --ignore-timeouts so another process cannot end it early.
+ui_monkey_verdict() { # $1 = monkey output file
+  local others
+  others=$(grep -E "^// (CRASH|NOT RESPONDING): " "$1" | grep -v ": $PKG " | sort | uniq -c)
+  [[ -n $others ]] && echo "::notice::monkey: other processes failed (emulator, not the app): $(echo $others)"
+  ! grep -qE "^// (CRASH|NOT RESPONDING): $PKG " "$1"
+}
+
 # The app (same process as the test) died for its own reasons: Java crash, ANR, or a native crash.
 _ui_real_app_crash() {
   adb logcat -d -b crash | grep -qE "FATAL EXCEPTION|Process: $PKG|Fatal signal|ANR in $PKG"

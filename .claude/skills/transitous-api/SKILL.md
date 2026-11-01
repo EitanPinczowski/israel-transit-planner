@@ -193,6 +193,19 @@ is missing from the test's "constant" column or from this table. **A package tha
 | Typing search: Transitous geocode; phone Geocoder + Photon | 1; 1 | `PlaceSearch.BACKUP_PER_SEARCH` |
 | Stop code · pin name (twice at a point) | 0 · 1 | – |
 | Rain on the walks (Open-Meteo, not Transitous): per 0.1° cell per hour | 1 | `GuardedWeather.cell` |
+| Low-data mode (Phase 11 E4): stops from zoom 16, asked only when a tile under the screen is missing (`LowData.loadStops`); no night boards. Never more requests than normal: `LowDataTest` replays 200 mixed and 200 pan-only walks through both rules | 0 extra | – |
+
+### Usage counter (Phase 11 E4, Settings → Data & battery)
+Every guard counts what it is asked, through one `UsageMeter` (`core/api/UsageLog.kt`, app `data/UsageStore.kt`,
+`TransitApp.usage`): `GuardedTransitApi` per kind (`plan`, `stops`, `geo`, `st`, `trip`, `mt`…), `GuardedGeocoder`
+(the phone's Geocoder and Photon: "address backup") and `GuardedWeather`, each as **net** (sent), **cache** (answered
+from the guard's cache, nothing sent) or **retry** (the second try after a 429/503: sent too). Counting never changes
+what is sent (`UsageLogTest`). Per Israel day (midnight Israel time), 7 days kept, in `filesDir/usage.json`: only fixed
+keys (`transitous.plan.net`), counts and times, never a place or a query (a kind that is not a code word is stored
+as `other`). The card: "14 requests to Transitous (6 answered from the cache)" = net + retry + cache; weather and
+address backup count only what was sent. The night refresh adds its time and request count, `RideService` the ride's
+GPS minutes; the map cache is the size of MapLibre's `mbgl-offline.db` (read, never changed). T4's mock server can
+check these counts against its own.
 
 ### Weekly CI traffic and the contract check (Phase 11 T5)
 `.github/workflows/weekly-live.yml`, Tuesdays 00:47 UTC (03:47 Israel in summer time), never on a PR:
@@ -219,7 +232,7 @@ transit leg, or not a string; an empty `tripShortName` on a train is expected). 
   `--update-shapes`, update the parser if the app reads the field differently, commit both.
 - `python tools/contract_check.py --out report.md` runs it live from your machine (7 requests).
 
-### What the guards do when the network misbehaves (pinned by `NetworkFaultTest`, Phase 10 D4)
+### What the guards do when the network misbehaves (pinned in core by `NetworkFaultTest`, Phase 10 D4, and on the emulator by `FaultMatrixTest`, Phase 11 T4)
 | fault | `GuardedTransitApi` / `GuardedGeocoder` | against the budget |
 |---|---|---|
 | 429 / 503, then 200 | waits `Retry-After` (else 2 s), one retry inside the same slot, answer cached | counted once |
@@ -232,7 +245,11 @@ transit leg, or not a string; an empty `tripShortName` on a train is expected). 
 | 3 at once, limit 2 | the third waits for a slot (retries stay inside their slot) | each counted |
 
 Tests inject these at the `TransitApi` / `BackupGeocoder` level (`FaultyTransitApi`, `FaultyGeocoder`) or in an OkHttp
-interceptor (`ScriptedHttp`): no socket, not even localhost. `RoutingInvariantsTest` checks times, ride details, fares,
+interceptor (`ScriptedHttp`): no socket, not even localhost. **On the emulator** (Phase 11 T4, the `faults` job of
+`ui-tests.yml`): the same faults plus "offline" over real HTTP to a `MockWebServer` on the emulator's loopback, through
+`MotisClient` / `PhotonClient` / `OpenMeteoClient` and the real guards, on every networked screen; the server counts each
+endpoint and every case is held to the feature's budget constant (×2 where a 429/503 retry is allowed), and a repeat within
+the cache time to 0 (skill `ui-testing`). `RoutingInvariantsTest` checks times, ride details, fares,
 traffic and Pareto fronts over every `plan_*` fixture and each feature's output; a new fixture is covered automatically.
 
 The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds

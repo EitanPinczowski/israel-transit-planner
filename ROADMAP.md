@@ -340,23 +340,23 @@ package. Tick only your own package's lines.
 - [ ] Follow-up (pre-existing, not R2): ride alert: extend `legGrace` while the rider is still on the route (a bus > 3 min late loses its alert)
 
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
-- [ ] "Pay with…" opens the user's payment app or its store page
-- [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
+- [x] "Pay with…" opens the user's payment app or its store page (Rav-Kav Online, Rav-Pass, Moovit; ANY WAY ended in 2022)
+- [x] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
 
 ### T4 — Network-fault matrix (`claude/p11-fault-matrix`, 0 requests, local mock server)
-- [ ] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator
-- [ ] Request counts asserted end to end against each feature's budget
+- [x] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator
+- [x] Request counts asserted end to end against each feature's budget
 
 ### T6 — Security + in-app update (`claude/p11-security-update`, 0 requests, local mock server)
-- [ ] Intent fuzzing of exported components; FileProvider path checks
-- [ ] Update download refuses a wrong host, a bad digest, an off-list redirect, a cut download
-- [ ] End-to-end update: banner → download → system installer → new version
+- [x] Intent fuzzing of exported components; FileProvider path checks
+- [x] Update download refuses a wrong host, a bad digest, an off-list redirect, a cut download
+- [x] End-to-end update: banner → download → system installer → new version
 
 ### T8 — Release, upgrade, performance (`claude/p11-release-perf`, Sonnet, 0 requests)
-- [ ] Release-APK smoke on the emulator (network off) + startup-time gate
-- [ ] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
-- [ ] LeakCanary in every journey (uitest build); nightly map jank and 30-min ride battery reports
-- [ ] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
+- [x] Release-APK smoke on the emulator (network off) + startup-time gate
+- [x] Upgrade test: the last release with data → the new build keeps everything; real install check in `release.yml`
+- [x] LeakCanary in every journey (uitest build); nightly map jank and 30-min ride battery reports
+- [x] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
 
 ### E5 — Accessibility (`claude/p11-accessibility`, 0 requests)
 - [ ] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)

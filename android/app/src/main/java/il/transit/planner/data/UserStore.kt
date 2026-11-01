@@ -1,7 +1,9 @@
 package il.transit.planner.data
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -43,38 +45,49 @@ class UserStore(private val prefs: DataStore<Preferences>) {
     /** The one active "time to leave" reminder, if any. */
     val reminder: Flow<Reminder?> = data.map { UserJson.decodeReminder(it[REMINDER]) }
 
-    suspend fun setSettings(s: UserSettings) {
-        prefs.edit { it[SETTINGS] = UserJson.encodeSettings(s) }
-    }
+    suspend fun setSettings(s: UserSettings): Boolean =
+        write { it[SETTINGS] = UserJson.encodeSettings(s) }
 
-    suspend fun setPlaces(p: List<SavedPlace>) {
-        prefs.edit { it[PLACES] = UserJson.encodePlaces(p) }
-    }
+    suspend fun setPlaces(p: List<SavedPlace>): Boolean =
+        write { it[PLACES] = UserJson.encodePlaces(p) }
 
-    suspend fun setRecents(p: List<SavedPlace>) {
-        prefs.edit { it[RECENTS] = UserJson.encodePlaces(p) }
-    }
+    suspend fun setRecents(p: List<SavedPlace>): Boolean =
+        write { it[RECENTS] = UserJson.encodePlaces(p) }
 
     /** When the app last asked GitHub for a newer release (epoch seconds). */
     val lastUpdateCheck: Flow<Long?> = data.map { it[LAST_UPDATE_CHECK] }
 
-    suspend fun setLastUpdateCheck(epochSec: Long) {
-        prefs.edit { it[LAST_UPDATE_CHECK] = epochSec }
-    }
+    suspend fun setLastUpdateCheck(epochSec: Long): Boolean =
+        write { it[LAST_UPDATE_CHECK] = epochSec }
 
-    suspend fun setReminder(r: Reminder?) {
-        prefs.edit { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
-    }
+    suspend fun setReminder(r: Reminder?): Boolean =
+        write { if (r == null) it.remove(REMINDER) else it[REMINDER] = UserJson.encodeReminder(r) }
 
-    suspend fun setTrips(t: List<SavedTrip>) {
-        prefs.edit { it[TRIPS] = UserJson.encodeTrips(t) }
-    }
+    suspend fun setTrips(t: List<SavedTrip>): Boolean =
+        write { it[TRIPS] = UserJson.encodeTrips(t) }
 
-    suspend fun setFavorites(f: List<il.transit.core.user.FavoriteLine>) {
-        prefs.edit { it[FAVORITES] = UserJson.encodeFavorites(f) }
-    }
+    suspend fun setFavorites(f: List<il.transit.core.user.FavoriteLine>): Boolean =
+        write { it[FAVORITES] = UserJson.encodeFavorites(f) }
+
+    /**
+     * A write that a full disk (ENOSPC) or another I/O error refuses: DataStore writes a temp file and
+     * renames it, so the old file stays whole. Thrown, it would end the app from a `viewModelScope.launch`
+     * (nightly `low_storage`, Phase 11 F2). The value is not saved and the caller gets false, so the
+     * screen can say so ("Not saved: phone storage is full"). No `ReplaceFileCorruptionHandler`: a
+     * `CorruptionException` (also an IOException) must not silently wipe the saved places.
+     */
+    private suspend fun write(change: suspend (MutablePreferences) -> Unit): Boolean =
+        try {
+            prefs.edit(change)
+            true
+        } catch (e: IOException) {
+            runCatching { Log.w(TAG, "not saved (${e.javaClass.simpleName}): ${e.message}") }
+            false
+        }
 
     private companion object {
+        const val TAG = "UserStore"
+
         val SETTINGS = stringPreferencesKey("settings")
         val PLACES = stringPreferencesKey("places")
         val TRIPS = stringPreferencesKey("trips")

@@ -123,6 +123,30 @@ jobs:
         id: verify
         continue-on-error: true
         run: ./gradlew -p android :app:verifyPaparazziDebug
+      # verifyPaparazziDebug runs EVERY unit test of the app, so a red verify is not always a picture:
+      # a ViewModel test failing there was reported as "Screenshots differ" (runs 39490612517, 41223364248;
+      # Phase 11 F2). Sort the failures by class: a class that renders with Paparazzi is a golden, any
+      # other is a unit test, named as such. Read now: the record step overwrites the results.
+      - name: what failed in verify
+        id: verdict
+        if: steps.verify.outcome == 'failure'
+        run: |
+          python3 - <<'PY'
+          import glob, os, pathlib, xml.etree.ElementTree as ET
+          shots = {p.stem for p in pathlib.Path("android/app/src/test").rglob("*.kt") if "Paparazzi(" in p.read_text()}
+          golden, other = [], []
+          for f in glob.glob("android/app/build/test-results/testDebugUnitTest/*.xml"):
+              for case in ET.parse(f).getroot().iter("testcase"):
+                  bad = case.find("failure") if case.find("failure") is not None else case.find("error")
+                  if bad is None: continue
+                  cls = case.get("classname", "").rsplit(".", 1)[-1].split("$")[0]
+                  line = f"{case.get('classname')} > {case.get('name')}: {(bad.get('message') or '').splitlines()[0][:200] if bad.get('message') else ''}"
+                  (golden if cls in shots else other).append(line)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"golden={len(golden)}\nother={len(other)}\n")
+          for l in golden: print(f"::error::golden: {l}")
+          for l in other: print(f"::error::unit test (not a golden): {l}")
+          PY
       # Fresh pictures for looking at (and for re-recording): light/dark, he/en, every shape.
       - run: ./gradlew -p android :app:recordPaparazziDebug
       # Phase 11 T3: the ViewModel / state tests (ui/vm/ and the other plain-JVM ones) under Kover; line coverage
@@ -184,8 +208,18 @@ jobs:
           done
           exit 1
       - name: fail if a golden changed
-        if: steps.verify.outcome == 'failure'
+        if: steps.verify.outcome == 'failure' && steps.verdict.outputs.other == '0' && steps.verdict.outputs.golden != '0'
         run: |
           echo "::error::Screenshots differ from the committed goldens (or a shot has none)."
           echo "If the change is intended, re-record in this PR: python3 tools/pull_goldens.py, then commit."
+          exit 1
+      - name: fail if a unit test failed in verify
+        if: steps.verify.outcome == 'failure' && steps.verdict.outputs.other != '0'
+        run: |
+          echo "::error::${{ steps.verdict.outputs.other }} unit test(s) failed in the verify step (listed in 'what failed in verify'); ${{ steps.verdict.outputs.golden }} golden(s) differ."
+          exit 1
+      - name: fail if verify failed without a failing test
+        if: steps.verify.outcome == 'failure' && steps.verdict.outputs.other == '0' && steps.verdict.outputs.golden == '0'
+        run: |
+          echo "::error::verifyPaparazziDebug failed before any test result (a build error?): read the 'verify goldens' log."
           exit 1

@@ -104,11 +104,15 @@ class RideService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
+        if (gpsSince == null) gpsSince = java.time.Instant.now()
         if (intent?.getBooleanExtra(EXTRA_SPEAK, false) == true && tts == null) startSpeech()
         il.transit.planner.remind.Notifications.cancelCountdown(this) // riding now: the leave countdown is done
         _active.value = true
         return START_NOT_STICKY
     }
+
+    /** When this ride's location updates started (wall clock), for the GPS minutes. */
+    private var gpsSince: java.time.Instant? = null
 
     @SuppressLint("MissingPermission") // the app only offers "Start trip" with location granted
     /** Asks GPS and network for fixes; false (logged) when location is refused. */
@@ -189,6 +193,8 @@ class RideService : Service() {
         tts?.shutdown()
         tts = null
         locationManager?.removeUpdates(listener)
+        // Phase 11 E4: the minutes of ride GPS, for Settings → Data & battery.
+        gpsSince?.let { (application as TransitApp).usage.rideGps(java.time.Duration.between(it, java.time.Instant.now())) }
         _active.value = false
         _progress.value = null
         // The ride is over: the (promoted) notification goes with the service, never left behind.

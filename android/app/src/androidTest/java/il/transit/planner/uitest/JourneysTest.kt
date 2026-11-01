@@ -79,7 +79,9 @@ import java.time.LocalTime
  */
 @RunWith(AndroidJUnit4::class)
 class JourneysTest {
-    @get:Rule val compose = createEmptyComposeRule()
+    val compose = createEmptyComposeRule()
+
+    @get:Rule val leaks = Leaks.around(compose)
     @get:Rule val permissions = Permissions.grantAll()
 
     private fun AppDriver.tapRow(labelRes: Int) =

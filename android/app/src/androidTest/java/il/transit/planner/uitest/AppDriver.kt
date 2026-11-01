@@ -24,6 +24,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.user.SavedPlace
+import leakcanary.DetectLeaksAfterTestSuccess
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 import il.transit.planner.MainActivity
 import il.transit.planner.R
 import il.transit.planner.UiTestApp
@@ -56,13 +59,28 @@ object Run {
         }
 }
 
+/**
+ * Phase 11 T8 (owner decision 25): LeakCanary after every journey. The rule runs OUTSIDE the Compose rule (RuleChain, see the
+ * journey classes), so the Activity, ViewModel, MapView or service the journey closed is looked at once the test's own Compose
+ * recomposer has been torn down too (checked inside the test body, that recomposer still held the closed Activity: first CI run).
+ * A retained one fails the journey with the leak trace. Known framework-only paths are in `LeakConfig` (uitest build).
+ */
+object Leaks {
+    /** The leak check wrapped around [compose]: it runs once [compose] has been torn down. */
+    fun around(compose: TestRule): TestRule {
+        val leaks = DetectLeaksAfterTestSuccess("journey")
+        val chain = RuleChain.outerRule(leaks)
+        return chain.around(compose)
+    }
+}
+
 /** Starts the app on a clean slate and reaches into it the way a test needs to. */
 class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestApp.PLACES) : Closeable {
     val inst = InstrumentationRegistry.getInstrumentation()
     val app = inst.targetContext.applicationContext as UiTestApp
     private var scenario: ActivityScenario<MainActivity>? = null
-    lateinit var activity: MainActivity
-        private set
+    private var activityRef: MainActivity? = null
+    val activity: MainActivity get() = checkNotNull(activityRef) { "the Activity is closed" }
 
     init {
         runBlocking { app.reset(places) }
@@ -74,7 +92,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     /** [intent]: start the Activity from it, as a notification tap on a killed app does (a fresh Activity and ViewModel). */
     fun launch(intent: android.content.Intent? = null): AppDriver {
         val s0 = if (intent != null) ActivityScenario.launch<MainActivity>(intent) else ActivityScenario.launch(MainActivity::class.java)
-        scenario = s0.also { s -> s.onActivity { activity = it } }
+        scenario = s0.also { s -> s.onActivity { activityRef = it } }
         compose.waitForIdle()
         return this
     }
@@ -88,7 +106,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     /** Re-reads the Activity after a configuration change recreated it. */
     fun refreshActivity() {
-        scenario?.onActivity { activity = it }
+        scenario?.onActivity { activityRef = it }
     }
 
     val scenarioState get() = scenario?.state
@@ -334,6 +352,8 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     override fun close() {
         scenario?.close()
+        scenario = null
+        activityRef = null // the driver itself must not be what keeps the closed Activity alive
     }
 
     companion object {

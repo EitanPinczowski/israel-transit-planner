@@ -46,6 +46,13 @@ fragments in the same commit.
   `INSTALL_FAILED_UPDATE_INCOMPATIBLE`; the banner says "App not installed: this copy is a
   different build. Uninstall it once". Never "fix" this by changing the key.
 - Failures (cut download, no space, checksum) show one line with Try again + Browser.
+- **What it refuses, pinned on the emulator** (Phase 11 T6, `UpdateFlowTest` against `FakeReleaseServer`,
+  GitHub faked on the loopback, `faults` job): an APK URL off the allowlist, plain HTTP, another port or
+  user info (never even looked up); a redirect off the allowlist (only the first hop is contacted); a digest
+  that doesn't match, isn't sha256 or is missing (the file is deleted); a download cut halfway (`NETWORK`,
+  nothing kept, the next try starts clean); a version that isn't newer (no banner). End to end on API 35:
+  the uitest APK installs the next one (`versionCode + 1`, built in the job) through the banner and
+  Android's prompt, and starts with its data. Changing `ApkInstaller` / `UpdateCheck`: keep these green.
 
 ## The signing key — the one thing that must never be lost
 - Lives in 4 **repository secrets**: `RELEASE_KEYSTORE_B64` (base64 of the .jks),
@@ -90,3 +97,13 @@ Android version and phone, what they did, expected, happened, screenshot, option
 checkbox that the report has no home address or personal places). Blank issues are off.
 Friends without an account use Settings → Crash log → "Share crash log" over WhatsApp (owner
 decision 28). Before a release, read the open `bug` issues and say in the notes which are fixed.
+
+## The upgrade check and the bug bash (Phase 11 T8)
+- `release.yml` installs the **previous release's published APK**, then the newly signed one over it (`adb install -r`, `tools/release_upgrade_check.sh`,
+  an API 35 emulator, +~8 min) **before** it publishes: a changed key (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`) or a lower version code
+  (`INSTALL_FAILED_VERSION_DOWNGRADE`) stops the release instead of reaching friends' phones. It never launches the app. No earlier release = skipped.
+- `upgrade.yml` (weekly and on PRs that touch stored data) installs the latest tag's uitest build with its saved-data sample, upgrades to HEAD and
+  compares everything (skill `ui-testing`). Add the release's sample first (see **Checks** above), or this job fails for the new tag.
+- Before announcing a release, the owner and testers go through `docs/testing/bug-bash.md` on real phones; the boss links it in the close-out.
+- `release-smoke` (ui-tests.yml) builds the release APK with a throwaway key on every UI run: it proves the release build starts with the network off and
+  gates cold-start time against `startup-baseline.json`.

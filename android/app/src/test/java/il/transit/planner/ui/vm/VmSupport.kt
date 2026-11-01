@@ -32,16 +32,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.fail
 import org.junit.Before
@@ -153,6 +156,18 @@ class ScriptedApi(private val inner: TransitApi) : TransitApi {
         call("mapTrips") { inner.mapTrips(box, start, end, zoom, language) }
 }
 
+/**
+ * Cancels [scopes] and waits until every coroutine in them has ended, before a test resets Main.
+ * Cancelling is not enough: a coroutine inside `withContext(Dispatchers.IO)` (the Trip cache file) finishes
+ * its block first, then resumes through Dispatchers.Main, by then concurrently with the next test's
+ * `setMain` ("Dispatchers.Main is used concurrently with setting it", the "screenshots" job, run 39490612517).
+ */
+fun cancelAndJoin(scopes: List<CoroutineScope>) = runBlocking {
+    val jobs = scopes.map { it.coroutineContext.job }
+    jobs.forEach { it.cancel() }
+    withTimeout(10_000) { jobs.joinAll() }
+}
+
 /** Where the screen is, in one word: the sequence of these is what the tests pin down. */
 fun phase(s: UiState): String = when {
     s.loading -> "searching"
@@ -180,8 +195,7 @@ abstract class VmTest {
     @Before fun mainOn() = Dispatchers.setMain(dispatcher)
 
     @After fun mainOff() {
-        made.forEach { it.viewModelScope.cancel() }
-        scope.cancel()
+        cancelAndJoin(made.map { it.viewModelScope } + scope)
         Dispatchers.resetMain()
     }
 

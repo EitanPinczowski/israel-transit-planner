@@ -101,6 +101,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -235,6 +236,15 @@ fun MainScreen(
     // unfolds the search card.
     LaunchedEffect(state.loading) { if (state.loading) { collapsed = false; searchOpen = false } }
     LaunchedEffect(showPanel) { if (!showPanel) searchOpen = false }
+    // A save the phone refused (full storage): one short message, then cleared.
+    val context = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(state.notSaved) {
+        if (state.notSaved) {
+            val toast = android.widget.Toast.makeText(context, R.string.not_saved_storage_full, android.widget.Toast.LENGTH_SHORT)
+            toast.show()
+            vm.notSavedShown()
+        }
+    }
 
     // Back closes what is open, innermost first; with nothing open it leaves the app as usual.
     // (The trip sheet has its own handler, composed later, so it closes first.) Screenshot
@@ -332,6 +342,7 @@ fun MainScreen(
         } else {
             var topEdge by remember { mutableIntStateOf(0) }
             var bottomEdge by remember { mutableIntStateOf(rootHeight) }
+            var creditHeight by remember { mutableIntStateOf(0) }
             // The search column ends where the bottom part (credit, results) begins, so a long
             // suggestion list or a tall card can never run under it.
             val belowSearch = WindowInsets(bottom = (rootHeight - bottomEdge).coerceAtLeast(0))
@@ -354,14 +365,22 @@ fun MainScreen(
                 Modifier.align(Alignment.BottomCenter).fillMaxWidth().testTag(UiTags.BOTTOM)
                     .onGloballyPositioned { bottomEdge = it.boundsInRoot().top.roundToInt() },
             ) {
-                AttributionChip(Modifier.windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal)).padding(8.dp))
+                AttributionChip(
+                    Modifier
+                        .onSizeChanged { creditHeight = it.height }
+                        .windowInsetsPadding(bars.only(WindowInsetsSides.Horizontal))
+                        .padding(8.dp),
+                )
                 if (panelShown) {
                     val top = MaterialTheme.shapes.extraLarge.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
                     // At most half the screen, and never so tall that less than [MAP_SHARE] of it
                     // stays map between the search and the sheet (R7): on a 640 dp phone, or at
                     // the largest font, the folded search and the credit take their part first.
                     val searchBottom = with(density) { topEdge.toDp() }
-                    val cap = minOf(sheetMaxHeight, screenHeight * (1f - MAP_SHARE) - searchBottom - CREDIT_ROOM)
+                    // The credit as drawn: at the largest font in a long language it wraps to
+                    // several lines, far over [CREDIT_ROOM] (nightly en-XA on P5, Phase 11 F2).
+                    val credit = maxOf(CREDIT_ROOM, with(density) { creditHeight.toDp() })
+                    val cap = minOf(sheetMaxHeight, screenHeight * (1f - MAP_SHARE) - searchBottom - credit)
                     panel(Modifier.heightIn(max = cap.coerceAtLeast(MIN_SHEET)), top)
                 } else {
                     Spacer(Modifier.windowInsetsBottomHeight(bars))
@@ -409,8 +428,12 @@ private val SHADOW_ROOM = 4.dp
 /** Of a phone's height, at least this much stays map while a sheet is open (layout rule R7: 25%). */
 private const val MAP_SHARE = 0.3f
 
-/** The Transitous credit chip above the sheet, with its padding. */
-private val CREDIT_ROOM = 48.dp
+/**
+ * The Transitous credit chip above the sheet on one line, the least it takes: `Surface(onClick)` keeps a
+ * 48 dp touch target, plus 8 dp padding above and below. Used until the chip is measured, so the first
+ * frame's sheet does not jump.
+ */
+private val CREDIT_ROOM = 64.dp
 
 /** A sheet is never squeezed below its header and one row. */
 private val MIN_SHEET = 160.dp

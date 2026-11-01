@@ -22,6 +22,7 @@ import il.transit.planner.data.HistoryStore
 import il.transit.planner.data.PlanCacheStore
 import il.transit.planner.data.StopsStore
 import il.transit.planner.data.UpdateChecker
+import il.transit.planner.data.UsageStore
 import il.transit.planner.data.UserStore
 import il.transit.planner.remind.ReminderScheduler
 import il.transit.planner.ride.RideService
@@ -39,7 +40,25 @@ import java.time.Clock
  * Open so the `uitest` build (src/uitest) can swap in recorded answers, a fixed clock and a
  * blank map: UI tests, monkey runs and Test Lab crawlers then never reach Transitous.
  */
-open class TransitApp : Application() {
+open class TransitApp :
+    Application(),
+    androidx.work.Configuration.Provider {
+    /**
+     * WorkManager (night refresh, last-trip check) keeps its own database. On a full disk opening it fails
+     * with SQLiteFullException on WorkManager's thread at start-up, which ended the app (nightly chaos
+     * `low_storage`, Phase 11 F2). Routed here instead: the background jobs wait for a later start.
+     * Not rethrown (a crash at start-up is worse), but written to the crash log too, so a failure that
+     * is not a full disk shows in Settings → Crash log. Built once.
+     */
+    override val workManagerConfiguration: androidx.work.Configuration by lazy {
+        androidx.work.Configuration
+            .Builder()
+            .setInitializationExceptionHandler { e ->
+                runCatching { android.util.Log.w("TransitApp", "WorkManager could not start: $e") }
+                runCatching { crashLog.append(e, Thread.currentThread().name) }
+            }.build()
+    }
+
     /** Local crash log (Settings → Share crash log). Installed first, so it sees every crash. */
     val crashLog: CrashLogStore by lazy { CrashLogStore(File(filesDir, "crash_log.txt"), BuildConfig.VERSION_NAME) }
 
@@ -70,7 +89,10 @@ open class TransitApp : Application() {
 
     /** "Now" for searches and labels. */
     open val clock: Clock = Clock.systemUTC()
-    open val api: TransitApi by lazy { GuardedTransitApi(MotisClient()) }
+    open val api: TransitApi by lazy { GuardedTransitApi(MotisClient(), usage = usage) }
+
+    /** Today's requests, cache hits, night refresh and ride GPS for Settings → Data & battery (Phase 11 E4). */
+    val usage: UsageStore by lazy { UsageStore(File(filesDir, UsageStore.FILE)) }
 
     /**
      * Asked only when Transitous has no street match (search fix S3): the phone's own Geocoder
@@ -78,11 +100,11 @@ open class TransitApp : Application() {
      * phone's Geocoder also names long-pressed pins and saved locations first.
      */
     open val backupGeocoder: BackupGeocoder? by lazy {
-        val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this)) else null
-        FallbackGeocoder(device, GuardedGeocoder(PhotonClient()))
+        val device = if (Geocoder.isPresent()) GuardedGeocoder(AndroidGeocoder(this), usage = usage) else null
+        FallbackGeocoder(device, GuardedGeocoder(PhotonClient(), usage = usage))
     }
     /** Rain on the walks (Phase 10 D9): Open-Meteo, told only the rounded start. */
-    open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock) }
+    open val weather: GuardedWeather? by lazy { GuardedWeather(OpenMeteoClient(), clock, usage = usage) }
     val store: UserStore by lazy { UserStore(this) }
     val planCache: PlanCacheStore<il.transit.core.plan.TripResult> by lazy { PlanCacheStore.trips(File(filesDir, "trip_cache.json"), clock) }
 

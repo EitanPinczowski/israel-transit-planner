@@ -35,6 +35,9 @@ instrument() { # $1 = class#method(s), $2 = output name, rest = extra -e pairs
 say() { adb logcat -d -s SystemJourney:I ChaosJourney:I | tr -d '\r'; }
 device_now() { adb shell date +%s | tr -d '\r'; }
 posted() { adb shell dumpsys notification --noredact | grep -qE "\|$PKG\|$1\|"; }
+# How many times the app posted notification $1: one `notification_enqueue` event per post. (Counting the
+# key in `dumpsys notification` counted the lines of ONE record's dump: "rang 4 times" every night.)
+enqueued() { adb logcat -d -b events -s notification_enqueue | grep -cE "[[,]$PKG,$1,"; }
 
 adb install -r -g "$APKS"/app-uitest.apk
 adb install -r -g "$APKS"/app-uitest-androidTest.apk
@@ -51,9 +54,11 @@ if [[ $MODE == monkey ]]; then
   adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
   for seed in 4242 777 20261019; do
     echo "::group::monkey seed $seed"
-    adb shell monkey -p "$PKG" --pct-syskeys 0 --throttle 40 -s "$seed" -v 20000 > "$OUT/monkey-$seed.txt" 2>&1
+    adb shell monkey -p "$PKG" --pct-syskeys 0 --ignore-crashes --ignore-timeouts --throttle 40 -s "$seed" -v 20000 > "$OUT/monkey-$seed.txt" 2>&1
     tail -5 "$OUT/monkey-$seed.txt"
-    grep -q "// CRASH\|// NOT RESPONDING" "$OUT/monkey-$seed.txt" && fail "monkey found a crash/ANR (seed $seed)"
+    ui_monkey_verdict "$OUT/monkey-$seed.txt" || { fail "monkey found an app crash/ANR (seed $seed)"; ui_monkey_evidence "$OUT/monkey-$seed.txt"; }
+    grep -q "Events injected: 20000" "$OUT/monkey-$seed.txt" || fail "monkey stopped early (seed $seed): $(tail -1 "$OUT/monkey-$seed.txt")"
+    adb logcat -d -b crash >> "$OUT/crash.txt"; adb logcat -c # each seed's evidence on its own
     echo "::endgroup::"
     echo "- monkey seed $seed: $(grep -c . "$OUT/monkey-$seed.txt") lines" >> "$OUT/findings.txt"
   done
@@ -110,12 +115,15 @@ fi
 set_time "$(date -u -d '2026-10-24 22:59:00' +%s)000"; sleep 3
 adb shell cmd notification cancel "$PKG" 1005 >/dev/null 2>&1 || true
 lc
+enq0=$(enqueued 1005)
 if instrument "$SYS#arm_test_reminder" arm-dst; then
   due=$(( $(say | grep -o "test-reminder due=[0-9]*" | tail -1 | cut -d= -f2) / 1000 ))
   ok=0; n=0
   while [[ $(device_now) -lt $((due + 150)) ]]; do posted 1005 && { ok=1; break; }; sleep 5; done
-  n=$(adb shell dumpsys notification --noredact | grep -cE "\|$PKG\|1005\|")
-  echo "across the DST change: rang=$ok, notifications=$n"
+  sleep 30 # a second ring would come right after the first
+  n=$(( $(enqueued 1005) - enq0 ))
+  echo "across the DST change: rang=$ok, posts=$n"
+  adb logcat -d -b events -s notification_enqueue | grep -E "[[,]$PKG,1005," | cut -c1-200
   [[ $ok == 1 ]] || fail "DST: the test reminder armed across the 25 Oct change did not ring"
   [[ $n -le 1 ]] || fail "DST: the test reminder rang $n times"
 fi

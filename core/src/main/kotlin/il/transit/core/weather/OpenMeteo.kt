@@ -2,6 +2,9 @@ package il.transit.core.weather
 
 import il.transit.core.api.MotisClient
 import il.transit.core.api.TransitHttpException
+import il.transit.core.api.UsageMeter
+import il.transit.core.api.UsageOutcome
+import il.transit.core.api.UsageService
 import il.transit.core.api.retryWait
 import il.transit.core.geo.LatLon
 import kotlinx.coroutines.CancellationException
@@ -146,6 +149,8 @@ class GuardedWeather(
     maxConcurrent: Int = 2,
     private val backoff: Duration = Duration.ofSeconds(2),
     private val ttl: Duration = Duration.ofHours(1),
+    /** Counts every request for the data card (Phase 11 E4). */
+    private val usage: UsageMeter = UsageMeter.NONE,
 ) {
     private val permits = Semaphore(maxConcurrent)
     private val cache = ConcurrentHashMap<LatLon, Pair<Instant, RainForecast>>()
@@ -155,13 +160,15 @@ class GuardedWeather(
         val now = clock.instant()
         if (start.isAfter(now.plus(HORIZON))) return null
         val key = cell(from)
-        cache[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value }
+        cache[key]?.let { (expires, value) -> if (now.isBefore(expires)) return value.also { count(UsageOutcome.CACHE) } }
         val value = try {
             permits.withPermit {
                 try {
+                    count(UsageOutcome.NETWORK)
                     inner.rain(key)
                 } catch (e: TransitHttpException) {
                     delay((retryWait(e, backoff) ?: throw e).toMillis())
+                    count(UsageOutcome.RETRY)
                     inner.rain(key)
                 }
             }
@@ -173,6 +180,8 @@ class GuardedWeather(
         cache[key] = now.plus(ttl) to value
         return value
     }
+
+    private fun count(outcome: UsageOutcome) = usage.count(UsageService.WEATHER, "forecast", outcome)
 
     companion object {
         val HORIZON: Duration = Duration.ofHours(48)

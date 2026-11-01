@@ -7,6 +7,7 @@ import il.transit.core.update.CheckResult
 import il.transit.core.update.LatestRelease
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
+import il.transit.planner.data.ApkInstaller
 import il.transit.planner.data.UpdateChecker
 import java.time.Clock
 import java.time.Duration
@@ -35,6 +36,9 @@ class UiTestApp : TransitApp() {
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(ProcessDeathProbe) // the process-death journey (D11)
+        LeakConfig.install() // framework-only leak paths are library leaks, not failures (Phase 11 T8)
+        registerActivityLifecycleCallbacks(PerfProbe) // the nightly jank and ride-battery reports (Phase 11 T8)
+        registerActivityLifecycleCallbacks(UpgradeProbe) // the upgrade test reads the old build's data (Phase 11 T8)
     }
 
     val replay: ReplayTransitApi by lazy {
@@ -52,16 +56,27 @@ class UiTestApp : TransitApp() {
             }
         }
     }
-    override val api: TransitApi get() = slowReplay
+    override val api: TransitApi get() = network?.api ?: slowReplay
 
-    /** No outside geocoder in UI tests: they never touch the network. */
-    override val backupGeocoder: BackupGeocoder? = null
+    /**
+     * Phase 11 T4: the network-fault mode. Set (with the local mock server's URL) before the Activity
+     * starts, the app talks HTTP to that server instead of answering from the replay; [reset] clears it.
+     */
+    @Volatile var network: MockNetwork? = null
+
+    /** Starts the fault mode against the mock server at [base] (the emulator's localhost). */
+    fun useMockServer(base: String): MockNetwork = MockNetwork(replay, clock, base).also { network = it }
+
+    /** No outside geocoder in UI tests: they never touch the network (the fault mode: Photon on the mock server). */
+    override val backupGeocoder: BackupGeocoder? get() = network?.backup
 
     /**
      * A wet morning, 0 requests (Phase 10 D9): 70% every hour around [NOW], so the rain note shows
      * on the Trip results of every phone profile in ci-screens. Trips past 48 h get no note, as live.
      */
-    override val weather: il.transit.core.weather.GuardedWeather by lazy {
+    override val weather: il.transit.core.weather.GuardedWeather get() = network?.weather ?: wetMorning
+
+    private val wetMorning: il.transit.core.weather.GuardedWeather by lazy {
         il.transit.core.weather.GuardedWeather(
             { _ ->
                 il.transit.core.weather.RainForecast(
@@ -81,20 +96,30 @@ class UiTestApp : TransitApp() {
     /** What the update check reports; null = up to date. Set before the Activity starts. */
     @Volatile var latestRelease: LatestRelease? = null
 
+    /**
+     * Phase 11 T6: a real [UpdateChecker] (with its real ApkInstaller) talking to the test's fake release
+     * server; set before the Activity starts. Null = the scripted [latestRelease], and Update does nothing.
+     */
+    @Volatile var releaseChecker: UpdateChecker? = null
+
     override val updates: UpdateChecker by lazy {
         object : UpdateChecker(store, BuildConfig.VERSION_NAME) {
-            override suspend fun check(now: Instant): LatestRelease? = latestRelease
+            override val installer: ApkInstaller? get() = releaseChecker?.installer
+            override suspend fun check(now: Instant): LatestRelease? =
+                releaseChecker.let { if (it != null) it.check(now) else latestRelease }
             override suspend fun checkNow(now: Instant): CheckResult =
-                latestRelease?.let(CheckResult::Newer) ?: CheckResult.UpToDate
+                releaseChecker?.checkNow(now) ?: latestRelease?.let(CheckResult::Newer) ?: CheckResult.UpToDate
         }
     }
 
     /** A clean slate: the saved places below, nothing else saved, replay answering. */
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
+        network = null
         planDelayMs = 0
         clockShift = Duration.ZERO
         latestRelease = null
+        releaseChecker = null
         // Journeys start past the first-run welcome tour (C6).
         store.setSettings(UserSettings(tourSeen = true))
         store.setPlaces(places)

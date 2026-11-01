@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 11 T8: LeakCanary runs in the uitest build for the journeys' leak check. No "Leaks" launcher icon
+         (the monkey and the layout audit stay inside the app). -->
+    <bool name="leak_canary_add_launcher_icon">false</bool>
+</resources>

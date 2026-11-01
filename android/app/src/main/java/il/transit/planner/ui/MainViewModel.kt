@@ -38,6 +38,7 @@ import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
 import il.transit.core.user.FavoriteLine
+import il.transit.core.user.LowData
 import il.transit.core.user.PlaceRoutine
 import il.transit.core.ride.RideProgress
 import il.transit.core.user.Routines
@@ -170,6 +171,8 @@ data class UiState(
     val selected: Int = 0,
     val stopSheet: StopSheet? = null,
     val showSettings: Boolean = false,
+    /** A save the phone refused (storage full): "Not saved: phone storage is full", shown once. */
+    val notSaved: Boolean = false,
     /** Phase 11 E1: "Will my reminder ring?" open, offered as a hint, or closed. */
     val reminderCheck: il.transit.planner.ui.screens.ReminderCheckView = il.transit.planner.ui.screens.ReminderCheckView.NONE,
     val settings: UserSettings = UserSettings(),
@@ -763,7 +766,7 @@ class MainViewModel(
             ?.copy(arriveBy = s.chain == null && s.mode == AppMode.TRIP && s.timeMode == TimeMode.ARRIVE_BY)
             ?: return false
         reminders?.cancel() // a countdown still showing for the old one goes, with its alarms
-        viewModelScope.launch { store.setReminder(r) }
+        viewModelScope.launch { saved(store.setReminder(r)) }
         reminders?.schedule(r)
         // Phase 11 E1: after the first reminder, once: "Check that reminders will ring on this phone".
         if (!s.settings.reminderCheckHintShown) {
@@ -807,11 +810,11 @@ class MainViewModel(
     fun toggleFavorite(sheet: StopSheet, row: DepartureRow) = viewModelScope.launch {
         val fav = FavoriteLine(sheet.stopId, sheet.name, row.line, row.headsign)
         val now = _state.value.favorites
-        store.setFavorites(if (fav in now) now - fav else now + fav)
+        saved(store.setFavorites(if (fav in now) now - fav else now + fav))
     }
 
     fun removeFavorite(fav: FavoriteLine) = viewModelScope.launch {
-        store.setFavorites(_state.value.favorites - fav)
+        saved(store.setFavorites(_state.value.favorites - fav))
     }
 
     /** Open the pinned lines with their next departures: one `stoptimes` request per stop. */
@@ -925,7 +928,7 @@ class MainViewModel(
 
     fun cancelReminder() {
         reminders?.cancel()
-        viewModelScope.launch { store.setReminder(null) }
+        viewModelScope.launch { saved(store.setReminder(null)) }
     }
 
     fun select(index: Int) {
@@ -1006,19 +1009,27 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
-        if (zoom < StopsViewport.MIN_ZOOM) {
+        // Phase 11 E4: low data shows stops from zoom 16 and asks only when a tile under the screen is missing.
+        val lowData = _state.value.settings.lowData
+        if (zoom < LowData.stopsMinZoom(lowData)) {
             if (loadedStops != null) {
                 loadedStops = null
                 _stops.value = MapData.EMPTY
             }
             return
         }
-        if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
+        val cache = stopsCache
+        if (!lowData || cache == null) {
+            if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
+        }
         val box = StopsViewport.fetchBox(view)
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {
-                val found = stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                val found = when {
+                    lowData && cache != null -> cache.loadLowData(view) { b -> api.stops(b, null, language) }
+                    else -> stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                }
                 loadedStops = box
                 _stops.value = MapData.stops(found)
             } catch (e: CancellationException) {
@@ -1061,19 +1072,19 @@ class MainViewModel(
     fun savePlace(name: String, at: LatLon) = viewModelScope.launch {
         val old = _state.value.savedPlaces.firstOrNull { it.name == name }
         val rest = _state.value.savedPlaces.filterNot { it.name == name }
-        store.setPlaces(rest + SavedPlace(name, at.lat, at.lon, routine = old?.routine))
+        if (!saved(store.setPlaces(rest + SavedPlace(name, at.lat, at.lon, routine = old?.routine)))) return@launch
         _state.update { st -> if ((st.to as? PlaceRef.Point)?.at == at) st.copy(to = PlaceRef.Point(name, at)) else st }
     }
 
     fun deletePlace(p: SavedPlace) = viewModelScope.launch {
-        store.setPlaces(_state.value.savedPlaces - p)
+        saved(store.setPlaces(_state.value.savedPlaces - p))
     }
 
     // --- routines -------------------------------------------------------------------------
 
     /** Set or clear (null) when [place] is usually the destination. */
     fun setRoutine(place: SavedPlace, routine: PlaceRoutine?) = viewModelScope.launch {
-        store.setPlaces(_state.value.savedPlaces.map { if (it.name == place.name) it.copy(routine = routine) else it })
+        saved(store.setPlaces(_state.value.savedPlaces.map { if (it.name == place.name) it.copy(routine = routine) else it }))
     }
 
     /** "Routine: University ✕": the user does not want it this time. */
@@ -1297,11 +1308,11 @@ class MainViewModel(
         val to = s.to as? PlaceRef.Point ?: return@launch
         val from = (s.from as? PlaceRef.Point)?.let { SavedPlace(it.name ?: name, it.at.lat, it.at.lon) }
         val trip = SavedTrip(name, from, SavedPlace(to.name ?: name, to.at.lat, to.at.lon))
-        store.setTrips(s.savedTrips.filterNot { it.name == name } + trip)
+        saved(store.setTrips(s.savedTrips.filterNot { it.name == name } + trip))
     }
 
     fun deleteTrip(t: SavedTrip) = viewModelScope.launch {
-        store.setTrips(_state.value.savedTrips - t)
+        saved(store.setTrips(_state.value.savedTrips - t))
     }
 
     fun runTrip(t: SavedTrip) {
@@ -1322,12 +1333,31 @@ class MainViewModel(
 
     fun reminderCheck(view: il.transit.planner.ui.screens.ReminderCheckView) = _state.update { it.copy(reminderCheck = view) }
 
-    fun updateSettings(s: UserSettings) = viewModelScope.launch { store.setSettings(s) }
+    fun updateSettings(s: UserSettings) = viewModelScope.launch { saved(store.setSettings(s)) }
 
-    /** Re-order the options in every tab (D12); the opened option stays opened ([resorted]). */
+    /**
+     * Re-order the options in every tab (D12); the opened option stays opened ([resorted]).
+     * Shown at once; if the phone refuses to save it, the old order comes back with "Not saved".
+     */
     fun setTripSort(sort: TripSort) {
+        val was = _state.value.settings.tripSort
         _state.update { it.resorted(sort) }
-        updateSettings(_state.value.settings)
+        val s = _state.value.settings
+        viewModelScope.launch {
+            if (!saved(store.setSettings(s))) _state.update { if (it.settings.tripSort == sort) it.resorted(was) else it }
+        }
+    }
+
+    /** The "Not saved" message was shown. */
+    fun notSavedShown() = _state.update { it.copy(notSaved = false) }
+
+    /**
+     * [ok] is false when the store refused a write (a full disk): the state keeps what was saved
+     * (it comes from the store) and the user is told once. Returns [ok].
+     */
+    private fun saved(ok: Boolean): Boolean {
+        if (!ok) _state.update { it.copy(notSaved = true) }
+        return ok
     }
 
     // --- helpers -----------------------------------------------------------------------------

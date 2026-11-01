@@ -6,7 +6,11 @@ agp = "8.9.1"
 coroutines = "1.9.0"
 serialization = "1.7.3"
 okhttp = "4.12.0"
+leakcanary = "2.14"
 junit = "4.13.2"
+# Stays 2024.12.01 (Compose 1.7). 2025.08.00 (Compose 1.9) was tried in Phase 11 F2: Paparazzi 1.3.5 fails to
+# render under it, every golden changes and the APK grows 2.8 %. The test-thread semantics race stays open
+# (ui-testing skill, F2 section).
 composeBom = "2024.12.01"
 activityCompose = "1.9.3"
 lifecycle = "2.8.7"
@@ -24,8 +28,12 @@ uiautomator = "2.3.0"
 atf = "4.1.1"
 # Screenshot tests without an emulator. 1.3.5: Compose 1.7 / AGP 8.4+, like this build.
 paparazzi = "1.3.5"
+# Paparazzi brings Guava 33.3.1 onto the unit-test classpath: GHSA-xxph-c9ww-hj94 (CVSS 8.2), fixed in 33.7.2.
+guavaTest = "33.7.2-jre"
 # Night refresh (Phase 9 C2). 2.9.1: compileSdk 34+, like this build.
-work = "2.9.1"
+# 2.10.5 (Phase 11 F2): a full disk makes WorkManager's own database throw SQLiteFullException at start-up;
+# TransitApp routes it to an initialization exception handler instead of ending the app.
+work = "2.10.5"
 # Style gate (Phase 11 T2, owner decision 17): ktlint via its Gradle plugin; findings are gated per changed line (tools/ktlint_gate.py).
 ktlintPlugin = "12.1.2"
 # Core test foundation (Phase 11 T1): line-coverage gate on core; property tests (standalone, from JUnit 4).
@@ -41,6 +49,8 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+leakcanary-instrumentation = { module = "com.squareup.leakcanary:leakcanary-android-instrumentation", version.ref = "leakcanary" }
 okhttp-mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -64,6 +74,7 @@ espresso-accessibility = { module = "androidx.test.espresso:espresso-accessibili
 uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 accessibility-test-framework = { module = "com.google.android.apps.common.testing.accessibility.framework:accessibility-test-framework", version.ref = "atf" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+guava-test = { module = "com.google.guava:guava", version.ref = "guavaTest" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playLocation" }
 
