@@ -590,7 +590,12 @@ internal fun ItineraryCard(
             Text("$depart–$arrive", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             Text(stringResource(R.string.minutes_short, s.durationMin), style = MaterialTheme.typography.titleSmall)
         }
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
+        // Centred: a tappable chip has a 48 dp tap area (Phase 11 E5), so the walks beside it stay on its line.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 4.dp),
+        ) {
             // On the selected option a bus or train chip opens that vehicle's stops (trip sheet).
             s.chips.forEach { c ->
                 val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit
