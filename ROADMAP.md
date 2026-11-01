@@ -344,8 +344,8 @@ package. Tick only your own package's lines.
 - [ ] Data & battery card (requests, cache, map cache, night refresh, ride GPS) + low-data switch
 
 ### T4 — Network-fault matrix (`claude/p11-fault-matrix`, 0 requests, local mock server)
-- [ ] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator
-- [ ] Request counts asserted end to end against each feature's budget
+- [x] 429 / 503 / timeout / garbage / empty / offline on every networked screen, on the emulator
+- [x] Request counts asserted end to end against each feature's budget
 
 ### T6 — Security + in-app update (`claude/p11-security-update`, 0 requests, local mock server)
 - [ ] Intent fuzzing of exported components; FileProvider path checks
