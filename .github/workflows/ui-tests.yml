@@ -197,12 +197,28 @@ jobs:
     name: network-fault matrix on API 35
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     permissions: { contents: read, issues: write } # issues: the flake log step only
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with: { name: uitest-apks, path: apks }
+      # Phase 11 T6: the in-app update test installs a "next version" over this one. Built here (versionCode 2,
+      # versionName 0.0.2-uitest); Android only updates an app signed with the same key, so the downloaded APKs
+      # are re-signed with this job's debug key too (a throwaway key, made by Gradle on the runner).
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build the next uitest APK and sign all three with one key
+        env: { RELEASE_VERSION: "0.0.2" }
+        run: |
+          ./gradlew -p android :app:assembleUitest
+          cp android/app/build/outputs/apk/uitest/app-uitest.apk apks/app-uitest-next.apk
+          signer="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner"
+          for apk in apks/app-uitest.apk apks/app-uitest-androidTest.apk; do
+            "$signer" sign --ks ~/.android/debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android "$apk"
+          done
+          for apk in apks/*.apk; do echo "$apk: $("$signer" verify --print-certs "$apk" | grep -m1 SHA-256)"; done
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

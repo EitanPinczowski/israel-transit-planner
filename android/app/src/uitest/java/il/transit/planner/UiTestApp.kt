@@ -7,6 +7,7 @@ import il.transit.core.update.CheckResult
 import il.transit.core.update.LatestRelease
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
+import il.transit.planner.data.ApkInstaller
 import il.transit.planner.data.UpdateChecker
 import java.time.Clock
 import java.time.Duration
@@ -92,11 +93,19 @@ class UiTestApp : TransitApp() {
     /** What the update check reports; null = up to date. Set before the Activity starts. */
     @Volatile var latestRelease: LatestRelease? = null
 
+    /**
+     * Phase 11 T6: a real [UpdateChecker] (with its real ApkInstaller) talking to the test's fake release
+     * server; set before the Activity starts. Null = the scripted [latestRelease], and Update does nothing.
+     */
+    @Volatile var releaseChecker: UpdateChecker? = null
+
     override val updates: UpdateChecker by lazy {
         object : UpdateChecker(store, BuildConfig.VERSION_NAME) {
-            override suspend fun check(now: Instant): LatestRelease? = latestRelease
+            override val installer: ApkInstaller? get() = releaseChecker?.installer
+            override suspend fun check(now: Instant): LatestRelease? =
+                releaseChecker.let { if (it != null) it.check(now) else latestRelease }
             override suspend fun checkNow(now: Instant): CheckResult =
-                latestRelease?.let(CheckResult::Newer) ?: CheckResult.UpToDate
+                releaseChecker?.checkNow(now) ?: latestRelease?.let(CheckResult::Newer) ?: CheckResult.UpToDate
         }
     }
 
@@ -107,6 +116,7 @@ class UiTestApp : TransitApp() {
         planDelayMs = 0
         clockShift = Duration.ZERO
         latestRelease = null
+        releaseChecker = null
         // Journeys start past the first-run welcome tour (C6).
         store.setSettings(UserSettings(tourSeen = true))
         store.setPlaces(places)

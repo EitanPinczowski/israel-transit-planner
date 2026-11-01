@@ -31,11 +31,21 @@ sealed interface SharedPlace {
         /** Longest text we search: a sentence, not a message. */
         const val MAX_QUERY = 80
 
+        /**
+         * Longest shared text we read (Phase 11 T6): parsing runs on the main thread, and an address
+         * search over a megabyte would hang it. A message with an address is far shorter.
+         */
+        const val MAX_SHARED = 2_000
+
+        /** Bidi controls (LRE…RLO, LRI…PDI): a label or query must not reorder the text around it on screen. */
+        private val BIDI = Regex("[\u202A-\u202E\u2066-\u2069]")
+
         private val URL = Regex("""(?i)\b((?:https?://|geo:)[^\s<>"]+)""")
         private val COORDS = Regex("""^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)""")
         private val ONLY_COORDS = Regex("""^\s*-?\d{1,3}(?:\.\d+)?\s*,\s*-?\d{1,3}(?:\.\d+)?\s*(?:\(.*\))?\s*$""")
         private val SHORT_HOSTS = listOf("maps.app.goo.gl", "goo.gl", "g.co", "waze.to")
-        private val MAP_HOSTS = Regex("""(?i)^(?:www\.|maps\.)?(?:google\.[a-z.]+|waze\.com)$""")
+        // google.com, google.co.il, google.com.au, google.de: Google's own country domains, not "google.com.evil.example" (T6).
+        private val MAP_HOSTS = Regex("""(?i)^(?:www\.|maps\.)?(?:google\.(?:com|co)(?:\.[a-z]{2})?|google\.[a-z]{2}|waze\.com)$""")
 
         /** Street words (also after ב/ל/ה/מ): where the address starts in a sentence. */
         private val STREET = Regex("""(?i)(?<![\p{L}])[בלהמ]?(רחוב|רח['׳]|שדרות|שד['׳]|דרך|כיכר|סמטת|סמטה)\s""")
@@ -46,7 +56,7 @@ sealed interface SharedPlace {
 
         /** [shared]: an intent's data URI or its `EXTRA_TEXT`. */
         fun parse(shared: String?): SharedPlace {
-            val text = shared?.trim().orEmpty()
+            val text = shared?.take(MAX_SHARED)?.replace(BIDI, "")?.trim().orEmpty()
             if (text.isEmpty()) return Unreadable
             var short = false
             for (m in URL.findAll(text)) {

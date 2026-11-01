@@ -233,3 +233,25 @@ the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on
   the budget constant, `act`, `outcome` (null while loading), `message`, `retry`, `reset`, `repeat`. Vary the input per
   action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
 
+## Security and in-app update tests (Phase 11 T6)
+
+In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui_faults_run.sh`). 0 requests to the internet.
+- **Intent fuzzing** (`IntentFuzzTest`, explicit intents to the exported `MainActivity`, replay mode): SEND with no / wrong-type /
+  240k-char text, VIEW with `geo:NaN`, `geo:999,999`, `javascript:`, `file://`, `content://` (+ grant flags), `intent:`, `data:`,
+  look-alike map hosts, markup / SQL / RLO in `geo:` queries, and our own notification / tile / shortcut extras broken. Each case:
+  the Activity stays up, saved data unchanged, refused input sends **0** (`replay.calls`), searched text ≤ 1 (a typed search's).
+  The shell repeats the kinds with `adb shell am`, checks the look-alike host does not resolve to us, the spoofed
+  `BOOT_COMPLETED` (refused to the shell; `BootReceiver` ignores other actions), the tile (System UI only), the provider.
+- **FileProvider** (`FileProviderTest`): only `cache/updates` and `cache/reports` get URIs (not `filesDir`, DataStore, the
+  crash log, a look-alike folder, `..`); crafted `..` URIs don't open; the shell can't read without a grant; a report older
+  than a day is deleted at start.
+- **Update** (`UpdateFlowTest`, `mock/FakeReleaseServer`): GitHub Releases on the loopback over TLS (a test-only
+  self-signed cert, `androidTest/assets/fake_release_server.p12`). The app's own clients (`ApkInstaller.client()`,
+  `UpdateChecker.client()`) get a DNS that answers 127.0.0.1 and records every name, sockets that land on the server's
+  port and record the host:port asked for, and trust in that cert only, so the app's real URL checks decide.
+  `UiTestApp.releaseChecker` puts a real checker + installer behind the banner. What it pins: `release-apk` skill.
+- **End to end on API 35** (`UpdateInstallSteps`, run only by the script, in order): the job builds the next APK
+  (`RELEASE_VERSION=0.0.2` → `versionCode` 2) and re-signs the downloaded pair with the same debug key. Step 1: banner →
+  download through GitHub's redirect → digest OK → Android's installer opens on `content://<pkg>.updates/updates/update.apk`.
+  The script taps the installer's button (from a `uiautomator dump`: the app's process dies with the install, so the
+  test can't), waits for `versionCode=2`, starts the app; step 2: the new version, places and settings kept.
