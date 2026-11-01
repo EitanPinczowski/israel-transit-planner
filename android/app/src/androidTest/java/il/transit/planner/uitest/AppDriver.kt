@@ -259,18 +259,20 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
         while (true) {
             compose.waitForIdle()
             refreshActivity()
+            // Read here: ActivityScenario refuses the main thread.
+            val resumed = scenarioState == Lifecycle.State.RESUMED
             var has = ""
             var ok = false
             inst.runOnMainSync {
                 val c = activity.resources.configuration
                 val isNight = (c.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
                 val l = c.locales[0].language.let { if (it == "iw") "he" else it }
-                has = "night=$isNight font=${c.fontScale} dpi=${c.densityDpi} lang=$l resumed=$scenarioState laidOut=${activity.window.decorView.isLaidOut}"
+                has = "night=$isNight font=${c.fontScale} dpi=${c.densityDpi} lang=$l resumed=$resumed laidOut=${activity.window.decorView.isLaidOut}"
                 ok = (night == null || night == isNight) &&
                     (font == null || kotlin.math.abs(font - c.fontScale) < 0.01f) &&
                     (dpi == null || dpi == c.densityDpi) &&
                     (lang == null || lang == l) &&
-                    scenarioState == Lifecycle.State.RESUMED &&
+                    resumed &&
                     activity.window.decorView.isLaidOut
             }
             if (ok) return
