@@ -15,8 +15,8 @@
     <string name="data_title">Data &amp; battery</string>
     <string name="data_today">Today</string>
     <plurals name="data_transitous">
-        <item quantity="one">%1$d request to Transitous (%2$d answered from the cache)</item>
-        <item quantity="other">%1$d requests to Transitous (%2$d answered from the cache)</item>
+        <item quantity="one">%1$d request to Transitous (%2$d answered from the cache)</item>
+        <item quantity="other">%1$d requests to Transitous (%2$d answered from the cache)</item>
     </plurals>
     <string name="data_weather">Weather: %1$d</string>
     <string name="data_address">Address backup: %1$d</string>
@@ -30,7 +30,7 @@
     <string name="data_empty">Nothing sent today yet.</string>
     <string name="data_help">Counted on this phone only: numbers and times, never places or searches. Kept for 7 days.</string>
     <string name="low_data_toggle">Low-data mode</string>
-    <string name="low_data_help">Map stops only when zoomed in closer, and only for what\'s on screen. No stop boards in the night refresh. The offline map asks first when you\'re not on Wi-Fi. Planning, search, reminders and the rain note stay the same.</string>
+    <string name="low_data_help">Map stops only when zoomed in closer, and fetched only when what\'s on screen isn\'t saved yet. No stop boards in the night refresh. The offline map asks first when you\'re not on Wi-Fi. Planning, search, reminders and the rain note stay the same.</string>
     <string name="low_data_ask_title">Download the offline map?</string>
     <string name="low_data_ask_text">You\'re not on Wi-Fi and low-data mode is on. A map area can take tens of MB.</string>
 </resources>

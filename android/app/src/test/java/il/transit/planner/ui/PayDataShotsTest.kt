@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.LayoutDirection as ComposeDirection
 
 /**
  * Pay with… and the data and battery card (Phase 11 E4): English and Hebrew, light and dark, and the
- * smallest phone in Hebrew at font 1.3. The trip sheet is a real Rahat → Be'er Sheva bus.
+ * smallest phone in Hebrew at font 1.3, light and dark. The trip sheet is a real Rahat → Be'er Sheva bus.
  */
 @RunWith(Parameterized::class)
 class PayDataShotsTest(private val v: Variant) {
@@ -133,6 +133,12 @@ class PayDataShotsTest(private val v: Variant) {
             Variant("he_light", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL), dark = false, rtl = true),
             Variant("he_dark", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, nightMode = NightMode.NIGHT), dark = true, rtl = true),
             Variant("he_small_13", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.3f), dark = false, rtl = true),
+            Variant(
+                "he_small_13_dark",
+                small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.3f, nightMode = NightMode.NIGHT),
+                dark = true,
+                rtl = true,
+            ),
         )
     }
 }

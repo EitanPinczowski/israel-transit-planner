@@ -1009,7 +1009,8 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
-        val lowData = _state.value.settings.lowData // Phase 11 E4: from zoom 16, only the tiles on screen
+        // Phase 11 E4: low data shows stops from zoom 16 and asks only when a tile under the screen is missing.
+        val lowData = _state.value.settings.lowData
         if (zoom < LowData.stopsMinZoom(lowData)) {
             if (loadedStops != null) {
                 loadedStops = null
@@ -1017,12 +1018,18 @@ class MainViewModel(
             }
             return
         }
-        if (!LowData.stopsNeedFetch(view, zoom, loadedStops, lowData)) return
-        val box = LowData.stopsFetchBox(view, lowData)
+        val cache = stopsCache
+        if (!lowData || cache == null) {
+            if (!StopsViewport.needsFetch(view, zoom, loadedStops)) return
+        }
+        val box = StopsViewport.fetchBox(view)
         stopsJob?.cancel()
         stopsJob = viewModelScope.launch {
             try {
-                val found = stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                val found = when {
+                    lowData && cache != null -> cache.loadLowData(view) { b -> api.stops(b, null, language) }
+                    else -> stopsCache?.load(box) { b -> api.stops(b, null, language) } ?: api.stops(box, null, language)
+                }
                 loadedStops = box
                 _stops.value = MapData.stops(found)
             } catch (e: CancellationException) {

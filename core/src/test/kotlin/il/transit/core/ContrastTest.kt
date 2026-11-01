@@ -56,4 +56,21 @@ class ContrastTest {
         )
         pairs.forEach { (name, c) -> assertTrue("$name $c", c >= 4.5) }
     }
+
+    /**
+     * Phase 11 E4: the data card (`secondaryContainer` with `onSecondaryContainer` text) and the payment chooser's
+     * second line ("Installed" in `primary`, "Get it on Google Play" in `onSurfaceVariant`) on the dialog's
+     * `surfaceContainerHigh`, values copied from `ui/Theme.kt`.
+     */
+    @Test fun `the data card and the payment chooser read in both themes`() {
+        val pairs = mapOf(
+            "card light" to LegPalette.contrast("#101C2B", "#D7E3F7"),
+            "card dark" to LegPalette.contrast("#D7E3F7", "#3B4858"),
+            "installed light" to LegPalette.contrast("#0061A4", "#E6E8EE"),
+            "installed dark" to LegPalette.contrast("#9ECAFF", "#282A2F"),
+            "get it light" to LegPalette.contrast("#43474E", "#E6E8EE"),
+            "get it dark" to LegPalette.contrast("#C3C7CF", "#282A2F"),
+        )
+        pairs.forEach { (name, c) -> assertTrue("$name $c", c >= 4.5) }
+    }
 }

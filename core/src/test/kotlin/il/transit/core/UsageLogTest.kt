@@ -161,10 +161,13 @@ class UsageLogTest {
         log.count(UsageService.ADDRESS, "search", UsageOutcome.CACHE)
         log.count(UsageService.TRANSITOUS, "דיזנגוף 50 תל אביב", UsageOutcome.NETWORK) // never a query: folded
         log.count(UsageService.TRANSITOUS, "32.08,34.78", UsageOutcome.NETWORK)
+        log.count(UsageService.TRANSITOUS, "dizengoff", UsageOutcome.NETWORK) // a Latin query is not a kind either
+        log.count(UsageService.ADDRESS, "ben_gurion_airport", UsageOutcome.NETWORK)
         log.nightRefresh(morning, 3)
         log.rideGps(Duration.ofMinutes(5))
         val text = UsageLog.encode(log.days())
-        val allowedKey = Regex("^(transitous|weather|address)\\.[a-z_]+\\.(net|cache|retry)$")
+        val kinds = (UsageLog.KINDS + "other").joinToString("|")
+        val allowedKey = Regex("^(transitous|weather|address)\\.($kinds)\\.(net|cache|retry)$")
         fun check(e: JsonElement, inCounts: Boolean = false) {
             when (e) {
                 is JsonObject -> e.forEach { (k, v) ->
@@ -177,7 +180,10 @@ class UsageLogTest {
         }
         Json.parseToJsonElement(text).jsonArray.forEach { check(it) }
         assertFalse(text.contains("דיזנגוף"))
-        assertEquals(2, log.days().single().counts["transitous.other.net"])
+        assertFalse(text.contains("dizengoff"))
+        assertFalse(text.contains("gurion"))
+        assertEquals(3, log.days().single().counts["transitous.other.net"])
+        assertEquals(1, log.days().single().counts["address.other.net"])
         assertEquals(log.days(), UsageLog.decode(text))
         assertEquals(emptyList<UsageDay>(), UsageLog.decode("not json"))
         assertEquals(emptyList<UsageDay>(), UsageLog.decode(null))
@@ -191,5 +197,59 @@ class UsageLogTest {
         log.rideGps(Duration.ofMinutes(1))
         log.nightRefresh(morning, 1)
         assertEquals(3, n)
+    }
+
+    @Test fun `a retry of the backup geocoder and of the weather is counted as sent`() = runTest {
+        val clock = Moving(morning)
+        val log = UsageLog(clock)
+        val geo = GuardedGeocoder(FaultyGeocoder(Fault.Http(429)), clock, backoff = Duration.ofMillis(1), usage = log)
+        geo.search("טבנקין", "he", null)
+        var calls = 0
+        val source = WeatherSource {
+            if (calls++ == 0) throw TransitHttpException(503, "busy", null)
+            RainForecast(emptyList())
+        }
+        GuardedWeather(source, clock, backoff = Duration.ofMillis(1), usage = log).forTrip(morning, LatLon(32.08, 34.78))
+        val counts = log.days().single().counts
+        assertEquals(1, counts["address.search.net"])
+        assertEquals(1, counts["address.search.retry"])
+        assertEquals(1, counts["weather.forecast.net"])
+        assertEquals(1, counts["weather.forecast.retry"])
+        val s = log.summary()
+        assertEquals("both tries left the phone", 2, s.address)
+        assertEquals(2, s.weather)
+    }
+
+    @Test fun `a timeout is counted as sent, and not as a retry`() = runTest {
+        val log = UsageLog(Moving(morning))
+        val api = GuardedTransitApi(FaultyTransitApi(Fault.Timeout), usage = log)
+        runCatching { api.geocode("x", "he", null, 5) }
+        assertEquals(mapOf("transitous.geo.net" to 1), log.days().single().counts)
+    }
+
+    /** 25 Oct 2026, the night the clocks go back: a 25-hour Israel day in which 01:00–02:00 comes twice. */
+    @Test fun `the day the clocks go back is one day of 25 hours`() {
+        fun day(utc: String) = UsageLog.date(UsageLog.dayOf(Instant.parse(utc))).toString()
+        assertEquals("2026-10-24", day("2026-10-24T20:59:00Z")) // 23:59 IDT
+        assertEquals("2026-10-25", day("2026-10-24T21:00:00Z")) // 00:00 IDT
+        assertEquals("2026-10-25", day("2026-10-24T22:30:00Z")) // 01:30 IDT
+        assertEquals("2026-10-25", day("2026-10-24T23:30:00Z")) // 01:30 IST, the second time
+        assertEquals("2026-10-25", day("2026-10-25T21:30:00Z")) // 23:30 IST
+        assertEquals("2026-10-25", day("2026-10-25T21:59:00Z")) // 23:59 IST
+        assertEquals("2026-10-26", day("2026-10-25T22:00:00Z")) // 00:00 IST
+
+        val clock = Moving(Instant.parse("2026-10-24T20:59:00Z"))
+        val log = UsageLog(clock)
+        for (t in listOf("2026-10-24T20:59:00Z", "2026-10-24T21:00:00Z", "2026-10-24T22:30:00Z", "2026-10-24T23:30:00Z", "2026-10-25T21:59:00Z", "2026-10-25T22:00:00Z")) {
+            clock.now = Instant.parse(t)
+            log.count(UsageService.TRANSITOUS, "plan", UsageOutcome.NETWORK)
+        }
+        assertEquals(listOf(1, 4, 1), log.days().map { it.counts.getValue("transitous.plan.net") })
+
+        // The night refresh at the repeated 01:14 (IST) is still last night's run the next morning.
+        log.nightRefresh(Instant.parse("2026-10-24T23:14:00Z"), 5)
+        clock.now = Instant.parse("2026-10-25T06:00:00Z") // 08:00 IST
+        assertEquals(Instant.parse("2026-10-24T23:14:00Z"), log.summary().nightAt)
+        assertEquals(5, log.summary().nightRequests)
     }
 }

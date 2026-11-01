@@ -193,7 +193,7 @@ is missing from the test's "constant" column or from this table. **A package tha
 | Typing search: Transitous geocode; phone Geocoder + Photon | 1; 1 | `PlaceSearch.BACKUP_PER_SEARCH` |
 | Stop code · pin name (twice at a point) | 0 · 1 | – |
 | Rain on the walks (Open-Meteo, not Transitous): per 0.1° cell per hour | 1 | `GuardedWeather.cell` |
-| Low-data mode (Phase 11 E4): only removes requests: stops from zoom 16, only the tiles on screen; no night boards | 0 extra | – |
+| Low-data mode (Phase 11 E4): stops from zoom 16, asked only when a tile under the screen is missing (`LowData.loadStops`); no night boards. Never more requests than normal: `LowDataTest` replays 200 mixed and 200 pan-only walks through both rules | 0 extra | – |
 
 ### Usage counter (Phase 11 E4, Settings → Data & battery)
 Every guard counts what it is asked, through one `UsageMeter` (`core/api/UsageLog.kt`, app `data/UsageStore.kt`,

@@ -15,9 +15,9 @@
     <string name="data_title">נתונים וסוללה</string>
     <string name="data_today">היום</string>
     <plurals name="data_transitous">
-        <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
-        <item quantity="two">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
-        <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
+        <item quantity="one">⁨%1$d⁩ בקשה ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
+        <item quantity="two">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
+        <item quantity="other">⁨%1$d⁩ בקשות ל-Transitous, ⁨%2$d⁩ מהן נענו מהזיכרון</item>
     </plurals>
     <string name="data_weather">מזג אוויר: ⁨%1$d⁩</string>
     <string name="data_address">גיבוי כתובות: ⁨%1$d⁩</string>
@@ -32,7 +32,7 @@
     <string name="data_empty">עוד לא נשלח דבר היום.</string>
     <string name="data_help">נספר בטלפון בלבד: מספרים ושעות, אף פעם לא מקומות או חיפושים. נשמר 7 ימים.</string>
     <string name="low_data_toggle">מצב חיסכון בנתונים</string>
-    <string name="low_data_help">תחנות במפה רק בזום קרוב יותר, ורק למה שעל המסך. בלי לוחות תחנות ברענון הלילי. המפה הלא מקוונת שואלת קודם כשאין Wi-Fi. תכנון, חיפוש, תזכורות והתראת הגשם לא משתנים.</string>
+    <string name="low_data_help">תחנות במפה רק בזום קרוב יותר, ונטענות רק כשמה שעל המסך עוד לא שמור. בלי לוחות תחנות ברענון הלילי. המפה הלא מקוונת שואלת קודם כשאין Wi-Fi. תכנון, חיפוש, תזכורות והתראת הגשם לא משתנים.</string>
     <string name="low_data_ask_title">להוריד את המפה הלא מקוונת?</string>
     <string name="low_data_ask_text">אין חיבור Wi-Fi ומצב חיסכון בנתונים פועל. אזור מפה יכול לתפוס עשרות MB.</string>
 </resources>

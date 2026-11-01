@@ -4,6 +4,7 @@ import il.transit.core.api.Place
 import il.transit.core.geo.BBox
 import il.transit.core.plan.StopsCacheJson
 import il.transit.core.plan.StopsTileCache
+import il.transit.core.user.LowData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -24,6 +25,14 @@ class StopsStore(private val file: File) {
     suspend fun load(box: BBox, fetch: suspend (BBox) -> List<Place>): List<Place> = lock.withLock {
         restoreOnce()
         val (stops, fetched) = cache.load(box, Instant.now(), fetch)
+        if (fetched) withContext(Dispatchers.IO) { runCatching { file.writeText(StopsCacheJson.encode(cache.all)) } }
+        stops
+    }
+
+    /** Low-data mode (Phase 11 E4): asks only when a tile under [view] is missing ([LowData.loadStops]). */
+    suspend fun loadLowData(view: BBox, fetch: suspend (BBox) -> List<Place>): List<Place> = lock.withLock {
+        restoreOnce()
+        val (stops, fetched) = LowData.loadStops(cache, view, Instant.now(), fetch)
         if (fetched) withContext(Dispatchers.IO) { runCatching { file.writeText(StopsCacheJson.encode(cache.all)) } }
         stops
     }

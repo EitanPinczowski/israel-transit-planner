@@ -332,9 +332,10 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   Keep it city-sized: OpenFreeMap is free and donation-run.
 - **Low-data mode** (Phase 11 E4, owner decision 2; `core/user/LowData.kt`, `UserSettings.lowData`, off by
   default; Settings → Data & battery): the night refresh plans the trips but saves **no stop boards**
-  (`LowData.nightStops` in `NightRefreshWorker`: 6 requests at most, not 6 + 3); Download in Offline map
+  (`LowData.nightStops` inside `NightRefresher.run`: 6 requests at most, not 6 + 3); Download in Offline map
   **asks first unless the phone is on Wi-Fi** (`rememberOfflineDownload`, `LowData.askBeforeOfflineDownload`);
-  the map's stops load from zoom 16 and only for the tiles on screen. Reminders, their re-check, planning,
+  the map's stops load from zoom 16, asked only when a tile under the screen is missing (never more
+  requests than normal; `LowData.loadStops`, `StopsStore.loadLowData`). Reminders, their re-check, planning,
   search and the rain note are unchanged (`LowDataTest`). The night refresh still needs Wi-Fi + charging.
 - **Data & battery card** (Phase 11 E4, `ui/screens/DataCard.kt`): the night refresh writes its time and
   requests to `TransitApp.usage` ("night refresh 02:14 (4 requests)", shown for 24 h), `RideService` the

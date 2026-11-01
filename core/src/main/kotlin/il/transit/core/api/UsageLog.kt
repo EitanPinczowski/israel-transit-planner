@@ -167,8 +167,12 @@ class UsageLog(private val clock: Clock = Clock.systemUTC(), restored: List<Usag
         fun decode(s: String?): List<UsageDay> =
             s?.let { runCatching { json.decodeFromString(list, it) }.getOrNull() }.orEmpty()
 
-        /** A kind is a code word; anything else is folded so no text can reach the file. */
-        private fun keyPart(kind: String): String =
-            kind.takeIf { k -> k.isNotEmpty() && k.length <= 24 && k.all { it in 'a'..'z' || it == '_' } } ?: "other"
+        /**
+         * The kinds of call the guards report: `GuardedTransitApi`'s cache prefixes, `GuardedGeocoder`'s and
+         * `GuardedWeather`'s. Anything else is stored as "other", so no text (a query, a place) can reach the file.
+         */
+        val KINDS: Set<String> = setOf("plan", "otm", "stops", "geo", "rgeo", "st", "trip", "mt", "search", "reverse", "forecast")
+
+        private fun keyPart(kind: String): String = if (kind in KINDS) kind else "other"
     }
 }
