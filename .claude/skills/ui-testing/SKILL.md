@@ -272,9 +272,8 @@ holds the app open by design).
 
 **Nightly performance reports** (`nightly-ui.yml` job `perf`, `tools/ui_perf_run.sh`, uitest build, software GL: compare a number with its own history, never
 with a phone's; numbers in the job summary, the trend table is `docs/testing/perf.md`, updated by the boss at close-out; no gate until 2 weeks of numbers).
-`PerfProbe` (uitest only, `--es uitest_perf map|ride`) draws BGU → Tel Aviv. `jank`: scripted pans and double-taps for about a minute, `dumpsys gfxinfo`:
-janky-frame % and the 50th / 90th / 95th / 99th percentile frame times. `ride`: `train_clean.gpx` interpolated to one fix per second, 1 800 `adb emu geo
-fix`, a real ride on the emulator's GPS; `dumpsys batterystats --reset` before and `--checkin` after: wake locks, GPS-on time, jobs, alarms of the app.
+`PerfProbe` (uitest only, `--es uitest_perf map|ride`) draws BGU → Tel Aviv; the script starts the app once first (dexopt, tour) and waits for the probe's `ready` line (`logcat -s PerfProbe:I` only: two levels of one tag keep the last). `jank` (1080x2400 skin, density 420): scripted pans and double-taps inside the map band for about a minute, `dumpsys gfxinfo`: janky-frame % and the 50th / 90th / 95th / 99th percentile frame times of the **Compose UI** (HWUI), plus the **map layer** on its own: MapLibre draws on a SurfaceView, so one 2 s swipe is followed by `dumpsys SurfaceFlinger --latency` for that layer (median / p90 / p99 gap between frames, gaps over 25 ms). `ride`: `train_clean.gpx` interpolated to one fix per second, 1 800 `adb emu geo
+fix` (about 0.7 s apart, 21 minutes of wall time), a real ride on the emulator's GPS; `dumpsys battery unplug` first (batterystats counts nothing while the emulator is "charging"), `batterystats --reset` before and `--checkin` after: wakeups, GPS-on time (sensor -10000), wake locks, jobs of the app. `workflow_dispatch` takes `only=perf` and `ride_fixes` to try a change in minutes. The flake log skips a cancelled job (`tools/test_flake_log.sh` is its dry-run test, run by ci.yml).
 
 **Journey inventory:** `docs/testing/inventory.md` (feature × unit × VM × shots × journey × faults × phone). `check_docs.py` fails if it names a journey that
 does not exist or a journey test it does not name. `MoreJourneysTest` (API 34 and 35, in `ui_behaviour_run.sh`): drop-off pick and send, park & ride,

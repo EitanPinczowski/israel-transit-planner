@@ -84,10 +84,11 @@ if [[ $MODE == jank ]]; then
   # The map draws on its own surface (MapLibre's GLSurfaceView), which HWUI's gfxinfo does not see: one long swipe, then SurfaceFlinger's
   # own frame timestamps for that layer (the last 127 frames).
   adb shell input swipe $x1 $y2 $x2 $y1 2000
-  layer=$(adb shell dumpsys SurfaceFlinger --list | tr -d '\r' | grep -i "SurfaceView" | grep "$PKG" | head -1)
+  # The listing prints "RequestedLayerState{SurfaceView[pkg/activity](BLAST)#167 parentId=166}": the layer name is the SurfaceView[...]#n part.
+  layer=$(adb shell dumpsys SurfaceFlinger --list | tr -d '\r' | grep "SurfaceView\[$PKG" | head -1 | sed -n 's/.*{\(SurfaceView[^ ]*\).*/\1/p')
   echo "map layer: ${layer:-none}"
   if [[ -n $layer ]]; then
-    adb shell dumpsys SurfaceFlinger --latency "$layer" | tr -d '\r' > "$OUT/sf-latency.txt"
+    adb shell "dumpsys SurfaceFlinger --latency '$layer'" | tr -d '\r' > "$OUT/sf-latency.txt"
   else
     : > "$OUT/sf-latency.txt"
   fi
@@ -156,6 +157,7 @@ grep -E "^9,$uid," "$OUT/batterystats-checkin.txt" > "$OUT/app-checkin.txt"
 # Checkin records of the app: apk = wakeups (apk,<wakeups>,<apk>,<service>,...), wl = wake locks, sr = sensors (GPS is sensor -10000:
 # <total ms>,<count>), jb = jobs, ua = a user-activity line. The fields stay in the artifact; the summary names the ones asked for.
 wakeups=$(awk -F, '$4=="apk"{s+=$5} END{print s+0}' "$OUT/app-checkin.txt")
+wakeup_alarms=$(awk -F, '$4=="wua"' "$OUT/app-checkin.txt" | wc -l)
 gps_ms=$(awk -F, '$4=="sr" && $5=="-10000"{s+=$6} END{print s+0}' "$OUT/app-checkin.txt")
 wl_lines=$(awk -F, '$4=="wl"' "$OUT/app-checkin.txt" | wc -l)
 # The per-app text block of `batterystats`: "Uid u0a209:" down to the next blank line.
@@ -163,7 +165,7 @@ awk "/^ *Uid u0a$((uid - 10000)):/,/^$/" "$OUT/batterystats-app.txt" > "$OUT/app
 alarm_stats=$(awk "/$PKG/ && /(run|alarms)/" "$OUT/alarm-after.txt" | head -5)
 {
   echo "### 30-minute simulated ride (API $API, ${secs}s of wall time for $(wc -l < "$OUT/fixes.txt") fixes)"
-  echo "- wakeups of the app (batterystats apk records): **$wakeups**"
+  echo "- wakeups of the app (batterystats apk records): **$wakeups**; wakeup-alarm wake locks (wua): **$wakeup_alarms**"
   echo "- GPS-on time of the app (sensor -10000): **${gps_ms} ms**"
   echo "- wake-lock records of the app: **$wl_lines**"
   echo "- RideService records alive at the end: $(adb shell dumpsys activity services "$PKG" | grep -c RideService)"
