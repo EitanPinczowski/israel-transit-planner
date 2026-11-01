@@ -211,7 +211,7 @@ class SpeechTest {
     @Test
     fun `every leg of every recorded Trip answer can be said in both languages`() {
         val p = plan("plan_bgu_telaviv")
-        for (itin in p.itineraries) for (l in itin.legs) {
+        for (l in p.itineraries.flatMap { it.legs }) {
             for (w in listOf(en, he)) {
                 val s = Speech.leg(l).render(w::say)
                 assertTrue(s, s.isNotBlank() && "null" !in s && !Regex("\\b0\\d:").containsMatchIn(s))

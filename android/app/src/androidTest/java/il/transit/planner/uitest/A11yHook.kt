@@ -73,8 +73,7 @@ class A11yHook(private val d: AppDriver) : IdlingResource {
         val text = n.config.getOrNull(SemanticsProperties.Text)?.joinToString(" ") { it.text }
         val desc = n.config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString(" ")
         val b = n.boundsInWindow
-        if (text != null || desc != null) sb.append(text ?: "").append('|').append(desc ?: "").append('@')
-            .append(b.left.toInt() / 8).append(',').append(b.top.toInt() / 8).append(';')
+        if (text != null || desc != null) sb.append("$text|$desc@${b.left.toInt() / 8},${b.top.toInt() / 8};")
         n.children.forEach { walk(it, sb) }
     }
 

@@ -102,7 +102,8 @@ object Speech {
         val min = minutes((leg.end.epochSecond - leg.start.epochSecond).coerceAtLeast(0).toInt())
         if (kind == LegKind.WALK || kind == LegKind.CAR) {
             val head = Phrase(if (kind == LegKind.WALK) SpeechKey.WALK_MIN else SpeechKey.DRIVE_MIN, count = min)
-            val to = leg.to.name.takeIf { it.isNotBlank() }?.let { Phrase(SpeechKey.TO_PLACE, listOf(it)) }
+            val end = leg.to.name
+            val to = if (end.isBlank()) null else Phrase(SpeechKey.TO_PLACE, listOf(end))
             return Spoken(listOfNotNull(head, to))
         }
         val train = trainLabel(leg)

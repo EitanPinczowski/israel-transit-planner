@@ -214,7 +214,8 @@ class A11yJourneysTest {
 
     private fun spoken(n: SemanticsNode): String {
         val desc = n.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty()
-        val text = n.config.getOrNull(SemanticsProperties.Text).orEmpty().map { it.text }
+        val texts = n.config.getOrNull(SemanticsProperties.Text).orEmpty()
+        val text = texts.map { it.text }
         val edit = listOfNotNull(n.config.getOrNull(SemanticsProperties.EditableText)?.text)
         return (desc + text + edit).filter { it.isNotBlank() }.joinToString(" ")
     }
