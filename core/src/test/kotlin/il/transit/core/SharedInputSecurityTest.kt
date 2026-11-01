@@ -63,10 +63,12 @@ class SharedInputSecurityTest {
         assertTrue(long is SharedPlace.Unreadable || (long as SharedPlace.Text).query.length <= SharedPlace.MAX_QUERY)
     }
 
-    @Test fun a_geo_uri_first_is_read_whole() {
-        assertEquals(SharedPlace.Text("הרצל 15 תל אביב"), SharedPlace.parse("geo:0,0?q=הרצל 15 תל אביב"))
-        assertTrue(SharedPlace.parse("geo:32.0853,34.7818 see you there") is SharedPlace.Point)
-        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("GEO:"))
+    @Test fun a_bare_geo_or_https_is_not_searched() {
+        for (t in listOf("geo:", "GEO:", "geo: ", "https://", "see geo: there")) {
+            assertFalse(t, SharedPlace.parse(t) is SharedPlace.Text && (SharedPlace.parse(t) as SharedPlace.Text).query.contains("geo:", true))
+        }
+        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("geo:"))
+        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("https://"))
     }
 
     @Test fun a_geo_uri_inside_a_message_is_still_found() {

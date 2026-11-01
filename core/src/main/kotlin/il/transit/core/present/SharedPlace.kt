@@ -40,7 +40,8 @@ sealed interface SharedPlace {
         /** Bidi controls (LRE…RLO, LRI…PDI): a label or query must not reorder the text around it on screen. */
         private val BIDI = Regex("[\u202A-\u202E\u2066-\u2069]")
 
-        private val URL = Regex("""(?i)\b((?:https?://|geo:)[^\s<>"]+)""")
+        // `*`, not `+`: a bare "geo:" is a broken link (Unreadable), never words to search (T6).
+        private val URL = Regex("""(?i)\b((?:https?://|geo:)[^\s<>"]*)""")
         private val COORDS = Regex("""^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)""")
         private val ONLY_COORDS = Regex("""^\s*-?\d{1,3}(?:\.\d+)?\s*,\s*-?\d{1,3}(?:\.\d+)?\s*(?:\(.*\))?\s*$""")
         private val SHORT_HOSTS = listOf("maps.app.goo.gl", "goo.gl", "g.co", "waze.to")
@@ -59,8 +60,6 @@ sealed interface SharedPlace {
         fun parse(shared: String?): SharedPlace {
             val text = BIDI.replace(shared.orEmpty().take(MAX_SHARED), "").trim()
             if (text.isEmpty()) return Unreadable
-            // A geo: URI is never searched as words, even an empty or broken one ("geo:"); its query may hold spaces.
-            if (text.startsWith("geo:", ignoreCase = true)) return geo(text.substring(4))
             var short = false
             for (m in URL.findAll(text)) {
                 when (val p = link(trimUrl(m.groupValues[1]))) {
