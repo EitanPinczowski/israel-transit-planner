@@ -21,7 +21,7 @@ class SharedInputSecurityTest {
             val ms = (System.nanoTime() - start) / 1_000_000
             assertTrue("${t.length} chars took $ms ms", ms < 2_000)
         }
-        assertTrue(SharedPlace.MAX_SHARED in 1_000..4_000)
+        assertEquals(4_000, SharedPlace.MAX_SHARED)
     }
 
     @Test fun broken_coordinates_are_unreadable() {
@@ -32,13 +32,26 @@ class SharedInputSecurityTest {
     }
 
     @Test fun look_alike_map_hosts_are_not_map_links() {
-        for (host in listOf("maps.google.com.evil.example", "www.google.com.evil.example", "google.evil.example", "waze.com.evil.example", "evilwaze.com")) {
+        for (host in listOf(
+            "maps.google.com.evil.example",
+            "www.google.com.evil.example",
+            "google.evil.example",
+            "waze.com.evil.example",
+            "evilwaze.com",
+            "maps.google.com@evil.example", // user info: the host is evil.example
+            "evil.example@maps.google.com", // user info before the host: not read either
+            "maps.google.com.", // trailing dot
+            "maps.google.com:8443", // a port
+            "xn--ggle-0nda.com", // punycode look-alike
+            "www.google.com.au", // another country: not on the list
+            "maps.waze.com",
+        )) {
             assertEquals(host, null, SharedPlace.link("https://$host/maps?q=32.0839,34.7983"))
             assertEquals(host, SharedPlace.Unreadable, SharedPlace.parse("https://$host/maps?q=32.0839,34.7983"))
             assertEquals(host, SharedPlace.Unreadable, SharedPlace.parse("https://$host/maps?q=Dizengoff"))
         }
         // Google's own country domains still are.
-        for (host in listOf("maps.google.com", "www.google.co.il", "www.google.com.au", "www.google.de", "waze.com", "www.waze.com")) {
+        for (host in listOf("maps.google.com", "google.com", "www.google.co.il", "maps.google.co.il", "waze.com", "www.waze.com")) {
             val path = if (host.contains("waze")) "/ul?ll=32.0839,34.7983" else "/maps?q=32.0839,34.7983"
             assertTrue(host, SharedPlace.parse("https://$host$path") is SharedPlace.Point)
         }
@@ -54,6 +67,21 @@ class SharedInputSecurityTest {
         val t = SharedPlace.parse("geo:0,0?q=${rlo}דיזנגוף 50 תל אביב")
         assertTrue(t is SharedPlace.Text)
         assertFalse((t as SharedPlace.Text).query.any { it in '\u202A'..'\u202E' || it in '\u2066'..'\u2069' })
+    }
+
+    /** Every control the filter names, raw and percent-encoded; LRM / RLM stay (Hebrew text carries them). */
+    @Test fun each_bidi_control_is_dropped_raw_and_encoded() {
+        for (c in listOf('\u061C', '\u202A', '\u202B', '\u202C', '\u202D', '\u202E', '\u2066', '\u2067', '\u2068', '\u2069')) {
+            val hex = String(Character.toChars(c.code)).toByteArray(Charsets.UTF_8).joinToString("") { "%%%02X".format(it) }
+            val raw = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(A${c}B)") as SharedPlace.Point
+            assertEquals("U+%04X raw".format(c.code), "AB", raw.label)
+            val enc = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(A${hex}B)") as SharedPlace.Point
+            assertEquals("U+%04X encoded".format(c.code), "AB", enc.label)
+            assertEquals("AB", SharedPlace.stripBidi("A${c}B"))
+        }
+        assertEquals("A\u200EB\u200F", SharedPlace.stripBidi("A\u200EB\u200F"))
+        val kept = SharedPlace.parse("geo:0,0?q=32.0839,34.7983(A%E2%80%8EB)") as SharedPlace.Point
+        assertEquals("A\u200EB", kept.label)
     }
 
     @Test fun markup_and_sql_stay_plain_text_of_bounded_length() {

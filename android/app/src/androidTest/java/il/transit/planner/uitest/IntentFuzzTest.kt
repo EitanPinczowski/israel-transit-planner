@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.MissedIt
 import il.transit.core.remind.Reminder
@@ -188,6 +189,9 @@ class IntentFuzzTest {
         for ((lat, lon) in listOf(999.0 to 999.0, Double.NaN to 34.79, 0.0 to 0.0, 48.85 to 2.35, Double.POSITIVE_INFINITY to 34.8)) {
             case("missed it at $lat,$lon", check = refused) { c -> missed(c, lat, lon) }
         }
+        // The destination's name from another app: cut, and no bidi control that could reorder the banner.
+        val named = MissedItAction.intent(d0(), MissedIt.Target("Tel\u202EAviv" + "x".repeat(10_000), tel))
+        assertEquals("TelAviv" + "x".repeat(112), MissedItAction.target(named)?.name)
         case("missed it, lat as a string", check = refused) { c -> missed(c, 32.0, 34.0).putExtra("missed_it_lat", "32.08") }
         // A reminder the user set must outlive a broken "missed it" from another app.
         AppDriver(compose).use { d ->
@@ -214,6 +218,8 @@ class IntentFuzzTest {
         case("shortcut to an unknown place", check = refused) { c -> main(c).putExtra(Shortcuts.EXTRA_PLACE, "x".repeat(100_000)) }
         case("shortcut with an unknown name", check = refused) { c -> main(c).putExtra(Shortcuts.EXTRA_SHORTCUT, "../../evil") }
     }
+
+    private fun d0() = InstrumentationRegistry.getInstrumentation().targetContext
 
     private val AppDriver.ui get() = vm.state.value
 

@@ -17,6 +17,7 @@ import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import il.transit.core.geo.LatLon
 import il.transit.core.plan.MissedIt
+import il.transit.core.present.SharedPlace
 import il.transit.core.search.PlaceSearch
 import il.transit.planner.MainActivity
 import il.transit.planner.R
@@ -65,7 +66,7 @@ object MissedItAction {
         val lon = intent.getDoubleExtra(EXTRA_LON, Double.NaN)
         // MainActivity is exported: a destination outside Israel (or NaN, 999) is refused before any request (T6).
         if (!PlaceSearch.inIsrael(LatLon(lat, lon))) return null
-        val name = intent.getStringExtra(EXTRA_NAME)?.take(MAX_NAME)
+        val name = intent.getStringExtra(EXTRA_NAME)?.take(MAX_NAME)?.let(SharedPlace::stripBidi)
         return MissedIt.Target(name, LatLon(lat, lon), intent.getBooleanExtra(EXTRA_ARRIVE_BY, false))
     }
 

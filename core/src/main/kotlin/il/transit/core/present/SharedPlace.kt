@@ -35,10 +35,13 @@ sealed interface SharedPlace {
          * Longest shared text we read (Phase 11 T6): parsing runs on the main thread, and an address
          * search over a megabyte would hang it. A message with an address is far shorter.
          */
-        const val MAX_SHARED = 2_000
+        const val MAX_SHARED = 4_000
 
-        /** Bidi controls (LRE…RLO, LRI…PDI): a label or query must not reorder the text around it on screen. */
-        private val BIDI = Regex("[\u202A-\u202E\u2066-\u2069]")
+        /**
+         * Bidi controls (ALM, LRE…RLO, LRI…PDI): a label or query must not reorder the text around it on screen.
+         * LRM / RLM (U+200E/U+200F) stay: Hebrew text carries them for its own punctuation, and they reorder nothing else.
+         */
+        private val BIDI = Regex("[\u061C\u202A-\u202E\u2066-\u2069]")
 
         // `*`, not `+`: a bare "geo:" is a broken link (Unreadable), never words to search (T6).
         private val URL = Regex("""(?i)\b((?:https?://|geo:)[^\s<>"]*)""")
@@ -46,8 +49,17 @@ sealed interface SharedPlace {
         private val ONLY_COORDS = Regex("""^\s*-?\d{1,3}(?:\.\d+)?\s*,\s*-?\d{1,3}(?:\.\d+)?\s*(?:\(.*\))?\s*$""")
         private val SHORT_HOSTS = listOf("maps.app.goo.gl", "goo.gl", "g.co", "waze.to")
 
-        // google.com, google.co.il, google.com.au, google.de: Google's own country domains, not "google.com.evil.example" (T6).
-        private val MAP_HOSTS = Regex("""(?i)^(?:www\.|maps\.)?(?:google\.(?:com|co)(?:\.[a-z]{2})?|google\.[a-z]{2}|waze\.com)$""")
+        /** The map hosts we read, exactly (T6): no pattern, so no "google.com.evil.example"; short links are [SHORT_HOSTS]. */
+        private val MAP_HOSTS = setOf(
+            "google.com",
+            "www.google.com",
+            "maps.google.com",
+            "google.co.il",
+            "www.google.co.il",
+            "maps.google.co.il",
+            "waze.com",
+            "www.waze.com",
+        )
 
         /** Street words (also after ב/ל/ה/מ): where the address starts in a sentence. */
         private val STREET = Regex("""(?i)(?<![\p{L}])[בלהמ]?(רחוב|רח['׳]|שדרות|שד['׳]|דרך|כיכר|סמטת|סמטה)\s""")
@@ -88,7 +100,7 @@ sealed interface SharedPlace {
             val host = afterScheme.substringBefore('/').substringBefore('?').substringBefore('#').lowercase()
             val path = afterScheme.removePrefix(afterScheme.substringBefore('/').substringBefore('?'))
             if (host in SHORT_HOSTS) return ShortLink
-            if (!MAP_HOSTS.matches(host)) return null
+            if (host !in MAP_HOSTS) return null
             val google = host.contains("google")
             if (google && !(host.startsWith("maps.") || path.startsWith("/maps"))) return null
             val query = params(path.substringAfter('?', ""))
@@ -148,6 +160,9 @@ sealed interface SharedPlace {
                 val k = kv.substringBefore('=', "")
                 if (k.isEmpty()) null else k.lowercase() to decode(kv.substringAfter('='))
             }.toMap()
+
+        /** [s] without bidi controls: for any name another app hands us (also the "missed it" destination's). */
+        fun stripBidi(s: String): String = BIDI.replace(s, "")
 
         /** Percent-decoded, and bidi controls sent encoded (%E2%80%AE) dropped as well. */
         private fun decode(s: String): String = BIDI.replace(runCatching { URLDecoder.decode(s, "UTF-8") }.getOrDefault(s), "")
