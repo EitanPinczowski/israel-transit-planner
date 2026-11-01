@@ -101,7 +101,7 @@ class SpeechTest {
     }
 
     @Test
-    fun `one stop, two stops: the plural forms of each language`() {
+    fun `one stop and two stops take the plural forms of each language`() {
         val one = leg("BUS", stop("a"), stop("b"), at("2026-10-05T05:10:00Z"), at("2026-10-05T05:12:00Z")).copy(routeShortName = "5א")
         assertEquals("Bus 5א, 8:10 to 8:12, 1 stop, get off at b", Speech.leg(one).render(en::say))
         assertEquals("אוטובוס קו 5א, מ־8:10 עד 8:12, תחנה אחת, ירידה בb", Speech.leg(one).render(he::say))
@@ -176,7 +176,7 @@ class SpeechTest {
     }
 
     @Test
-    fun `every kind has a name: a line name, the kind alone, a train number without its town`() {
+    fun `every kind has a name, a line name, the kind alone or a train number without its town`() {
         val c = LegChip(LegKind.OTHER, "F1", 12, false, "#000000")
         assertEquals("Line F1, 12 minutes", Speech.chip(c).render(en::say))
         assertEquals("Public transport, 12 minutes", Speech.chip(c.copy(label = null)).render(en::say))
