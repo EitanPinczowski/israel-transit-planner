@@ -229,6 +229,27 @@ adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION
 adb shell am force-stop "$PKG"
 echo "::endgroup::"
 
+# F5: the real Quick Settings tile, tapped through System UI (`cmd statusbar click-tile`, API 29+). Its
+# trip home must reach the app through the non-exported alias and open (Settings with no Home, or the trip).
+echo "::group::quick settings tile"
+TILE=$PKG/il.transit.planner.tile.NextTripTile
+lc
+adb shell cmd statusbar add-tile "$TILE" >/dev/null 2>&1
+sleep 3
+adb shell cmd statusbar click-tile "$TILE"
+tile=""
+for _ in $(seq 1 30); do
+  tile=$(adb logcat -d -s SystemProbe:I | tr -d '\r' | grep -o "tile-open .*" | tail -1)
+  [[ -n $tile ]] && break
+  sleep 1
+done
+echo "$tile"
+[[ $tile == "tile-open alias=true opened=true" ]] || fail "tile: a tap did not open the trip home through the alias: '$tile'"
+adb shell cmd statusbar remove-tile "$TILE" >/dev/null 2>&1 || true
+adb shell cmd statusbar collapse >/dev/null 2>&1 || true
+adb shell am force-stop "$PKG"
+echo "::endgroup::"
+
 adb pull "/sdcard/Android/data/$PKG/files/ui" "$OUT/" >/dev/null 2>&1 || true
 adb logcat -d > "$OUT/logcat.txt" || true
 adb logcat -d -b crash >> "$OUT/crash.txt" || true

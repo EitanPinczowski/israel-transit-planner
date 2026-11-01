@@ -1,5 +1,6 @@
 package il.transit.planner
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 
@@ -18,6 +19,6 @@ object OwnIntents {
     /** An explicit intent to the alias, for a PendingIntent or a shortcut. */
     fun to(context: Context): Intent = Intent().setClassName(context, ALIAS)
 
-    /** True only for an intent Android delivered through the alias. */
-    fun isOurs(intent: Intent?): Boolean = intent?.component?.className == ALIAS
+    /** True only for an intent Android delivered through the alias: this package and the alias, both. */
+    fun isOurs(context: Context, intent: Intent?): Boolean = intent?.component == ComponentName(context, ALIAS)
 }

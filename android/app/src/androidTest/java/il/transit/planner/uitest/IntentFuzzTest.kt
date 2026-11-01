@@ -18,9 +18,12 @@ import il.transit.planner.OwnIntents
 import il.transit.planner.UiTestApp
 import il.transit.planner.remind.MissedItAction
 import il.transit.planner.remind.Notifications
+import il.transit.planner.ride.RideService
 import il.transit.planner.tile.NextTripTile
+import il.transit.planner.ui.Field
 import il.transit.planner.ui.PlaceRef
 import il.transit.planner.ui.Shortcuts
+import il.transit.planner.ui.Suggestion
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -244,10 +247,13 @@ class IntentFuzzTest {
         case("public: trip home", check = nothing) { c -> public(c, NextTripTile.tripHomeIntent(c)) }
         case("public: open settings", check = nothing) { c -> main(c).setAction(Notifications.EXTRA_OPEN_SETTINGS).putExtra(Notifications.EXTRA_OPEN_SETTINGS, true) }
         case("public: start ride", check = nothing) { c -> main(c).setAction(Notifications.EXTRA_START_RIDE).putExtra(Notifications.EXTRA_START_RIDE, true) }
+        case("public: shortcut to my lines", check = { d -> nothing(d); assertFalse("my lines opened", d.ui.showFavorites) }) { c ->
+            main(c).setAction(Intent.ACTION_VIEW).putExtra(Shortcuts.EXTRA_SHORTCUT, Shortcuts.LINES)
+        }
         case("public: shortcut to a saved place", check = nothing) { c ->
             main(c).setAction(Intent.ACTION_VIEW).putExtra(Shortcuts.EXTRA_PLACE, UiTestApp.TEL_AVIV.name)
         }
-        assertFalse("no ride from another app", il.transit.planner.ride.RideService.active.value)
+        assertFalse("no ride from another app", RideService.active.value)
 
         // The legit path: the same extras through the alias.
         AppDriver(compose).use { d ->
@@ -265,6 +271,10 @@ class IntentFuzzTest {
             compose.waitUntil(15_000) { d.ui.showSettings }
         }
         AppDriver(compose).use { d ->
+            d.launch(OwnIntents.to(d.inst.targetContext).setAction(Intent.ACTION_VIEW).putExtra(Shortcuts.EXTRA_SHORTCUT, Shortcuts.LINES))
+            compose.waitUntil(15_000) { d.ui.showFavorites }
+        }
+        AppDriver(compose).use { d ->
             d.launch(OwnIntents.to(d.inst.targetContext).setAction(Intent.ACTION_VIEW).putExtra(Shortcuts.EXTRA_PLACE, UiTestApp.TEL_AVIV.name))
             compose.waitUntil(15_000) { (d.ui.to as? PlaceRef.Point)?.name == UiTestApp.TEL_AVIV.name }
         }
@@ -273,6 +283,41 @@ class IntentFuzzTest {
             assertEquals(null, d.ui.missedIt)
             checkNotNull(MissedItAction.action(d.app, target).actionIntent).send()
             compose.waitUntil(15_000) { d.ui.missedIt != null }
+        }
+    }
+
+    /**
+     * "Start trip" with a real reminder waiting (its itinerary planned in the app): from another app it
+     * starts nothing and the reminder stays; through the alias it starts the ride and uses the reminder up.
+     * Both sent to the open Activity (onNewIntent), as a tap with the app running does.
+     */
+    @Test fun start_ride_only_through_the_alias() = AppDriver(compose).launch().use { d ->
+        val (from, to) = UiTestApp.BGU to UiTestApp.TEL_AVIV
+        d.onMain { vm ->
+            vm.startEditing(Field.FROM)
+            vm.pick(Suggestion(from.name, null, from.latLon, saved = true, isStop = false))
+            vm.startEditing(Field.TO)
+            vm.pick(Suggestion(to.name, null, to.latLon, saved = true, isStop = false))
+        }
+        compose.waitUntil(15_000) { d.ui.results != null && !d.ui.loading }
+        val itinerary = d.ui.options.first { it.firstTransitLeg != null }
+        val r = checkNotNull(Reminder.from(itinerary, from.latLon, to.latLon, UserSettings(), from.name, to.name))
+        runBlocking { d.app.store.setReminder(r) }
+        val ctx = d.inst.targetContext
+        val start = { i: Intent -> ctx.startActivity(i.setAction(Notifications.EXTRA_START_RIDE).putExtra(Notifications.EXTRA_START_RIDE, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        try {
+            start(main(ctx))
+            SystemClock.sleep(2_000)
+            compose.waitForIdle()
+            assertEquals("the reminder is still there", r, d.reminder())
+            assertFalse("no ride from another app", RideService.active.value)
+
+            start(OwnIntents.to(ctx))
+            compose.waitUntil(15_000) { d.reminder() == null }
+            Log.i(TAG, "alias: start ride -> reminder used, ride active=${RideService.active.value}")
+        } finally {
+            d.onMain { it.stopRide() }
+            runBlocking { d.app.store.setReminder(null) }
         }
     }
 

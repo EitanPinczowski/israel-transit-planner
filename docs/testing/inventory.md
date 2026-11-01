@@ -65,6 +65,7 @@ journey named below (`ClassName#test`) must exist, and every journey test in `an
 |---|---|---|---|---|---|---|
 | Saved places and trips, one-tap re-plan | `UserJsonTest`, `UserJsonPropertyTest`, `UserDataMigrationTest` | `SavedUiTest` | `s02_home_saved`, `s18_save_trip_dialog` | `JourneysTest#j10_save_trip_then_one_tap_then_delete` | GAP | BB |
 | Routines on saved places, Home / Work | `RoutineTest` | `TripHomeViewModelTest` | `s02_home_saved` | GAP | GAP | BB |
+| Launcher shortcuts (My lines, saved places) | GAP | GAP | GAP | `JourneysTest#j18_shortcuts_open_through_the_alias` | GAP | BB |
 | Offline: last results with an "offline" banner | `TripCacheUpgradeTest`, `CacheLookupTest` | `TripStateTest` | `s06_trip_network_error`, `s07_trip_offline_banner` | `JourneysTest#j08_no_signal_shows_saved_results_then_retry_works` | `trip_search` | BB |
 | Search and chosen trip kept across process death | `TabCacheTest` | `RestoreTabsStateTest`, `SavedUiTest` | GAP | `SystemJourneysTest#mid_flow_rotation`, `SystemJourneysTest#mid_flow_language` | GAP | BB |
 | Settings: language, theme, first-run tour | `AppearanceTest` | `AppStateTest` | `LookShotsTest` | `SystemJourneysTest#mid_flow_theme`, `SystemJourneysTest#mid_flow_language` | GAP | BB |
@@ -83,7 +84,7 @@ journey named below (`ClassName#test`) must exist, and every journey test in `an
 | "I missed it" re-plan from GPS | `MissedItTest` | `MissedItStateTest` | `MissedItShotsTest` | `JourneysTest#j16_missed_it_from_ride_notification`, `JourneysTest#j17_missed_it_from_a_killed_app` | `missed_it` | BB |
 | Last trip home alert | `LastTripHomeTest` | GAP | `AlertsShotsTest` | GAP | GAP | BB |
 | Night refresh (Wi-Fi + charging) | `NightRefreshTest` | GAP | `NightRefreshShotsTest` | GAP | GAP | BB |
-| Quick Settings tile | GAP | GAP | `TileShotsTest` | GAP | GAP | BB |
+| Quick Settings tile | GAP | GAP | `TileShotsTest` | system job: the real tile tapped (`ui_system_run.sh`, API 34) | GAP | BB |
 | Rav-Kav pass-expiry reminder | `PassExpiryTest` | GAP | `ReminderCheckShotsTest` | `SystemJourneysTest#arm_trip_state` | GAP | BB |
 | Airplane mode, Doze, reboot | GAP | GAP | GAP | `SystemJourneysTest#airplane_mode` | GAP | BB |
 | Clock skew | GAP | GAP | GAP | `ChaosJourneysTest#clock_skew` | GAP | BB |

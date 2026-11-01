@@ -21,6 +21,8 @@ Use the **signed APK from the GitHub release**, never a debug or CI build (a dif
 - [ ] Settings: change a walking limit, the traffic factor, the fare profile; the "Pay with…" button opens a payment app or its store page.
 - [ ] Monthly report (needs a finished month in History): the share sheet shows a CSV and the summary.
 - [ ] Crash log: Settings → Crash log is empty after all of the above, or its entries are explained.
+- [ ] Long-press the app icon: "My lines" and a saved place open their screens. Pin one to the home screen and tap it. A pinned place that is no longer offered (fewer saved places) shows as unavailable, not a wrong trip.
+- [ ] Quick Settings tile "Home": add it, tap it (once unlocked, once on the lock screen): the trip home opens. CI taps the tile only on Android 14 (`cmd statusbar click-tile` doesn't exist on 8.0), so try it on the oldest phone you have.
 
 ## 3. Hebrew and English, dark mode
 - [ ] Settings → language: עברית, then English, then System. Nothing is cut off, mirrored wrongly or left in the other language; times and prices read left to right inside Hebrew text.

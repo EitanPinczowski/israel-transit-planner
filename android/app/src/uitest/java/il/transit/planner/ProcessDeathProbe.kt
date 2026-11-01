@@ -2,6 +2,7 @@ package il.transit.planner
 
 import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
@@ -15,6 +16,7 @@ import il.transit.core.present.LegPalette
 import il.transit.core.user.SavedPlace
 import il.transit.planner.remind.MissedItAction
 import il.transit.planner.ride.RideService
+import il.transit.planner.tile.NextTripTile
 import il.transit.planner.ui.AppMode
 import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainViewModel
@@ -44,7 +46,8 @@ import kotlinx.coroutines.withTimeoutOrNull
  *    permission under it; after the restart `ride-after …` says what is left.
  * Phase 11 F5 adds [EXTRA_MISSED]: the probe taps "Missed it?" the way the notification does, by
  * sending the action's own PendingIntent (the shell can't reach the non-exported alias), and logs
- * `missed-it …` under [SYSTEM_TAG].
+ * `missed-it …` under [SYSTEM_TAG]. Any MainActivity opened (or handed a new intent) with the tile's
+ * trip-home extra logs `tile-open alias=… opened=…` 3 s later: the system job taps the real tile.
  * uitest build only; tag [TAG].
  */
 object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
@@ -65,6 +68,8 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         if (activity !is MainActivity) return
+        if (activity.intent.hasExtra(NextTripTile.EXTRA_TRIP_HOME)) tileOpened(activity, activity.intent)
+        activity.addOnNewIntentListener { i -> if (i.hasExtra(NextTripTile.EXTRA_TRIP_HOME)) tileOpened(activity, i) }
         fromSaved = savedInstanceState != null
         tab = if (fromSaved) null else activity.intent.getStringExtra(EXTRA_TAB)
         ride = !fromSaved && activity.intent.getBooleanExtra(EXTRA_RIDE, false)
@@ -214,6 +219,15 @@ object ProcessDeathProbe : Application.ActivityLifecycleCallbacks {
                 .orEmpty()
         }
         Log.i(SYSTEM_TAG, "ride-after active=${RideService.active.value} ongoing=${ongoing.size} title=$text")
+    }
+
+    /** F5: the tile's trip home arrived through the alias and opened Settings (no Home) or the trip home. */
+    private fun tileOpened(main: MainActivity, intent: Intent) {
+        main.lifecycleScope.launch {
+            delay(3_000)
+            val s = ViewModelProvider(main)[MainViewModel::class.java].state.value
+            Log.i(SYSTEM_TAG, "tile-open alias=${OwnIntents.isOurs(main, intent)} opened=${s.showSettings || s.to != null}")
+        }
     }
 
     /** F5: "Missed it?" tapped through the notification action's own PendingIntent (Tel Aviv, depart now). */

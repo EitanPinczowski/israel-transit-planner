@@ -101,14 +101,17 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
   launcher shortcuts (`Shortcuts`) build their intent with `OwnIntents.to(context)`: the
   `<activity-alias android:name=".ActionEntry" android:exported="false">` of `MainActivity`.
   Only this app's own PendingIntents and shortcuts can start it; the shell and other apps are refused.
-- `MainActivity.ownActions` reads those extras only when `OwnIntents.isOurs(intent)` (the intent's
-  component is the alias). The same extras sent to the exported `MainActivity` do nothing.
+- `MainActivity.ownActions` reads those extras only when `OwnIntents.isOurs(context, intent)` (the
+  intent's full component, package and class, is the alias). `Shortcuts.update` disables a pinned
+  shortcut it no longer publishes (it would keep its old target) and re-enables it when it comes back. The same extras sent to the exported `MainActivity` do nothing.
   `MainActivity` stays exported only for the launcher and SEND/VIEW shares; `NextTripTile` stays
   exported behind `BIND_QUICK_SETTINGS_TILE`; `BootReceiver` behind protected broadcasts; the
   other receivers, `RideService` and the FileProvider are not exported.
 - A new action: build it with `OwnIntents.to`, read it in `ownActions`. Never read an action extra
-  outside that function. Tests: `IntentFuzzTest.own_actions_only_through_the_alias`, and
-  `tools/ui_intent_fuzz.sh` checks the shell is refused at the alias.
+  outside that function. Tests: `IntentFuzzTest.own_actions_only_through_the_alias` and
+  `start_ride_only_through_the_alias`, `JourneysTest#j18` (the published shortcuts), the system job's
+  real tile tap (`cmd statusbar click-tile`, API 34), and `tools/ui_intent_fuzz.sh` (the shell is
+  refused at the alias).
 - `MainViewModel.missedIt(target, fixes)` → core `plan/MissedIt` (tested, `MissedItTest`,
   `MissedItStateTest`): the last fix (map or platform GPS/network/fused, read on the tap only) if
   ≤ 2 min old and ≤ 100 m accuracy, else waits ≤ 10 s for one, else the Trip tab with From focused

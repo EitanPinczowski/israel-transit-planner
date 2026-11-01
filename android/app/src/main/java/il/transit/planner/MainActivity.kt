@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
      * (Phase 11 F5), so another app can't start a ride or a plan from the phone's location.
      */
     private fun ownActions(intent: Intent) {
-        if (!OwnIntents.isOurs(intent)) return
+        if (!OwnIntents.isOurs(this, intent)) return
         if (intent.hasExtra(Shortcuts.EXTRA_SHORTCUT) || intent.hasExtra(Shortcuts.EXTRA_PLACE)) pendingShortcut = intent
         // The Quick Settings tile (C4), and C5's alert: the trip home, planned once the store is read.
         if (intent.getBooleanExtra(NextTripTile.EXTRA_TRIP_HOME, false)) vm.openTripHome()

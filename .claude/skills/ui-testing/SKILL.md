@@ -178,6 +178,8 @@ is a finding (`::notice::finding:` + the job summary).
   has the probe send the "Missed it" action's own PendingIntent (the notification died with the process,
   and the shell can't reach the non-exported alias, F5): without the location permission it must ask for
   the start (`kind=NEED_START editing=FROM`) with 0 requests.
+- *Quick Settings tile* (F5): `cmd statusbar add-tile` + `click-tile` taps the real tile; the probe logs
+  `tile-open alias=true opened=true` (the trip home came through the alias and opened). API 29+ only.
 
 **Nightly** (`nightly-ui.yml`, 01:47 Israel winter time, only when `main` changed since the last good
 run; a failure comments on the open issue "nightly"; `ui_chaos_run.sh chaos|monkey`, API 35, root):
