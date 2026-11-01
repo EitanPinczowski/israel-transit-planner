@@ -102,29 +102,51 @@ nets=$(adb shell dumpsys connectivity | tr -d '\r' | grep -cE "NetworkAgentInfo.
 [[ $nets -eq 0 ]] || fail "a network came up during the smoke ($nets); the monkey may have toggled it"
 
 # --- 3. startup time ------------------------------------------------------------------------------------------------------
-echo "::group::cold start x10"
-: > "$OUT/startup.txt"
-for i in $(seq 1 10); do
-  adb shell am force-stop "$PKG"; sleep 2
-  adb shell am start -W -n "$ACT" | tr -d '\r' | sed -n 's/^TotalTime: *//p' | tee -a "$OUT/startup.txt"
-  sleep 3
-done
+# The same code measured 631 ms on one CI runner and 930 ms on another (first two runs, T8): runner speed alone is a 47 % swing, more than
+# the 25 % the gate allows. So every run also times the phone's own Settings app cold, ten times, and the gate compares the RATIO
+# (app / Settings) with the baseline's ratio. Without `reference_ms` in the baseline it falls back to the absolute median.
+cold_starts() { # $1 = component, $2 = out file
+  : > "$2"
+  for i in $(seq 1 10); do
+    adb shell am force-stop "$PKG"; adb shell am force-stop com.android.settings; sleep 2
+    adb shell am start -W -n "$1" | tr -d '\r' | sed -n 's/^TotalTime: *//p' | tee -a "$2"
+    sleep 3
+  done
+}
+echo "::group::cold start x10 (the app)"
+cold_starts "$ACT" "$OUT/startup.txt"
 echo "::endgroup::"
-verdict=$(python3 -I - "$OUT/startup.txt" "$ROOT/startup-baseline.json" <<'PY'
+echo "::group::cold start x10 (reference: Settings)"
+cold_starts com.android.settings/.Settings "$OUT/startup-reference.txt"
+adb shell am force-stop com.android.settings
+echo "::endgroup::"
+verdict=$(python3 -I - "$OUT/startup.txt" "$OUT/startup-reference.txt" "$ROOT/startup-baseline.json" <<'PY'
 import json, statistics, sys
-times = [int(l) for l in open(sys.argv[1]) if l.strip().isdigit()]
-base = json.load(open(sys.argv[2]))
+def load(p): return [int(l) for l in open(p) if l.strip().isdigit()]
+times, ref = load(sys.argv[1]), load(sys.argv[2])
+base = json.load(open(sys.argv[3]))
 if len(times) < 10:
     print(f"FAIL only {len(times)} of 10 cold starts were measured"); sys.exit()
 med = int(statistics.median(times))
-b = base.get("median_ms")
+rmed = int(statistics.median(ref)) if len(ref) >= 5 else 0
 tol = base.get("tolerance", 0.25)
-line = f"cold start median {med} ms (min {min(times)}, max {max(times)}), baseline {b} ms, limit {int(b * (1 + tol)) if b else 'none yet'}"
-print(("FAIL " if b and med > b * (1 + tol) else "OK ") + line)
+b, bref = base.get("median_ms"), base.get("reference_ms")
+line = f"cold start median {med} ms (min {min(times)}, max {max(times)}); Settings {rmed} ms; ratio {med / rmed:.3f}" if rmed else f"cold start median {med} ms"
+if b and bref and rmed:
+    limit = b / bref * (1 + tol)
+    bad = med / rmed > limit
+    line += f"; baseline ratio {b / bref:.3f} ({b}/{bref}), limit {limit:.3f}"
+elif b:
+    bad = med > b * (1 + tol)
+    line += f"; baseline {b} ms, limit {int(b * (1 + tol))} ms (absolute: no reference_ms yet)"
+else:
+    bad = False
+    line += "; no baseline yet"
+print(("FAIL " if bad else "OK ") + line)
 PY
 )
 echo "$verdict"
-{ echo "### Release APK smoke"; echo "$(grep -m1 "^package:" "$OUT/badging.txt")"; echo; echo "Startup: \`$verdict\`"; echo "TotalTime x10: $(tr '\n' ' ' < "$OUT/startup.txt")"; } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+{ echo "### Release APK smoke"; echo "$(grep -m1 "^package:" "$OUT/badging.txt")"; echo; echo "Startup: \`$verdict\`"; echo "TotalTime x10: $(tr '\n' ' ' < "$OUT/startup.txt")"; echo "Settings x10: $(tr '\n' ' ' < "$OUT/startup-reference.txt")"; } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
 [[ $verdict == OK* ]] || fail "$verdict"
 
 adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true

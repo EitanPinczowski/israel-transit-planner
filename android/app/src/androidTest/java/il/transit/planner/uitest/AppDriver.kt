@@ -54,8 +54,8 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     val inst = InstrumentationRegistry.getInstrumentation()
     val app = inst.targetContext.applicationContext as UiTestApp
     private var scenario: ActivityScenario<MainActivity>? = null
-    lateinit var activity: MainActivity
-        private set
+    private var activityRef: MainActivity? = null
+    val activity: MainActivity get() = checkNotNull(activityRef) { "the Activity is closed" }
 
     init {
         runBlocking { app.reset(places) }
@@ -67,7 +67,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     /** [intent]: start the Activity from it, as a notification tap on a killed app does (a fresh Activity and ViewModel). */
     fun launch(intent: android.content.Intent? = null): AppDriver {
         val s0 = if (intent != null) ActivityScenario.launch<MainActivity>(intent) else ActivityScenario.launch(MainActivity::class.java)
-        scenario = s0.also { s -> s.onActivity { activity = it } }
+        scenario = s0.also { s -> s.onActivity { activityRef = it } }
         compose.waitForIdle()
         return this
     }
@@ -81,7 +81,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
 
     /** Re-reads the Activity after a configuration change recreated it. */
     fun refreshActivity() {
-        scenario?.onActivity { activity = it }
+        scenario?.onActivity { activityRef = it }
     }
 
     val scenarioState get() = scenario?.state
@@ -243,6 +243,7 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
     override fun close() {
         scenario?.close()
         scenario = null
+        activityRef = null // the driver itself must not be what keeps the closed Activity alive
         if (detectLeaks) assertNoLeaks()
     }
 
@@ -252,8 +253,10 @@ class AppDriver(val compose: ComposeTestRule, places: List<SavedPlace> = UiTestA
      * failed, this error rides on it as a suppressed one (the original stays first).
      */
     private fun assertNoLeaks() {
-        val tag = "AppDriver:${Run.id}"
-        leakcanary.LeakAssertions.assertNoLeaks(tag)
+        // Android 15's InteractionJankMonitor holds the closed Activity's context in a message it runs ~2 s later (seen in
+        // the first CI run): give such framework hand-overs time to finish before the heap is looked at.
+        SystemClock.sleep(3_000)
+        leakcanary.LeakAssertions.assertNoLeaks("AppDriver:${Run.id}")
     }
 
     /** Set false by a test that holds the app open by design (none today). */
