@@ -336,7 +336,11 @@ class A11yJourneysTest {
         }
         var me = ""
         inst.runOnMainSync { me = "the test's activity: $activity task=${activity.taskId} state=${activity.lifecycle.currentState} finishing=${activity.isFinishing}" }
-        return "$me\n" + out.toString().take(6_000)
+        // The input dispatcher's view: windows in z-order with their touchable regions and flags, and its touch state.
+        val input = shell("dumpsys input").lines()
+            .filter { "name='" in it || "TouchState" in it || "touchedWindow" in it || "Pointers:" in it }
+            .take(30).joinToString("\n") { it.trim().take(400) }
+        return "$me\n" + out.toString().take(3_000) + "\ninput:\n" + input
     }
 
     /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
