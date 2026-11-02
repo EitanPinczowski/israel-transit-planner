@@ -116,8 +116,12 @@ class A11yJourneysTest {
             assertTrue("$lang: no leg chip on the selected card", chips > 0)
             d.selectedCardChecks(lang, buffer)
 
-            // Trip sheet: a tap on the first ride's chip.
-            val ride = itin.legs.indexOfFirst { it.isTransit }
+            // Trip sheet: a tap on the first ride's chip of the train option (its `trip` answer is recorded).
+            if (trainAt >= 0 && trainAt != i) {
+                d.onMain { it.select(trainAt) }
+                compose.waitForIdle()
+            }
+            val ride = d.ui.selectedItinerary!!.legs.indexOfFirst { it.isTransit }
             compose.onAllNodes(hasTestTag(legChipTag(ride)) and inCard and hasClickAction(), useUnmergedTree = true).onFirst().performClick()
             compose.waitUntil(10_000) { compose.onAllNodes(hasText(d.str(R.string.trip_board), substring = true), useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
             d.step("trip sheet", rtl)
