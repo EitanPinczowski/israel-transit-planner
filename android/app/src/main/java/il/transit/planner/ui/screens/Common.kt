@@ -188,6 +188,15 @@ internal fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit, m
     }
 }
 
+/**
+ * The phone's font is at least ×1.5 (Settings → Font size, largest steps): rows that put two texts side by
+ * side stack them instead, and one-line names may take two (F7). Shrinking the text is never the answer.
+ */
+@Composable
+internal fun largeFont(): Boolean = LocalDensity.current.fontScale >= LARGE_FONT
+
+internal const val LARGE_FONT = 1.5f
+
 @Composable
 internal fun PlaceRow(
     labelRes: Int,

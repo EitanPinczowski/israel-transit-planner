@@ -229,7 +229,8 @@ internal fun StopPanel(
         SheetHeader(collapsed, onCollapse) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(sheet.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    // F7: two lines at large fonts; TalkBack reads the whole name either way.
+                    Text(sheet.name, style = MaterialTheme.typography.titleMedium, maxLines = if (largeFont()) 2 else 1, overflow = TextOverflow.Ellipsis)
                     PlatformLine(sheet.platform)
                     Text(stringResource(R.string.departures), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
@@ -285,26 +286,38 @@ internal fun DepartureView(r: DepartureRow) {
 
 @Composable
 private fun DepartureLine(r: DepartureRow) {
-    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            Modifier.background(parseColor(r.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
-        ) { Text(r.line.ifBlank { kindName(r.kind) }, style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(r.color))) }
-        Spacer(Modifier.width(10.dp))
-        Text(r.headsign, Modifier.weight(1f).padding(end = 8.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
-        val status = when {
-            r.cancelled -> stringResource(R.string.cancelled)
-            r.delayMin == null -> ""
-            r.delayMin!! > 0 -> stringResource(R.string.late, r.delayMin!!)
-            else -> stringResource(R.string.on_time)
+    // F7: at large fonts the headsign gets its own line under the badge and time, up to two lines, instead of
+    // the word or two left between them. The row's own words (Speech.departure) always carry the whole headsign.
+    val large = largeFont()
+    Column(Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier.background(parseColor(r.color), MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
+            ) { Text(r.line.ifBlank { kindName(r.kind) }, style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(r.color))) }
+            Spacer(Modifier.width(10.dp))
+            if (large) {
+                Spacer(Modifier.weight(1f))
+            } else {
+                Text(r.headsign, Modifier.weight(1f).padding(end = 8.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            val status = when {
+                r.cancelled -> stringResource(R.string.cancelled)
+                r.delayMin == null -> ""
+                r.delayMin!! > 0 -> stringResource(R.string.late, r.delayMin!!)
+                else -> stringResource(R.string.on_time)
+            }
+            if (status.isNotEmpty()) {
+                Text(
+                    status,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (r.cancelled || (r.delayMin ?: 0) > 2) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                )
+                Spacer(Modifier.width(8.dp))
+            }
+            Text(r.time, style = MaterialTheme.typography.titleSmall)
         }
-        if (status.isNotEmpty()) {
-            Text(
-                status,
-                style = MaterialTheme.typography.labelSmall,
-                color = if (r.cancelled || (r.delayMin ?: 0) > 2) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            )
-            Spacer(Modifier.width(8.dp))
+        if (large && r.headsign.isNotBlank()) {
+            Text(r.headsign, Modifier.padding(top = 2.dp), maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
-        Text(r.time, style = MaterialTheme.typography.titleSmall)
     }
 }

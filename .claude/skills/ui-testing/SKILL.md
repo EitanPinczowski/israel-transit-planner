@@ -346,5 +346,5 @@ on the Pixel in Hebrew (owner decision 8).
 - **Known ATF errors** (`Atf.KNOWN`: check + test tag + reason): reported as warnings, never blocking, and
   only inside that tagged node. Today one: `EditableContentDescCheck` in Material 3's `TimeInput`
   (`DayTags.TIME_INPUT`). Each ATF finding prints the Compose node(s) at its bounds (`compose: #id {…}`).
-- **Fonts:** `PanelsTest` has a third variant, `he_dark_font2` (Nexus 5, 360×640 dp, font ×2.0, Hebrew, dark).
+- **Fonts:** `PanelsTest` has two font ×2.0 variants on a Nexus 5 (360×640 dp): `he_dark_font2` (E5) and `en_light_font2` (F7).
 - R3 and R4 stay report-only: they still have findings after E5 (the PR lists them).
