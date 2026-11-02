@@ -8,6 +8,8 @@ import il.transit.core.plan.ChainResult
 import il.transit.core.plan.ChainStop
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripResult
+import il.transit.core.search.MatchLevel
+import il.transit.core.search.MatchNote
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -48,7 +50,7 @@ class SavedUiTest {
         val answers = listOf(
             Suggestion("שדרות רגר", "באר שבע", LatLon(31.25, 34.79), saved = false, isStop = false),
             Suggestion("רגר/יצחק", null, LatLon(31.251, 34.791), saved = false, isStop = true, backup = true),
-            Suggestion("הרצל", "באר שבע", LatLon(31.24, 34.79), saved = false, isStop = false, closest = true, match = il.transit.core.search.MatchNote(il.transit.core.search.MatchLevel.STREET, "12")),
+            Suggestion("הרצל", "באר שבע", LatLon(31.24, 34.79), saved = false, isStop = false, closest = true, match = MatchNote(MatchLevel.STREET, "12")),
             Suggestion("Home", null, LatLon(31.2, 34.8), saved = true, isStop = false, home = true),
             Suggestion("רמות", "באר שבע", LatLon(31.28, 34.81), saved = false, isStop = false, refine = "רמות, באר שבע"),
             Suggestion("47899", null, LatLon(31.24, 34.79), saved = false, isStop = true, stopId = "il-Israel-MOT_1"),

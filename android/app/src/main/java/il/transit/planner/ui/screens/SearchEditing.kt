@@ -23,16 +23,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
@@ -75,7 +75,13 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         value = state.query,
         onValueChange = vm::onQuery,
         modifier = modifier.focusRequester(focus)
-            .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus && user()) vm.cancelEditing() }
+            .onFocusChanged { f ->
+                if (f.isFocused) {
+                    hadFocus = true
+                } else if (hadFocus && user()) {
+                    vm.cancelEditing()
+                }
+            }
             // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
             // hook sees it before both, keyboard or not: one Back closes the search.

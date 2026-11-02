@@ -101,8 +101,13 @@ data class SavedSearch(
                 )
             }
             return SavedSearch(
-                field, get(QUERY) as? String ?: "", answers,
-                searchHint = flags and HINT != 0, backupShown = flags and BACKUP_SHOWN != 0, notFound = flags and NOT_FOUND != 0, offline = flags and OFFLINE != 0,
+                field = field,
+                query = get(QUERY) as? String ?: "",
+                answers = answers,
+                searchHint = flags and HINT != 0,
+                backupShown = flags and BACKUP_SHOWN != 0,
+                notFound = flags and NOT_FOUND != 0,
+                offline = flags and OFFLINE != 0,
             )
         }
     }
