@@ -338,10 +338,11 @@ on the Pixel in Hebrew (owner decision 8).
   the trip sheet, stop sheet and Settings, the first departure row equal to `Speech.departure` and its ☆
   label, the map `NO_HIDE_DESCENDANTS` + "Map: …" with results and `YES` without, a sighted long-press on the
   map still dropping a pin, and a landscape step with the keyboard up.
-- **Long-press on the map band (F6, `A11Y-MAP`):** the blocking check injects a touchscreen DOWN, 1.2 s, UP through
-  `UiAutomation.injectInputEvent` at screen coordinates (the input system's path, as a finger). `input swipe x y x y`
-  and the same press with a MOVE every 10 ms are report-only findings (`A11Y-MAP`, `A11Y-MAP-MOVES`), logged as
-  `A11yJourney: A11Y-MAP …`.
+- **Long-press on the map band (F6, `A11Y-MAP`):** a touchscreen long-press injected through `UiAutomation.injectInputEvent`
+  at screen coordinates is report-only: on the CI API 35 image **no injected touch reaches the app's window** (a Window.Callback
+  proxy saw nothing, not even a DOWN+CANCEL on the search card; touch exploration off, no accessibility service bound; runs
+  41437338188 / 41437345486). Not an app bug: the blocking check dispatches the long-press to the MapView itself, and a real
+  finger is the owner's Pixel check.
 - **Known ATF errors** (`Atf.KNOWN`: check + test tag + reason): reported as warnings, never blocking, and
   only inside that tagged node. Today one: `EditableContentDescCheck` in Material 3's `TimeInput`
   (`DayTags.TIME_INPUT`). Each ATF finding prints the Compose node(s) at its bounds (`compose: #id {…}`).

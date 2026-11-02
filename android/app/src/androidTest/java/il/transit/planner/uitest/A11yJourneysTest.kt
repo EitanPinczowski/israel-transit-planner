@@ -21,7 +21,6 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
@@ -271,64 +270,41 @@ class A11yJourneysTest {
         val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
         val x = ((top.left + top.right) / 2).toInt()
         val y = ((top.bottom + bottom.top) / 2).toInt()
-        // F6 (A11Y-MAP): the same point on the screen. A finger's long-press there goes InputDispatcher -> our window ->
-        // Compose -> the AndroidView -> MapView; [injectLongPress] sends exactly that path (a DOWN, held 1.2 s, an UP) at
-        // screen coordinates, and must drop a pin: blocking.
+        // F6 (A11Y-MAP): a long-press at that point of the screen, injected through the input system (UiAutomation:
+        // InputDispatcher -> our window -> Compose -> the AndroidView -> MapView). Report-only: on the CI API 35 image
+        // no injected touch reaches our window anywhere (not even a DOWN+CANCEL on the search card; touch exploration
+        // off; runs 41437338188 / 41437345486). The evidence goes into the finding.
         val (sx, sy) = onScreen(x, y)
         val seen = watchMapTouches()
-        injectLongPress(sx, sy, moves = false)
-        val viaFinger = awaitPin()
-        // Control: a DOWN then CANCEL (no click) injected the same way on the search card. Does ANY injected touch reach
-        // our window, or only none in the map band? And is touch exploration on (a finger then arrives as hover)?
-        val bandSeen = seen.toList()
-        seen.clear()
-        val (tx, ty) = onScreen(((top.left + top.right) / 2).toInt(), ((top.top + top.bottom) / 2).toInt())
-        injectDownCancel(tx, ty)
-        SystemClock.sleep(300)
-        val controlSeen = seen.toList()
-        seen.clear()
-        var exploring = false
-        inst.runOnMainSync {
-            val am = activity.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
-            exploring = am.isTouchExplorationEnabled
-        }
-        val a11y = shell("dumpsys accessibility").lines().filter { "touchExploration" in it || "Bound services" in it || "Enabled services" in it }
-        val evidence = "band: [${bandSeen.joinToString()}]; control on the search card ($tx, $ty): [${controlSeen.joinToString()}]; " +
-            "touchExploration=$exploring ${a11y.take(6).joinToString(" | ") { it.trim().take(300) }}; " +
-            "top=$top bottom=$bottom; compose dialogs=" +
-            "${compose.onAllNodes(isDialog()).fetchSemanticsNodes().size} popups=${compose.onAllNodes(isPopup()).fetchSemanticsNodes().size}; " +
-            "our windows:\n" + ourWindows()
-        Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger $evidence")
-        if (!viaFinger) {
-            // The same press at the MapView's own centre, through the input system: is it the point or the path?
+        injectLongPress(sx, sy)
+        var viaScreen = awaitPin()
+        if (!viaScreen) {
+            val bandSeen = seen.toList()
             seen.clear()
-            val (cx, cy) = mapCentreOnScreen()
-            injectLongPress(cx, cy, moves = false)
-            val atCentre = awaitPin()
-            Log.i("A11yJourney", "A11Y-MAP $lang: at the MapView centre ($cx, $cy) pin=$atCentre MapView got [${seen.joinToString()}]")
-            onMain { it.closePin() }
-            unwatchMapTouches()
-            throw AssertionError("$lang: a long-press at screen ($sx, $sy), between the panels, dropped no pin (at the MapView centre ($cx, $cy): $atCentre). $evidence")
+            val (tx, ty) = onScreen(((top.left + top.right) / 2).toInt(), ((top.top + top.bottom) / 2).toInt())
+            injectDownCancel(tx, ty)
+            SystemClock.sleep(300)
+            var exploring = false
+            inst.runOnMainSync {
+                val am = activity.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
+                exploring = am.isTouchExplorationEnabled
+            }
+            val evidence = "window and MapView got [${bandSeen.joinToString()}]; a DOWN+CANCEL on the search card ($tx, $ty): " +
+                "[${seen.joinToString()}]; touchExploration=$exploring"
+            Log.i("A11yJourney", "A11Y-MAP $lang: no pin from an injected long-press at ($sx, $sy); $evidence")
+            Findings.expect(
+                "A11Y-MAP",
+                false,
+                "$lang: an injected long-press at ($sx, $sy), between the panels, dropped no pin on this emulator; $evidence. " +
+                    "Environment, not the app: no injected touch reaches the window on this image (F6: run 41437345486, job 125251099953)",
+            )
         }
         unwatchMapTouches()
-        onMain { it.closePin() }
-        compose.waitForIdle()
-        // What `input swipe x y x y 1200` sends instead: the same DOWN and UP with a MOVE every few ms in between.
-        // Report-only, to name what the shell probe below trips on.
-        injectLongPress(sx, sy, moves = true)
-        val viaMoves = awaitPin()
-        Log.i("A11yJourney", "A11Y-MAP $lang: with a MOVE stream pin=$viaMoves")
-        Findings.expect("A11Y-MAP-MOVES", viaMoves, "$lang: a long-press with a MOVE stream (as `input swipe` sends) at ($sx, $sy) dropped no pin")
-        onMain { it.closePin() }
-        compose.waitForIdle()
-        shell("input swipe $sx $sy $sx $sy 1200") // the shell's own long-press, report-only (E5's finding)
-        val viaScreen = awaitPin()
-        Log.i("A11yJourney", "A11Y-MAP $lang: shell input swipe pin=$viaScreen")
-        Findings.expect("A11Y-MAP", viaScreen, "$lang: `input swipe` at ($sx, $sy), between the panels, dropped no pin on this emulator")
-        // The hiding only changes what accessibility services see: the MapView itself must still take a long-press.
+        // The hiding only changes what accessibility services see: the MapView itself must still take a long-press. Blocking.
         if (!viaScreen) {
             longPressOn(mapView())
-            assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", awaitPin())
+            viaScreen = awaitPin()
+            assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", viaScreen)
         }
         onMain { it.closePin() }
         onMain { it.clearResults() }
@@ -340,24 +316,6 @@ class A11yJourneysTest {
         val until = SystemClock.uptimeMillis() + 10_000
         while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
         return ui.places.pin != null
-    }
-
-    /** `dumpsys window windows`, only the blocks of this app's windows (type, flags, frame, touchable region). */
-    private fun AppDriver.ourWindows(): String {
-        val out = StringBuilder()
-        var ours = false
-        for (line in shell("dumpsys window windows").lines()) {
-            if (line.trimStart().startsWith("Window #")) ours = "il.transit.planner" in line || "PopupWindow" in line
-            val keep = listOf("Window #", "mActivityRecord", "ty=", "Frames:", "isVisible", "mHasSurface", "mViewVisibility")
-            if (ours && keep.any { it in line }) out.append(line.trim().take(200)).append('\n')
-        }
-        var me = ""
-        inst.runOnMainSync { me = "the test's activity: $activity task=${activity.taskId} state=${activity.lifecycle.currentState} finishing=${activity.isFinishing}" }
-        // The input dispatcher's view: windows in z-order with their touchable regions and flags, and its touch state.
-        val wanted = listOf("name='", "TouchState", "touchedWindow", "Pointers:")
-        val lines = shell("dumpsys input").lines().filter { l -> wanted.any { it in l } }
-        val input = lines.take(30).joinToString("\n") { it.trim().take(400) }
-        return "$me\n" + out.toString().take(3_000) + "\ninput:\n" + input
     }
 
     /** A touch that starts and is cancelled: reaches the window like a finger, clicks nothing. */
@@ -372,7 +330,6 @@ class A11yJourneysTest {
         }
     }
 
-    /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
     private var realCallback: android.view.Window.Callback? = null
 
     /**
@@ -417,17 +374,6 @@ class A11yJourneysTest {
         }
     }
 
-    private fun AppDriver.mapCentreOnScreen(): Pair<Int, Int> {
-        val map = mapView()
-        val at = IntArray(2)
-        var size = 0 to 0
-        inst.runOnMainSync {
-            map.getLocationOnScreen(at)
-            size = map.width to map.height
-        }
-        return (at[0] + size.first / 2) to (at[1] + size.second / 2)
-    }
-
     /** A point of the window ([boundsInWindow]) on the screen, where the input system delivers a finger. */
     private fun AppDriver.onScreen(x: Int, y: Int): Pair<Int, Int> {
         val at = IntArray(2)
@@ -435,12 +381,8 @@ class A11yJourneysTest {
         return (x + at[0]) to (y + at[1])
     }
 
-    /**
-     * A touchscreen long-press injected through the input system (UiAutomation, as `input` does, but with no
-     * shell between): a DOWN, held 1.2 s, an UP. With [moves], a MOVE on the same point every 10 ms in between,
-     * as `input swipe x y x y 1200` sends.
-     */
-    private fun AppDriver.injectLongPress(x: Int, y: Int, moves: Boolean) {
+    /** A touchscreen long-press injected through the input system (UiAutomation, as `input` does): a DOWN, held 1.2 s, an UP. */
+    private fun AppDriver.injectLongPress(x: Int, y: Int) {
         val ui = inst.uiAutomation
         val down = SystemClock.uptimeMillis()
         fun send(action: Int, at: Long) {
@@ -450,11 +392,7 @@ class A11yJourneysTest {
             e.recycle()
         }
         send(MotionEvent.ACTION_DOWN, down)
-        val end = down + 1_200
-        while (SystemClock.uptimeMillis() < end) {
-            SystemClock.sleep(10)
-            if (moves) send(MotionEvent.ACTION_MOVE, SystemClock.uptimeMillis())
-        }
+        SystemClock.sleep(1_200)
         send(MotionEvent.ACTION_UP, SystemClock.uptimeMillis())
     }
 
