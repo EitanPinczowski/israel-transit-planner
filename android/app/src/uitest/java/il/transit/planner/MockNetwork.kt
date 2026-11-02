@@ -2,7 +2,6 @@ package il.transit.planner
 
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.GuardedTransitApi
-import il.transit.core.api.UsageMeter
 import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisClient
 import il.transit.core.api.MotisJson
@@ -13,6 +12,7 @@ import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.TransitApi
 import il.transit.core.api.TripSegment
+import il.transit.core.api.UsageMeter
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.search.BackupGeocoder
@@ -123,10 +123,10 @@ class MockNetwork(
     /**
      * One weather guard for the whole run: the ViewModel keeps the one it was built with. Its source
      * reads [base] on every call, so it follows the server across "offline"; each case of the rain
-     * screen asks for another cell, so its 1 h cache never hides a request.
+     * screen asks for another cell, so its 1 h cache never hides a request. `this.base`: in a property
+     * initializer a bare `base` is the constructor parameter, the first server's URL; after "offline"
+     * every forecast then went to the dead port and failed silently (T4's finding 3, reproduced by F6).
      */
-    // `this.base`: in a property initializer a bare `base` is the constructor parameter, the first server's URL. After
-    // "offline" every forecast then went to the dead port and failed silently (T4's finding 3, reproduced by F6).
     val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("${this.base}/meteo", http).rain(cell) }, clock, usage = usage)
 
     private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock, usage = usage))
