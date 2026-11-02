@@ -395,10 +395,12 @@ internal fun NameDialog(titleRes: Int, onDismiss: () -> Unit, onSave: (String) -
 @Composable
 internal fun AttributionChip(modifier: Modifier) {
     val context = LocalContext.current
+    // Phase 11 E5: the chip says its own words, so it keeps a label when the keyboard squeezes it (landscape).
+    val said = stringResource(R.string.attribution)
     // Surface(onClick) keeps a 48dp touch target around the small pill.
     Surface(
         onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
-        modifier = modifier,
+        modifier = modifier.semantics { contentDescription = said },
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.92f),
         shadowElevation = 2.dp,
