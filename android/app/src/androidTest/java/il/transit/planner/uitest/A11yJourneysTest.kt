@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.SystemClock
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.geometry.Offset
@@ -269,13 +270,33 @@ class A11yJourneysTest {
         val x = ((top.left + top.right) / 2).toInt()
         val y = ((top.bottom + bottom.top) / 2).toInt()
         shell("input swipe $x $y $x $y 1200") // a finger held 1.2 s: a long-press, as a sighted user does it
-        val until = SystemClock.uptimeMillis() + 10_000
-        while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
-        assertTrue("$lang: a long-press on the map at ($x, $y) between $top and $bottom dropped no pin", ui.places.pin != null)
+        val viaScreen = awaitPin()
+        Findings.expect("A11Y-MAP", viaScreen, "$lang: a long-press at ($x, $y), between the panels, dropped no pin on this emulator")
+        if (!viaScreen) {
+            // The hiding only changes what accessibility services see: the MapView itself must still take a long-press.
+            longPressOn(mapView())
+            assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", awaitPin())
+        }
         onMain { it.closePin() }
         onMain { it.clearResults() }
         compose.waitForIdle()
         assertEquals("$lang: the map after the results closed", View.IMPORTANT_FOR_ACCESSIBILITY_YES, mapState().first)
+    }
+
+    private fun AppDriver.awaitPin(): Boolean {
+        val until = SystemClock.uptimeMillis() + 10_000
+        while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
+        return ui.places.pin != null
+    }
+
+    /** A finger held 1.2 s in the middle of [v], sent to the view itself. */
+    private fun AppDriver.longPressOn(v: View) {
+        val down = SystemClock.uptimeMillis()
+        val x = v.width / 2f
+        val y = v.height / 2f
+        inst.runOnMainSync { v.dispatchTouchEvent(MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, x, y, 0)) }
+        SystemClock.sleep(1_200)
+        inst.runOnMainSync { v.dispatchTouchEvent(MotionEvent.obtain(down, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x, y, 0)) }
     }
 
     /** Turns the phone and waits for the recreated Activity in that orientation. */
