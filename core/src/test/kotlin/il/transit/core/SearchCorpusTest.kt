@@ -147,6 +147,12 @@ class SearchCorpusTest {
         val out = File("build").apply { mkdirs() }
         File(out, "search-missing.sh").writeText(missing.values.joinToString("\n", postfix = "\n"))
         File(out, "search-observed.tsv").writeText(observed.joinToString("\n", postfix = "\n"))
+        // Build output is unreadable to the agents by design (.claude/settings.json), so the list also goes to stdout between
+        // markers (`./gradlew -p core test -i --tests '*SearchCorpusTest*'`) and, when SEARCH_MISSING_OUT / SEARCH_OBSERVED_OUT name a file, there.
+        val missingText = missing.values.joinToString("\n", postfix = "\n")
+        System.getenv("SEARCH_MISSING_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(missingText) }
+        System.getenv("SEARCH_OBSERVED_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(observed.joinToString("\n", postfix = "\n")) }
+        println("=== SEARCH-MISSING BEGIN ===\n" + missingText + "=== SEARCH-MISSING END ===")
         assertTrue(
             "${failures.size} of ${rows.size} rows fail:\n" + failures.joinToString("\n") +
                 (if (missing.isEmpty()) "" else "\nRECORD (≥ 1.5 s apart; ${missing.size} new searches):\n" + missing.values.joinToString("\n")),
