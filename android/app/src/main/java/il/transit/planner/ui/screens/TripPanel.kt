@@ -300,7 +300,7 @@ internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier)
     // No room for one row (landscape, keyboard up): no list. A row squeezed to nothing would be one more
     // stop for TalkBack with nothing on screen (Phase 11 E5: ATF's only error left in the layout audit).
     BoxWithConstraints(modifier.fillMaxWidth()) {
-        if (maxHeight < 48.dp) return@BoxWithConstraints
+        if (maxHeight < 72.dp) return@BoxWithConstraints // one whole row (48–64 dp) and the card around it
         SuggestionCard(state, vm)
     }
 }
