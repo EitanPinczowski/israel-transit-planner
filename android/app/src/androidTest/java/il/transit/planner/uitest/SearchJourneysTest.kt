@@ -194,9 +194,16 @@ class SearchJourneysTest {
             d.onMain { it.pick(picked) }
             // The recent is stored a moment after the pick (a coroutine), so wait for it.
             compose.waitUntil(WAIT_MS) { d.st.recentNames().contains(picked.name) }
-            d.onMain { it.startEditing(Field.FROM) }
-            compose.waitForIdle()
-            assertTrue("the pick is a recent", d.st.suggestions.any { it.recent && it.name == picked.name })
+            // Open the empty field; if the recent is not listed yet, open it again (the list is built when the field opens).
+            val until = SystemClock.uptimeMillis() + 10_000
+            do {
+                d.onMain { it.startEditing(Field.FROM) }
+                compose.waitForIdle()
+                if (d.st.suggestions.any { it.recent && it.name == picked.name }) break
+                SystemClock.sleep(500)
+            } while (SystemClock.uptimeMillis() < until)
+            val listed = d.st.suggestions.map { "${it.name}(saved=${it.saved},recent=${it.recent},home=${it.home})" }
+            assertTrue("the pick '${picked.name}' is a recent; recents=${d.st.recentNames()} listed=$listed", d.st.suggestions.any { it.recent && it.name == picked.name })
             val saved = d.st.suggestions.first { it.saved || it.home }
             d.onMain { it.pick(saved) }
             compose.waitForIdle()
