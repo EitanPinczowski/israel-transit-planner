@@ -344,21 +344,48 @@ class A11yJourneysTest {
     }
 
     /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
+    private var realCallback: android.view.Window.Callback? = null
+
+    /**
+     * The touch events the window receives ("win:", through a Window.Callback proxy) and the MapView receives ("map:",
+     * a listener that only records: MapLibre still gets them), from now on.
+     */
     private fun AppDriver.watchMapTouches(): MutableList<String> {
         val seen = java.util.Collections.synchronizedList(mutableListOf<String>())
         val map = mapView()
         inst.runOnMainSync {
             map.setOnTouchListener { _, e ->
-                seen += "${MotionEvent.actionToString(e.actionMasked)}@${e.x.toInt()},${e.y.toInt()}"
+                seen += "map:${MotionEvent.actionToString(e.actionMasked)}@${e.x.toInt()},${e.y.toInt()}"
                 false
             }
+            val window = activity.window
+            val real = window.callback
+            realCallback = real
+            window.callback = java.lang.reflect.Proxy.newProxyInstance(
+                android.view.Window.Callback::class.java.classLoader,
+                arrayOf(android.view.Window.Callback::class.java),
+            ) { _, method, args ->
+                if (method.name == "dispatchTouchEvent") {
+                    val e = args[0] as MotionEvent
+                    seen += "win:${MotionEvent.actionToString(e.actionMasked)}@${e.rawX.toInt()},${e.rawY.toInt()}"
+                    val handled = real.dispatchTouchEvent(e)
+                    seen += "win-handled=$handled"
+                    handled
+                } else {
+                    method.invoke(real, *(args ?: emptyArray()))
+                }
+            } as android.view.Window.Callback
         }
         return seen
     }
 
     private fun AppDriver.unwatchMapTouches() {
         val map = mapView()
-        inst.runOnMainSync { map.setOnTouchListener(null) }
+        inst.runOnMainSync {
+            map.setOnTouchListener(null)
+            realCallback?.let { activity.window.callback = it }
+            realCallback = null
+        }
     }
 
     private fun AppDriver.mapCentreOnScreen(): Pair<Int, Int> {
