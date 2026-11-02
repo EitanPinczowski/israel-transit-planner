@@ -243,6 +243,14 @@ the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on
 - **Adding a screen:** a `Screen` in `FaultMatrixTest`: endpoints (the path after `/api/<v>/`, or `photon` / `meteo`),
   the budget constant, `act`, `outcome` (null while loading), `message`, `retry`, `reset`, `repeat`. Vary the input per
   action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
+- **Beside the screens** (F6; they don't call `matrix()`, so the job's "screens × 9 cases" count leaves them out):
+  `rain_note_right_after_offline` (3 tries: search, offline search, back online, the next search must ask Open-Meteo)
+  (T4's "no forecast after offline" was the mock's: the weather source read the constructor's first URL, not the moved
+  `base`; fixed) and `data_card_equals_server_counts` (a scripted session; the data card's `UsageStore.summary()` equals the server's
+  count per service: Transitous sent = net + retry, Open-Meteo, Photon). `MockNetwork` gets the app's `usage` meter for it.
+- **Repeat checks with a narrower count:** typing search (Transitous) counts `geocode` only: the matrix closes the
+  search while Photon's guard waits out `Retry-After`, a closed search caches nothing, so the same text later asks
+  Photon once more: inside the Photon rules, pinned in core by `PhotonRepeatTest`.
 
 
 ## Release, upgrade, leaks, performance (Phase 11 T8)
@@ -273,7 +281,9 @@ lost (new fields are fine). A release without its sample fails the job with the 
 **Leaks:** LeakCanary (`leakcanary-android` in the `uitest` build only, `leakcanary-android-instrumentation` for tests; no launcher icon). `AppDriver.close()`
 closes the Activity and calls `LeakAssertions.assertNoLeaks`: a retained Activity, ViewModel, MapView or service fails the journey with the trace. If it
 fires, it is a real leak in the app (or a library): fix it or open an issue; never turn the check off (`AppDriver.detectLeaks` exists only for a test that
-holds the app open by design).
+holds the app open by design). The analysis runs in the test process: the uitest manifest sets `largeHeap` (F6), because the API 29 image (no
+device profile) gives an app a 16 MB growth limit and Shark ran out of memory there (j12); `Leaks.around` fails a journey
+first if the heap may grow to less than `MIN_HEAP_MB` (64).
 
 **Nightly performance reports** (`nightly-ui.yml` job `perf`, `tools/ui_perf_run.sh`, uitest build, software GL: compare a number with its own history, never
 with a phone's; numbers in the job summary, the trend table is `docs/testing/perf.md`, updated by the boss at close-out; no gate until 2 weeks of numbers).
@@ -328,6 +338,11 @@ on the Pixel in Hebrew (owner decision 8).
   the trip sheet, stop sheet and Settings, the first departure row equal to `Speech.departure` and its ☆
   label, the map `NO_HIDE_DESCENDANTS` + "Map: …" with results and `YES` without, a sighted long-press on the
   map still dropping a pin, and a landscape step with the keyboard up.
+- **Long-press on the map band (F6, `A11Y-MAP`):** a touchscreen long-press injected through `UiAutomation.injectInputEvent`
+  at screen coordinates is report-only: on the CI API 35 image **no injected touch reaches the app's window** (a Window.Callback
+  proxy saw nothing, not even a DOWN+CANCEL on the search card; touch exploration off, no accessibility service bound; runs
+  41437338188 / 41437345486). Not an app bug: the blocking check dispatches the long-press to the MapView itself, and a real
+  finger is the owner's Pixel check.
 - **Known ATF errors** (`Atf.KNOWN`: check + test tag + reason): reported as warnings, never blocking, and
   only inside that tagged node. Today one: `EditableContentDescCheck` in Material 3's `TimeInput`
   (`DayTags.TIME_INPUT`). Each ATF finding prints the Compose node(s) at its bounds (`compose: #id {…}`).

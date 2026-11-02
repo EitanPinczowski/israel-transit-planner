@@ -1,6 +1,7 @@
 package il.transit.planner.ui.vm
 
 import il.transit.core.api.BudgetExceededException
+import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.PlanResponse
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.features.DropOffPlanner
@@ -248,6 +249,52 @@ class CarTabsStateTest : VmTest() {
         api.fault = { _, _ -> null }
         vm.plan()
         assertTrue(phase(vm.state.value) in ends)
+    }
+
+    @Test fun `park and ride - plans from the injected clock, so a second identical search sends 0 through the guard`() {
+        // Phase 11 F6 (T4): park & ride read Instant.now(), so every search had a new time, missed the guard's cache
+        // and sent 4 requests again where every other tab sent 0.
+        val api = ScriptedApi(replay())
+        val vm = newVm(GuardedTransitApi(api, CLOCK))
+        vm.setMode(AppMode.PARK_RIDE)
+        vm.choose(Field.FROM, "Start", MEITAR) // time: now
+        vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
+        assertTrue(phase(vm.state.value) in ends)
+        assertEquals(NOW, api.planRequests.first().time)
+        val sent = api.total
+        assertTrue(sent > 0)
+        vm.plan()
+        assertEquals(sent, api.total)
+        assertTrue(phase(vm.state.value) in ends)
+    }
+
+    /** A clock the test moves forward, like the phone's: seconds pass between two taps. */
+    private class Ticking(var now: java.time.Instant) : java.time.Clock() {
+        override fun getZone(): java.time.ZoneId = java.time.ZoneOffset.UTC
+
+        override fun withZone(zone: java.time.ZoneId?): java.time.Clock = this
+
+        override fun instant(): java.time.Instant = now
+    }
+
+    @Test fun `a Now search repeated 20 s later in the same minute sends 0 on every tab, under a real-time clock`() {
+        // Phase 11 F6 (review of PR #118): the guard keys a request by its query, time included. With the time to the
+        // second, two Now searches seconds apart never met the cache; the Now departure is rounded to the minute.
+        for (mode in listOf(AppMode.TRIP, AppMode.BETTER_START, AppMode.PICK_UP, AppMode.PARK_RIDE)) {
+            val clock = Ticking(NOW.plusSeconds(10))
+            val api = ScriptedApi(replay())
+            val vm = newVm(GuardedTransitApi(api, clock), clock = clock)
+            vm.setMode(mode)
+            vm.choose(Field.FROM, "Start", if (mode == AppMode.PICK_UP) TEL_AVIV else MEITAR)
+            vm.choose(Field.TO, "End", if (mode == AppMode.PICK_UP) MEITAR else TEL_AVIV)
+            assertTrue("$mode: ${phase(vm.state.value)}", phase(vm.state.value) in ends)
+            assertTrue("$mode: the Now departure is whole minutes", api.planRequests.any { it.time == NOW })
+            val sent = api.total
+            assertTrue("$mode sent nothing", sent > 0)
+            clock.now = NOW.plusSeconds(30)
+            vm.plan()
+            assertEquals("$mode: the same search 20 s later", sent, api.total)
+        }
     }
 
     // --- Errands ------------------------------------------------------------------------------------------------

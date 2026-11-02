@@ -270,13 +270,46 @@ class A11yJourneysTest {
         val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
         val x = ((top.left + top.right) / 2).toInt()
         val y = ((top.bottom + bottom.top) / 2).toInt()
-        shell("input swipe $x $y $x $y 1200") // a finger held 1.2 s: a long-press, as a sighted user does it
-        val viaScreen = awaitPin()
-        Findings.expect("A11Y-MAP", viaScreen, "$lang: a long-press at ($x, $y), between the panels, dropped no pin on this emulator")
+        // F6 (A11Y-MAP): a long-press at that point of the screen, injected through the input system (UiAutomation:
+        // InputDispatcher -> our window -> Compose -> the AndroidView -> MapView). Report-only: on the CI API 35 image
+        // no injected touch reaches our window anywhere (not even a DOWN+CANCEL on the search card; touch exploration
+        // off; runs 41437338188 / 41437345486). The evidence goes into the finding.
+        // TODO: make this band press blocking again once injected touches reach the app on the API 35 image.
+        val (sx, sy) = onScreen(x, y)
+        val seen = watchMapTouches()
+        var viaScreen = false
+        try {
+            injectLongPress(sx, sy)
+            viaScreen = awaitPin()
+            if (!viaScreen) {
+                val bandSeen = seen.toList()
+                seen.clear()
+                val (tx, ty) = onScreen(((top.left + top.right) / 2).toInt(), ((top.top + top.bottom) / 2).toInt())
+                injectDownCancel(tx, ty)
+                SystemClock.sleep(300)
+                var exploring = false
+                inst.runOnMainSync {
+                    val am = activity.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
+                    exploring = am.isTouchExplorationEnabled
+                }
+                val evidence = "window and MapView got [${bandSeen.joinToString()}]; a DOWN+CANCEL on the search card ($tx, $ty): " +
+                    "[${seen.joinToString()}]; touchExploration=$exploring"
+                Log.i("A11yJourney", "A11Y-MAP $lang: no pin from an injected long-press at ($sx, $sy); $evidence")
+                Findings.expect(
+                    "A11Y-MAP",
+                    false,
+                    "$lang: an injected long-press at ($sx, $sy), between the panels, dropped no pin on this emulator; $evidence. " +
+                        "Environment, not the app: no injected touch reaches the window on this image (F6: run 41437345486, job 125251099953)",
+                )
+            }
+        } finally {
+            unwatchMapTouches()
+        }
+        // The hiding only changes what accessibility services see: the MapView itself must still take a long-press. Blocking.
         if (!viaScreen) {
-            // The hiding only changes what accessibility services see: the MapView itself must still take a long-press.
             longPressOn(mapView())
-            assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", awaitPin())
+            viaScreen = awaitPin()
+            assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", viaScreen)
         }
         onMain { it.closePin() }
         onMain { it.clearResults() }
@@ -288,6 +321,85 @@ class A11yJourneysTest {
         val until = SystemClock.uptimeMillis() + 10_000
         while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
         return ui.places.pin != null
+    }
+
+    /** A touch that starts and is cancelled: reaches the window like a finger, clicks nothing. */
+    private fun AppDriver.injectDownCancel(x: Int, y: Int) {
+        val ui = inst.uiAutomation
+        val down = SystemClock.uptimeMillis()
+        for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_CANCEL)) {
+            val e = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x.toFloat(), y.toFloat(), 0)
+            e.source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+            ui.injectInputEvent(e, true)
+            e.recycle()
+        }
+    }
+
+    private var realCallback: android.view.Window.Callback? = null
+
+    /**
+     * The touch events the window receives ("win:", through a Window.Callback proxy) and the MapView receives ("map:",
+     * a listener that only records: MapLibre still gets them), from now on.
+     */
+    private fun AppDriver.watchMapTouches(): MutableList<String> {
+        val seen = java.util.Collections.synchronizedList(mutableListOf<String>())
+        val map = mapView()
+        inst.runOnMainSync {
+            map.setOnTouchListener { _, e ->
+                seen += "map:${MotionEvent.actionToString(e.actionMasked)}@${e.x.toInt()},${e.y.toInt()}"
+                false
+            }
+            val window = activity.window
+            val real = window.callback
+            realCallback = real
+            window.callback = java.lang.reflect.Proxy.newProxyInstance(
+                android.view.Window.Callback::class.java.classLoader,
+                arrayOf(android.view.Window.Callback::class.java),
+            ) { _, method, args ->
+                if (method.name == "dispatchTouchEvent") {
+                    val e = args[0] as MotionEvent
+                    seen += "win:${MotionEvent.actionToString(e.actionMasked)}@${e.rawX.toInt()},${e.rawY.toInt()}"
+                    val handled = real.dispatchTouchEvent(e)
+                    seen += "win-handled=$handled"
+                    handled
+                } else {
+                    method.invoke(real, *(args ?: emptyArray()))
+                }
+            } as android.view.Window.Callback
+        }
+        return seen
+    }
+
+    private fun AppDriver.unwatchMapTouches() {
+        val map = mapView()
+        inst.runOnMainSync {
+            map.setOnTouchListener(null)
+            realCallback?.let { activity.window.callback = it }
+            realCallback = null
+        }
+    }
+
+    /** A point of the window ([boundsInWindow]) on the screen, where the input system delivers a finger. */
+    private fun AppDriver.onScreen(x: Int, y: Int): Pair<Int, Int> {
+        val at = IntArray(2)
+        inst.runOnMainSync { activity.window.decorView.getLocationOnScreen(at) }
+        return (x + at[0]) to (y + at[1])
+    }
+
+    /** A touchscreen long-press injected through the input system (UiAutomation, as `input` does): a DOWN, held 1.2 s, an UP. */
+    private fun AppDriver.injectLongPress(x: Int, y: Int) {
+        val ui = inst.uiAutomation
+        val down = SystemClock.uptimeMillis()
+        fun send(action: Int, at: Long) {
+            val e = MotionEvent.obtain(down, at, action, x.toFloat(), y.toFloat(), 0)
+            e.source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+            // Report-only like the press itself: a refusal shows as "no pin" in the A11Y-MAP finding.
+            if (!ui.injectInputEvent(e, true)) Log.w("A11yJourney", "A11Y-MAP: injecting $action was refused")
+            e.recycle()
+        }
+        send(MotionEvent.ACTION_DOWN, down)
+        SystemClock.sleep(1_200)
+        send(MotionEvent.ACTION_UP, SystemClock.uptimeMillis())
     }
 
     /** A finger held 1.2 s in the middle of [v], sent to the view itself. */

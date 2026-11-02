@@ -252,6 +252,9 @@ endpoint and every case is held to the feature's budget constant (×2 where a 42
 the cache time to 0 (skill `ui-testing`). `RoutingInvariantsTest` checks times, ride details, fares,
 traffic and Pareto fronts over every `plan_*` fixture and each feature's output; a new fixture is covered automatically.
 
+A "Now" search sends its time rounded down to the minute (`plan/SearchTime`, F6): the guard keys a request by its query,
+time included, so with seconds in it a repeat a few seconds later never met the cache. Explicit times stay exact.
+
 The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds
 `additionalTransferTime` (minutes) to every `plan`, so it is part of the cache key (`TransfersTest`).
 
@@ -329,7 +332,9 @@ timeouts: connect 3 s, read 4 s).
 search only after typing pauses 350 ms (`TypingSearch`): ≤ 1 Geocoder + ≤ 1 Photon request,
 pinned in `PlaceSearchTest`. Each service under its own `GuardedGeocoder` (day cache — "nothing"
 only 2 min, since the phone's Geocoder answers nothing when offline —, ≤ 2 at once, one retry on
-429/503). A backup failure never fails the search. Every backup answer outside Israel's box is
+429/503). A search closed while its guard waits out `Retry-After` sends no retry and caches nothing; the same
+text typed later asks once more (one request for that typing pause, after the wait the server asked for): allowed,
+pinned by `PhotonRepeatTest` (F6). A backup failure never fails the search. Every backup answer outside Israel's box is
 dropped (the phone's Geocoder is also asked inside the box).
 
 **Search hardening (Phase 10 D2), 0 new requests:**

@@ -12,9 +12,10 @@ OUT=$3
 PKG=il.transit.planner.uitest
 RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
 CLASS=il.transit.planner.uitest.FaultMatrixTest
-# Every test is one screen and runs every fault: a run that saw fewer cases did not test them.
+# Every matrix screen runs every fault: a run that saw fewer cases did not test them. Tests that are not a
+# screen of the matrix (F6: rain after offline, data card vs server) don't call matrix() and add no 9 cases.
 SRC="$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/FaultMatrixTest.kt"
-SCREENS=$(grep -c "@Test fun" "$SRC")
+SCREENS=$(grep -cE "= matrix\(|^[[:space:]]*matrix\(" "$SRC")
 FAULTS=9
 mkdir -p "$OUT"
 : > "$OUT/crash.txt"
@@ -48,7 +49,8 @@ echo "::endgroup::"
 cases=$(wc -l < "$OUT/cases.txt")
 echo "$cases cases ($SCREENS screens x $FAULTS faults expected)"
 [[ $cases -ge $((SCREENS * FAULTS)) ]] || fail "the fault matrix ran $cases of $((SCREENS * FAULTS)) cases"
-grep -q "^OK ($SCREENS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fail "not all $SCREENS fault-matrix tests passed"
+TESTS=$(grep -cE "^[[:space:]]*@Test fun" "$SRC") # the screens plus the F6 tests beside them
+grep -q "^OK ($TESTS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fail "not all $TESTS fault-matrix tests passed"
 {
   echo "### Network-fault matrix (API $API)"
   echo '```'

@@ -42,6 +42,7 @@ import il.transit.planner.ui.screens.MissedItUi
 import il.transit.planner.uitest.mock.Fault
 import il.transit.planner.uitest.mock.MockServerRule
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -320,22 +321,9 @@ class FaultMatrixTest {
         planScreen("Pick-up", AppMode.PICK_UP, PickUpPlanner.BUDGET, setOf("plan"), Field.FROM to TEL_AVIV, Field.TO to MEITAR),
     )
 
-    /**
-     * No repeat check: Park & ride plans from `Instant.now()`, not the app's clock (`ParkRideState.kt`),
-     * so under the uitest build's fixed clock its second search asks again (finding, PR #106; a fix
-     * belongs to its own package).
-     */
+    /** With the repeat check since F6: Park & ride used to plan from `Instant.now()`, not the app's clock (PR #106). */
     @Test fun park_ride() = matrix(
-        Screen(
-            name = "Park & ride",
-            endpoints = setOf("plan", "one-to-many"),
-            budget = ParkRidePlanner.BUDGET,
-            prepare = { c -> c.d.onMain { it.setMode(AppMode.PARK_RIDE) } },
-            act = planAct(Field.FROM to MEITAR, Field.TO to TEL_AVIV),
-            outcome = planOutcome,
-            message = networkMessage,
-            retry = retryButton,
-        ),
+        planScreen("Park & ride", AppMode.PARK_RIDE, ParkRidePlanner.BUDGET, setOf("plan", "one-to-many"), Field.FROM to MEITAR, Field.TO to TEL_AVIV),
     )
 
     @Test fun errands() = matrix(
@@ -574,6 +562,111 @@ class FaultMatrixTest {
                 describe = { c -> c.s.let { "loading=${it.loading} error=${it.error} offline=${it.offlineSince} results=${it.hasResults} rain=${it.rain.forecast != null}" } },
             ),
         )
+    }
+
+    /**
+     * T4's unconfirmed finding 3 (F6): once, the first search right after "offline" got its options but asked
+     * Open-Meteo nothing. Three tries of: a search (forecast asked), a search while offline (fails, no forecast),
+     * back online, then a search in a new cell that must ask Open-Meteo and show the note.
+     */
+    @Test fun rain_note_right_after_offline() {
+        val d = AppDriver(compose)
+        val net = d.app.useMockServer(mock.url)
+        d.launch().use {
+            var seq = 0
+            fun search(): Int {
+                seq++
+                d.app.clockShift = Duration.ofSeconds(seq.toLong())
+                mock.settle()
+                val before = mock.count("meteo")
+                d.place(Field.FROM, SavedPlace("נקודה $seq", 31.0 + 0.15 * seq, 34.85))
+                compose.waitUntil(WAIT_MS) { val s = d.vm.state.value; !s.loading && (s.error != null || s.hasResults) }
+                return before
+            }
+            d.place(Field.TO, TEL_AVIV)
+            repeat(3) { attempt ->
+                val before = search()
+                compose.waitUntil(WAIT_MS) { d.vm.state.value.rain.forecast != null && d.vm.state.value.rain.forResults == d.vm.state.value.resultsAt }
+                assertTrue("try $attempt: online search asked no forecast", mock.count("meteo") > before)
+                mock.goOffline()
+                search()
+                assertFalse("try $attempt: offline search has options", d.vm.state.value.hasResults && d.vm.state.value.offlineSince == null)
+                mock.goOnline(net)
+                val after = search()
+                val s0 = d.vm.state.value
+                assertTrue("try $attempt: first search after offline has no options (${s0.error})", s0.hasResults && s0.offlineSince == null)
+                try {
+                    compose.waitUntil(WAIT_MS) { val s = d.vm.state.value; s.rain.forecast != null && s.rain.forResults == s.resultsAt }
+                } catch (e: Throwable) {
+                    throw AssertionError("try $attempt: no rain note after offline; meteo sent ${mock.count("meteo") - after}, server=${mock.counts()}", e)
+                }
+                assertTrue("try $attempt: the first search after offline asked Open-Meteo nothing", mock.count("meteo") > after)
+                Log.i(MockServerRule.TAG, "Rain after offline try $attempt -> OK sent=${mock.count("meteo") - after}")
+            }
+        }
+    }
+
+    /**
+     * The data card (Phase 11 E4) against the server (F6, T4's open check): after a scripted session (a Trip
+     * search with its rain note, the same search again from the cache, a Better start search whose plans are
+     * refused once then answered, and a typing search that Transitous can't answer so Photon is asked), the
+     * card's numbers equal what the mock server received, per service.
+     */
+    @Test fun data_card_equals_server_counts() {
+        val d = AppDriver(compose)
+        d.app.useMockServer(mock.url)
+        d.launch().use {
+            mock.settle()
+            val card0 = d.app.usage.summary()
+            val server0 = mock.counts()
+            // Trip search, with its rain note (1 Open-Meteo request).
+            d.place(Field.FROM, BGU)
+            d.place(Field.TO, TEL_AVIV)
+            d.awaitSearch()
+            compose.waitUntil(WAIT_MS) { val s = d.vm.state.value; s.rain.forecast != null && s.rain.forResults == s.resultsAt }
+            // The same search again: the guard's cache answers.
+            mock.settle()
+            d.onMain { it.plan() }
+            d.awaitSearch()
+            // Better start, every plan refused once (429) then answered: the guard's retries.
+            mock.settle()
+            mock.script(setOf("plan"), Fault.RETRY_THEN_OK)
+            d.onMain { it.setMode(AppMode.BETTER_START) }
+            compose.waitUntil(WAIT_MS) { val s = d.vm.state.value; !s.loading && (s.betterStart != null || s.error != null) }
+            mock.settle(1_500)
+            mock.script(emptyList(), null)
+            d.onMain { it.setMode(AppMode.TRIP) }
+            d.awaitSearch()
+            // A typing search Transitous knows nothing about: Photon is asked.
+            mock.settle()
+            mock.bodies = mapOf("geocode" to "[]")
+            d.onMain {
+                it.startEditing(Field.TO)
+                it.onQuery("רגר")
+            }
+            compose.waitUntil(WAIT_MS) { val s = d.vm.state.value; s.places.notFound || s.suggestions.any { x -> !x.saved && !x.recent && !x.home } }
+            mock.settle(1_500)
+            d.onMain { it.cancelEditing() }
+            mock.bodies = emptyMap()
+            mock.settle(1_500)
+            compose.waitForIdle()
+
+            val card = d.app.usage.summary()
+            val server = mock.counts()
+            fun delta(e: String) = (server[e] ?: 0) - (server0[e] ?: 0)
+            val transitousSent = server.keys.filter { it != "photon" && it != "meteo" }.sumOf(::delta)
+            val cardSent = (card.transitous - card.transitousCache) - (card0.transitous - card0.transitousCache)
+            val summary = "card before $card0, after $card; server before $server0, after $server"
+            Log.i(MockServerRule.TAG, "Data card -> transitous ${card.transitous - card0.transitous} (cache ${card.transitousCache - card0.transitousCache}, retries ${card.transitousRetries - card0.transitousRetries}) weather ${card.weather - card0.weather} address ${card.address - card0.address}; server $server")
+            assertEquals("Transitous requests sent: card vs server ($summary)", transitousSent, cardSent)
+            assertEquals("Open-Meteo: card vs server ($summary)", delta("meteo"), card.weather - card0.weather)
+            assertEquals("Photon: card vs server ($summary)", delta("photon"), card.address - card0.address)
+            // The session went through each path the card counts.
+            assertTrue("no request answered from the cache ($summary)", card.transitousCache > card0.transitousCache)
+            assertTrue("no retry after a 429 ($summary)", card.transitousRetries > card0.transitousRetries)
+            assertTrue("no Open-Meteo request ($summary)", delta("meteo") >= 1)
+            assertTrue("no Photon request ($summary)", delta("photon") >= 1)
+        }
     }
 
     @Test fun missed_it() {

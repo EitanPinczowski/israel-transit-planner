@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The uitest build runs as UiTestApp: recorded answers, fixed clock, blank map. Plain HTTP is
-     allowed to the loopback only, for the network-fault matrix's local mock server (Phase 11 T4). -->
+     allowed to the loopback only, for the network-fault matrix's local mock server (Phase 11 T4).
+     largeHeap (uitest only, Phase 11 F6): the API 29 emulator image has no device profile, so its
+     heap growth limit is 16 MB, and LeakCanary's heap analysis inside the test process ran out of
+     memory there (j12, runs 41360687084 and 41378230493: "growth limit 16777216"). With largeHeap the
+     limit is the AVD's dalvik.vm.heapsize (512 MB). Leak detection stays on at every level; the
+     release APK has no largeHeap. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <application
         android:name="il.transit.planner.UiTestApp"
+        android:largeHeap="true"
         android:networkSecurityConfig="@xml/uitest_network"
         tools:replace="android:name" />
 </manifest>

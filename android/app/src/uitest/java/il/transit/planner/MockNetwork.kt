@@ -12,6 +12,7 @@ import il.transit.core.api.ReplayTransitApi
 import il.transit.core.api.StopTimesResponse
 import il.transit.core.api.TransitApi
 import il.transit.core.api.TripSegment
+import il.transit.core.api.UsageMeter
 import il.transit.core.geo.BBox
 import il.transit.core.geo.LatLon
 import il.transit.core.search.BackupGeocoder
@@ -43,7 +44,13 @@ import java.util.concurrent.atomic.AtomicLong
  * Read timeouts are [TIMEOUT_S] (live: 20 s), so "the server never answers" costs the matrix seconds,
  * not minutes. [clearCaches] starts fresh guards, so each fault case sends its own requests.
  */
-class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock, base: String) {
+class MockNetwork(
+    private val replay: ReplayTransitApi,
+    private val clock: Clock,
+    base: String,
+    /** The app's data card counter (Phase 11 E4), so a test can hold its numbers to the server's (F6). */
+    private val usage: UsageMeter = UsageMeter.NONE,
+) {
     /** The server's root URL; moved when the test restarts the server after "offline". */
     @Volatile var base: String = base.trimEnd('/')
         set(value) {
@@ -109,22 +116,24 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
             }
     }
 
-    @Volatile private var guard: TransitApi = GuardedTransitApi(wire, clock)
+    @Volatile private var guard: TransitApi = GuardedTransitApi(wire, clock, usage = usage)
 
     @Volatile private var geocoder: BackupGeocoder = photon()
 
     /**
      * One weather guard for the whole run: the ViewModel keeps the one it was built with. Its source
      * reads [base] on every call, so it follows the server across "offline"; each case of the rain
-     * screen asks for another cell, so its 1 h cache never hides a request.
+     * screen asks for another cell, so its 1 h cache never hides a request. `this.base`: in a property
+     * initializer a bare `base` is the constructor parameter, the first server's URL; after "offline"
+     * every forecast then went to the dead port and failed silently (T4's finding 3, reproduced by F6).
      */
-    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("$base/meteo", http).rain(cell) }, clock)
+    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("${this.base}/meteo", http).rain(cell) }, clock, usage = usage)
 
-    private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock))
+    private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock, usage = usage))
 
     /** Fresh Transitous and Photon guards (empty caches) on the current [base]; see [weather] for Open-Meteo. */
     fun clearCaches() {
-        guard = GuardedTransitApi(wire, clock)
+        guard = GuardedTransitApi(wire, clock, usage = usage)
         geocoder = photon()
     }
 

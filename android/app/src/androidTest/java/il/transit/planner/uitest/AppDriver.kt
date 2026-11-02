@@ -71,8 +71,25 @@ object Leaks {
     /** The leak check wrapped around [compose]: it runs once [compose] has been torn down. */
     fun around(compose: TestRule): TestRule {
         val leaks = DetectLeaksAfterTestSuccess("journey")
-        val chain = RuleChain.outerRule(leaks)
+        val chain = RuleChain.outerRule(heapForAnalysis).around(leaks)
         return chain.around(compose)
+    }
+
+    /**
+     * LeakCanary analyses the heap dump inside the test process. On a 16 MB growth limit (the API 29 image, no device
+     * profile) that analysis ran out of memory (j12, Phase 11 F6); the uitest manifest's largeHeap lifts it. Checked
+     * before each journey, so a lost largeHeap fails at once with this message, not later as an OOM in Shark.
+     */
+    const val MIN_HEAP_MB = 64L
+
+    private val heapForAnalysis = TestRule { base, _ ->
+        object : org.junit.runners.model.Statement() {
+            override fun evaluate() {
+                val mb = Runtime.getRuntime().maxMemory() / (1024 * 1024)
+                check(mb >= MIN_HEAP_MB) { "the test process may grow to $mb MB; LeakCanary's analysis needs $MIN_HEAP_MB (uitest largeHeap)" }
+                base.evaluate()
+            }
+        }
     }
 }
 
