@@ -13,10 +13,8 @@ import il.transit.core.search.TypingSearch
 import il.transit.core.search.parsePhoton
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.builtins.ListSerializer
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -44,7 +42,10 @@ class SearchCorpusTest {
     private fun key(text: String, language: String) =
         PlaceSearch.normalize(text).replace(",", " ").replace(Regex("\\s+"), " ").trim() + "|" + language
 
-    private fun hash(key: String) = MessageDigest.getInstance("SHA-1").digest(key.toByteArray()).joinToString("") { "%02x".format(it) }.take(12)
+    private fun hash(key: String) = MessageDigest.getInstance("SHA-1")
+        .digest(key.toByteArray())
+        .joinToString("") { "%02x".format(it) }
+        .take(12)
     private fun resource(path: String) = javaClass.getResource(path)?.readText()
     private fun table(name: String) = resource("$dir/$name")!!.lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }
 
@@ -56,10 +57,14 @@ class SearchCorpusTest {
             val name = "geo_" + hash(key(text, language))
             val body = resource("$dir/$name.json")
             if (body == null) {
-                val url = "http://x/api/v1/geocode".toHttpUrl().newBuilder().addQueryParameter("text", text).addQueryParameter("language", language)
-                    .addQueryParameter("numResults", max.toString()).apply {
+                val url = "http://x/api/v1/geocode".toHttpUrl().newBuilder()
+                    .addQueryParameter("text", text)
+                    .addQueryParameter("language", language)
+                    .addQueryParameter("numResults", max.toString())
+                    .apply {
                         near?.let { addQueryParameter("place", it.comma()); addQueryParameter("placeBias", MotisClient.PLACE_BIAS.toString()) }
-                    }.build()
+                    }
+                    .build()
                 missing.putIfAbsent(name, "python tools/record_fixture.py search/$name '${url.encodedPath}?${url.encodedQuery}' && sleep 1.5  # ${key(text, language)}")
                 throw IOException("not recorded: $text")
             }
@@ -140,20 +145,24 @@ class SearchCorpusTest {
                 if (hit != null) failures += "line ${r.line} ${r.id}: marked BAD but ${hit.name} is now in the top 3 (source $source): flip the row to OK"
                 if (r.note.isBlank()) failures += "line ${r.line} ${r.id}: a BAD row needs its reason"
             } else {
-                if (hit == null) failures += "line ${r.line} ${r.id} '${r.query}': no acceptable answer in the top 3: ${top.joinToString { it.name }}"
-                else if (source != r.source) failures += "line ${r.line} ${r.id}: answered by $source, row says ${r.source}"
+                if (hit == null) {
+                    failures += "line ${r.line} ${r.id} '${r.query}': no acceptable answer in the top 3: ${top.joinToString { it.name }}"
+                } else if (source != r.source) {
+                    failures += "line ${r.line} ${r.id}: answered by $source, row says ${r.source}"
+                }
             }
         }
+        val observedText = observed.joinToString("\n", postfix = "\n")
         val out = File("build").apply { mkdirs() }
         File(out, "search-missing.sh").writeText(missing.values.joinToString("\n", postfix = "\n"))
-        File(out, "search-observed.tsv").writeText(observed.joinToString("\n", postfix = "\n"))
+        File(out, "search-observed.tsv").writeText(observedText)
         // Build output is unreadable to the agents by design (.claude/settings.json), so the list also goes to stdout between
         // markers (`./gradlew -p core test -i --tests '*SearchCorpusTest*'`) and, when SEARCH_MISSING_OUT / SEARCH_OBSERVED_OUT name a file, there.
         val missingText = missing.values.joinToString("\n", postfix = "\n")
         System.getenv("SEARCH_MISSING_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(missingText) }
-        System.getenv("SEARCH_OBSERVED_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(observed.joinToString("\n", postfix = "\n")) }
+        System.getenv("SEARCH_OBSERVED_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(observedText) }
         println("=== SEARCH-MISSING BEGIN ===\n" + missingText + "=== SEARCH-MISSING END ===")
-        println("=== SEARCH-OBSERVED BEGIN ===\n" + observed.joinToString("\n", postfix = "\n") + "=== SEARCH-OBSERVED END ===")
+        println("=== SEARCH-OBSERVED BEGIN ===\n" + observedText + "=== SEARCH-OBSERVED END ===")
         println("=== SEARCH-FAILURES BEGIN ===\n" + failures.joinToString("\n", postfix = "\n") + "=== SEARCH-FAILURES END ===")
         assertTrue(
             "${failures.size} of ${rows.size} rows fail:\n" + failures.joinToString("\n") +
