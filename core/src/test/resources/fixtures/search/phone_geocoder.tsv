@@ -1,3 +1,4 @@
 # normalized query|lang <TAB> name <TAB> lat <TAB> lon: what the phone Geocoder answers (a stub: android.location.Geocoder is an Android class). Values from the 2026-10-07 emulator check in the transitous-api skill.
 tabenkin 15 raanana|en	Tabenkin St 15, Ra'anana, Israel	32.1881065	34.860527
 tabenkin 15 ra'anana|en	Tabenkin St 15, Ra'anana, Israel	32.1881065	34.860527
+טבנקין 15 רעננה|he	טבנקין 15, רעננה, ישראל	32.1881065	34.860527

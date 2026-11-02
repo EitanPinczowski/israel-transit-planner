@@ -154,6 +154,7 @@ class SearchCorpusTest {
         System.getenv("SEARCH_OBSERVED_OUT")?.takeIf { it.isNotBlank() }?.let { File(it).writeText(observed.joinToString("\n", postfix = "\n")) }
         println("=== SEARCH-MISSING BEGIN ===\n" + missingText + "=== SEARCH-MISSING END ===")
         println("=== SEARCH-OBSERVED BEGIN ===\n" + observed.joinToString("\n", postfix = "\n") + "=== SEARCH-OBSERVED END ===")
+        println("=== SEARCH-FAILURES BEGIN ===\n" + failures.joinToString("\n", postfix = "\n") + "=== SEARCH-FAILURES END ===")
         assertTrue(
             "${failures.size} of ${rows.size} rows fail:\n" + failures.joinToString("\n") +
                 (if (missing.isEmpty()) "" else "\nRECORD (≥ 1.5 s apart; ${missing.size} new searches):\n" + missing.values.joinToString("\n")),
