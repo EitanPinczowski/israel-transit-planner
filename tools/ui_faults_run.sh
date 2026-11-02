@@ -76,7 +76,14 @@ SEARCH=il.transit.planner.uitest.SearchJourneysTest
 SEARCH_TESTS=$(grep -cE "^[[:space:]]*@Test fun" "$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/SearchJourneysTest.kt")
 for lang in en he; do
   echo "::group::search journeys ($lang)"
-  adb shell cmd locale set-app-locales "$PKG" --locales "$lang" >/dev/null 2>&1 || true
+  # The app's own language needs API 33+; check it took (a silent failure would run the Hebrew journeys in English).
+  [[ $API -ge 33 ]] || fail "set-app-locales needs API 33+ (this is API $API)"
+  adb shell cmd locale set-app-locales "$PKG" --locales "$lang" >/dev/null 2>&1 || fail "set-app-locales $lang failed on API $API"
+  applied=$(adb shell cmd locale get-app-locales "$PKG" 2>&1 | tr -d '\r')
+  case "$lang:$applied" in
+    en:*en*|he:*he*|he:*iw*) ;;
+    *) fail "the $lang locale was not applied to $PKG: $applied" ;;
+  esac
   ui_instrument "$SEARCH" "$OUT/instrument-search-$lang.txt" -e profile "api$API" -e locale "$lang" -e theme light \
     || fail "the search journeys failed on API $API ($lang)"
   grep -q "^OK ($SEARCH_TESTS tests)" <(tr -d '\r' < "$OUT/instrument-search-$lang.txt") || fail "not all $SEARCH_TESTS search journeys passed ($lang)"

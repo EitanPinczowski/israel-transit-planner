@@ -351,13 +351,13 @@ on the Pixel in Hebrew (owner decision 8).
 
 ## Search + everyday-use journeys (Phase 11 T9)
 `SearchJourneysTest` (API 35, the `faults` job, `tools/ui_faults_run.sh`, after the matrix, English then Hebrew through the
-app's own locale; the same local `MockWebServer` and counts, 0 requests to the internet): typing key by key sends **one** geocode
-per pause; the X clears the server's answers and Back closes the search; a rotation with the search field open is **not** pinned (finding below); the field takes text and its Search key picks the first answer (Compose semantics: `performTextInput` and
+app's own locale; the same local `MockWebServer` and counts, 0 requests to the internet): typing 14 keys in one burst sends **1** geocode
+per pause (`GEOCODE_PER_PAUSE`; a burst, so no emulator timing is involved); the X clears the server's answers and Back closes the search; a rotation with the search field open is **not** pinned (finding below); the field takes text and its Search key picks the first answer (Compose semantics: `performTextInput` and
 `performImeAction`, no injected touch); the field's layout direction follows the language and the caret sits after what was
 typed; no-result and offline are told apart (and search recovers when the network is back); an empty field sends 0 and lists the
 saved places; a picked place comes back as a recent; swap, "my location" and error-then-retry; **task completion**: A→B from a cold
-start in `TAPS` = 4 steps (tap start, pick, tap destination, pick; the search runs by itself) with the first result under
-`FIRST_RESULT_MS` = 8 s on the mock. `AppDriver` runs the ATF check after every step. The journeys use the ViewModel's own entry
+start in 4 ViewModel steps (start field, pick, destination field, pick; the search runs by itself), with the first result under
+`FIRST_RESULT_MS` = 8 s on the mock: only the **time gate** is asserted, the steps are the test's own list, not counted taps on UI nodes. `AppDriver` runs the ATF check after every step. The journeys use the ViewModel's own entry
 points and Compose semantics on purpose: **injected input does not reach apps on the API 35 `google_apis` image** (the `A11Y-MAP`
 band press above stays report-only). T9 did not investigate why (no emulator time was spent on it; the only evidence is F6's runs
 41437338188 / 41437345486), so nothing is ruled out yet. Added cost: two short instrumentation runs (~1–2 min each) inside the

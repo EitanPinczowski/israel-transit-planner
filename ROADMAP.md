@@ -373,7 +373,7 @@ package. Tick only your own package's lines.
 - [x] Search corpus (core, offline): ~115 real queries in `fixtures/search/search_corpus.tsv`, Transitous recorded, phone Geocoder stubbed, Photon replayed; per row an acceptable answer in the top 3, the source, requests per typing pause; bad real answers kept as `BAD` rows with the reason
 - [x] Ranking edge cases for TypingSearch / LocalFirst / Recents: saved place vs server hit of the same name, recents order and dedupe, prefix vs whole word, mixed Hebrew/English
 - [x] UX journeys (emulator, local mock server): debounce, clear, back, IME search action, Hebrew caret, empty / no-result / offline states, pick recent / saved, swap A/B, my location, error then retry; accessibility checks after each step; Hebrew and English
-- [x] Task completion: plan A→B from cold start in ≤ N taps, time to first result under a gate
+- [x] Task completion: plan A→B from cold start in 4 ViewModel steps (not counted UI taps: the time gate is what is asserted), time to first result under a gate
 - [x] Timetable golden made independent of its scroll slice
 - [x] `tools/ui_faults_run.sh` screen count no longer matches `matrix(` text
 - [ ] API 35 `google_apis` injected-input question (time-boxed): not investigated in T9 (no emulator time spent), recorded in `ui-testing`; still open

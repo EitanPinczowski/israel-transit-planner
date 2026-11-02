@@ -51,7 +51,7 @@ class SearchCorpusTest {
     private fun resource(path: String) = javaClass.getResource(path)?.readText()
     private fun table(name: String) = resource("$dir/$name")!!.lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }
 
-    private class Counts { var geocode = 0; var phone = 0; var photon = 0 }
+    private class Counts { var geocode = 0; var phone = 0; var photon = 0; var unrecorded = false }
 
     private inner class Replay(val counts: Counts) : TransitApi by FakeTransitApi() {
         override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
@@ -59,6 +59,7 @@ class SearchCorpusTest {
             val name = "geo_" + hash(key(text, language))
             val body = resource("$dir/$name.json")
             if (body == null) {
+                counts.unrecorded = true
                 val builder = "http://x/api/v1/geocode".toHttpUrl().newBuilder()
                 builder.addQueryParameter("text", text)
                 builder.addQueryParameter("language", language)
@@ -141,12 +142,20 @@ class SearchCorpusTest {
                 else -> "TRANSITOUS"
             }
             observed += listOf(r.id, r.query, "top=" + top.joinToString(" / ") { "${it.name} (%.3f,%.3f)".format(it.lat, it.lon) }, "source=$source", "geocode=${o.counts.geocode} phone=${o.counts.phone} photon=${o.counts.photon}").joinToString("\t")
+            // A search text with no recording makes the replay throw, which reads as "no answer": a BAD row would pass on that.
+            if (o.counts.unrecorded) {
+                failures += "line ${r.line} ${r.id}: its search text is not recorded (see the SEARCH-MISSING list)"
+                continue
+            }
             if (o.counts.geocode == 0 && o.answer == null) { failures += "line ${r.line} ${r.id}: no answer (unrecorded? see core/build/search-missing.sh)"; continue }
             if (o.counts.geocode > 1 || o.counts.phone > 1 || o.counts.photon > 1) failures += "line ${r.line} ${r.id}: one typing pause sent ${o.counts.geocode} geocode / ${o.counts.phone} phone / ${o.counts.photon} photon"
             if (o.answers != 1) failures += "line ${r.line} ${r.id}: ${o.answers} settled answers for one pause"
             if (r.bad) {
                 if (hit != null) failures += "line ${r.line} ${r.id}: marked BAD but ${hit.name} is now in the top 3 (source $source): flip the row to OK"
                 if (r.note.isBlank()) failures += "line ${r.line} ${r.id}: a BAD row needs its reason"
+                // BAD means "answered, and wrongly": an empty or missing answer is something else (a broken replay).
+                if (o.answer == null || o.shown.isEmpty()) failures += "line ${r.line} ${r.id}: a BAD row must have answers (it got none)"
+                if (r.source != "NONE") failures += "line ${r.line} ${r.id}: a BAD row's source is NONE, the row says ${r.source}"
             } else {
                 if (hit == null) {
                     failures += "line ${r.line} ${r.id} '${r.query}': no acceptable answer in the top 3: ${top.joinToString { it.name }}"

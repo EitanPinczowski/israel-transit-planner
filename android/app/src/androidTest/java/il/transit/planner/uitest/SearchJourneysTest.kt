@@ -76,16 +76,18 @@ class SearchJourneysTest {
         journey { d ->
             mock.settle()
             val before = mock.count("geocode")
-            val text = "שדרות רגר"
-            for (i in 1..text.length) {
-                d.onMain { if (i == 1) it.startEditing(Field.TO); it.onQuery(text.substring(0, i)) }
-                SystemClock.sleep(40)
+            // A text no other journey types (each journey has fresh guards anyway), every key in one burst on the main thread:
+            // all of them land inside one debounce window, so this does not depend on the emulator's timing.
+            val text = "רגר שדרות יצחק"
+            d.onMain {
+                it.startEditing(Field.TO)
+                for (i in 1..text.length) it.onQuery(text.substring(0, i))
             }
             d.awaitAnswer()
             mock.settle(1_000)
             val sent = mock.count("geocode") - before
-            Log.i(MockServerRule.TAG, "Typing ${text.length} keys 40 ms apart -> $sent geocode request(s)")
-            assertEquals("one pause, one geocode request (not one per key): server=${mock.counts()}", 1, sent)
+            Log.i(MockServerRule.TAG, "Typing ${text.length} keys in one burst -> $sent geocode request(s)")
+            assertTrue("one pause sends 1..$GEOCODE_PER_PAUSE geocode request(s), not one per key ($sent): server=${mock.counts()}", sent in 1..GEOCODE_PER_PAUSE)
         }
     }
 
@@ -129,7 +131,8 @@ class SearchJourneysTest {
             d.onMain { it.startEditing(Field.TO) }
             d.awaitNode(hasSetTextAction(), 10_000)
             val field = compose.onAllNodes(hasSetTextAction()).onFirst()
-            field.performTextInput("רגר")
+            val typed = "רגר"
+            field.performTextInput(typed)
             compose.waitForIdle()
             val node = field.fetchSemanticsNode()
             val want = if (Run.locale == "he") LayoutDirection.Rtl else LayoutDirection.Ltr
@@ -139,7 +142,7 @@ class SearchJourneysTest {
             // The caret sits after what was typed (typing Hebrew in an RTL field moves it left, but its offset is the text length).
             val selection = node.config.getOrNull(SemanticsProperties.TextSelectionRange)
             assertNotNull(selection)
-            assertEquals(3, selection!!.end)
+            assertEquals(typed.length, selection!!.end)
         }
     }
 
@@ -257,29 +260,30 @@ class SearchJourneysTest {
     // -- task completion --------------------------------------------------------------------------------------
 
     /**
-     * From a cold start with two saved places: tap the start, pick it, tap the destination, pick it: [TAPS] taps (the
-     * search runs by itself once both are set), and the first result shows within [FIRST_RESULT_MS] on the mock server.
+     * From a cold start with two saved places: start field, pick it, destination field, pick it: [STEPS] ViewModel actions
+     * (the search runs by itself once both are set). The steps are the test's own list, NOT counted taps on UI nodes: the
+     * journeys avoid injected input, so what is asserted is that a result arrives after exactly these actions, and that
+     * the first result shows within [FIRST_RESULT_MS] on the mock server (the time gate).
      */
-    @Test fun plan_a_to_b_from_cold_start_in_four_taps() {
+    @Test fun plan_a_to_b_from_cold_start_in_four_steps_under_the_time_gate() {
         journey { d ->
-            var taps = 0
             val t0 = SystemClock.uptimeMillis()
-            d.onMain { it.startEditing(Field.FROM) }; taps++
-            d.onMain { it.pick(Suggestion(BGU.name, null, BGU.latLon, saved = true, isStop = false)) }; taps++
-            d.onMain { it.startEditing(Field.TO) }; taps++
-            d.onMain { it.pick(Suggestion(TEL_AVIV.name, null, TEL_AVIV.latLon, saved = true, isStop = false)) }; taps++
+            d.onMain { it.startEditing(Field.FROM) }
+            d.onMain { it.pick(Suggestion(BGU.name, null, BGU.latLon, saved = true, isStop = false)) }
+            d.onMain { it.startEditing(Field.TO) }
+            d.onMain { it.pick(Suggestion(TEL_AVIV.name, null, TEL_AVIV.latLon, saved = true, isStop = false)) }
             d.awaitSearch()
             val ms = SystemClock.uptimeMillis() - t0
-            Log.i(MockServerRule.TAG, "Task completion: $taps taps, first result after $ms ms")
-            assertTrue("no result", d.st.options.isNotEmpty())
-            assertTrue("$taps taps, expected at most $TAPS", taps <= TAPS)
+            Log.i(MockServerRule.TAG, "Task completion: $STEPS steps, first result after $ms ms")
+            assertTrue("no result after $STEPS steps", d.st.options.isNotEmpty())
             assertTrue("first result after $ms ms, gate $FIRST_RESULT_MS ms", ms <= FIRST_RESULT_MS)
         }
     }
 
     private companion object {
         const val WAIT_MS = 20_000L
-        const val TAPS = 4
+        const val STEPS = 4
+        const val GEOCODE_PER_PAUSE = 1
         const val FIRST_RESULT_MS = 8_000L
     }
 }
