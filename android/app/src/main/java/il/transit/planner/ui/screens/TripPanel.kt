@@ -297,7 +297,17 @@ internal fun timeLabel(res: Int, state: UiState, mode: TimeMode): String {
 /** Fills whatever room is left above the keyboard ([modifier] carries the weight). */
 @Composable
 internal fun SuggestionList(state: UiState, vm: MainActions, modifier: Modifier) {
-    ElevatedCard(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
+    // No room for one row (landscape, keyboard up): no list. A row squeezed to nothing would be one more
+    // stop for TalkBack with nothing on screen (Phase 11 E5: ATF's only error left in the layout audit).
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxHeight < 48.dp) return@BoxWithConstraints
+        SuggestionCard(state, vm)
+    }
+}
+
+@Composable
+private fun SuggestionCard(state: UiState, vm: MainActions) {
+    ElevatedCard(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
         LazyColumn {
             item {
                 SuggestionRow(stringResource(R.string.my_location), null, Icons.Default.Place) { vm.pickMyLocation() }
