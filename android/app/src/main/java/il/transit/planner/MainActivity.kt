@@ -81,6 +81,7 @@ import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
+import il.transit.planner.ui.mapAccessibility
 
 /**
  * Hosts the map and the Compose UI. The MapView is owned here (not by Compose) so its
@@ -292,7 +293,7 @@ class MainActivity : ComponentActivity() {
                     if (openSheet != null) ({ m, shape -> TripDetailsSheet(openSheet, onClose = tripVm::close, modifier = m, shape = shape, onMissedIt = if (state.to is PlaceRef.Point) ({ tripVm.close(); missedItFromSheet() }) else null, accessibleRoutes = state.settings.accessible, paymentApp = state.settings.paymentApp) }) else null
                 CompositionLocalProvider(LocalCalendarChip provides { s -> CalendarChip(s, vm) }) {
                     MainScreen(state, ui, actions, tripSheet = sheetUi) {
-                        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize(), update = { mapAccessibility(it, getString(R.string.a11y_map), state.hasResults) })
                     }
                 }
             }

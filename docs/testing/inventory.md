@@ -69,6 +69,7 @@ journey named below (`ClassName#test`) must exist, and every journey test in `an
 | Offline: last results with an "offline" banner | `TripCacheUpgradeTest`, `CacheLookupTest` | `TripStateTest` | `s06_trip_network_error`, `s07_trip_offline_banner` | `JourneysTest#j08_no_signal_shows_saved_results_then_retry_works` | `trip_search` | BB |
 | Search and chosen trip kept across process death | `TabCacheTest` | `RestoreTabsStateTest`, `SavedUiTest` | GAP | `SystemJourneysTest#mid_flow_rotation`, `SystemJourneysTest#mid_flow_language` | GAP | BB |
 | Settings: language, theme, first-run tour | `AppearanceTest` | `AppStateTest` | `LookShotsTest` | `SystemJourneysTest#mid_flow_theme`, `SystemJourneysTest#mid_flow_language` | GAP | BB |
+| Screen reader (TalkBack): spoken legs and rows, labels, headings, reading order; font ×2.0 | `SpeechTest` | GAP | `PanelsTest` (font ×2.0, Hebrew dark), the layout audit (R5) | `A11yJourneysTest#a11y_journey_hebrew`, `A11yJourneysTest#a11y_journey_english`; ATF after every step of every journey (`A11yHook`) | GAP | BB |
 | Crash log (last 5, share) | `CrashLogTest` | `FullDiskStateTest` | `s15_settings_bottom` | `ChaosJourneysTest#low_storage` | GAP | BB |
 | Data & battery card, low-data switch | `UsageLogTest`, `LowDataTest` | GAP | `PayDataShotsTest` | GAP | GAP | BB |
 | "Pay with…" | `PayAppsTest` | GAP | `PayDataShotsTest` | GAP | GAP | BB |

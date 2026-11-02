@@ -359,8 +359,8 @@ package. Tick only your own package's lines.
 - [x] Feature × test inventory checked by `check_docs`; 5 gap journeys; release bug-bash checklist
 
 ### E5 — Accessibility (`claude/p11-accessibility`, 0 requests)
-- [ ] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)
-- [ ] Accessibility checks after every step of every journey; font 2.0 goldens
+- [x] Semantics on every screen (spoken legs, roles, states, headings, 48 dp, map skipped)
+- [x] Accessibility checks after every step of every journey; font 2.0 goldens
 
 ### E6 — NFC Rav-Kav spike (`claude/p11-nfc-spike`, optional, 0 requests)
 - [ ] Debug-only read of the owner's own card, clean room; owner's go/no-go

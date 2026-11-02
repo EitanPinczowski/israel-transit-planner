@@ -18,6 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import il.transit.planner.R
 import il.transit.planner.tile.NextTripTile
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.Modifier
 
 /**
  * Settings: the Quick Settings tile "Home" (Phase 9 C4). Android 13+ adds it from a button
@@ -27,7 +30,7 @@ import il.transit.planner.tile.NextTripTile
 internal fun QuickTileSection(sdk: Int = Build.VERSION.SDK_INT) {
     val context = LocalContext.current
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.tile_title), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.tile_title), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Text(stringResource(R.string.tile_help), style = MaterialTheme.typography.bodySmall)
         if (sdk >= Build.VERSION_CODES.TIRAMISU) {
             // No side padding: the label lines up with the text above; the 48 dp target stays.

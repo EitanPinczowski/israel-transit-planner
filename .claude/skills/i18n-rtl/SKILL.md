@@ -42,6 +42,32 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
 - Plurals: `<plurals>` in both files; Hebrew needs `one` and `other` (and `two` reads
   better for minutes: "2 דקות").
 
+# Screen reader (TalkBack) — Phase 11 E5
+
+- **What a leg, an option, a departure row or a tight change says** comes from core `present/Speech.kt`
+  (`SpeechTest`, rendered through the real `strings_a11y.xml` in both languages): phrases with keys, joined by
+  ", ". "Bus 47, 8:10 to 8:34, 12 stops, get off at Rager/Oren" / "אוטובוס קו 47, מ־8:10 עד 8:34, 12 תחנות,
+  ירידה ב…". Times are `H:mm` (no leading zero; "0:20" past midnight), line and train numbers stay text, E3's
+  train label and badge are words. The day is said as the screen shows it: "leave Friday at 23:50, arrive
+  0:20 the next day", a ride "23:50 to 0:20 the next day". Never "0 minutes": a short walk is 1 minute, no
+  slack is "no time to spare". Every tight-change chip kind has its sentence (`Speech.tight`). The app maps keys to resources in `screens/A11y.kt` (`spoken()`).
+- **One node per thing:** a leg chip is one node (`clearAndSetSemantics { contentDescription = spoken(...) }`,
+  inner to its `clickable`, so the tap and role stay); an option card is one merged node (its `clickable`),
+  its time row says "leave 8:21, arrive 9:46, 85 minutes, 1 transfer"; a departure row says its sentence and
+  its ☆ says "Add 5 to My lines"; a trip-sheet stop is one node; an invisible spacer text is cleared.
+- **State, not colour:** options carry `selected`; tabs are `Role.Tab` + selected; chips are Material chips
+  (selected built in). `heading()` on sheet headers, the trip sheet's title and Settings section titles. The
+  ride progress and "Reminder set" rows are `liveRegion = Polite` (they change once a stop, never per second).
+- **Labels:** every icon button has a `contentDescription`; a decorative icon next to its words has `null`.
+- **Targets ≥ 48 dp without growing the layout:** Compose's hit test already takes a touch up to 48 dp
+  around a small `clickable` (where no other target is closer), so a leg chip keeps its size. Don't wrap
+  it in `minimumInteractiveComponentSize()`: that pads the layout, and E5's first try made the selected
+  card's chip rows 48 dp tall, pushed the tight-change chips below the fold on 360×640 and made the card
+  jump on every tap (designer pass).
+- **The map** (`mapAccessibility`, `MapController.kt`) says "Map: the list has the same options" and is hidden
+  from TalkBack while results show (`IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS`); taps are untouched.
+- Colour is never the only signal: leg chips keep their line number or mode word, warnings their ⚠ and words.
+
 # Design: theme, dark mode, every phone shape
 
 - Colours come from `ui/Theme.kt` (`LightColors`/`DarkColors`, seeded from the icon's

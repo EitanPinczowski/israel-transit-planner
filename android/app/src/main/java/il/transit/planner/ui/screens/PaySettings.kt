@@ -36,6 +36,8 @@ import il.transit.core.present.PayApps
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
 import il.transit.planner.ui.PayWith
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /** The app's language for the payment apps' names ("iw"/"he" → Hebrew). */
 @Composable
@@ -50,7 +52,7 @@ internal fun PaySettingsSection(s: UserSettings, set: (UserSettings) -> Unit) {
     val lang = payLanguage()
     val chosen = PayApps.chosen(s.paymentApp)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.pay_settings_title), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.pay_settings_title), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Text(stringResource(R.string.pay_my_app), style = MaterialTheme.typography.bodyMedium)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             FilterChip(chosen == null, { set(s.copy(paymentApp = null)) }, label = { Text(stringResource(R.string.pay_none)) })

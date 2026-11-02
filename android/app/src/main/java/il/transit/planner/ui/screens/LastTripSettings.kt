@@ -31,6 +31,12 @@ import il.transit.core.user.Home
 import il.transit.core.user.SavedPlace
 import il.transit.core.user.UserSettings
 import il.transit.planner.R
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 
 /**
  * Settings → "Last trip home alert" (Phase 9 C5), off by default. Turning it on asks for
@@ -84,10 +90,14 @@ internal fun LastTripSetting(s: UserSettings, places: List<SavedPlace>, set: (Us
 @Composable
 internal fun LastTripSection(s: UserSettings, places: List<SavedPlace>, denied: Boolean, onToggle: (Boolean) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.last_trip_section), style = MaterialTheme.typography.labelLarge)
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.last_trip_section), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
+        // The whole row is the switch: one TalkBack control that says its name (Phase 11 E5).
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = s.lastTripAlert, role = Role.Switch, onValueChange = onToggle),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(stringResource(R.string.last_trip_toggle), Modifier.weight(1f))
-            Switch(checked = s.lastTripAlert, onCheckedChange = onToggle)
+            Switch(checked = s.lastTripAlert, onCheckedChange = null)
         }
         Text(stringResource(R.string.last_trip_help), style = MaterialTheme.typography.bodySmall)
         if (denied && !s.lastTripAlert) {

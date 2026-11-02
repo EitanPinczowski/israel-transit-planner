@@ -374,6 +374,13 @@ class PanelsTest(private val v: Variant) {
         fun variants() = listOf(
             Variant("en_light", phone, dark = false, rtl = false),
             Variant("he_dark", phone.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, nightMode = NightMode.NIGHT), dark = true, rtl = true),
+            // Phase 11 E5: the largest font Android offers, Hebrew, dark, on the smallest common phone (360×640 dp).
+            Variant(
+                "he_dark_font2",
+                DeviceConfig.NEXUS_5.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, nightMode = NightMode.NIGHT, fontScale = 2.0f),
+                dark = true,
+                rtl = true,
+            ),
         )
     }
 }

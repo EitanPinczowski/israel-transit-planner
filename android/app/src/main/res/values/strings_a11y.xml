@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E5: what a screen reader says (core present/Speech.kt picks the keys). Never shown on screen. -->
+<resources>
+    <string name="a11y_bus_line">Bus %1$s</string>
+    <string name="a11y_light_rail_line">Light rail %1$s</string>
+    <string name="a11y_other_line">Line %1$s</string>
+    <string name="a11y_train_number_to">Train %1$s to %2$s</string>
+    <string name="a11y_train_number">Train %1$s</string>
+    <string name="a11y_kind_bus">Bus</string>
+    <string name="a11y_kind_train">Train</string>
+    <string name="a11y_kind_light_rail">Light rail</string>
+    <string name="a11y_kind_other">Public transport</string>
+    <plurals name="a11y_walk_min">
+        <item quantity="one">Walk %d minute</item>
+        <item quantity="other">Walk %d minutes</item>
+    </plurals>
+    <plurals name="a11y_drive_min">
+        <item quantity="one">Drive %d minute</item>
+        <item quantity="other">Drive %d minutes</item>
+    </plurals>
+    <string name="a11y_times">%1$s to %2$s</string>
+    <plurals name="a11y_stops">
+        <item quantity="one">%d stop</item>
+        <item quantity="other">%d stops</item>
+    </plurals>
+    <plurals name="a11y_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="a11y_get_off">get off at %1$s</string>
+    <string name="a11y_to_place">to %1$s</string>
+    <string name="a11y_badge_accessible">accessible bus</string>
+    <string name="a11y_badge_may_not_be">may not be wheelchair accessible</string>
+    <string name="a11y_leave_at">leave %1$s</string>
+    <string name="a11y_arrive_at">arrive %1$s</string>
+    <plurals name="a11y_transfers">
+        <item quantity="one">%d transfer</item>
+        <item quantity="other">%d transfers</item>
+    </plurals>
+    <string name="a11y_direct">no transfers</string>
+    <string name="a11y_headsign">to %1$s</string>
+    <string name="a11y_leaves_at">leaves %1$s</string>
+    <plurals name="a11y_late_min">
+        <item quantity="one">%d minute late</item>
+        <item quantity="other">%d minutes late</item>
+    </plurals>
+    <string name="a11y_cancelled">cancelled</string>
+    <plurals name="a11y_tight_change">
+        <item quantity="one">warning: tight change at %1$s, only %2$d minute</item>
+        <item quantity="other">warning: tight change at %1$s, only %2$d minutes</item>
+    </plurals>
+    <string name="a11y_times_next_day">%1$s to %2$s the next day</string>
+    <string name="a11y_leave_on_day">leave %1$s at %2$s</string>
+    <string name="a11y_arrive_next_day">arrive %1$s the next day</string>
+    <plurals name="a11y_arrive_days_later">
+        <item quantity="one">arrive %1$s, %2$d day later</item>
+        <item quantity="other">arrive %1$s, %2$d days later</item>
+    </plurals>
+    <string name="a11y_tight_no_spare">warning: tight change at %1$s, no time to spare</string>
+    <plurals name="a11y_tight_walk">
+        <item quantity="one">warning: walk %d minute to the next ride</item>
+        <item quantity="other">warning: walk %d minutes to the next ride</item>
+    </plurals>
+    <plurals name="a11y_spare">
+        <item quantity="one">%d minute to spare</item>
+        <item quantity="other">%d minutes to spare</item>
+    </plurals>
+    <string name="a11y_no_spare">no time to spare</string>
+    <string name="a11y_tight_may_miss">warning: tight change, you may miss it</string>
+    <!-- The ☆ next to a departure (stop sheet). -->
+    <string name="a11y_pin_line">Add %1$s to My lines</string>
+    <string name="a11y_unpin_line">Remove %1$s from My lines</string>
+    <!-- The map (Phase 11 E5): when results show, TalkBack skips it; the list holds the same options. -->
+    <string name="a11y_map">Map: the list has the same options</string>
+</resources>

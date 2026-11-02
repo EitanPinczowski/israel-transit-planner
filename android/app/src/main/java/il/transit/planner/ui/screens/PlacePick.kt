@@ -46,6 +46,8 @@ import il.transit.planner.ui.Field
 import il.transit.planner.ui.MainActions
 import il.transit.planner.ui.MapPin
 import il.transit.planner.ui.PlaceDraft
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 
 /** "Pin · 32.1801, 34.8712": a point nothing names (offline, open country). */
 @Composable
@@ -134,8 +136,12 @@ internal fun SavePlaceContent(draft: PlaceDraft, name: String, onName: (String) 
             placeholder = { Text(if (draft.naming) stringResource(R.string.pin_naming) else stringResource(R.string.name_hint)) },
             supportingText = { Text(PinName.coords(draft.at)) },
         )
-        Row(Modifier.fillMaxWidth().clickable { onHome(!home) }, verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = home, onCheckedChange = onHome)
+        // One control that says its name: the row toggles, the box only shows it (Phase 11 E5).
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = home, role = Role.Checkbox, onValueChange = onHome),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(checked = home, onCheckedChange = null, modifier = Modifier.padding(horizontal = 14.dp)) // the 48 dp box it had as a control
             Text(stringResource(R.string.set_as_home))
         }
     }

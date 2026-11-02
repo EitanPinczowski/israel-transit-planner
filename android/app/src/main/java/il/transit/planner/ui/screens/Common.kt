@@ -160,6 +160,15 @@ import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.heading
+import il.transit.core.api.Leg
+import il.transit.core.present.AccessibleBadge
+import il.transit.core.present.Speech
 
 internal const val TRANSITOUS_SOURCES = "https://transitous.org/sources/"
 
@@ -205,8 +214,16 @@ internal fun PlaceRow(
         }
         return
     }
+    // Phase 11 E5: the row says its own words ("To, Choose destination"), so it keeps a label even while a
+    // layout change clips its texts.
+    val said = stringResource(labelRes) + ", " + (value ?: stringResource(placeholderRes))
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 8.dp),
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 44.dp)
+            .semantics { contentDescription = said }
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -239,6 +256,7 @@ internal fun SheetHeader(collapsed: Boolean, onCollapse: (Boolean) -> Unit, titl
     val label = stringResource(if (collapsed) R.string.panel_expand else R.string.panel_collapse)
     Column(
         Modifier.fillMaxWidth()
+            .semantics { heading() }
             .draggable(
                 rememberDraggableState { drag += it },
                 Orientation.Vertical,
@@ -287,6 +305,8 @@ internal fun Modifier.option(selected: Boolean, onClick: () -> Unit): Modifier {
         .background(if (selected) c.primaryContainer else Color.Transparent)
         .border(1.dp, if (selected) c.primary.copy(alpha = 0.6f) else Color.Transparent, shape)
         .then(if (selected) Modifier.testTag(il.transit.planner.ui.UiTags.SELECTED) else Modifier)
+        // Phase 11 E5: TalkBack says "selected" on the option the map shows.
+        .semantics { this.selected = selected }
         .clickable(onClick = onClick)
         .padding(10.dp)
 }
@@ -309,15 +329,24 @@ internal fun FareText(f: FareEstimate?) {
 }
 
 @Composable
-internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null) {
+internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null, leg: Leg? = null, badge: AccessibleBadge? = null) {
     val color = parseColor(c.color)
     val text = when (c.kind) {
         LegKind.WALK, LegKind.CAR -> "${kindName(c.kind)} ${c.minutes}′"
         else -> c.label ?: kindName(c.kind)
     }.let { if (c.alert) "⚠ $it" else it } // only when an answer carries an alert
+    // Phase 11 E5: one node that says the whole leg ("Bus 47, 8:10 to 8:34, 12 stops, get off at …"),
+    // never "47". A tappable chip keeps its size: Compose's hit test already takes a touch up to 48 dp
+    // around a small `clickable` (where no other target is closer), so the row stays as tall as before
+    // and the tight-change chips stay above the fold on a 360×640 phone (designer pass).
+    val said = spoken(if (leg != null) Speech.leg(leg, badge) else Speech.chip(c))
     Box(
-        Modifier.background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+        Modifier
+            .background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
+            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(if (c.legIndex >= 0) Modifier.testTag(legChipTag(c.legIndex)) else Modifier)
+            // Inner to `clickable`, so the tap and its role stay; the chip's own text is replaced.
+            .clearAndSetSemantics { contentDescription = said }
             .padding(horizontal = 6.dp, vertical = 2.dp),
     ) {
         val live = when {
@@ -366,10 +395,12 @@ internal fun NameDialog(titleRes: Int, onDismiss: () -> Unit, onSave: (String) -
 @Composable
 internal fun AttributionChip(modifier: Modifier) {
     val context = LocalContext.current
+    // Phase 11 E5: the chip says its own words, so it keeps a label when the keyboard squeezes it (landscape).
+    val said = stringResource(R.string.attribution)
     // Surface(onClick) keeps a 48dp touch target around the small pill.
     Surface(
         onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(TRANSITOUS_SOURCES))) },
-        modifier = modifier,
+        modifier = modifier.semantics { contentDescription = said },
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.92f),
         shadowElevation = 2.dp,
