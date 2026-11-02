@@ -137,7 +137,10 @@ internal fun SavePlaceContent(draft: PlaceDraft, name: String, onName: (String) 
             supportingText = { Text(PinName.coords(draft.at)) },
         )
         // One control that says its name: the row toggles, the box only shows it (Phase 11 E5).
-        Row(Modifier.fillMaxWidth().toggleable(value = home, role = Role.Checkbox, onValueChange = onHome), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = home, role = Role.Checkbox, onValueChange = onHome),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Checkbox(checked = home, onCheckedChange = null)
             Text(stringResource(R.string.set_as_home))
         }

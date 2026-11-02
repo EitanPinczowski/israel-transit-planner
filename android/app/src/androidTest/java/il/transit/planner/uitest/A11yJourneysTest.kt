@@ -121,7 +121,8 @@ class A11yJourneysTest {
                 d.onMain { it.select(trainAt) }
                 compose.waitForIdle()
             }
-            val ride = d.ui.selectedItinerary!!.legs.indexOfFirst { it.isTransit }
+            val train = d.ui.selectedItinerary!!
+            val ride = train.legs.indexOfFirst { it.isTransit }
             compose.onAllNodes(hasTestTag(legChipTag(ride)) and inCard and hasClickAction(), useUnmergedTree = true).onFirst().performClick()
             compose.waitUntil(10_000) { compose.onAllNodes(hasText(d.str(R.string.trip_board), substring = true), useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
             d.step("trip sheet", rtl)
