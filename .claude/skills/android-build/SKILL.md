@@ -174,3 +174,10 @@ installs the handler (`data/CrashLogStore`, format in core `diag/CrashLog`); it 
 `filesDir/crash_log.txt` and then hands over to Android's own handler. Nothing is uploaded,
 and that stays so: sending crashes anywhere automatically would need a server or a
 third-party service (see `dead-ends`).
+
+## Debug-only code (Phase 11 E6 labs)
+`src/debug/` is compiled into the debug APK only (not `uitest`, which has its own source set, nor release).
+Main code reaches it through one function that every variant defines: `labs/LabsRow()` is the real Settings
+row in `src/debug/.../labs/RavKavLab.kt` and an empty composable in `src/release/` and `src/uitest/`. The NFC
+permission sits in `src/debug/AndroidManifest.xml`, so release builds never ask for it. Its Paparazzi shots
+live in `src/testDebug/` (run by `verifyPaparazziDebug` like the rest).

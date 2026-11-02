@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E6: מעבדת רב-קו, בגרסת debug בלבד. -->
+<resources>
+    <string name="labs_title">מעבדה (גרסת debug)</string>
+    <string name="labs_ravkav_open">קריאת הרב-קו שלי</string>
+    <string name="labs_ravkav_title">מעבדת רב-קו</string>
+    <string name="labs_ravkav_privacy">הקריאה נעשית בטלפון בלבד. שום דבר לא נשמר, נרשם או נשלח. שם בעל הכרטיס ומספר הזהות לעולם לא נקראים.</string>
+    <string name="labs_ravkav_close">סגירה</string>
+    <string name="labs_ravkav_no_nfc">אין NFC בטלפון הזה.</string>
+    <string name="labs_ravkav_nfc_off">ה-NFC כבוי. יש להפעיל אותו בהגדרות הטלפון ולהקיש על ״לנסות שוב״.</string>
+    <string name="labs_ravkav_retry">לנסות שוב</string>
+    <string name="labs_ravkav_hold">יש להצמיד את הרב-קו לגב הטלפון.</string>
+    <string name="labs_ravkav_reading">קורא… לא להזיז את הכרטיס.</string>
+    <string name="labs_ravkav_cant_read">אי אפשר לקרוא את הכרטיס הזה. יש להחזיק אותו יציב ולנסות שוב.</string>
+    <string name="labs_ravkav_again">אפשר להצמיד את הכרטיס שוב כדי לקרוא אותו פעם נוספת.</string>
+    <string name="labs_ravkav_summary">נקרא ב־⁨%1$d⁩ מ״ש · SELECT ⁨%2$s⁩ · class ⁨%3$s⁩</string>
+    <string name="labs_ravkav_skipped">סביבה ובעל הכרטיס (SFI 07): לא נקראו, בכוונה.</string>
+    <string name="labs_file_contract_list">רשימת חוזים</string>
+    <string name="labs_file_contracts">חוזים</string>
+    <string name="labs_file_counters">מונים</string>
+    <string name="labs_file_event_log">יומן אירועים</string>
+    <string name="labs_file_special_events">אירועים מיוחדים</string>
+    <string name="labs_file_header">%1$s (SFI ⁨%2$s⁩)</string>
+    <plurals name="labs_outcome_read">
+        <item quantity="one">ענה: רשומה ⁨%1$d⁩ (⁨%2$s⁩ בתים)</item>
+        <item quantity="two">ענה: ⁨%1$d⁩ רשומות (⁨%2$s⁩ בתים)</item>
+        <item quantity="other">ענה: ⁨%1$d⁩ רשומות (⁨%2$s⁩ בתים)</item>
+    </plurals>
+    <string name="labs_outcome_empty">ענה, אין רשומות (⁨%1$s⁩)</string>
+    <string name="labs_outcome_not_found">לא קיים בכרטיס (⁨%1$s⁩)</string>
+    <string name="labs_outcome_needs_keys">דרוש מפתח או חיבור מאובטח (⁨%1$s⁩)</string>
+    <string name="labs_outcome_refused">נדחה (⁨%1$s⁩)</string>
+</resources>

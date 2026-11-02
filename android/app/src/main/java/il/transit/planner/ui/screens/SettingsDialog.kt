@@ -273,6 +273,7 @@ internal fun SettingsContent(
         item { QuickTileSection() }
         item { OfflineSection(actions, s.lowData) }
         item { CrashLogSection(actions.crashLog) }
+        item { il.transit.planner.labs.LabsRow() } // Phase 11 E6: debug builds only; empty in release and uitest
         item { UpdateSettingsRow(state.updateState, vm) }
         item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() }) }
         item { SaveHereRow(vm) }
