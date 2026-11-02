@@ -54,6 +54,8 @@ class SearchJourneysTest {
         d.launch().use { block(d) }
     }
 
+    private val AppDriver.st get() = vm.state.value
+
     private fun AppDriver.type(text: String, field: Field = Field.TO) = onMain {
         it.startEditing(field)
         it.onQuery(text)
@@ -61,11 +63,11 @@ class SearchJourneysTest {
 
     /** A server answer shows (not only the saved places and recents the phone has), or the search says why not. */
     private fun AppDriver.awaitAnswer() = compose.waitUntil(WAIT_MS) {
-        val s = vm.state.value
+        val s = st
         s.places.notFound || s.places.offline || s.suggestions.any { x -> !x.saved && !x.recent && !x.home }
     }
 
-    private fun AppDriver.serverSuggestion(): Suggestion = vm.state.value.suggestions.first { !it.saved && !it.recent && !it.home }
+    private fun AppDriver.serverSuggestion(): Suggestion = st.suggestions.first { !it.saved && !it.recent && !it.home }
 
     // -- typing ---------------------------------------------------------------------------------------
 
@@ -90,17 +92,17 @@ class SearchJourneysTest {
         journey { d ->
             d.type("רגר")
             d.awaitAnswer()
-            assertTrue(d.vm.state.value.suggestions.isNotEmpty())
+            assertTrue(d.st.suggestions.isNotEmpty())
             // The X clears the text: the server's answers go, the field stays open.
             d.onMain { it.onQuery("") }
-            compose.waitUntil(WAIT_MS) { d.vm.state.value.suggestions.none { x -> !x.saved && !x.recent && !x.home } }
-            assertEquals(Field.TO, d.vm.state.value.editing)
-            assertEquals("", d.vm.state.value.query)
+            compose.waitUntil(WAIT_MS) { d.st.suggestions.none { x -> !x.saved && !x.recent && !x.home } }
+            assertEquals(Field.TO, d.st.editing)
+            assertEquals("", d.st.query)
             // Back closes the search.
             d.onMain { it.cancelEditing() }
             compose.waitForIdle()
-            assertNull(d.vm.state.value.editing)
-            assertTrue(d.vm.state.value.suggestions.isEmpty())
+            assertNull(d.st.editing)
+            assertTrue(d.st.suggestions.isEmpty())
         }
     }
 
@@ -108,14 +110,14 @@ class SearchJourneysTest {
         journey { d ->
             d.type("רגר")
             d.awaitAnswer()
-            val before = d.vm.state.value
+            val before = d.st
             val sent = mock.count("geocode")
             try {
                 d.inst.runOnMainSync { d.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
                 SystemClock.sleep(1_500)
                 d.refreshActivity()
                 compose.waitForIdle()
-                val after = d.vm.state.value
+                val after = d.st
                 assertEquals(before.editing, after.editing)
                 assertEquals(before.query, after.query)
                 assertEquals(before.suggestions, after.suggestions)
@@ -136,10 +138,10 @@ class SearchJourneysTest {
             d.awaitNode(hasSetTextAction(), 10_000)
             compose.onAllNodes(hasSetTextAction()).onFirst().performTextInput("רגר")
             d.awaitAnswer()
-            val first = d.vm.state.value.suggestions.first()
+            val first = d.st.suggestions.first()
             compose.onAllNodes(hasSetTextAction()).onFirst().performImeAction()
-            compose.waitUntil(WAIT_MS) { d.vm.state.value.editing == null }
-            val to = d.vm.state.value.to
+            compose.waitUntil(WAIT_MS) { d.st.editing == null }
+            val to = d.st.to
             assertNotNull("the search key picked nothing", to)
             Log.i(MockServerRule.TAG, "IME search key picked '${first.name}' -> $to")
         }
@@ -171,8 +173,8 @@ class SearchJourneysTest {
             mock.bodies = mapOf("geocode" to "[]", "photon" to "{\"features\":[]}")
             d.type("בלבלבלבל")
             d.awaitAnswer()
-            assertTrue("not found", d.vm.state.value.places.notFound)
-            assertFalse(d.vm.state.value.places.offline)
+            assertTrue("not found", d.st.places.notFound)
+            assertFalse(d.st.places.offline)
             mock.bodies = emptyMap()
         }
     }
@@ -183,14 +185,14 @@ class SearchJourneysTest {
             try {
                 d.type("רגר")
                 d.awaitAnswer()
-                assertTrue("offline", d.vm.state.value.places.offline)
-                assertFalse("offline is not 'not found'", d.vm.state.value.places.notFound)
+                assertTrue("offline", d.st.places.offline)
+                assertFalse("offline is not 'not found'", d.st.places.notFound)
             } finally {
                 mock.goOnline(net)
             }
             d.type("רגר ה")
             d.awaitAnswer()
-            assertFalse(d.vm.state.value.places.offline)
+            assertFalse(d.st.places.offline)
         }
     }
 
@@ -198,7 +200,7 @@ class SearchJourneysTest {
         journey { d ->
             d.onMain { it.startEditing(Field.FROM) }
             compose.waitForIdle()
-            val s = d.vm.state.value
+            val s = d.st
             assertTrue("saved places listed at once", s.suggestions.any { it.saved || it.home })
             mock.settle()
             assertEquals("an empty field sends nothing: ${mock.counts()}", 0, mock.count("geocode"))
@@ -216,12 +218,12 @@ class SearchJourneysTest {
             compose.waitForIdle()
             d.onMain { it.startEditing(Field.FROM) }
             compose.waitForIdle()
-            assertTrue("the pick is a recent", d.vm.state.value.suggestions.any { it.recent && it.name == picked.name })
-            val saved = d.vm.state.value.suggestions.first { it.saved || it.home }
+            assertTrue("the pick is a recent", d.st.suggestions.any { it.recent && it.name == picked.name })
+            val saved = d.st.suggestions.first { it.saved || it.home }
             d.onMain { it.pick(saved) }
             compose.waitForIdle()
-            assertNull(d.vm.state.value.editing)
-            assertNotNull(d.vm.state.value.from)
+            assertNull(d.st.editing)
+            assertNotNull(d.st.from)
         }
     }
 
@@ -230,13 +232,13 @@ class SearchJourneysTest {
             d.place(Field.FROM, BGU)
             d.place(Field.TO, TEL_AVIV)
             d.awaitSearch()
-            val from = d.vm.state.value.from
-            val to = d.vm.state.value.to
+            val from = d.st.from
+            val to = d.st.to
             d.onMain { it.swap() }
             d.awaitSearch()
-            assertEquals(to, d.vm.state.value.from)
-            assertEquals(from, d.vm.state.value.to)
-            assertTrue(d.vm.state.value.options.isNotEmpty())
+            assertEquals(to, d.st.from)
+            assertEquals(from, d.st.to)
+            assertTrue(d.st.options.isNotEmpty())
         }
     }
 
@@ -247,8 +249,8 @@ class SearchJourneysTest {
                 it.pickMyLocation()
             }
             compose.waitForIdle()
-            assertEquals(PlaceRef.MyLocation, d.vm.state.value.from)
-            assertNull(d.vm.state.value.editing)
+            assertEquals(PlaceRef.MyLocation, d.st.from)
+            assertNull(d.st.editing)
         }
     }
 
@@ -258,12 +260,12 @@ class SearchJourneysTest {
             d.place(Field.FROM, BGU)
             d.place(Field.TO, TEL_AVIV)
             d.awaitSearch()
-            assertNotNull("the 503s should end in an error", d.vm.state.value.error)
+            assertNotNull("the 503s should end in an error", d.st.error)
             mock.script(emptyList(), null)
             d.onMain { it.plan() }
             d.awaitSearch()
-            assertNull(d.vm.state.value.error)
-            assertTrue(d.vm.state.value.options.isNotEmpty())
+            assertNull(d.st.error)
+            assertTrue(d.st.options.isNotEmpty())
         }
     }
 
@@ -284,7 +286,7 @@ class SearchJourneysTest {
             d.awaitSearch()
             val ms = SystemClock.uptimeMillis() - t0
             Log.i(MockServerRule.TAG, "Task completion: $taps taps, first result after $ms ms")
-            assertTrue("no result", d.vm.state.value.options.isNotEmpty())
+            assertTrue("no result", d.st.options.isNotEmpty())
             assertTrue("$taps taps, expected at most $TAPS", taps <= TAPS)
             assertTrue("first result after $ms ms, gate $FIRST_RESULT_MS ms", ms <= FIRST_RESULT_MS)
         }
