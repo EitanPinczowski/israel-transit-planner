@@ -245,7 +245,8 @@ the internet: `MockServerRule` (`uitest/mock/`) runs OkHttp's `MockWebServer` on
   action with `seq` where a cache would otherwise answer (the fixed clock never expires one: `clockShift` moves "now").
 - **Beside the screens** (F6; they don't call `matrix()`, so the job's "screens × 9 cases" count leaves them out):
   `rain_note_right_after_offline` (3 tries: search, offline search, back online, the next search must ask Open-Meteo)
-  and `data_card_equals_server_counts` (a scripted session; the data card's `UsageStore.summary()` equals the server's
+  (T4's "no forecast after offline" was the mock's: the weather source read the constructor's first URL, not the moved
+  `base`; fixed) and `data_card_equals_server_counts` (a scripted session; the data card's `UsageStore.summary()` equals the server's
   count per service: Transitous sent = net + retry, Open-Meteo, Photon). `MockNetwork` gets the app's `usage` meter for it.
 - **Repeat checks with a narrower count:** typing search (Transitous) counts `geocode` only: the matrix closes the
   search while Photon's guard waits out `Retry-After`, a closed search caches nothing, so the same text later asks
