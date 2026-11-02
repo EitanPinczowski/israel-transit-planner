@@ -1,0 +1,117 @@
+# Search corpus (Phase 11 T9, SearchCorpusTest). Add a row, run `./gradlew -p core test -q`; a new search text fails the test and writes the record commands to core/build/search-missing.sh.
+# id | query | lang | acceptable names (contains, normalized; | = alternatives) | acceptable area S,W,N,E | source (TRANSITOUS PHONE PHOTON NONE) | status (OK, BAD = the real answer is wrong: asserted still wrong) | note
+cities-he	באר שבע	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+cities-en1	Beer Sheva	en	Be'er Sheva|Beer Sheva|Beersheba|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+cities-en2	Be'er Sheva	en	Be'er Sheva|Beer Sheva|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+cities-en3	Beersheba	en	Beersheba|Be'er Sheva|Beer Sheva|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+cities-ta-he	תל אביב	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+cities-ta-en	Tel Aviv	en	Tel Aviv|תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+cities-jm-he	ירושלים	he	ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+cities-jm-en	Jerusalem	en	Jerusalem|ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+cities-hf-he	חיפה	he	חיפה	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+cities-hf-en	Haifa	en	Haifa|חיפה	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+cities-el-he	אילת	he	אילת	29.50,34.88,29.60,34.98	TRANSITOUS	OK	
+cities-el-en	Eilat	en	Eilat|אילת	29.50,34.88,29.60,34.98	TRANSITOUS	OK	
+cities-nt	נתניה	he	נתניה	32.28,34.82,32.37,34.88	TRANSITOUS	OK	
+cities-ra-en	Ra'anana	en	Ra'anana|Raanana|רעננה	32.16,34.83,32.22,34.90	TRANSITOUS	OK	
+cities-re-he	רחובות	he	רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+cities-kg	קריית גת	he	גת	31.57,34.73,31.64,34.80	TRANSITOUS	OK	
+cities-kg2	קרית גת	he	גת	31.57,34.73,31.64,34.80	TRANSITOUS	OK	
+cities-ad	אשדוד	he	אשדוד	31.76,34.57,31.86,34.69	TRANSITOUS	OK	
+cities-ks	כפר סבא	he	כפר סבא	32.15,34.88,32.21,34.94	TRANSITOUS	OK	
+cities-pt	פתח תקווה	he	פתח תקווה|פתח תקוה	32.05,34.84,32.12,34.93	TRANSITOUS	OK	
+cities-rl	ראשון לציון	he	ראשון לציון	31.93,34.74,31.99,34.84	TRANSITOUS	OK	
+translit-bs1	Beer Shva	en	Be'er Sheva|Beer Sheva|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+translit-bs2	Beersheva	en	Be'er Sheva|Beer Sheva|Beersheba|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+translit-jm	Yerushalayim	en	ירושלים|Jerusalem	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+translit-hf	Chaifa	en	חיפה|Haifa	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+translit-pt	Petach Tikva	en	פתח תקווה|פתח תקוה|Petah Tikva	32.05,34.84,32.12,34.93	TRANSITOUS	OK	
+translit-ra	Raanana	en	Ra'anana|Raanana|רעננה	32.16,34.83,32.22,34.90	TRANSITOUS	OK	
+typo-bs-short	באר שב	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+typo-bs-joined	בארשבע	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+typo-ta-short	תל אבי	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+typo-jm-short	ירושלי	he	ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+typo-ad	אשדד	he	אשדוד	31.76,34.57,31.86,34.69	TRANSITOUS	OK	
+typo-hf-en	Haifaa	en	Haifa|חיפה	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+typo-ta-en	Tel Avv	en	Tel Aviv|תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+typo-jm-en	Jerusalm	en	Jerusalem|ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+typo-re	רחובת	he	רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+final-nt	נתניא	he	נתניה	32.28,34.82,32.37,34.88	TRANSITOUS	OK	
+niqqud-jm	יְרוּשָׁלַיִם	he	ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+niqqud-bs	בְּאֵר שֶׁבַע	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+final-letters-ta	תל אבים	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+abbr-ta1	ת"א	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+abbr-ta2	ת״א	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+abbr-tlv	TLV	en	Tel Aviv|תל אביב|Ben Gurion|נתב	31.9,34.7,32.05,35.0	TRANSITOUS	OK	
+abbr-bs	ב"ש	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+abbr-jm	י-ם	he	ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+abbr-pt	פ"ת	he	פתח תקווה|פתח תקוה	32.05,34.84,32.12,34.93	TRANSITOUS	OK	
+abbr-rg	ר"ג	he	רמת גן	32.04,34.80,32.10,34.84	TRANSITOUS	OK	
+abbr-rl	ראשל"צ	he	ראשון לציון	31.93,34.74,31.99,34.84	TRANSITOUS	OK	
+abbr-bg	נתב"ג	he	בן גוריון|נתב	31.9,34.7,32.05,35.0	TRANSITOUS	OK	
+abbr-tau	את"א	he	אוניברסיטת תל אביב|אוניברסיטת	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-dz	דיזנגוף 50 תל אביב	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-dz-abbr	דיזנגוף 50 ת"א	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-herzl-bs	הרצל 12 באר שבע	he	הרצל	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+street-herzl-bs-en	Herzl 12 Be'er Sheva	en	Herzl|הרצל	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+street-jaffa-jm	יפו 97 ירושלים	he	יפו	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+street-jaffa-en	Jaffa Road 97 Jerusalem	en	Jaffa|יפו	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+street-by	בן יהודה 10 תל אביב	he	בן יהודה	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-roth	שדרות רוטשילד 10 תל אביב	he	רוטשילד	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-roth-en	Rothschild 10 Tel Aviv	en	Rothschild|רוטשילד	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-allenby	אלנבי 40 תל אביב	he	אלנבי	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-allenby-en	Allenby 40 Tel Aviv	en	Allenby|אלנבי	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-haifa	העצמאות 5 חיפה	he	העצמאות	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+street-nohouse	דיזנגוף תל אביב	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+street-gap	ז'בוטינסקי 20 רמת גן	he	ז'בוטינסקי|זבוטינסקי	32.04,34.80,32.10,34.84	TRANSITOUS	OK	
+street-ben-gurion	בן גוריון 3 תל אביב	he	בן גוריון	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+citystreet-herzl-re	הרצל רחובות	he	הרצל	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+citystreet-herzl-hf	הרצל חיפה	he	הרצל	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+citystreet-herzl-rl	הרצל ראשון לציון	he	הרצל	31.93,34.74,31.99,34.84	TRANSITOUS	OK	
+citystreet-herzl-en	Herzl Haifa	en	Herzl|הרצל	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+rail-bs	תחנת רכבת באר שבע מרכז	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+rail-bs-en	Beer Sheva Center train station	en	Be'er Sheva|Beer Sheva|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+rail-savidor	תחנת רכבת תל אביב סבידור	he	סבידור	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+rail-savidor-en	Tel Aviv Savidor	en	Savidor|סבידור	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+rail-navon	תחנת רכבת יצחק נבון	he	נבון	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+rail-hof	חיפה חוף הכרמל	he	חוף הכרמל	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+rail-rehovot	תחנת רכבת רחובות	he	רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+rail-rehovot-en	Rehovot railway station	en	Rehovot|רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+rail-airport	תחנת רכבת נמל התעופה בן גוריון	he	נמל התעופה|בן גוריון	31.9,34.7,32.05,35.0	TRANSITOUS	OK	
+rail-hashalom	תחנת השלום תל אביב	he	השלום	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lr-petah	קריית אריה פתח תקווה	he	קריית אריה	32.05,34.84,32.12,34.93	TRANSITOUS	OK	
+lr-mahane	שוק מחנה יהודה	he	מחנה יהודה	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lr-damascus	שער שכם	he	שכם|Damascus	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+bus-tlv	תחנה מרכזית חדשה תל אביב	he	תחנה מרכזית	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+bus-tlv-en	Tel Aviv Central Bus Station	en	Central Bus|תחנה מרכזית	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+bus-jm	התחנה המרכזית ירושלים	he	תחנה מרכזית	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-ichilov	איכילוב	he	איכילוב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lm-ichilov-en	Ichilov hospital	en	Ichilov|איכילוב|Sourasky	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lm-sheba	שיבא תל השומר	he	שיבא|תל השומר	31.8,34.5,31.98,34.95	TRANSITOUS	OK	
+lm-soroka	סורוקה	he	סורוקה	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+lm-hadassah	הדסה עין כרם	he	הדסה	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-rambam	רמב"ם חיפה	he	רמב"ם|רמבם	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+lm-bgu	אוניברסיטת בן גוריון	he	בן גוריון	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+lm-bgu-en	Ben Gurion University	en	Ben Gurion|בן גוריון	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+lm-technion	הטכניון	he	טכניון	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+lm-technion-en	Technion	en	Technion|טכניון	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
+lm-huji	האוניברסיטה העברית גבעת רם	he	אוניברסיטה העברית	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-azrieli	עזריאלי תל אביב	he	עזריאלי	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lm-dizengoff-center	דיזנגוף סנטר	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lm-big	קניון הנגב באר שבע	he	קניון	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+lm-kotel	הכותל המערבי	he	כותל	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-kotel-en	Western Wall	en	Western Wall|Kotel|הכותל	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-yadvashem	יד ושם	he	יד ושם	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
+lm-carmel-market	שוק הכרמל	he	שוק הכרמל|הכרמל	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+lm-masada	מצדה	he	מצדה	30.5,34.7,31.0,35.0	TRANSITOUS	OK	
+amb-herzl	הרצל	he	הרצל	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+amb-herzl-en	Herzl	en	Herzl|הרצל	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+amb-rehovot-st	רחובות	he	רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	OK	
+amb-weizmann	ויצמן	he	ויצמן	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+amb-bg	בן גוריון	he	בן גוריון	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+amb-central	תחנה מרכזית	he	תחנה מרכזית	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+mixed-dz	Dizengoff דיזנגוף	en	Dizengoff|דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
+mixed-bs	באר Sheva	he	באר שבע|Be'er Sheva|Beer Sheva	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
+backup-tabenkin	טבנקין 15 רעננה	he	טבנקין	32.16,34.83,32.22,34.90	TRANSITOUS	OK	
+backup-tabenkin-en	Tabenkin 15 Ra'anana	en	Tabenkin|טבנקין	32.16,34.83,32.22,34.90	TRANSITOUS	OK	
+backup-rager	רגר	he	רגר	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
