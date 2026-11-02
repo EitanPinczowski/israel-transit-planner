@@ -70,6 +70,21 @@ grep -q "^OK ($TESTS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fai
   echo '```'
 } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
 adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+# Phase 11 T9: search and everyday-use journeys against the same mock server, in English and then in Hebrew (the
+# app's own language for the package, API 33+). Typing must send one request per pause; the ATF check runs after every step.
+SEARCH=il.transit.planner.uitest.SearchJourneysTest
+SEARCH_TESTS=$(grep -cE "^[[:space:]]*@Test fun" "$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/SearchJourneysTest.kt")
+for lang in en he; do
+  echo "::group::search journeys ($lang)"
+  adb shell cmd locale set-app-locales "$PKG" --locales "$lang" >/dev/null 2>&1 || true
+  ui_instrument "$SEARCH" "$OUT/instrument-search-$lang.txt" -e profile "api$API" -e locale "$lang" -e theme light \
+    || fail "the search journeys failed on API $API ($lang)"
+  grep -q "^OK ($SEARCH_TESTS tests)" <(tr -d '\r' < "$OUT/instrument-search-$lang.txt") || fail "not all $SEARCH_TESTS search journeys passed ($lang)"
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+  echo "::endgroup::"
+done
+adb shell cmd locale set-app-locales "$PKG" --locales "" >/dev/null 2>&1 || true
+adb logcat -d -s FaultMatrix:I | tr -d '\r' | grep -E "Typing|Task completion|IME search" | sed 's/^.*FaultMatrix: //' | tee "$OUT/search-journeys.txt" || true
 bash "$(dirname "$0")/ui_intent_fuzz.sh" "$API" "$APKS" "$OUT/security" || fail "the security / update tests failed on API $API"
 
 adb logcat -d > "$OUT/logcat.txt" || true
