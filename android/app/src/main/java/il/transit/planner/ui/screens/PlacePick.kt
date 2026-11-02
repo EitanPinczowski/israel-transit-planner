@@ -141,7 +141,7 @@ internal fun SavePlaceContent(draft: PlaceDraft, name: String, onName: (String) 
             Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = home, role = Role.Checkbox, onValueChange = onHome),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(checked = home, onCheckedChange = null)
+            Checkbox(checked = home, onCheckedChange = null, modifier = Modifier.padding(horizontal = 14.dp)) // the 48 dp box it had as a control
             Text(stringResource(R.string.set_as_home))
         }
     }
