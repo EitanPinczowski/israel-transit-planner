@@ -67,7 +67,7 @@ def check_inventory() -> list[str]:
     for f in sorted(src.glob("*JourneysTest.kt")) + [src / "FirstLaunchTest.kt"]:
         if f.exists():
             existing |= {f"{f.stem}#{m}" for m in re.findall(r"@Test fun ([A-Za-z0-9_]+)", f.read_text(encoding="utf-8"))}
-    named = set(re.findall(r"`([A-Za-z]*(?:JourneysTest|FirstLaunchTest)#[A-Za-z0-9_]+)`", text))
+    named = set(re.findall(r"`([A-Za-z0-9]*(?:JourneysTest|FirstLaunchTest)#[A-Za-z0-9_]+)`", text))
     errors = [f"inventory.md names journey `{n}` but no such test exists" for n in sorted(named - existing)]
     errors += [f"journey test `{n}` is not listed in docs/testing/inventory.md" for n in sorted(existing - named)]
     return errors

@@ -212,3 +212,14 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         private val DARK = Palette(fill = "#1D2024", stopStroke = "#9ECAFF", walk = "#B4B8C0", casing = "#111418", others = 0.5f)
     }
 }
+
+/**
+ * Phase 11 E5: the map for a screen reader. It says what it is, and while a results list is shown
+ * TalkBack skips it (and its compass and markers): the list holds the same options, in words. Taps
+ * by a sighted user are not touched: this only changes what accessibility services see.
+ */
+fun mapAccessibility(view: android.view.View, label: String, listShown: Boolean) {
+    view.contentDescription = label
+    view.importantForAccessibility =
+        if (listShown) android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES
+}

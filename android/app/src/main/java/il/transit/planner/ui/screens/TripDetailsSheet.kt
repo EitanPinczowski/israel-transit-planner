@@ -55,6 +55,9 @@ import il.transit.core.present.collapse
 import il.transit.core.present.onColor
 import il.transit.planner.R
 import il.transit.planner.ui.TripSheet
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.clearAndSetSemantics
 
 /**
  * Every stop of the vehicle behind one leg (Phase 8 B1). Live times, ⚠ alerts and "live
@@ -123,7 +126,7 @@ private fun Header(d: TripDetails, leg: Leg, accessibleRoutes: Boolean) {
                 Text(d.line ?: kindName(d.kind), style = MaterialTheme.typography.labelLarge, color = parseColor(onColor(d.color)))
             }
             Spacer(Modifier.width(8.dp))
-            Text(legTitle(leg, d.headsign), style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(legTitle(leg, d.headsign), style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
         }
         legStops(leg)?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         AccessibleBadgeRow(leg, accessibleRoutes)
@@ -157,7 +160,9 @@ private fun StopRowView(r: TripStopRow, lineColor: Color) {
         Modifier.fillMaxWidth()
             .background(if (mine) MaterialTheme.colorScheme.primaryContainer else Color.Transparent, MaterialTheme.shapes.small)
             .padding(horizontal = 6.dp, vertical = 5.dp)
-            .alpha(if (r.passed && !mine) 0.5f else 1f),
+            .alpha(if (r.passed && !mine) 0.5f else 1f)
+            // One stop, one node: "8:12, Rager/Oren, Board here" (Phase 11 E5).
+            .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(r.scheduled, style = MaterialTheme.typography.titleSmall, textDecoration = strike, softWrap = false, maxLines = 1, modifier = Modifier.widthIn(min = 48.dp))
@@ -208,7 +213,8 @@ private fun FoldRow(f: StopListItem.Folded, lineColor: Color, onClick: () -> Uni
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Same width as a stop row's time (digits are tabular), so the dots line up at any text size.
-        Text("00:00", style = MaterialTheme.typography.titleSmall, softWrap = false, maxLines = 1, modifier = Modifier.widthIn(min = 48.dp).alpha(0f))
+        // Invisible, so TalkBack must not read "00:00" either (Phase 11 E5).
+        Text("00:00", style = MaterialTheme.typography.titleSmall, softWrap = false, maxLines = 1, modifier = Modifier.widthIn(min = 48.dp).alpha(0f).clearAndSetSemantics {})
         // Dots stand for the folded stops, in the line's colour, centred on the stop dots above.
         Box(Modifier.width(14.dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size(4.dp).background(lineColor, CircleShape))

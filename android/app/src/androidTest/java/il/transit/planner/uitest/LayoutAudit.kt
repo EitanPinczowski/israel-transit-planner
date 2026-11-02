@@ -123,7 +123,9 @@ class LayoutAudit(private val d: AppDriver) {
                 if (SemanticsActions.OnClick !in n.config) return@walk
                 val r = n.boundsInWindow
                 if (r.width <= 0f || r.height <= 0f) return@walk
-                taps += n to r
+                // R4 measures whole targets: a row half scrolled out of its list shows "58×5 dp" of a
+                // 48 dp button, which is the list's edge, not a small target (Phase 11 E5).
+                if (!scrolled) taps += n to r
                 // R2 (a node scrolled out of its list is fine: the list scrolls)
                 if (scrolled || area.contains(r.toRect())) return@walk
                 if (ime > 0 && noKeyboard.contains(r.toRect())) underKeyboard += label(n)

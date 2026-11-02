@@ -33,6 +33,8 @@ import il.transit.planner.remind.ReminderScheduler
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /**
  * Settings → "Rav-Kav pass ends on" (Phase 11 E1): a date or Off. Setting or changing it
@@ -81,7 +83,7 @@ internal fun PassExpirySetting(s: UserSettings, set: (UserSettings) -> Unit) {
 internal fun PassExpirySection(endsOn: LocalDate?, refused: PassExpiry.Validity?, onPick: () -> Unit, onOff: () -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.pass_row), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.pass_row), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 endsOn?.let { stringResource(R.string.pass_date, PassExpiry.dateLabel(it, locale)) } ?: stringResource(R.string.pass_off),

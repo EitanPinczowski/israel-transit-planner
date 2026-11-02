@@ -40,6 +40,8 @@ import il.transit.planner.ui.MainActions
 import il.transit.planner.ui.UiState
 import kotlinx.coroutines.delay
 import java.time.Instant
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 
 /** Phase 11 E1: the reminder check is closed, offered once as a hint, or open. */
 enum class ReminderCheckView { NONE, HINT, OPEN }
@@ -72,7 +74,7 @@ internal fun ReminderCheckHint(onCheck: () -> Unit, onLater: () -> Unit) {
 @Composable
 internal fun ReminderCheckRow(onOpen: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.check_reminders_row), style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.check_reminders_row), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() })
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.check_reminders_help), Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = onOpen, modifier = Modifier.testTag("check_reminders")) { Text(stringResource(R.string.check_reminders_open)) }

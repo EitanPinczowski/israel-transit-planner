@@ -69,8 +69,9 @@ to the dialog, not the app (J4's "two Backs on Android 8", 2026-10-06). Before a
 
 R1 search card and bottom panel overlap · R2 tappable outside the usable screen (keyboard-hidden
 items = one finding per screen; behind an open dialog doesn't count) · R3 clipped/squeezed text, or a time/price/duration cut with …
-· R4 a target under 40 dp whose grown 48 dp tap area reaches another · R5 Accessibility Test Framework
-(contrast, labels) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
+· R4 a target under 40 dp whose grown 48 dp tap area reaches another (a row only partly scrolled into its
+list is skipped: that is the list's edge) · R5 Accessibility Test Framework (contrast, labels; on the
+dialog or popup when one is open, else the main window) · R6 Hebrew row labels on the right · R7 route inside the visible map, map
 not squeezed · R8 the selected option's action row (`UiTags.ACTIONS`: Start trip, Remind me, Send to
 driver): every button ≥ 48 × 48 dp and inside the usable screen, and the selected card (`UiTags.SELECTED`)
 on screen above it, at least its first line, 32 dp (D11; the list is 76 dp in landscape, so a whole card can't be required). The row never shows with the keyboard up: the sheet
@@ -305,3 +306,30 @@ In the `faults` job after the matrix (`tools/ui_intent_fuzz.sh`, one line in `ui
   download through GitHub's redirect → digest OK → Android's installer opens on `content://<pkg>.updates/updates/update.apk`.
   The script taps the installer's button (from a `uiautomator dump`: the app's process dies with the install, so the
   test can't), waits for `versionCode=2`, starts the app; step 2: the new version, places and settings kept.
+
+## Accessibility (Phase 11 E5)
+
+**No TalkBack in CI:** GitHub's emulator images (`google_apis`, AOSP `default`) don't ship Google's
+Accessibility Suite, so CI checks the semantics TalkBack reads, and the owner runs the PR's TalkBack checklist
+on the Pixel in Hebrew (owner decision 8).
+- **Every journey, every API level, errors blocking:** `AppDriver` registers `A11yHook` as a Compose idling
+  resource. The test framework polls it on the main thread before every tap, text input and lookup; when the
+  reachable windows' words or layout changed, it runs ATF there (`Atf.run`, no screenshot, so no contrast;
+  `TouchTargetSizeCheck` is R4's). An error counts when the same screen still shows it at the next poll or at
+  the end; `AppDriver.close()` fails the journey with each error, its element (class, bounds, words) and screen.
+  Off only in `ScreensTest` (`checkA11y = false`), whose audit reports ATF per profile as R5.
+- **`A11yJourneysTest`** (API 35, `ui_behaviour_run.sh`, Hebrew and English through `AppLocale`): search →
+  results → select the train option → its trip sheet → a stop sheet → Settings → reminder check. Each step,
+  blocking: ATF with a screenshot (errors; warnings go to logcat `A11yJourney`), every tappable node says
+  something, no two neighbouring nodes read the same, each leg chip of the selected card equals core `Speech`
+  for its leg, and nodes side by side are in the layout direction (right to left in Hebrew). It also asserts
+  the hook ran. Screenshots `a11y-<lang>-<step>.png`. Besides, by name: the selected card's `Selected`, its
+  tight-change chips (tag `TIGHT_CHIP`) equal to `Speech.tight`, the reminder row a live region, headings on
+  the trip sheet, stop sheet and Settings, the first departure row equal to `Speech.departure` and its ☆
+  label, the map `NO_HIDE_DESCENDANTS` + "Map: …" with results and `YES` without, a sighted long-press on the
+  map still dropping a pin, and a landscape step with the keyboard up.
+- **Known ATF errors** (`Atf.KNOWN`: check + test tag + reason): reported as warnings, never blocking, and
+  only inside that tagged node. Today one: `EditableContentDescCheck` in Material 3's `TimeInput`
+  (`DayTags.TIME_INPUT`). Each ATF finding prints the Compose node(s) at its bounds (`compose: #id {…}`).
+- **Fonts:** `PanelsTest` has a third variant, `he_dark_font2` (Nexus 5, 360×640 dp, font ×2.0, Hebrew, dark).
+- R3 and R4 stay report-only: they still have findings after E5 (the PR lists them).
