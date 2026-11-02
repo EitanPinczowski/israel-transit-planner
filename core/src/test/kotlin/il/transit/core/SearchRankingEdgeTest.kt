@@ -26,7 +26,7 @@ class SearchRankingEdgeTest {
         assertEquals(listOf("other"), LocalFirst.serverAfter(local, server).map { it.id })
     }
 
-    @Test fun `the same name 3 km away is a different place: both are offered, the saved one first`() {
+    @Test fun `the same name 3 km away is a different place so both are offered, the saved one first`() {
         val work = SavedPlace("עבודה", 32.08, 34.78)
         val local = LocalFirst.suggest("עבודה", listOf(work), null, emptyList())
         val farSameName = match("עבודה", 32.11, 34.78, "far")
