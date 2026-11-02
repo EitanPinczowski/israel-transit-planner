@@ -21,6 +21,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onFirst
@@ -277,8 +278,9 @@ class A11yJourneysTest {
         val seen = watchMapTouches()
         injectLongPress(sx, sy, moves = false)
         val viaFinger = awaitPin()
-        val evidence = "top=$top bottom=$bottom; MapView got [${seen.joinToString()}]; windows:\n" +
-            shell("dumpsys window windows").lines().filter { "Window #" in it || "mCurrentFocus" in it || "mFrame=" in it || "mTouchableInsets" in it }.take(40).joinToString("\n")
+        val evidence = "top=$top bottom=$bottom; MapView got [${seen.joinToString()}]; compose dialogs=" +
+            "${compose.onAllNodes(isDialog()).fetchSemanticsNodes().size} popups=${compose.onAllNodes(isPopup()).fetchSemanticsNodes().size}; " +
+            "our windows:\n" + ourWindows()
         Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger $evidence")
         if (!viaFinger) {
             // The same press at the MapView's own centre, through the input system: is it the point or the path?
@@ -321,6 +323,17 @@ class A11yJourneysTest {
         val until = SystemClock.uptimeMillis() + 10_000
         while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
         return ui.places.pin != null
+    }
+
+    /** `dumpsys window windows`, only the blocks of this app's windows (type, flags, frame, touchable region). */
+    private fun AppDriver.ourWindows(): String {
+        val out = StringBuilder()
+        var ours = false
+        for (line in shell("dumpsys window windows").lines()) {
+            if (line.trimStart().startsWith("Window #")) ours = "il.transit.planner" in line || "PopupWindow" in line
+            if (ours && line.isNotBlank()) out.append(line.trim().take(300)).append('\n')
+        }
+        return out.toString().take(6_000)
     }
 
     /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
