@@ -369,6 +369,15 @@ package. Tick only your own package's lines.
 - [x] Ride alert waits for a late bus: the leg stays open while the rider waits at the stop or rides the route, ≤ 30 min past its end (GPS replay 5/10/20 min late)
 - [x] Font scale 2.0: stop-sheet headsigns wrap (full text to TalkBack); compact Park & ride header and way-back row
 
+### T9 — Search + UX testing (`claude/p11-search-ux-t9`, Sonnet, ≤ 120 Transitous recordings, 0 Photon)
+- [ ] Search corpus (core, offline): ~115 real queries in `fixtures/search/search_corpus.tsv`, Transitous recorded, phone Geocoder stubbed, Photon replayed; per row an acceptable answer in the top 3, the source, requests per typing pause; bad real answers kept as `BAD` rows with the reason
+- [ ] Ranking edge cases for TypingSearch / LocalFirst / Recents: saved place vs server hit of the same name, recents order and dedupe, prefix vs whole word, mixed Hebrew/English
+- [ ] UX journeys (emulator, local mock server): debounce, clear, back, rotate, IME search action, Hebrew caret, empty / no-result / offline states, pick recent / saved, swap A/B, my location, error then retry; accessibility checks after each step; Hebrew and English
+- [ ] Task completion: plan A→B from cold start in ≤ N taps, time to first result under a gate
+- [ ] Timetable golden made independent of its scroll slice
+- [ ] `tools/ui_faults_run.sh` screen count no longer matches `matrix(` text
+- [ ] API 35 `google_apis` injected-input question (time-boxed): fixed, or what was ruled out in `ui-testing`
+
 ### Close-out (boss)
 - [ ] `docs/releases/v0.9.1.md` after Wave 4 (if the owner releases it)
 - [ ] `docs/releases/v0.10.0.md` assembled from `docs/releases/next/*`; fragments removed

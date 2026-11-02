@@ -15,7 +15,19 @@ CLASS=il.transit.planner.uitest.FaultMatrixTest
 # Every matrix screen runs every fault: a run that saw fewer cases did not test them. Tests that are not a
 # screen of the matrix (F6: rain after offline, data card vs server) don't call matrix() and add no 9 cases.
 SRC="$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/FaultMatrixTest.kt"
-SCREENS=$(grep -cE "= matrix\(|^[[:space:]]*matrix\(" "$SRC")
+# Count the @Test functions that call matrix(): comments and strings are stripped, and the definition itself
+# (`private fun matrix(`) is not a call, so neither a comment nor a line break can change the number.
+SCREENS=$(python3 - "$SRC" <<'PY'
+import re, sys
+src = open(sys.argv[1], encoding="utf-8").read()
+src = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+src = re.sub(r"//[^\n]*", "", src)
+src = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', src)
+src = re.sub(r"\bfun\s+matrix\s*\(", "fun _def(", src)
+tests = re.split(r"@Test\b", src)[1:]
+print(sum(1 for t in tests if re.search(r"\bmatrix\s*\(", t.split("@Test")[0])))
+PY
+)
 FAULTS=9
 mkdir -p "$OUT"
 : > "$OUT/crash.txt"
