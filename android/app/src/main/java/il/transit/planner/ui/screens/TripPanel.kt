@@ -718,10 +718,21 @@ internal fun CarRow(state: UiState, vm: MainActions) {
  *  Park & ride reuses it with its own label: the way back goes to the parked car. */
 @Composable
 internal fun WayBackRow(vm: MainActions, labelRes: Int = R.string.way_back_after) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(stringResource(labelRes), style = MaterialTheme.typography.bodySmall)
+    val hours = @Composable {
         listOf(60, 120, 180).forEach { m ->
             TextButton(onClick = { vm.wayBack(m) }) { Text(stringResource(R.string.hours_short, m / 60)) }
+        }
+    }
+    if (largeFont()) {
+        // F7: at font ×2.0 the three buttons did not fit beside the label ("1 / h" broken, 2 h and 3 h squeezed out).
+        Column {
+            Text(stringResource(labelRes), style = MaterialTheme.typography.bodySmall)
+            Row(verticalAlignment = Alignment.CenterVertically) { hours() }
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(labelRes), style = MaterialTheme.typography.bodySmall)
+            hours()
         }
     }
 }
