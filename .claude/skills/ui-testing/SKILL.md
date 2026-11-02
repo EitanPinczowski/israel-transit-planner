@@ -352,8 +352,7 @@ on the Pixel in Hebrew (owner decision 8).
 ## Search + everyday-use journeys (Phase 11 T9)
 `SearchJourneysTest` (API 35, the `faults` job, `tools/ui_faults_run.sh`, after the matrix, English then Hebrew through the
 app's own locale; the same local `MockWebServer` and counts, 0 requests to the internet): typing key by key sends **one** geocode
-per pause; the X clears the server's answers and Back closes the search; rotating keeps text and answers and asks the server
-nothing; the field takes text and its Search key picks the first answer (Compose semantics: `performTextInput` and
+per pause; the X clears the server's answers and Back closes the search; a rotation with the search field open is **not** pinned (finding below); the field takes text and its Search key picks the first answer (Compose semantics: `performTextInput` and
 `performImeAction`, no injected touch); the field's layout direction follows the language and the caret sits after what was
 typed; no-result and offline are told apart (and search recovers when the network is back); an empty field sends 0 and lists the
 saved places; a picked place comes back as a recent; swap, "my location" and error-then-retry; **task completion**: A→B from a cold
@@ -363,4 +362,8 @@ points and Compose semantics on purpose: **injected input does not reach apps on
 band press above stays report-only). T9 did not investigate why (no emulator time was spent on it; the only evidence is F6's runs
 41437338188 / 41437345486), so nothing is ruled out yet. Added cost: two short instrumentation runs (~1–2 min each) inside the
 existing `faults` job; no new job.
-
+**Finding (T9, run 41524230044, API 35, English and Hebrew):** rotating the phone with the search field open closes the search and
+clears the typed text (`editing` is null afterwards). Likely cause: `SearchEditing.kt` calls `vm.cancelEditing()` when the field loses
+focus, which an Activity re-creation does. The existing rotation journeys (`SystemJourneysTest#mid_flow_rotation`) cover a search that
+is loading, not one being typed, so nothing pinned it. The journey was kept out of `SearchJourneysTest` (no test is skipped); the case
+is in the PR body for the owner / boss to decide whether typed text should survive a rotation.

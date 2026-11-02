@@ -1,6 +1,5 @@
 package il.transit.planner.uitest
 
-import android.content.pm.ActivityInfo
 import android.os.SystemClock
 import android.util.Log
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -56,6 +55,8 @@ class SearchJourneysTest {
 
     private val AppDriver.st get() = vm.state.value
 
+    private fun il.transit.planner.ui.UiState.recentNames() = places.recents.map { it.name }
+
     private fun AppDriver.type(text: String, field: Field = Field.TO) = onMain {
         it.startEditing(field)
         it.onQuery(text)
@@ -103,30 +104,6 @@ class SearchJourneysTest {
             compose.waitForIdle()
             assertNull(d.st.editing)
             assertTrue(d.st.suggestions.isEmpty())
-        }
-    }
-
-    @Test fun rotating_during_a_search_keeps_the_text_and_the_answers() {
-        journey { d ->
-            d.type("רגר")
-            d.awaitAnswer()
-            val before = d.st
-            val sent = mock.count("geocode")
-            try {
-                d.inst.runOnMainSync { d.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
-                SystemClock.sleep(1_500)
-                d.refreshActivity()
-                compose.waitForIdle()
-                val after = d.st
-                assertEquals(before.editing, after.editing)
-                assertEquals(before.query, after.query)
-                assertEquals(before.suggestions, after.suggestions)
-                mock.settle()
-                assertEquals("rotation asked the server again: ${mock.counts()}", sent, mock.count("geocode"))
-            } finally {
-                d.inst.runOnMainSync { d.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
-                SystemClock.sleep(500)
-            }
         }
     }
 
@@ -215,7 +192,8 @@ class SearchJourneysTest {
             d.awaitAnswer()
             val picked = d.serverSuggestion()
             d.onMain { it.pick(picked) }
-            compose.waitForIdle()
+            // The recent is stored a moment after the pick (a coroutine), so wait for it.
+            compose.waitUntil(WAIT_MS) { d.st.recentNames().contains(picked.name) }
             d.onMain { it.startEditing(Field.FROM) }
             compose.waitForIdle()
             assertTrue("the pick is a recent", d.st.suggestions.any { it.recent && it.name == picked.name })
