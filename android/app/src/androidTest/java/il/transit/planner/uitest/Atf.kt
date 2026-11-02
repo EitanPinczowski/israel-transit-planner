@@ -51,7 +51,7 @@ object Atf {
     private val KNOWN = listOf(
         Triple(
             "EditableContentDescCheck",
-            DayTags.CLOCK,
+            DayTags.TIME_INPUT,
             "Material 3's TimeInput gives its own hour and minute fields a contentDescription (\"for hour\"); the app can't reach them",
         ),
     )
@@ -73,9 +73,9 @@ object Atf {
                 val message = r.message.toString().replace("\n", " ")
                 val excused = known.firstOrNull { (c, rect, _) -> c == check && r.element?.boundsInScreen?.let { b -> inside(b.left, b.top, b.right, b.bottom, rect) } == true }
                 out += if (excused != null) {
-                    Finding(false, check, "known, not blocking: ${excused.third}. $message", where(r))
+                    Finding(false, check, "known, not blocking: ${excused.third}. $message", where(r, roots))
                 } else {
-                    Finding(r.type == AccessibilityCheckResultType.ERROR, check, message, where(r))
+                    Finding(r.type == AccessibilityCheckResultType.ERROR, check, message, where(r, roots))
                 }
             }
         }
@@ -83,6 +83,22 @@ object Atf {
     }
 
     private fun inside(l: Int, t: Int, r: Int, b: Int, box: android.graphics.Rect) = l >= box.left - 2 && t >= box.top - 2 && r <= box.right + 2 && b <= box.bottom + 2
+
+    /** The Compose node(s) at [b] on screen, for a finding ATF can only place by its bounds. Main thread only. */
+    private fun composeAt(roots: List<View>, b: android.graphics.Rect): String {
+        val found = mutableListOf<String>()
+        fun walk(n: SemanticsNode) {
+            val p = n.positionOnScreen
+            val l = p.x.toInt()
+            val t = p.y.toInt()
+            val near = kotlin.math.abs(l - b.left) <= 3 && kotlin.math.abs(t - b.top) <= 3 &&
+                kotlin.math.abs(l + n.size.width - b.right) <= 3 && kotlin.math.abs(t + n.size.height - b.bottom) <= 3
+            if (near) found += "#${n.id} ${n.config}".replace("\n", " ").take(220)
+            n.children.forEach(::walk)
+        }
+        roots.forEach { root -> composeRoots(root).forEach { walk(it.semanticsOwner.unmergedRootSemanticsNode) } }
+        return if (found.isEmpty()) "" else " compose: " + found.take(3).joinToString(" | ")
+    }
 
     /** Screen bounds of the Compose nodes tagged [tag] in [roots]. Main thread only. */
     private fun taggedOnScreen(roots: List<View>, tag: String): List<android.graphics.Rect> {
@@ -106,11 +122,13 @@ object Atf {
     }
 
     /** What the finding is about: its class, bounds and words, so a CI log alone can find it. */
-    private fun where(r: AccessibilityViewCheckResult): String {
+    private fun where(r: AccessibilityViewCheckResult, roots: List<View>): String {
         val e = r.element
         if (e != null) {
-            val words = listOfNotNull(e.text?.toString(), e.contentDescription?.toString()).filter { it.isNotBlank() }.joinToString(" / ").take(60)
-            return "${e.className} ${e.boundsInScreen} \"$words\""
+            val texts = listOfNotNull(e.text?.toString(), e.contentDescription?.toString())
+            val words = texts.filter { it.isNotBlank() }.joinToString(" / ").take(60)
+            val b = e.boundsInScreen
+            return "${e.className} $b \"$words\"" + composeAt(roots, android.graphics.Rect(b.left, b.top, b.right, b.bottom))
         }
         val v = r.view ?: return "?"
         return "${v.javaClass.simpleName} ${v.width}x${v.height} \"${v.contentDescription ?: ""}\""

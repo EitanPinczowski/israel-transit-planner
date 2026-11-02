@@ -84,6 +84,9 @@ object DayTags {
     const val CLOCK = "time_step"
     const val CLOCK_OK = "time_step_ok"
     const val CLOCK_TYPE = "time_step_type"
+
+    /** Material 3's TimeInput itself (Phase 11 E5: the one ATF error the app can't fix sits in it). */
+    const val TIME_INPUT = "time_step_input"
     const val PAST = "past_ask"
     fun day(offset: Int) = "day_$offset"
 }
@@ -312,7 +315,7 @@ internal fun ClockStepContent(
     Column(Modifier.verticalScroll(rememberScrollState()).padding(top = 20.dp, start = 12.dp, end = 12.dp, bottom = 8.dp)) {
         Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(start = 12.dp, bottom = 16.dp))
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            if (typing) TimeInput(clock) else TimePicker(clock)
+            if (typing) TimeInput(clock, modifier = Modifier.testTag(DayTags.TIME_INPUT)) else TimePicker(clock)
         }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onToggle, modifier = Modifier.testTag(DayTags.CLOCK_TYPE)) {

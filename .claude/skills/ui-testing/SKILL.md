@@ -323,6 +323,13 @@ on the Pixel in Hebrew (owner decision 8).
   blocking: ATF with a screenshot (errors; warnings go to logcat `A11yJourney`), every tappable node says
   something, no two neighbouring nodes read the same, each leg chip of the selected card equals core `Speech`
   for its leg, and nodes side by side are in the layout direction (right to left in Hebrew). It also asserts
-  the hook ran. Screenshots `a11y-<lang>-<step>.png`.
+  the hook ran. Screenshots `a11y-<lang>-<step>.png`. Besides, by name: the selected card's `Selected`, its
+  tight-change chips (tag `TIGHT_CHIP`) equal to `Speech.tight`, the reminder row a live region, headings on
+  the trip sheet, stop sheet and Settings, the first departure row equal to `Speech.departure` and its ☆
+  label, the map `NO_HIDE_DESCENDANTS` + "Map: …" with results and `YES` without, a sighted long-press on the
+  map still dropping a pin, and a landscape step with the keyboard up.
+- **Known ATF errors** (`Atf.KNOWN`: check + test tag + reason): reported as warnings, never blocking, and
+  only inside that tagged node. Today one: `EditableContentDescCheck` in Material 3's `TimeInput`
+  (`DayTags.TIME_INPUT`). Each ATF finding prints the Compose node(s) at its bounds (`compose: #id {…}`).
 - **Fonts:** `PanelsTest` has a third variant, `he_dark_font2` (Nexus 5, 360×640 dp, font ×2.0, Hebrew, dark).
 - R3 and R4 stay report-only: they still have findings after E5 (the PR lists them).

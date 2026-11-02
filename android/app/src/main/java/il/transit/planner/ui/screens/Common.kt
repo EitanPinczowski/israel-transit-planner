@@ -160,7 +160,6 @@ import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -329,11 +328,12 @@ internal fun LegChipView(c: LegChip, onClick: (() -> Unit)? = null, leg: Leg? = 
         else -> c.label ?: kindName(c.kind)
     }.let { if (c.alert) "⚠ $it" else it } // only when an answer carries an alert
     // Phase 11 E5: one node that says the whole leg ("Bus 47, 8:10 to 8:34, 12 stops, get off at …"),
-    // never "47"; a tappable chip grows its tap area to 48 dp without growing the chip itself.
+    // never "47". A tappable chip keeps its size: Compose's hit test already takes a touch up to 48 dp
+    // around a small `clickable` (where no other target is closer), so the row stays as tall as before
+    // and the tight-change chips stay above the fold on a 360×640 phone (designer pass).
     val said = spoken(if (leg != null) Speech.leg(leg, badge) else Speech.chip(c))
     Box(
         Modifier
-            .then(if (onClick != null) Modifier.minimumInteractiveComponentSize() else Modifier)
             .background(if (c.kind == LegKind.WALK) Color.Transparent else color, MaterialTheme.shapes.extraSmall)
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .then(if (c.legIndex >= 0) Modifier.testTag(legChipTag(c.legIndex)) else Modifier)

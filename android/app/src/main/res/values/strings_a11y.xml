@@ -49,6 +49,24 @@
         <item quantity="one">warning: tight change at %1$s, only %2$d minute</item>
         <item quantity="other">warning: tight change at %1$s, only %2$d minutes</item>
     </plurals>
+    <string name="a11y_times_next_day">%1$s to %2$s the next day</string>
+    <string name="a11y_leave_on_day">leave %1$s at %2$s</string>
+    <string name="a11y_arrive_next_day">arrive %1$s the next day</string>
+    <plurals name="a11y_arrive_days_later">
+        <item quantity="one">arrive %1$s, %2$d day later</item>
+        <item quantity="other">arrive %1$s, %2$d days later</item>
+    </plurals>
+    <string name="a11y_tight_no_spare">warning: tight change at %1$s, no time to spare</string>
+    <plurals name="a11y_tight_walk">
+        <item quantity="one">warning: walk %d minute to the next ride</item>
+        <item quantity="other">warning: walk %d minutes to the next ride</item>
+    </plurals>
+    <plurals name="a11y_spare">
+        <item quantity="one">%d minute to spare</item>
+        <item quantity="other">%d minutes to spare</item>
+    </plurals>
+    <string name="a11y_no_spare">no time to spare</string>
+    <string name="a11y_tight_may_miss">warning: tight change, you may miss it</string>
     <!-- The ☆ next to a departure (stop sheet). -->
     <string name="a11y_pin_line">Add %1$s to My lines</string>
     <string name="a11y_unpin_line">Remove %1$s from My lines</string>

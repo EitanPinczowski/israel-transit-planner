@@ -582,7 +582,8 @@ internal fun ItineraryCard(
     val s = remember(itin, fareProfile, searchedAt) { summarize(itin, fareProfile, searchedAt ?: Instant.now()) }
     Column(Modifier.option(selected, onClick)) {
         // Phase 11 E5: the times as times ("leave 8:21, arrive 9:46, 85 minutes, 1 transfer"), not "08:21–09:46".
-        val header = spoken(remember(itin) { Speech.option(itin.start, itin.end, s.durationMin, s.transfers) })
+        val dayName = s.departDay?.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        val header = spoken(remember(itin, dayName) { Speech.option(itin.start, itin.end, s.durationMin, s.transfers, dayName, s.arriveDaysLater) })
         Row(Modifier.clearAndSetSemantics { contentDescription = header }, verticalAlignment = Alignment.CenterVertically) {
             // A trip on another day than the one searched (Friday → Saturday night) says so.
             val depart = s.departDay?.let { d -> stringResource(R.string.on_day, d.getDisplayName(TextStyle.SHORT, Locale.getDefault()), s.depart) } ?: s.depart
@@ -590,12 +591,7 @@ internal fun ItineraryCard(
             Text("$depart–$arrive", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             Text(stringResource(R.string.minutes_short, s.durationMin), style = MaterialTheme.typography.titleSmall)
         }
-        // Centred: a tappable chip has a 48 dp tap area (Phase 11 E5), so the walks beside it stay on its line.
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 4.dp),
-        ) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             // On the selected option a bus or train chip opens that vehicle's stops (trip sheet).
             s.chips.forEach { c ->
                 val tappable = selected && onLeg != null && c.legIndex >= 0 && itin.legs[c.legIndex].isTransit

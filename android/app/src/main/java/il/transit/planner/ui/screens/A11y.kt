@@ -35,6 +35,12 @@ private fun string(k: SpeechKey): Int = when (k) {
     SpeechKey.KIND_LIGHT_RAIL -> R.string.a11y_kind_light_rail
     SpeechKey.KIND_OTHER -> R.string.a11y_kind_other
     SpeechKey.TIMES -> R.string.a11y_times
+    SpeechKey.TIMES_NEXT_DAY -> R.string.a11y_times_next_day
+    SpeechKey.LEAVE_ON_DAY -> R.string.a11y_leave_on_day
+    SpeechKey.ARRIVE_NEXT_DAY -> R.string.a11y_arrive_next_day
+    SpeechKey.TIGHT_NO_SPARE -> R.string.a11y_tight_no_spare
+    SpeechKey.NO_SPARE -> R.string.a11y_no_spare
+    SpeechKey.TIGHT_MAY_MISS -> R.string.a11y_tight_may_miss
     SpeechKey.GET_OFF -> R.string.a11y_get_off
     SpeechKey.TO_PLACE -> R.string.a11y_to_place
     SpeechKey.BADGE_ACCESSIBLE -> R.string.a11y_badge_accessible
@@ -56,6 +62,9 @@ private fun plural(k: SpeechKey): Int = when (k) {
     SpeechKey.TRANSFERS -> R.plurals.a11y_transfers
     SpeechKey.LATE_MIN -> R.plurals.a11y_late_min
     SpeechKey.TIGHT_CHANGE -> R.plurals.a11y_tight_change
+    SpeechKey.ARRIVE_DAYS_LATER -> R.plurals.a11y_arrive_days_later
+    SpeechKey.TIGHT_WALK -> R.plurals.a11y_tight_walk
+    SpeechKey.SPARE -> R.plurals.a11y_spare
     else -> error("$k is not a plural")
 }
 

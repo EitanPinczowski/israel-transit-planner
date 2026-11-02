@@ -48,6 +48,9 @@ enum class SpeechKey(
     /** "%1$s to %2$s": two times. */
     TIMES,
 
+    /** "%1$s to %2$s the next day": a ride past midnight. */
+    TIMES_NEXT_DAY,
+
     /** "%d stops" */
     STOPS(plural = true),
 
@@ -68,6 +71,13 @@ enum class SpeechKey(
     LEAVE_AT,
     ARRIVE_AT,
 
+    /** "leave %1$s at %2$s": an option on another day than the one searched (weekday, time). */
+    LEAVE_ON_DAY,
+
+    /** "arrive %1$s the next day" / "arrive %1$s, %2$d days later". */
+    ARRIVE_NEXT_DAY,
+    ARRIVE_DAYS_LATER(plural = true),
+
     /** "%d transfers" / "no transfers". */
     TRANSFERS(plural = true),
     DIRECT,
@@ -80,6 +90,17 @@ enum class SpeechKey(
 
     /** A tight change: "warning: change at %1$s, %2$d minutes" (the count is the slack). */
     TIGHT_CHANGE(plural = true),
+
+    /** The same with no minute to spare: "warning: tight change at %1$s, no time to spare". */
+    TIGHT_NO_SPARE,
+
+    /** A walk between two rides: "warning: walk %d minutes to the next ride", then [SPARE] or [NO_SPARE]. */
+    TIGHT_WALK(plural = true),
+    SPARE(plural = true),
+    NO_SPARE,
+
+    /** A change the plan itself can't make (a live delay): "warning: tight change, you may miss it". */
+    TIGHT_MAY_MISS,
 }
 
 /** One phrase: a key, its text arguments, and the number that picks a plural form. */
@@ -99,7 +120,8 @@ object Speech {
     /** A leg of an itinerary, with E3's train number and badge. */
     fun leg(leg: Leg, badge: AccessibleBadge? = null): Spoken {
         val kind = legKind(leg.mode)
-        val min = minutes((leg.end.epochSecond - leg.start.epochSecond).coerceAtLeast(0).toInt())
+        // A 20-second walk rounds to 0; it is said as 1 minute, never "0 minutes".
+        val min = minutes((leg.end.epochSecond - leg.start.epochSecond).coerceAtLeast(0).toInt()).coerceAtLeast(1)
         if (kind == LegKind.WALK || kind == LegKind.CAR) {
             val head = Phrase(if (kind == LegKind.WALK) SpeechKey.WALK_MIN else SpeechKey.DRIVE_MIN, count = min)
             val end = leg.to.name
@@ -109,7 +131,8 @@ object Speech {
         val train = trainLabel(leg)
         val out = mutableListOf(name(kind, lineLabel(leg), train))
         badge?.let { out += Phrase(if (it == AccessibleBadge.ACCESSIBLE) SpeechKey.BADGE_ACCESSIBLE else SpeechKey.BADGE_MAY_NOT_BE) }
-        out += Phrase(SpeechKey.TIMES, listOf(time(leg.start), time(leg.end)))
+        val times = if (daysBetween(leg.start, leg.end) > 0) SpeechKey.TIMES_NEXT_DAY else SpeechKey.TIMES
+        out += Phrase(times, listOf(time(leg.start), time(leg.end)))
         val stops = leg.intermediateStops.size + 1
         out += Phrase(SpeechKey.STOPS, count = stops)
         if (leg.to.name.isNotBlank()) out += Phrase(SpeechKey.GET_OFF, listOf(leg.to.name))
@@ -118,20 +141,26 @@ object Speech {
 
     /** A leg chip without its leg (the car features' cards): "Bus 370, 25 minutes". */
     fun chip(c: LegChip): Spoken = when (c.kind) {
-        LegKind.WALK -> Spoken(listOf(Phrase(SpeechKey.WALK_MIN, count = c.minutes)))
-        LegKind.CAR -> Spoken(listOf(Phrase(SpeechKey.DRIVE_MIN, count = c.minutes)))
+        LegKind.WALK -> Spoken(listOf(Phrase(SpeechKey.WALK_MIN, count = c.minutes.coerceAtLeast(1))))
+        LegKind.CAR -> Spoken(listOf(Phrase(SpeechKey.DRIVE_MIN, count = c.minutes.coerceAtLeast(1))))
         else -> Spoken(listOf(name(c.kind, c.label, null), Phrase(SpeechKey.MINUTES, count = c.minutes)))
     }
 
-    /** An option's header: "leave 8:21, arrive 9:46, 85 minutes, 1 transfer". */
-    fun option(start: Instant, end: Instant, durationMin: Int, transfers: Int): Spoken = Spoken(
-        listOf(
-            Phrase(SpeechKey.LEAVE_AT, listOf(time(start))),
-            Phrase(SpeechKey.ARRIVE_AT, listOf(time(end))),
-            Phrase(SpeechKey.MINUTES, count = durationMin),
-            if (transfers == 0) Phrase(SpeechKey.DIRECT) else Phrase(SpeechKey.TRANSFERS, count = transfers),
-        ),
-    )
+    /**
+     * An option's header: "leave 8:21, arrive 9:46, 85 minutes, 1 transfer". As on screen, an option on
+     * another day than the one searched names its weekday ([departDay], in the app's language), and an
+     * arrival after midnight says so ([arriveDaysLater], from `summarize`).
+     */
+    fun option(start: Instant, end: Instant, durationMin: Int, transfers: Int, departDay: String? = null, arriveDaysLater: Int = 0): Spoken {
+        val leave = if (departDay != null) Phrase(SpeechKey.LEAVE_ON_DAY, listOf(departDay, time(start))) else Phrase(SpeechKey.LEAVE_AT, listOf(time(start)))
+        val arrive = when {
+            arriveDaysLater == 1 -> Phrase(SpeechKey.ARRIVE_NEXT_DAY, listOf(time(end)))
+            arriveDaysLater > 1 -> Phrase(SpeechKey.ARRIVE_DAYS_LATER, listOf(time(end)), count = arriveDaysLater)
+            else -> Phrase(SpeechKey.ARRIVE_AT, listOf(time(end)))
+        }
+        val changes = if (transfers == 0) Phrase(SpeechKey.DIRECT) else Phrase(SpeechKey.TRANSFERS, count = transfers)
+        return Spoken(listOf(leave, arrive, Phrase(SpeechKey.MINUTES, count = durationMin), changes))
+    }
 
     /** A stop's departure row: "Bus 5, to Central station, leaves 8:28, 3 minutes late". */
     fun departure(r: DepartureRow): Spoken {
@@ -145,8 +174,22 @@ object Speech {
         return Spoken(out)
     }
 
-    /** A tight change of vehicle: "warning: change at Lehavim, 3 minutes". */
-    fun tightChange(stop: String, slackMin: Int): Spoken = Spoken(listOf(Phrase(SpeechKey.TIGHT_CHANGE, listOf(stop), count = slackMin)))
+    /** A tight change of vehicle: "warning: tight change at Lehavim, only 3 minutes"; 0 or less: "no time to spare". */
+    fun tightChange(stop: String, slackMin: Int): Spoken = Spoken(
+        listOf(if (slackMin <= 0) Phrase(SpeechKey.TIGHT_NO_SPARE, listOf(stop)) else Phrase(SpeechKey.TIGHT_CHANGE, listOf(stop), count = slackMin)),
+    )
+
+    /** Each kind of tight-change chip (`TransferChips`), said in words. */
+    fun tight(t: Transfer, w: TransferWarning): Spoken = when (w) {
+        TransferWarning.CHANGE_IN -> tightChange(t.stop, t.slackMin)
+        TransferWarning.WALK_SPARE -> Spoken(
+            listOf(
+                Phrase(SpeechKey.TIGHT_WALK, count = t.walkMin.coerceAtLeast(1)),
+                if (t.slackMin <= 0) Phrase(SpeechKey.NO_SPARE) else Phrase(SpeechKey.SPARE, count = t.slackMin),
+            ),
+        )
+        TransferWarning.TIGHT -> Spoken(listOf(Phrase(SpeechKey.TIGHT_MAY_MISS)))
+    }
 
     private fun name(kind: LegKind, line: String?, train: TrainLabel?): Phrase = when {
         train != null && train.to != null -> Phrase(SpeechKey.TRAIN_NUMBER_TO, listOf(train.number, train.to))

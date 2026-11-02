@@ -10,7 +10,10 @@ import il.transit.core.present.LegKind
 import il.transit.core.present.Phrase
 import il.transit.core.present.Speech
 import il.transit.core.present.SpeechKey
+import il.transit.core.present.Transfer
+import il.transit.core.present.TransferWarning
 import il.transit.core.present.accessibleBadge
+import il.transit.core.present.tightTransfers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -113,9 +116,9 @@ class SpeechTest {
     fun `a walk and a drive say minutes and where they end`() {
         val walk = leg("WALK", stop("a"), stop("Central station"), at("2026-10-05T05:00:00Z"), at("2026-10-05T05:07:00Z"))
         assertEquals("Walk 7 minutes, to Central station", Speech.leg(walk).render(en::say))
-        assertEquals("הליכה של 7 דקות, עד Central station", Speech.leg(walk).render(he::say))
+        assertEquals("הליכה של 7 דקות, אל Central station", Speech.leg(walk).render(he::say))
         val oneMin = walk.copy(endTime = "2026-10-05T05:01:00Z")
-        assertEquals("הליכה של דקה אחת, עד Central station", Speech.leg(oneMin).render(he::say))
+        assertEquals("הליכה של דקה אחת, אל Central station", Speech.leg(oneMin).render(he::say))
         val drive = leg("CAR", stop("a"), stop("b"), at("2026-10-05T05:00:00Z"), at("2026-10-05T05:12:00Z"))
         assertEquals("Drive 12 minutes, to b", Speech.leg(drive).render(en::say))
     }
@@ -123,7 +126,8 @@ class SpeechTest {
     @Test
     fun `past midnight the hour is 0, never 24 and never digit by digit`() {
         val night = leg("BUS", stop("a"), stop("b"), at("2026-10-05T20:50:00Z"), at("2026-10-05T21:20:00Z")).copy(routeShortName = "N1")
-        assertEquals("Bus N1, 23:50 to 0:20, 1 stop, get off at b", Speech.leg(night).render(en::say))
+        assertEquals("Bus N1, 23:50 to 0:20 the next day, 1 stop, get off at b", Speech.leg(night).render(en::say))
+        assertEquals("אוטובוס קו N1, מ־23:50 עד 0:20 למחרת, תחנה אחת, ירידה בb", Speech.leg(night).render(he::say))
         assertEquals("0:05", Speech.time(at("2026-10-05T21:05:00Z")))
         // Winter time (UTC+2) after 25 Oct.
         assertEquals("8:10", Speech.time(at("2026-11-02T06:10:00Z")))
@@ -152,7 +156,7 @@ class SpeechTest {
         val said = Speech.leg(bus, badge).render(en::say)
         assertTrue(said, Regex("^Bus [^,]+, accessible bus, \\d+:\\d\\d to ").containsMatchIn(said))
         val maybe = Speech.leg(bus, AccessibleBadge.MAY_NOT_BE).render(he::say)
-        assertTrue(maybe, maybe.contains(", ייתכן שלא נגיש לכיסא גלגלים, מ־"))
+        assertTrue(maybe, maybe.contains(", ייתכן שאינו נגיש לכיסא גלגלים, מ־"))
         // Setting off: no badge, nothing said.
         assertEquals(null, accessibleBadge(bus, accessibleRoutes = false))
     }
@@ -164,6 +168,45 @@ class SpeechTest {
         assertEquals("יציאה ב־8:21, הגעה ב־9:46, 85 דקות, החלפה אחת", o.render(he::say))
         val d = Speech.option(at("2026-10-05T05:21:00Z"), at("2026-10-05T05:23:00Z"), 2, 0)
         assertEquals("יציאה ב־8:21, הגעה ב־8:23, 2 דקות, בלי החלפות", d.render(he::say))
+    }
+
+    @Test
+    fun `an option on another day names its weekday, an arrival after midnight says so`() {
+        // A picked day (Friday) searched from Thursday: the weekday comes from the app, in its language.
+        val fri = Speech.option(at("2026-10-09T20:50:00Z"), at("2026-10-09T21:20:00Z"), 30, 0, departDay = "Friday", arriveDaysLater = 1)
+        assertEquals("leave Friday at 23:50, arrive 0:20 the next day, 30 minutes, no transfers", fri.render(en::say))
+        val heFri = Speech.option(at("2026-10-09T20:50:00Z"), at("2026-10-09T21:20:00Z"), 30, 0, departDay = "יום שישי", arriveDaysLater = 1)
+        assertEquals("יציאה ביום שישי ב־23:50, הגעה ב־0:20 למחרת, 30 דקות, בלי החלפות", heFri.render(he::say))
+        val later = Speech.option(at("2026-10-09T20:50:00Z"), at("2026-10-11T05:00:00Z"), 1930, 2, arriveDaysLater = 2)
+        assertEquals("leave 23:50, arrive 8:00, 2 days later, 1930 minutes, 2 transfers", later.render(en::say))
+        assertTrue(later.render(he::say), later.render(he::say).contains("הגעה ב־8:00, יומיים אחרי"))
+    }
+
+    @Test
+    fun `zero minutes are never said: a short walk is 1 minute, no slack is no time to spare`() {
+        val walk = leg("WALK", stop("a"), stop("b"), at("2026-10-05T05:00:00Z"), at("2026-10-05T05:00:20Z"))
+        assertEquals("Walk 1 minute, to b", Speech.leg(walk).render(en::say))
+        assertEquals("Walk 1 minute", Speech.chip(LegChip(LegKind.WALK, null, 0, false, "#888888")).render(en::say))
+        assertEquals("Drive 1 minute", Speech.chip(LegChip(LegKind.CAR, null, 0, false, "#888888")).render(en::say))
+        assertEquals("warning: tight change at Lehavim, no time to spare", Speech.tightChange("Lehavim", 0).render(en::say))
+        assertEquals("אזהרה: החלפה צפופה בלהבים, בלי זמן מיותר", Speech.tightChange("להבים", -2).render(he::say))
+    }
+
+    @Test
+    fun `every kind of tight-change chip is said in words`() {
+        val t = Transfer(fromLeg = 1, toLeg = 3, stop = "Savidor", slackSec = 150, walkMin = 4, sameStop = false, train = false)
+        assertEquals("warning: tight change at Savidor, only 2 minutes", Speech.tight(t, TransferWarning.CHANGE_IN).render(en::say))
+        assertEquals("warning: walk 4 minutes to the next ride, 2 minutes to spare", Speech.tight(t, TransferWarning.WALK_SPARE).render(en::say))
+        assertEquals("אזהרה: הליכה של 4 דקות לנסיעה הבאה, 2 דקות מיותרות", Speech.tight(t, TransferWarning.WALK_SPARE).render(he::say))
+        val none = t.copy(slackSec = 20, walkMin = 0)
+        assertEquals("warning: walk 1 minute to the next ride, no time to spare", Speech.tight(none, TransferWarning.WALK_SPARE).render(en::say))
+        assertEquals("warning: tight change, you may miss it", Speech.tight(t.copy(slackSec = -60), TransferWarning.TIGHT).render(en::say))
+        assertEquals("אזהרה: החלפה צפופה, ייתכן שתפספסו אותה", Speech.tight(t, TransferWarning.TIGHT).render(he::say))
+        // The recorded BGU → Tel Aviv answer has tight walks: each says its words in both languages.
+        val warned = plan("plan_bgu_telaviv").itineraries.flatMap { tightTransfers(it, null) }
+        for ((tr, w) in warned) {
+            for (lang in listOf(en, he)) assertTrue(Speech.tight(tr, w).render(lang::say).isNotBlank())
+        }
     }
 
     @Test

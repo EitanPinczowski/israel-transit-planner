@@ -1,13 +1,18 @@
 package il.transit.planner.uitest
 
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.SystemClock
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollAction
@@ -25,12 +30,18 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.UiDevice
+import il.transit.core.present.LegKind
 import il.transit.core.present.Speech
+import il.transit.core.present.Spoken
+import il.transit.core.present.hhmm
+import il.transit.core.present.tightTransfers
 import il.transit.planner.R
 import il.transit.planner.UiTestApp.Companion.BGU
 import il.transit.planner.UiTestApp.Companion.TEL_AVIV
 import il.transit.planner.ui.AppLocale
 import il.transit.planner.ui.UiTags
+import il.transit.planner.ui.screens.TIGHT_CHIP
 import il.transit.planner.ui.screens.legChipTag
 import il.transit.planner.ui.screens.say
 import org.junit.Assert.assertEquals
@@ -38,6 +49,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.maplibre.android.maps.MapView
 
 /**
  * Phase 11 E5: what TalkBack would read, on API 35 in Hebrew and in English (ui_behaviour_run.sh).
@@ -80,9 +92,12 @@ class A11yJourneysTest {
             d.awaitSearch()
             d.step("results", rtl)
 
-            // Select the option with a train, then check what each of its leg chips says.
-            val options = d.vm.state.value.options
-            val i = options.indexOfFirst { o -> o.legs.any { it.mode.endsWith("RAIL") } }.takeIf { it >= 0 } ?: 0
+            // Select an option with a tight change (so its chip is checked), else one with a train.
+            val options = d.ui.options
+            val buffer = d.ui.settings.transferBufferMin
+            val tightAt = options.indexOfFirst { tightTransfers(it, buffer).isNotEmpty() }
+            val trainAt = options.indexOfFirst { o -> o.legs.any { it.mode.endsWith("RAIL") } }
+            val i = listOf(tightAt, trainAt, 0).first { it >= 0 }
             d.onMain { it.select(i) }
             compose.waitForIdle()
             d.step("selected", rtl)
@@ -99,12 +114,14 @@ class A11yJourneysTest {
                 }
             }
             assertTrue("$lang: no leg chip on the selected card", chips > 0)
+            d.selectedCardChecks(lang, buffer)
 
             // Trip sheet: a tap on the first ride's chip.
             val ride = itin.legs.indexOfFirst { it.isTransit }
             compose.onAllNodes(hasTestTag(legChipTag(ride)) and inCard and hasClickAction(), useUnmergedTree = true).onFirst().performClick()
             compose.waitUntil(10_000) { compose.onAllNodes(hasText(d.str(R.string.trip_board), substring = true), useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
             d.step("trip sheet", rtl)
+            assertTrue("$lang: the trip sheet has no heading", compose.onAllNodes(isHeading).fetchSemanticsNodes().isNotEmpty())
             Espresso.pressBack()
             compose.waitForIdle()
 
@@ -112,14 +129,26 @@ class A11yJourneysTest {
             d.onMain { it.openStop(FaultMatrixTest.STOP_ID, "תחנה מרכזית") }
             compose.waitUntil(10_000) { d.ui.stopSheet?.loading == false }
             d.step("stop sheet", rtl)
+            d.stopSheetChecks(lang)
             d.onMain { it.closeStop() }
             compose.waitForIdle()
+
+            // The map: hidden from TalkBack while results show, a sighted long-press still drops a pin.
+            d.mapChecks(lang)
+
+            // Rotated with the keyboard up (R5 found 2 errors only there, in the layout audit).
+            d.rotate(landscape = true)
+            d.tapRow(R.string.from)
+            d.step("search landscape", rtl)
+            d.onMain { it.cancelEditing() }
+            d.rotate(landscape = false)
 
             // Settings, then its reminder check.
             d.tapMenuItem(R.string.settings)
             compose.waitUntil(5_000) { d.vm.state.value.showSettings }
             d.awaitNode(hasScrollAction() and hasAnyAncestor(isDialog()))
             d.step("settings", rtl)
+            assertTrue("$lang: Settings has no heading", compose.onAllNodes(isHeading and hasAnyAncestor(isDialog())).fetchSemanticsNodes().isNotEmpty())
             val list = hasScrollAction() and hasAnyAncestor(isDialog())
             val row = hasTestTag("check_reminders")
             repeat(30) {
@@ -136,11 +165,128 @@ class A11yJourneysTest {
             d.step("reminder check", rtl)
             assertTrue("the ATF check after every step never ran", (d.a11y?.checks ?: 0) > 0)
         } finally {
-            d.inst.runOnMainSync { AppLocale.apply(d.activity, null) }
+            d.onMain { it.cancelReminder() }
+            d.inst.runOnMainSync {
+                d.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                AppLocale.apply(d.activity, null)
+            }
         }
     }
 
     private val AppDriver.ui get() = vm.state.value
+
+    private val isHeading = SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
+
+    private fun desc(n: SemanticsNode): String {
+        val said = n.config.getOrNull(SemanticsProperties.ContentDescription)
+        return said.orEmpty().joinToString(", ")
+    }
+
+    private fun text(n: SemanticsNode): String {
+        val texts = n.config.getOrNull(SemanticsProperties.Text)
+        return texts.orEmpty().joinToString { it.text }
+    }
+
+    private fun AppDriver.say(s: Spoken) = s.render { say(activity.resources, it) }
+
+    /**
+     * The selected card: it says "selected", its tight-change chips say core's words, and a reminder
+     * set on it is announced by itself (a polite live region).
+     */
+    private fun AppDriver.selectedCardChecks(lang: String, buffer: Int?) {
+        val card = compose.onNode(hasTestTag(UiTags.SELECTED)).fetchSemanticsNode("the selected card")
+        assertEquals("$lang: the selected card says so", true, card.config.getOrNull(SemanticsProperties.Selected))
+        val itin = ui.selectedItinerary!!
+        val want = tightTransfers(itin, buffer).map { (t, w) -> say(Speech.tight(t, w)) }
+        val inCard = hasAnyAncestor(hasTestTag(UiTags.SELECTED))
+        val got = compose.onAllNodes(hasTestTag(TIGHT_CHIP) and inCard, useUnmergedTree = true).fetchSemanticsNodes().map(::desc)
+        assertEquals("$lang: tight-change chips", want, got)
+        Log.i(TAG, "$lang: ${got.size} tight-change chips checked")
+
+        tapInResults(str(R.string.action_remind))
+        compose.waitUntil(10_000) { ui.reminder != null }
+        val leave = hhmm(ui.reminder!!.leaveAt)
+        val live = SemanticsMatcher.keyIsDefined(SemanticsProperties.LiveRegion)
+        compose.waitUntil(5_000) { compose.onAllNodes(live).fetchSemanticsNodes().isNotEmpty() }
+        val said = compose.onAllNodes(live).fetchSemanticsNodes().map(::text)
+        assertTrue("$lang: the reminder row is not a live region: $said", said.any { leave in it })
+    }
+
+    /** The first departure reads as core's sentence; its ☆ says which line it pins. Headings are there. */
+    private fun AppDriver.stopSheetChecks(lang: String) {
+        val r = ui.stopSheet!!.rows.first()
+        val sentence = say(Speech.departure(r)) + r.alerts.joinToString("") { ", ⚠ ${it.header}" }
+        val rowSays = SemanticsMatcher("says \"$sentence\"") { desc(it) == sentence }
+        assertTrue("$lang: no departure row says \"$sentence\"", compose.onAllNodes(rowSays).fetchSemanticsNodes().isNotEmpty())
+        val line = r.line.ifBlank { str(kindRes(r.kind)) }
+        val stars = setOf(str(R.string.a11y_pin_line, line), str(R.string.a11y_unpin_line, line))
+        val star = SemanticsMatcher("a ☆ for $line") { desc(it) in stars }
+        assertTrue("$lang: no ☆ says one of $stars", compose.onAllNodes(star).fetchSemanticsNodes().isNotEmpty())
+        assertTrue("$lang: the stop sheet has no heading", compose.onAllNodes(isHeading).fetchSemanticsNodes().isNotEmpty())
+    }
+
+    private fun kindRes(k: LegKind) = when (k) {
+        LegKind.BUS -> R.string.kind_bus
+        LegKind.TRAIN -> R.string.kind_train
+        LegKind.LIGHT_RAIL -> R.string.kind_light_rail
+        else -> R.string.kind_other
+    }
+
+    /** The MapView, found in the Activity's window. */
+    private fun AppDriver.mapView(): MapView {
+        var found: MapView? = null
+        fun walk(v: View) {
+            if (v is MapView) found = v
+            if (v is ViewGroup) for (c in 0 until v.childCount) walk(v.getChildAt(c))
+        }
+        inst.runOnMainSync { walk(activity.window.decorView) }
+        return checkNotNull(found) { "no MapView on screen" }
+    }
+
+    private fun AppDriver.mapState(): Pair<Int, CharSequence?> {
+        val map = mapView()
+        var out: Pair<Int, CharSequence?> = 0 to null
+        inst.runOnMainSync { out = map.importantForAccessibility to map.contentDescription }
+        return out
+    }
+
+    /**
+     * With results the map is hidden from TalkBack (and says what it is); a sighted long-press on it
+     * still drops a pin; with the results gone TalkBack reaches the map again.
+     */
+    private fun AppDriver.mapChecks(lang: String) {
+        assertTrue("$lang: no results to hide the map behind", ui.hasResults)
+        assertEquals("$lang: the map while results show", View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS to str(R.string.a11y_map), mapState().let { it.first to it.second?.toString() })
+        // The band of map between the search card and the results (R7 keeps it at least 25% of the screen).
+        val top = compose.onNode(hasTestTag(UiTags.TOP)).fetchSemanticsNode().boundsInWindow
+        val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
+        val x = ((top.left + top.right) / 2).toInt()
+        val y = ((top.bottom + bottom.top) / 2).toInt()
+        UiDevice.getInstance(inst).swipe(x, y, x, y, 200) // held about a second: a long-press
+        compose.waitUntil(10_000) { ui.places.pin != null }
+        onMain { it.closePin() }
+        onMain { it.clearResults() }
+        compose.waitForIdle()
+        assertEquals("$lang: the map after the results closed", View.IMPORTANT_FOR_ACCESSIBILITY_YES, mapState().first)
+    }
+
+    /** Turns the phone and waits for the recreated Activity in that orientation. */
+    private fun AppDriver.rotate(landscape: Boolean) {
+        inst.runOnMainSync {
+            activity.requestedOrientation = if (landscape) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+        val want = if (landscape) Configuration.ORIENTATION_LANDSCAPE else Configuration.ORIENTATION_PORTRAIT
+        val until = SystemClock.uptimeMillis() + 15_000
+        while (true) {
+            SystemClock.sleep(300) // polling a condition, not waiting out a time
+            refreshActivity()
+            compose.waitForIdle()
+            var now = 0
+            inst.runOnMainSync { now = activity.resources.configuration.orientation }
+            if (now == want) return
+            assertTrue("the Activity never turned (want $want, has $now)", SystemClock.uptimeMillis() < until)
+        }
+    }
 
     private fun AppDriver.tapRow(labelRes: Int) =
         compose.onNode(hasText(str(labelRes)) and hasClickAction() and hasAnyAncestor(hasTestTag(UiTags.TOP))).performClick()
