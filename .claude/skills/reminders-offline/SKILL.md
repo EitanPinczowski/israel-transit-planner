@@ -148,7 +148,12 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
 - **A late vehicle keeps its alert** (F7): past `leg.end + 3 min` the leg stays open while the fixes are within
   200 m of its route (`legGeometry`, else its stops; the boarding stop counts, so waiting for it does too), up
   to `RideTracker.MAX_LATE` (30 min, the same as the trip's own `tripGrace`) past the planned end. Off the route
-  for 60 s (one GPS jump is not leaving), or never seen on it, ends the leg as before. Pinned by
+  for 60 s (one GPS jump is not leaving), or never seen on it, ends the leg as before; once off, back on only
+  within 150 m (a rider hovering at ~200 m does not reset the timer). While extended (`PROGRESS_M` = 150 m):
+  the leg alerts only after 150 m of progress along its route since the extension began (or stops passed in
+  order), so waiting at a short hop's stop or a bus the other way stays quiet; it ends 150 m back along the
+  route (got off, walks back), when the distance to the stop grows 150 m past its least since the alert
+  (passed it), or, once alerted, at the next leg's boarding stop (a transfer on the same street). Pinned by
   `RideTrackerLateTest` and the `bus_late_5/10/20` replays. Pinned by `RideTrackerArmingTest`
   and `prop/RideTrackerPropertyTest` (safety on stopless legs; liveness for a whole trip ridden 0–20 min
   early). The uitest clock is frozen before the train boards, so journey J12 moves it to 5 min before the

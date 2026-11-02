@@ -114,4 +114,105 @@ class RideTrackerLateTest {
         assertEquals(0, t.currentLeg)
         assertEquals(RideEvent.Approaching(0, "Q", isLastLeg = false), t.update(at(31.3470), end.plusSeconds(900)))
     }
+
+    // --- Review round (boss, 2026-11-02): what an extended leg must not do. 0.001° lat ≈ 111 m. ---
+
+    /** Fixes 20 s apart at these latitudes on the line, from [from]; every event they raise. */
+    private fun track(t: RideTracker, from: Instant, vararg lats: Double): List<RideEvent?> =
+        lats.mapIndexed { k, lat -> t.update(at(lat), from.plusSeconds(20L * k)) }
+
+    @Test fun `a second bus back along the same street alerts - waiting at the transfer stop moves on to it`() {
+        // Bus 1 P → Q (late), then bus 2 from Q back south to T, 555 m, on bus 1's street.
+        val tt = place("T", LatLon(31.3450, 34.8000))
+        val t = RideTracker(
+            itinerary(
+                leg("BUS", p, q, NOON, end).copy(intermediateStops = listed),
+                leg("BUS", q, tt, end.plusSeconds(120), end.plusSeconds(360)),
+            ),
+        )
+        stay(t, p.latLon, NOON, end.plusSeconds(5 * 60)) // bus 1 is 5 min late
+        val ride = track(t, end.plusSeconds(6 * 60), 31.30, 31.31, 31.32, 31.33, 31.34, 31.3470)
+        assertTrue("alerted (at S4, the stop before Q): $ride", RideEvent.Approaching(0, "Q", isLastLeg = false) in ride)
+        // off at Q, but no fix within 80 m of it: the first is 111 m past it, still on bus 1's route
+        assertNull(t.update(at(31.3510), end.plusSeconds(10 * 60)))
+        assertEquals("waiting at bus 2's stop is bus 2", 1, t.currentLeg)
+        val second = track(t, end.plusSeconds(12 * 60), 31.3500, 31.3490, 31.3480, 31.3470)
+        assertTrue("bus 2 alerts: $second", RideEvent.Approaching(1, "T", isLastLeg = true) in second)
+    }
+
+    @Test fun `got off early and walks back along the bus street - the extended leg ends, it does not run 30 min`() {
+        val t = RideTracker(trip)
+        stay(t, p.latLon, NOON, end.plusSeconds(5 * 60))
+        track(t, end.plusSeconds(6 * 60), 31.30, 31.305, 31.31, 31.315, 31.32) // rides to S2
+        assertEquals(0, t.currentLeg)
+        // off at S2, walking home back south on the same street, 1.2 m/s
+        val walk = (1..10).map { k -> t.update(at(31.32 - 0.0002 * k), end.plusSeconds(8 * 60 + 20L * k)) }
+        assertEquals("ended 150 m back: ${walk.size} fixes", 1, t.currentLeg)
+        assertTrue(walk.none { it is RideEvent.Approaching })
+    }
+
+    @Test fun `rides past the stop with no fix at it - the leg ends as the distance grows`() {
+        val t = RideTracker(trip, routeM = 1000.0) // the street goes on past Q: stay "on the route" past it
+        stay(t, p.latLon, NOON, end.plusSeconds(5 * 60))
+        val ride = track(t, end.plusSeconds(6 * 60), 31.31, 31.32, 31.33, 31.34, 31.3485)
+        assertTrue("alerted (at S4, the stop before Q): $ride", RideEvent.Approaching(0, "Q", isLastLeg = false) in ride)
+        track(t, end.plusSeconds(8 * 60), 31.3512, 31.3530) // 133 m past Q, then 333 m: 200 m past its closest
+        assertEquals(1, t.currentLeg)
+    }
+
+    @Test fun `a bus the other way on the same street does not alert during the extension`() {
+        val t = RideTracker(trip)
+        // first fix in the extension 222 m from Q (inside approachM), then south, away from Q
+        val ride = track(t, end.plusSeconds(5 * 60), 31.3480, 31.3460, 31.3440, 31.3420, 31.3400)
+        assertTrue("no alert going the wrong way: $ride", ride.none { it is RideEvent.Approaching })
+        assertEquals("150 m back along the route ends it", 1, t.currentLeg)
+    }
+
+    @Test fun `waiting at a short hop's stop within 400 m of its end - no alert until the bus moves`() {
+        val a = place("A", LatLon(31.2530, 34.8000))
+        val b = place("B", LatLon(31.2560, 34.8000)) // 333 m
+        val t = RideTracker(itinerary(leg("BUS", a, b, NOON, NOON.plusSeconds(120)), leg("BUS", b, r, NOON.plusSeconds(600), NOON.plusSeconds(3600))))
+        // the ride's GPS starts late, in the extension: the rider still waits at A
+        assertTrue(stay(t, a.latLon, NOON.plusSeconds(6 * 60), NOON.plusSeconds(9 * 60)).all { it == null })
+        assertEquals(0, t.currentLeg)
+        val moves = (1..6).map { k -> t.update(at(31.2530 + 0.0004 * k), NOON.plusSeconds(9 * 60 + 15L * k)) }
+        val k = moves.indexOfFirst { it == RideEvent.Approaching(0, "B", isLastLeg = false) }
+        assertTrue("alerts once the bus has gone 150 m: $moves", k >= 3) // 0.0004° × 4 = 178 m ≥ 150 m
+    }
+
+    @Test fun `the same short hop forward alerts at once while the bus is on time`() {
+        val a = place("A", LatLon(31.2530, 34.8000))
+        val b = place("B", LatLon(31.2560, 34.8000))
+        val t = RideTracker(itinerary(leg("BUS", a, b, NOON, NOON.plusSeconds(120))))
+        assertEquals(RideEvent.Approaching(0, "B", isLastLeg = true), t.update(a.latLon, NOON)) // R2's rule, unchanged
+    }
+
+    @Test fun `hovering about 200 m from the route does not keep resetting the off-route timer`() {
+        val t = RideTracker(trip)
+        stay(t, p.latLon, NOON, end.plusSeconds(4 * 60))
+        // alternately 190 m and 210 m west of the line (0.001° lon ≈ 95 m here)
+        val west = listOf(0.0020, 0.0022)
+        var time = end.plusSeconds(4 * 60)
+        var k = 0
+        while (t.currentLeg == 0 && k < 30) {
+            t.update(at(31.3050, 34.8000 - west[k % 2]), time)
+            time = time.plusSeconds(20)
+            k++
+        }
+        assertEquals(1, t.currentLeg)
+        assertTrue("ended after $k fixes", k <= 6)
+    }
+
+    @Test fun `a GPS gap then one off-route fix does not end the leg, a minute of them does`() {
+        val t = RideTracker(trip)
+        stay(t, p.latLon, NOON, end.plusSeconds(5 * 60))
+        val off = at(31.3000, 34.8100) // 950 m east
+        // no fixes for 10 min (a tunnel, a pocket), then one off the route
+        assertNull(t.update(off, end.plusSeconds(15 * 60)))
+        assertEquals("one fix is not leaving", 0, t.currentLeg)
+        t.update(off, end.plusSeconds(15 * 60 + 59))
+        assertEquals(0, t.currentLeg)
+        t.update(off, end.plusSeconds(16 * 60))
+        assertEquals("60 s of them is", 1, t.currentLeg)
+    }
 }

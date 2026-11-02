@@ -226,6 +226,16 @@ class A11yJourneysTest {
         val sentence = say(Speech.departure(r)) + r.alerts.joinToString("") { ", ⚠ ${it.header}" }
         val rowSays = SemanticsMatcher("says \"$sentence\"") { desc(it) == sentence }
         assertTrue("$lang: no departure row says \"$sentence\"", compose.onAllNodes(rowSays).fetchSemanticsNodes().isNotEmpty())
+        // F7: the headsign is read once. Every row that carries it (merged tree: what TalkBack focuses) says it in
+        // its own words (contentDescription, which TalkBack reads instead of the text) exactly once.
+        if (r.headsign.isNotBlank()) {
+            val carriers = compose.onAllNodes(hasText(r.headsign, substring = true) and hasClickAction()).fetchSemanticsNodes()
+            assertTrue("$lang: no node carries the headsign \"${r.headsign}\"", carriers.isNotEmpty())
+            carriers.forEach { n ->
+                val d = desc(n)
+                assertEquals("$lang: \"$d\" reads the headsign \"${r.headsign}\"", 1, d.split(r.headsign).size - 1)
+            }
+        }
         val line = r.line.ifBlank { str(kindRes(r.kind)) }
         val stars = setOf(str(R.string.a11y_pin_line, line), str(R.string.a11y_unpin_line, line))
         val star = SemanticsMatcher("a ☆ for $line") { desc(it) in stars }

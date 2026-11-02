@@ -140,6 +140,8 @@ class TimetableShotsTest(private val v: Variant) {
             Variant("he_small", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL), dark = false, rtl = true),
             Variant("he_large", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.5f), dark = false, rtl = true),
             Variant("en_large", small.copy(fontScale = 1.5f), dark = false, rtl = false),
+            // F7: ×1.3, the lowest font that stacks the stop sheet's rows (largeFont()).
+            Variant("he_font13", small.copy(locale = "iw", layoutDirection = LayoutDirection.RTL, fontScale = 1.3f), dark = false, rtl = true),
         )
     }
 }

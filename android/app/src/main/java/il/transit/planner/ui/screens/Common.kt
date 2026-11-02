@@ -189,13 +189,15 @@ internal fun MinutesSlider(labelRes: Int, current: Int, onDone: (Int) -> Unit, m
 }
 
 /**
- * The phone's font is at least ×1.5 (Settings → Font size, largest steps): rows that put two texts side by
- * side stack them instead, and one-line names may take two (F7). Shrinking the text is never the answer.
+ * The phone's font is at least ×1.3 (Settings → Font size: the largest step on many phones before Android 14,
+ * and every step above it): rows that put two texts side by side stack them instead, and one-line names may
+ * take two (F7). At ×1.3 on a 360 dp phone a departure row leaves ~140 dp for its headsign, which cuts most
+ * long Hebrew ones. Shrinking the text is never the answer.
  */
 @Composable
 internal fun largeFont(): Boolean = LocalDensity.current.fontScale >= LARGE_FONT
 
-internal const val LARGE_FONT = 1.5f
+internal const val LARGE_FONT = 1.3f
 
 @Composable
 internal fun PlaceRow(
