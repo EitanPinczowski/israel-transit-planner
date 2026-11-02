@@ -1,0 +1,430 @@
+[
+ {
+  "type": "PLACE",
+  "category": "marketplace_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "שוק הכרמל",
+  "id": "way/149546103",
+  "lat": 32.0672673,
+  "lon": 34.7671919,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -24.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "שוק הכרמל/אלנבי",
+  "id": "il-Israel-MOT_13297",
+  "lat": 32.068607,
+  "lon": 34.770782000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -23.100000381469727,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "שוק הכרמל/שינקין",
+  "id": "il-Israel-MOT_49937",
+  "lat": 32.069786,
+  "lon": 34.77071800000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -22.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.5802831916953437e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "חוף הכרמל",
+  "id": "il-Israel-MOT_37376",
+  "lat": 32.793600000000005,
+  "lon": 34.957404999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע מערב חיפה",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -14.026287078857422,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.0003481676976662129
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "הכרמל/נוף",
+  "id": "il-Israel-MOT_26839",
+  "lat": 31.260199999999998,
+  "lon": 35.223267,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ערד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.21542472395231e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "עמק הכרמל",
+  "id": "il-Israel-MOT_48900",
+  "lat": 32.774525000000004,
+  "lon": 35.04331200000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נשר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "תל חנן",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.3282716938410886e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "טירת הכרמל",
+  "id": "node/278474505",
+  "lat": 32.7613834,
+  "lon": 34.9715506,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "טירת הכרמל",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.5
+ },
+ {
+  "type": "PLACE",
+  "category": "region",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "הר הכרמל",
+  "id": "node/14074570133",
+  "lat": 32.7232666,
+  "lon": 35.0401425,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.25
+ }
+]

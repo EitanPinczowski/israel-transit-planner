@@ -1,0 +1,486 @@
+[
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Wall",
+  "id": "way/817206833",
+  "lat": 31.776946,
+  "lon": 35.2343641,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -20.0
+ },
+ {
+  "type": "PLACE",
+  "category": "clothes_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Wall Street Western",
+  "id": "node/12244285897",
+  "lat": 29.9964434,
+  "lon": -98.0966883,
+  "country": "US",
+  "tz": "America/Chicago",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Texas",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hays County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Wimberley",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.75
+ },
+ {
+  "type": "PLACE",
+  "category": "castle_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Wall of Serdica",
+  "id": "way/1531887826",
+  "lat": 42.6990268,
+  "lon": 23.320675,
+  "country": "BG",
+  "zip": "1000",
+  "tz": "Europe/Sofia",
+  "areas": [
+   {
+    "name": "Bulgaria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sofia-City",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Stolichna",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Vazrajdane District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sofia",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Centre",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.5
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Wall men's section",
+  "id": "node/4905269168",
+  "lat": 31.7767158,
+  "lon": 35.2342249,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jewish Quarter",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.0
+ },
+ {
+  "type": "PLACE",
+  "category": "museum_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Outer Wall (entrance)",
+  "id": "node/11037064724",
+  "lat": 42.6428154,
+  "lon": 18.108507,
+  "areas": [
+   {
+    "name": "Dubrovnik-Neretva County",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Grad Dubrovnik",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Dubrovnik",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gradski kotar Grad",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.0
+ },
+ {
+  "type": "PLACE",
+  "category": "police_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Wall Police Station",
+  "id": "node/14073079423",
+  "lat": 31.7767279,
+  "lon": 35.2334654,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jewish Quarter",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.0
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Western Wall women's section",
+  "id": "node/4905269169",
+  "lat": 31.7765384,
+  "lon": 35.2342649,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jewish Quarter",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -16.5
+ },
+ {
+  "type": "PLACE",
+  "category": "rect",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    4.0
+   ]
+  ],
+  "name": "Entry to Western Wall tunnel",
+  "id": "node/4975809347",
+  "lat": 31.7769336,
+  "lon": 35.2334016,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jewish Quarter",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -16.5
+ }
+]

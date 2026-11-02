@@ -1,0 +1,435 @@
+[
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl",
+  "id": "node/627779949",
+  "lat": 47.7887414,
+  "lon": 11.8323476,
+  "country": "DE",
+  "zip": "83714",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bavaria",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Upper Bavaria",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Landkreis Miesbach",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Miesbach",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.75
+ },
+ {
+  "type": "PLACE",
+  "category": "entrance_main",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl",
+  "id": "node/6450145122",
+  "lat": 47.0709121,
+  "lon": 15.4403994,
+  "country": "AT",
+  "zip": "8010",
+  "tz": "Europe/Vienna",
+  "areas": [
+   {
+    "name": "Austria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Styria",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Graz",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Innere Stadt",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Katastralgemeinde Innere Stadt",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.75
+ },
+ {
+  "type": "PLACE",
+  "category": "neighbourhood",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl",
+  "id": "node/854386558",
+  "lat": 33.0176952,
+  "lon": 35.2819711,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Acre Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Maalot Tarshiha",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.5
+ },
+ {
+  "type": "PLACE",
+  "category": "neighbourhood",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl",
+  "id": "node/10026470309",
+  "lat": 31.7365647,
+  "lon": 34.7418154,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ashkelon Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kiryat Malachi",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "PRASSILLA/HERZL",
+  "id": "it-Lazio-Rome_76960",
+  "lat": 41.754375,
+  "lon": 12.359853000000001,
+  "country": "IT",
+  "tz": "Europe/Rome",
+  "areas": [
+   {
+    "name": "Italy",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lazio",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Roma Capitale",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rome",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Municipio Roma X",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.8006976410542848e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Die Herzl",
+  "id": "node/888735554",
+  "lat": 47.0708973,
+  "lon": 15.4403457,
+  "country": "AT",
+  "zip": "8010",
+  "tz": "Europe/Vienna",
+  "areas": [
+   {
+    "name": "Austria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Styria",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Graz",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Innere Stadt",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Katastralgemeinde Innere Stadt",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.0
+ },
+ {
+  "type": "PLACE",
+  "category": "bar_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl Bar",
+  "id": "node/4716547195",
+  "lat": 47.4058629,
+  "lon": 12.6516045,
+  "country": "AT",
+  "zip": "5753",
+  "tz": "Europe/Vienna",
+  "areas": [
+   {
+    "name": "Austria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Salzburg",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bezirk Zell am See",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Saalbach-Hinterglemm",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Katastralgemeinde Saalbach",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.0
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ]
+  ],
+  "name": "Herzl Alm",
+  "id": "way/173467258",
+  "lat": 48.4233981,
+  "lon": 9.2907158,
+  "country": "DE",
+  "zip": "72805",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Baden-Württemberg",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Regierungsbezirk Tübingen",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Landkreis Reutlingen",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lichtenstein",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Holzelfingen",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.0
+ }
+]

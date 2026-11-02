@@ -1,0 +1,434 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "תל אביב - יפו",
+  "id": "node/278472603",
+  "lat": 32.0852997,
+  "lon": 34.7818064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.48900032043457
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "תל אביד",
+  "id": "node/3584019751",
+  "lat": 36.6946212,
+  "lon": 38.9499931,
+  "country": "SY",
+  "tz": "Asia/Damascus",
+  "areas": [
+   {
+    "name": "סוריה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז א-רקקה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפה תל אביד",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נאחיית תל אביד",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.57400131225586
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "תל אביב מרכז",
+  "id": "il-Israel-MOT_37358",
+  "lat": 32.083714,
+  "lon": 34.79825000000001,
+  "level": 0.0,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.528861999511719,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.0008413448231294751
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "תל אביב ההגנה",
+  "id": "il-Israel-MOT_37292",
+  "lat": 32.053978,
+  "lon": 34.784839999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.872688293457031,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.0007978419889695942
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "אבי-דוד",
+  "id": "way/331499137",
+  "lat": 32.0230275,
+  "lon": 34.7682959,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חולון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.0
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "לב תל-אביב",
+  "id": "way/34798197",
+  "lat": 32.073995,
+  "lon": 34.764123,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.75
+ },
+ {
+  "type": "PLACE",
+  "category": "electronics_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "אבי סופר",
+  "id": "node/2701869266",
+  "lat": 32.1645868,
+  "lon": 34.8114011,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "הרצליה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "דרך יפו/תל אביב",
+  "id": "il-Israel-MOT_2041",
+  "lat": 32.825157000000004,
+  "lon": 34.989414,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "המושבה הגרמנית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.34999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 8.396046951020253e-07
+ }
+]

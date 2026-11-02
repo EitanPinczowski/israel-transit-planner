@@ -81,6 +81,11 @@ tasks.test {
     // Unit tests must never reach the network; fixtures only (see .claude/skills/transitous-api).
     systemProperty("transit.offline", "true")
     testLogging { events("failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT }
+    // Phase 11 T9: SearchCorpusTest prints "=== SEARCH-MISSING ... ===" / "=== SEARCH-OBSERVED ... ===" blocks to stdout (agents cannot
+    // read core/build); only that test's output is shown, every other test stays quiet.
+    addTestOutputListener { descriptor, event ->
+        if (descriptor.className?.endsWith("SearchCorpusTest") == true) print(event.message)
+    }
 }
 
 // Style (Phase 11 T2): ktlint reports every finding, `tools/ktlint_gate.py` fails on those that sit

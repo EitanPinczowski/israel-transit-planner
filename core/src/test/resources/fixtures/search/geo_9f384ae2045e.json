@@ -1,0 +1,397 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "נתניה",
+  "id": "node/1683129849",
+  "lat": 32.3286181,
+  "lon": 34.8566246,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -45.882999420166016
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "נתניה",
+  "id": "il-Israel-MOT_37366",
+  "lat": 32.319916,
+  "lon": 34.86926,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.52628707885742,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.00025035880389623344
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "מחלף נתניה",
+  "id": "il-Israel-MOT_15233",
+  "lat": 32.323730000000005,
+  "lon": 34.867107,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.316946094855666e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "ת. רכבת נתניה",
+  "id": "il-Israel-MOT_24323",
+  "lat": 32.32001,
+  "lon": 34.868140000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -41.349998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.578238440444693e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "marketplace_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "שוק נתניה",
+  "id": "way/44503709",
+  "lat": 32.3302841,
+  "lon": 34.8596028,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שיכון המזרחי",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -41.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "ת. מרכזית נתניה",
+  "id": "il-Israel-MOT_353",
+  "lat": 32.32737,
+  "lon": 34.858239999999995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.349998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.1513303585816175e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "town_hall_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "עיריית נתניה",
+  "id": "node/559172819",
+  "lat": 32.3287588,
+  "lon": 34.8545015,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -39.5
+ },
+ {
+  "type": "PLACE",
+  "category": "fire_station_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "מכבי אש נתניה",
+  "id": "way/108409554",
+  "lat": 32.3215856,
+  "lon": 34.8678798,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -39.5
+ }
+]

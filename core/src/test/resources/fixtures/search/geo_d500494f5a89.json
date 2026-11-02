@@ -1,0 +1,474 @@
+[
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Rothschild 48",
+  "id": "node/12952209648",
+  "lat": 32.0638911,
+  "lon": 34.7749395,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -41.33776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "the rothschild 71",
+  "id": "node/2950317983",
+  "lat": 32.0657753,
+  "lon": 34.7767884,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.83776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "The Rothschild Hotel",
+  "id": "node/2079226681",
+  "lat": 32.067302,
+  "lon": 34.778059,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.33776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Rothschild 30",
+  "id": "way/204436144",
+  "lat": 32.0631782,
+  "lon": 34.7724631,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -38.33776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Rothschild 22",
+  "id": "way/358986495",
+  "lat": 32.062689,
+  "lon": 34.7718368,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -38.33776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Rothschild",
+  "id": "node/10804333064",
+  "lat": 32.062812,
+  "lon": 34.7716372,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -38.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Rothschild 1 Tower",
+  "id": "way/91061244",
+  "lat": 32.0632678,
+  "lon": 34.7687377,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -37.08776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    3.0
+   ],
+   [
+    18.0,
+    4.0
+   ]
+  ],
+  "name": "Meier on Rothschild",
+  "id": "way/203502495",
+  "lat": 32.0630897,
+  "lon": 34.7733074,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -37.08776092529297
+ }
+]

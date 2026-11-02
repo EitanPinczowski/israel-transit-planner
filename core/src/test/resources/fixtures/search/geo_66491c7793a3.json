@@ -1,0 +1,426 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/278472603",
+  "lat": 32.0852997,
+  "lon": 34.7818064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.83899974822998
+ },
+ {
+  "type": "PLACE",
+  "category": "mobile_phone_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Avi-tel",
+  "id": "node/4404712569",
+  "lat": -17.7475156,
+  "lon": -63.1225758,
+  "country": "BO",
+  "tz": "America/La_Paz",
+  "areas": [
+   {
+    "name": "Bolivia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Santa Cruz",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Provincia Andrés Ibáñez",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Municipio Santa Cruz de la Sierra",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "electronics_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Avo.Tel",
+  "id": "node/10060762933",
+  "lat": 36.2174401,
+  "lon": 37.1617061,
+  "country": "SY",
+  "tz": "Asia/Damascus",
+  "areas": [
+   {
+    "name": "Syria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Aleppo Governorate",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mount Simeon District",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mount Simeon Subdistrict",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "department_store_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel avin",
+  "id": "node/2405883348",
+  "lat": -1.2403524,
+  "lon": 36.8989981,
+  "country": "KE",
+  "tz": "Africa/Nairobi",
+  "areas": [
+   {
+    "name": "Kenya",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nairobi County",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kasarani",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lucky Summer sublocation",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "fast_food_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/2765852665",
+  "lat": 52.373205,
+  "lon": 4.5301073,
+  "country": "NL",
+  "tz": "Europe/Amsterdam",
+  "areas": [
+   {
+    "name": "Netherlands",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Netherlands",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North Holland",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Zandvoort",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Zandvoort",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "neighbourhood",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/3988463420",
+  "lat": 11.4797028,
+  "lon": -85.6661002,
+  "country": "NI",
+  "zip": "48700",
+  "tz": "America/Managua",
+  "areas": [
+   {
+    "name": "Nicaragua",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rivas",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Moyogalpa",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "San José del Sur",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "fast_food_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/6345991384",
+  "lat": 48.0919154,
+  "lon": 17.1187709,
+  "country": "SK",
+  "zip": "851 07",
+  "tz": "Europe/Bratislava",
+  "areas": [
+   {
+    "name": "Slovakia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Region of Bratislava",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bratislava",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "District of Bratislava V",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Bratislava-Petržalka",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Janíkov dvor",
+    "adminLevel": 11.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "bar_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/6513463342",
+  "lat": 5.1165933,
+  "lon": -1.2715667,
+  "country": "GH",
+  "tz": "Africa/Abidjan",
+  "areas": [
+   {
+    "name": "Ghana",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Region",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cape Coast Metropolitan District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ }
+]

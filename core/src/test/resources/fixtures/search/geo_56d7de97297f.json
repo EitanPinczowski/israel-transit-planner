@@ -1,0 +1,513 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת רכבת קוממיות",
+  "id": "il-Israel-MOT_25353",
+  "lat": 32.001110000000004,
+  "lon": 34.76074200000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חולון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -27.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.160770938848145e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת רכבת קלה",
+  "id": "way/901708303",
+  "lat": 32.0622401,
+  "lon": 34.8450867,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קריית אונו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -24.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "ת. רכבת יוספטל",
+  "id": "il-Israel-MOT_33940",
+  "lat": 32.015217,
+  "lon": 34.76205000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חולון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.84999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.9090344469295815e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת האוכל",
+  "id": "node/12529700323",
+  "lat": 32.074378,
+  "lon": 34.7986565,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת רבין",
+  "id": "way/1168120142",
+  "lat": 32.0801789,
+  "lon": 34.7814238,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת רבין",
+  "id": "way/1011993415",
+  "lat": 32.0808674,
+  "lon": 34.7808365,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.0
+ },
+ {
+  "type": "PLACE",
+  "category": "fire_station_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "מכבי אש, תחנת עתידים",
+  "id": "node/1212527366",
+  "lat": 32.1063892,
+  "lon": 34.833702,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    4.0
+   ],
+   [
+    23.0,
+    8.0
+   ],
+   [
+    32.0,
+    12.0
+   ]
+  ],
+  "name": "ת. רכבת האוניברסיטה/מזרח",
+  "id": "il-Israel-MOT_39045",
+  "lat": 32.103300000000004,
+  "lon": 34.805282999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.84999942779541,
+  "modes": [],
+  "importance": 0.0
+ }
+]

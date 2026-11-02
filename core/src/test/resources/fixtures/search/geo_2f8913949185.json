@@ -1,0 +1,404 @@
+[
+ {
+  "type": "PLACE",
+  "category": "shop_other_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Haifaa Mall",
+  "id": "way/334688043",
+  "lat": 21.5286789,
+  "lon": 39.1789549,
+  "country": "SA",
+  "tz": "Asia/Riyadh",
+  "areas": [
+   {
+    "name": "Saudi Arabia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Makkah Region",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Governorate of Jeddah",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ar Ruwais",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Halifax",
+  "id": "node/24922221",
+  "lat": 44.648618,
+  "lon": -63.5859487,
+  "country": "CA",
+  "tz": "America/Halifax",
+  "areas": [
+   {
+    "name": "Canada",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nova Scotia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax County",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax Regional Municipality",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "South End",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax Central Common",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.515000343322754
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Haifa",
+  "id": "node/1656107649",
+  "lat": 32.8191218,
+  "lon": 34.9983856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Downtown District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ir Tachtit (Lower City)",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.385000228881836
+ },
+ {
+  "type": "PLACE",
+  "category": "dentist_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Tannlege Haifaa Obeid",
+  "id": "node/6126672085",
+  "lat": 59.2077707,
+  "lon": 10.9414779,
+  "country": "NO",
+  "tz": "Europe/Oslo",
+  "areas": [
+   {
+    "name": "Norway",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Østfold",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Fredrikstad",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Halifax",
+  "id": "gb-great-britain_910GHLFX",
+  "lat": 53.72084,
+  "lon": -1.8536276999999999,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "West Yorkshire",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Calderdale",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.45894718170166,
+  "modes": [
+   "LONG_DISTANCE",
+   "REGIONAL_RAIL",
+   "BUS"
+  ],
+  "importance": 0.0028922033961862326
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Halifax",
+  "id": "node/158472591",
+  "lat": 36.7661444,
+  "lon": -78.9287299,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Virginia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.005000114440918
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Halifax",
+  "id": "node/158372198",
+  "lat": 36.3286329,
+  "lon": -77.5897391,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North Carolina",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Halifax",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.0
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Haifongas",
+  "id": "node/369487083",
+  "lat": 20.8830967,
+  "lon": 106.6790381,
+  "country": "VN",
+  "zip": "04344",
+  "areas": [
+   {
+    "name": "Vietnam",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hải Phòng",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Thủy Nguyên Ward",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.899999618530273
+ }
+]

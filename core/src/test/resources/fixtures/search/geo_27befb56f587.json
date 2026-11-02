@@ -1,0 +1,489 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "הדסה עין כרם",
+  "id": "il-Israel-MOT_49451",
+  "lat": 31.76477,
+  "lon": 35.147679999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -62.77652359008789,
+  "modes": [
+   "TRAM"
+  ],
+  "importance": 2.1490399376489222e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "הדסה עין כרם",
+  "id": "way/284576720",
+  "lat": 31.7648832,
+  "lon": 35.1554097,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -61.17652130126953
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "מכון שרת/הדסה עין כרם",
+  "id": "il-Israel-MOT_10224",
+  "lat": 31.766337999999998,
+  "lon": 35.15027,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -59.27652359008789,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.1084522157034371e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "בי''ס לרפואה/הדסה עין כרם",
+  "id": "il-Israel-MOT_9866",
+  "lat": 31.764421,
+  "lon": 35.150597,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -57.77652359008789,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.1084522157034371e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "כניסה ראשית/הדסה עין כרם",
+  "id": "il-Israel-MOT_9863",
+  "lat": 31.765888,
+  "lon": 35.147755000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -57.77652359008789,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.0575391317834146e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "מרכז הסטודנט/הדסה עין כרם",
+  "id": "il-Israel-MOT_9864",
+  "lat": 31.763711999999995,
+  "lon": 35.150124,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -57.77652359008789,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.065674405253958e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "בית חולים הדסה עין כרם",
+  "id": "node/10103368277",
+  "lat": 31.7653138,
+  "lon": 35.150195,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -57.17652130126953
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    6.0
+   ],
+   [
+    16.0,
+    6.0
+   ],
+   [
+    23.0,
+    14.0
+   ]
+  ],
+  "name": "בית החולים הדסה עין כרם",
+  "id": "way/12367267",
+  "lat": 31.765762,
+  "lon": 35.1488652,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -53.67652130126953
+ }
+]

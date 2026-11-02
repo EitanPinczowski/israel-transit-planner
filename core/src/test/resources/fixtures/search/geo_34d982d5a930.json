@@ -1,0 +1,414 @@
+[
+ {
+  "type": "PLACE",
+  "category": "country",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chaina",
+  "id": "node/424313582",
+  "lat": 34.5412252,
+  "lon": 108.9237067,
+  "country": "CN",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Shaanxi",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Xianyang",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jingyang County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.149999618530273
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chaiya",
+  "id": "node/8733083027",
+  "lat": 9.3858077,
+  "lon": 99.1964728,
+  "country": "TH",
+  "tz": "Asia/Bangkok",
+  "areas": [
+   {
+    "name": "Thailand",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Surat Thani Province",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Chaiya District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chaifen",
+  "id": "node/13347190000",
+  "lat": 35.997682,
+  "lon": 111.2042785,
+  "country": "CN",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Shanxi",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Linfen City",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Xiangning County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Guanghua Town",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chaidan",
+  "id": "node/840680148",
+  "lat": 37.8549636,
+  "lon": 95.3539794,
+  "country": "CN",
+  "zip": "816200",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Qinghai",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haixi Mongol and Tibetan Autonomous Prefecture",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Da Qaidam",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Qaidam",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Charkif",
+  "id": "node/1685829423",
+  "lat": 49.9923181,
+  "lon": 36.2310146,
+  "country": "UA",
+  "tz": "Europe/Kyiv",
+  "areas": [
+   {
+    "name": "Ukraine",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kharkiv Oblast",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kharkiv Raion",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kharkiv Urban Hromada",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kharkiv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Shevchenkivskyi district",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.149999618530273
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chaitang",
+  "id": "node/2065837537",
+  "lat": 25.0357589,
+  "lon": 114.1673092,
+  "country": "CN",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Guangdong",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Shaoguan City",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Shixing County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mashi Town",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.0
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chafang",
+  "id": "node/4206825871",
+  "lat": 24.2396726,
+  "lon": 100.1859952,
+  "country": "CN",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Yunnan",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lincang",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Yun County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.0
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "Chafang",
+  "id": "node/5279434912",
+  "lat": 39.1658434,
+  "lon": 113.6236534,
+  "country": "CN",
+  "tz": "Asia/Shanghai",
+  "areas": [
+   {
+    "name": "China",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Shanxi",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Xinzhou City",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Fanshi County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Dongshan Township",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.0
+ }
+]

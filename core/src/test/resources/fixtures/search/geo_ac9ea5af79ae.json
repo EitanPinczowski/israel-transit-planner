@@ -1,0 +1,390 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה",
+  "id": "il-Israel-MOT_12069",
+  "lat": 31.3127,
+  "lon": 35.36459,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.841620019149559e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה",
+  "id": "il-Israel-MOT_43624",
+  "lat": 33.001408,
+  "lon": 35.273273,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הצפון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת עכו",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מעלות תרשיחא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.63627180174808e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה",
+  "id": "node/4380700192",
+  "lat": 32.0777722,
+  "lon": 34.76685,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.0
+ },
+ {
+  "type": "PLACE",
+  "category": "peak_8",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה",
+  "id": "node/7605310178",
+  "lat": 31.3172236,
+  "lon": 35.3536881,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.0
+ },
+ {
+  "type": "PLACE",
+  "category": "archaeological_site_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה",
+  "id": "way/32231475",
+  "lat": 31.3180492,
+  "lon": 35.3540176,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "הדקל/מצדה",
+  "id": "il-Israel-MOT_14936",
+  "lat": 32.25407,
+  "lon": 34.918736,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל מונד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.05188371182885e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מלון מצדה",
+  "id": "il-Israel-MOT_26845",
+  "lat": 31.261278,
+  "lon": 35.23871000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ערד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "מצדה מערב",
+  "id": "il-Israel-MOT_50180",
+  "lat": 31.317976000000005,
+  "lon": 35.347736,
+  "level": 0.0,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [],
+  "importance": 0.0
+ }
+]

@@ -15,7 +15,19 @@ CLASS=il.transit.planner.uitest.FaultMatrixTest
 # Every matrix screen runs every fault: a run that saw fewer cases did not test them. Tests that are not a
 # screen of the matrix (F6: rain after offline, data card vs server) don't call matrix() and add no 9 cases.
 SRC="$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/FaultMatrixTest.kt"
-SCREENS=$(grep -cE "= matrix\(|^[[:space:]]*matrix\(" "$SRC")
+# Count the @Test functions that call matrix(): comments and strings are stripped, and the definition itself
+# (`private fun matrix(`) is not a call, so neither a comment nor a line break can change the number.
+SCREENS=$(python3 - "$SRC" <<'PY'
+import re, sys
+src = open(sys.argv[1], encoding="utf-8").read()
+src = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+src = re.sub(r"//[^\n]*", "", src)
+src = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', src)
+src = re.sub(r"\bfun\s+matrix\s*\(", "fun _def(", src)
+tests = re.split(r"@Test\b", src)[1:]
+print(sum(1 for t in tests if re.search(r"\bmatrix\s*\(", t.split("@Test")[0])))
+PY
+)
 FAULTS=9
 mkdir -p "$OUT"
 : > "$OUT/crash.txt"
@@ -58,6 +70,28 @@ grep -q "^OK ($TESTS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fai
   echo '```'
 } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
 adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+# Phase 11 T9: search and everyday-use journeys against the same mock server, in English and then in Hebrew (the
+# app's own language for the package, API 33+). Typing must send one request per pause; the ATF check runs after every step.
+SEARCH=il.transit.planner.uitest.SearchJourneysTest
+SEARCH_TESTS=$(grep -cE "^[[:space:]]*@Test fun" "$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/SearchJourneysTest.kt")
+for lang in en he; do
+  echo "::group::search journeys ($lang)"
+  # The app's own language needs API 33+; check it took (a silent failure would run the Hebrew journeys in English).
+  [[ $API -ge 33 ]] || fail "set-app-locales needs API 33+ (this is API $API)"
+  adb shell cmd locale set-app-locales "$PKG" --locales "$lang" >/dev/null 2>&1 || fail "set-app-locales $lang failed on API $API"
+  applied=$(adb shell cmd locale get-app-locales "$PKG" 2>&1 | tr -d '\r')
+  case "$lang:$applied" in
+    en:*en*|he:*he*|he:*iw*) ;;
+    *) fail "the $lang locale was not applied to $PKG: $applied" ;;
+  esac
+  ui_instrument "$SEARCH" "$OUT/instrument-search-$lang.txt" -e profile "api$API" -e locale "$lang" -e theme light \
+    || fail "the search journeys failed on API $API ($lang)"
+  grep -q "^OK ($SEARCH_TESTS tests)" <(tr -d '\r' < "$OUT/instrument-search-$lang.txt") || fail "not all $SEARCH_TESTS search journeys passed ($lang)"
+  adb shell cmd connectivity airplane-mode disable >/dev/null 2>&1 || true
+  echo "::endgroup::"
+done
+adb shell cmd locale set-app-locales "$PKG" --locales "" >/dev/null 2>&1 || true
+adb logcat -d -s FaultMatrix:I | tr -d '\r' | grep -E "Typing|Task completion|IME search" | sed 's/^.*FaultMatrix: //' | tee "$OUT/search-journeys.txt" || true
 bash "$(dirname "$0")/ui_intent_fuzz.sh" "$API" "$APKS" "$OUT/security" || fail "the security / update tests failed on API $API"
 
 adb logcat -d > "$OUT/logcat.txt" || true

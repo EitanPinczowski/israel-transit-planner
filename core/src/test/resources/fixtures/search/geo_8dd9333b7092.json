@@ -1,0 +1,383 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana",
+  "id": "node/348385591",
+  "lat": 32.1860244,
+  "lon": 34.8678359,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Petah Tikva Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Raanana",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.849998474121094
+ },
+ {
+  "type": "PLACE",
+  "category": "car_repair_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana Tires",
+  "id": "node/2324420458",
+  "lat": 32.1922657,
+  "lon": 34.881742,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Petah Tikva Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Raanana",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -39.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Ha'Poel Ra'anana",
+  "id": "way/32689597",
+  "lat": 32.1870462,
+  "lon": 34.8722955,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Petah Tikva Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Raanana",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -36.0
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Raanana",
+  "id": "way/21101709",
+  "lat": 32.1945139,
+  "lon": 34.8440735,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Petah Tikva Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Raanana",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -30.099857330322266
+ },
+ {
+  "type": "PLACE",
+  "category": "hamlet",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Zayit Ra'anan",
+  "id": "node/2266238847",
+  "lat": 31.95619,
+  "lon": 35.1174952,
+  "tz": "Asia/Hebron",
+  "areas": [
+   {
+    "name": "Judea and Samaria",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Area C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Talmon",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Talmon",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.14285659790039
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Ra'anana",
+  "id": "",
+  "lat": 53.0001515,
+  "lon": 6.0705687,
+  "country": "NL",
+  "tz": "Europe/Amsterdam",
+  "areas": [
+   {
+    "name": "Netherlands",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Netherlands",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Frisia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Opsterland",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gorredijk",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.0
+ },
+ {
+  "type": "PLACE",
+  "category": "veterinary_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Dr' Ra'anan Refa'eli",
+  "id": "node/2432439455",
+  "lat": 33.2210062,
+  "lon": 35.5753619,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "North District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Safed Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Kiryat Shmona",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.64285659790039
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Rānana",
+  "id": "node/107775",
+  "lat": 51.5074456,
+  "lon": -0.1277653,
+  "country": "GB",
+  "tz": "Europe/London",
+  "areas": [
+   {
+    "name": "United Kingdom",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "England",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Greater London",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Westminster",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.149999618530273
+ }
+]

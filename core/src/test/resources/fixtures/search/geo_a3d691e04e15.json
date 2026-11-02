@@ -1,0 +1,413 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "ראשון לציון",
+  "id": "node/196353200",
+  "lat": 31.9635712,
+  "lon": 34.8101149,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.220001220703125
+ },
+ {
+  "type": "PLACE",
+  "category": "police_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "משטרת ראשון לציון",
+  "id": "way/253976173",
+  "lat": 31.9747628,
+  "lon": 34.7975899,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.5
+ },
+ {
+  "type": "PLACE",
+  "category": "town_hall_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "עיריית ראשון לציון",
+  "id": "way/202747588",
+  "lat": 31.9620066,
+  "lon": 34.8041293,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.0
+ },
+ {
+  "type": "PLACE",
+  "category": "museum_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "מוזיאון ראשון-לציון",
+  "id": "way/253571967",
+  "lat": 31.9641949,
+  "lon": 34.8075306,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.0
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "ראשון לציון",
+  "id": "way/385023487",
+  "lat": 31.9499025,
+  "lon": 34.833257,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.0
+ },
+ {
+  "type": "PLACE",
+  "category": "arts_centre",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "בית אמוני ראשון לציון",
+  "id": "node/12996009920",
+  "lat": 31.9655774,
+  "lon": 34.8173556,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "חוף ראשון לציון",
+  "id": "il-Israel-MOT_34073",
+  "lat": 31.996451999999998,
+  "lon": 34.73390200000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.591564331552945e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "קדמת ראשון",
+  "id": "node/1073996415",
+  "lat": 31.9706329,
+  "lon": 34.815564,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראשון לציון",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.074440002441406
+ }
+]

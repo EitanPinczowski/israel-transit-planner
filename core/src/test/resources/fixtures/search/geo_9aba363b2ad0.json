@@ -1,0 +1,465 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "באר-שבע",
+  "id": "way/675627797",
+  "lat": 31.2879582,
+  "lon": 34.7976265,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רמות",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -24.55500030517578
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "באר שבע",
+  "id": "node/738723480",
+  "lat": 31.2457442,
+  "lon": 34.7925181,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה א",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -24.54800033569336
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "באר שבע מרכז",
+  "id": "il-Israel-MOT_37312",
+  "lat": 31.242886,
+  "lon": 34.79854600000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "מרכז העיר",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -21.026287078857422,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.00020917612710036337
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "באר שבע צפון",
+  "id": "il-Israel-MOT_37314",
+  "lat": 31.262088999999996,
+  "lon": 34.809287999999995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -21.026287078857422,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.00022483714565169066
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "באר שבע",
+  "id": "node/4645271291",
+  "lat": 31.2591077,
+  "lon": 34.7837358,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ו",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -21.0
+ },
+ {
+  "type": "PLACE",
+  "category": "archaeological_site_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "תל באר שבע",
+  "id": "way/96320718",
+  "lat": 31.2469245,
+  "lon": 34.8415195,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה באר שבע",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -20.0
+ },
+ {
+  "type": "PLACE",
+  "category": "peak_8",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "כתף באר שבע",
+  "id": "node/278476004",
+  "lat": 31.2666725,
+  "lon": 34.8166663,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רמות",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -19.5
+ },
+ {
+  "type": "PLACE",
+  "category": "prison_16",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ],
+   [
+    13.0,
+    12.0
+   ]
+  ],
+  "name": "כלא באר שבע",
+  "id": "way/129016251",
+  "lat": 31.2074345,
+  "lon": 34.8085722,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.5
+ }
+]

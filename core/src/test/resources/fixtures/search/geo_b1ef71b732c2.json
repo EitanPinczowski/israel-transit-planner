@@ -1,0 +1,406 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אשדוד",
+  "id": "way/36876347",
+  "lat": 31.7693288,
+  "lon": 34.6174565,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.380000114440918
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אשדוד",
+  "id": "node/196303399",
+  "lat": 31.7977314,
+  "lon": 34.6529922,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.378999710083008
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אודסה",
+  "id": "node/26150437",
+  "lat": 46.4843023,
+  "lon": 30.7322878,
+  "country": "UA",
+  "tz": "Europe/Kyiv",
+  "areas": [
+   {
+    "name": "אוקראינה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Одеська область",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Одеський район",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Одеська міська громада",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Приморський район",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.75
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אשגאבט",
+  "id": "node/1811650017",
+  "lat": 37.9404648,
+  "lon": 58.3823487,
+  "country": "TM",
+  "tz": "Asia/Ashgabat",
+  "areas": [
+   {
+    "name": "טורקמניסטן",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשגאבט",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Köpetdag etraby",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשגאבט",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Köpetdag etraby",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.75
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "איידן",
+  "id": "node/8603453649",
+  "lat": 37.8483767,
+  "lon": 27.8435878,
+  "country": "TR",
+  "tz": "Europe/Istanbul",
+  "areas": [
+   {
+    "name": "טורקיה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ege Bölgesi",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Aydın",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Efeler",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hasanefendi - Ramazan Paşa Mahallesi",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.75
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "איבדאן",
+  "id": "node/27565066",
+  "lat": 7.3783681,
+  "lon": 3.8972331,
+  "country": "NG",
+  "tz": "Africa/Lagos",
+  "areas": [
+   {
+    "name": "ניגריה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Oyo",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ibadan South West",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אינדור,  -",
+  "id": "node/245709027",
+  "lat": 22.7203616,
+  "lon": 75.8681996,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "הודו",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Madhya Pradesh",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Indore",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Juni Indore Tahsil",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Indore City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "אגאדיר",
+  "id": "node/27565078",
+  "lat": 30.4205162,
+  "lon": -9.5838532,
+  "country": "MA",
+  "tz": "Africa/Casablanca",
+  "areas": [
+   {
+    "name": "מרוקו",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Souss-Massa ⵙⵓⵙⵙ-ⵎⴰⵙⵙⴰ سوس-ماسة",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Préfecture d'Agadir Ida-Outanane ⵍⵄⴰⵎⴰⵍⴰ ⵏ ⴰⴳⴰⴷⵉⵔ ⵉⴷⴰ ⵡⵜⴰⵏⴰⵏ عمالة أكادير إدا وتنان",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Pachalik d'Agadir ⵍⴱⴰⵛⴰⵡⵉⵢⴰ ⵏ ⴰⴳⴰⴷⵉⵔ باشوية أكادير",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Agadir ⴰⴳⴰⴷⵉⵔ أكادير",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.77299976348877
+ }
+]

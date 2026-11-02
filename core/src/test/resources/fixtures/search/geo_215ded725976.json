@@ -1,0 +1,511 @@
+[
+ {
+  "type": "PLACE",
+  "category": "parking_entrance_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Rishonim Railway station Parking",
+  "id": "node/4154327899",
+  "lat": 31.9489123,
+  "lon": 34.804503,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rehovot Subdistrict",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rishon LeZion",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -22.5
+ },
+ {
+  "type": "PLACE",
+  "category": "parking_entrance_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Rishonim Railway station Parking",
+  "id": "node/6581176584",
+  "lat": 31.9487928,
+  "lon": 34.8044331,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rehovot Subdistrict",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rishon LeZion",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -22.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "NEW RAILWAY STATION",
+  "id": "gr-Thessaloniki-Metro_sa:979",
+  "lat": 40.64396,
+  "lon": 22.928751,
+  "level": -2.0,
+  "country": "GR",
+  "tz": "Europe/Athens",
+  "areas": [
+   {
+    "name": "Greece",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Macedonia and Thrace",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Macedonia",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Thessaloniki Regional Unit",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Municipality of Thessaloniki",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Thessaloniki Municipal Unit",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "2nd District of Thessaloniki",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -20.188060760498047,
+  "modes": [
+   "SUBWAY",
+   "BUS"
+  ],
+  "importance": 0.017132004722952843
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Ramses Railway Station",
+  "id": "eg-CairoPublicRoadTransport_367",
+  "lat": 30.061956000000002,
+  "lon": 31.248015999999996,
+  "country": "EG",
+  "tz": "Africa/Cairo",
+  "areas": [
+   {
+    "name": "Egypt",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cairo",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.145004272460938,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 0.005298853851854801
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Central Railway Station",
+  "id": "bg-sofia_M206St",
+  "lat": 42.710167,
+  "lon": 23.322229999999998,
+  "country": "BG",
+  "tz": "Europe/Sofia",
+  "areas": [
+   {
+    "name": "Bulgaria",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sofia-City",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Stolichna",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Serdika District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sofia",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Centre",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -19.101016998291016,
+  "modes": [
+   "SUBWAY",
+   "TRAM",
+   "BUS"
+  ],
+  "importance": 0.007780611049383879
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "KR Pura Railway Station,  -",
+  "id": "in-flixbus_32ab92f9-027d-4e62-90cd-0126a913c8de",
+  "lat": 13.000145,
+  "lon": 77.67683999999998,
+  "country": "IN",
+  "zip": "560016",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Karnataka",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bengaluru Urban",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bangalore East",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bengaluru",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bengaluru East City Corporation",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "A Narayanapura",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -18.664348602294922,
+  "modes": [
+   "COACH",
+   "BUS"
+  ],
+  "importance": 0.003451717784628272
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Hove Railway Station",
+  "id": "au-sa-Adelaide-Metro_50012",
+  "lat": -35.01222,
+  "lon": 138.52393,
+  "country": "AU",
+  "zip": "5048",
+  "tz": "Australia/Adelaide",
+  "areas": [
+   {
+    "name": "Australia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South Australia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Holdfast Bay",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Hove",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -18.49897575378418,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.0012026358162984252
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    7.0
+   ],
+   [
+    16.0,
+    7.0
+   ]
+  ],
+  "name": "Adelaide Railway Station",
+  "id": "au-sa-Adelaide-Metro_6665",
+  "lat": -34.9209,
+  "lon": 138.59679,
+  "country": "AU",
+  "zip": "5000",
+  "tz": "Australia/Adelaide",
+  "areas": [
+   {
+    "name": "Australia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South Australia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Adelaide City Council",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Adelaide",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -18.47166633605957,
+  "modes": [
+   "REGIONAL_RAIL",
+   "TRAM"
+  ],
+  "importance": 0.007239601109176874
+ }
+]

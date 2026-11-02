@@ -1,0 +1,450 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "ביה''ח תל השומר/שיקום",
+  "id": "il-Israel-MOT_15526",
+  "lat": 32.048700000000004,
+  "lon": 34.84915,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -39.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.529559631308075e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "ביה''ח תל השומר",
+  "id": "il-Israel-MOT_25096",
+  "lat": 32.049946,
+  "lon": 34.84734699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -35.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "helipad_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "מנחת תל השומר",
+  "id": "way/295739596",
+  "lat": 32.0436421,
+  "lon": 34.8417927,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -34.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "ביה''ח תל השומר/מיון",
+  "id": "il-Israel-MOT_15643",
+  "lat": 32.045837,
+  "lon": 34.84124799999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.599998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.5231792531267274e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "fuel_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "תל השומר",
+  "id": "node/4159732555",
+  "lat": 32.0482196,
+  "lon": 34.8406435,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.5
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "תל השומר",
+  "id": "node/5325561830",
+  "lat": 32.0457803,
+  "lon": 34.8419485,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.5
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "תל השומר",
+  "id": "node/7472469969",
+  "lat": 32.0468815,
+  "lon": 34.8447686,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    4.0
+   ],
+   [
+    14.0,
+    10.0
+   ]
+  ],
+  "name": "ביה''ח תל השומר/מנהלה",
+  "id": "il-Israel-MOT_25094",
+  "lat": 32.048252000000005,
+  "lon": 34.84539,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -33.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ }
+]

@@ -1,0 +1,567 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "מרכז רפואי סורוקה/דרך מצדה",
+  "id": "il-Israel-MOT_25733",
+  "lat": 31.258556,
+  "lon": 34.797527,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ד",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -47.444000244140625,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.782657121424563e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "מרכז רפואי סורוקה/יצחק רגר",
+  "id": "il-Israel-MOT_26121",
+  "lat": 31.257666,
+  "lon": 34.798443000000006,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -47.444000244140625,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 6.206984107848257e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "מרכז רפואי סורוקה/בן גוריון",
+  "id": "il-Israel-MOT_26665",
+  "lat": 31.260914,
+  "lon": 34.799587,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -46.944000244140625,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.5308647562051192e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "סורוקה מיון/ביאליק",
+  "id": "il-Israel-MOT_41087",
+  "lat": 31.255547999999997,
+  "lon": 34.79777000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -45.84400177001953,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.0547838630591286e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "פארק סורוקה",
+  "id": "way/367970005",
+  "lat": 31.2572888,
+  "lon": 34.8028487,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -44.24399948120117
+ },
+ {
+  "type": "PLACE",
+  "category": "arts_centre",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "המרכז לאמנויות באר שבע",
+  "id": "way/1573729312",
+  "lat": 31.2374707,
+  "lon": 34.7882459,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -37.5
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "קפה המרכז",
+  "id": "node/12098062045",
+  "lat": 31.246467,
+  "lon": 34.8572564,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -37.0
+ },
+ {
+  "type": "PLACE",
+  "category": "library_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    12.0
+   ],
+   [
+    24.0,
+    12.0
+   ],
+   [
+    37.0,
+    6.0
+   ],
+   [
+    44.0,
+    6.0
+   ]
+  ],
+  "name": "הספרייה המרכזית אב\"ג",
+  "id": "node/1667827851",
+  "lat": 31.2620381,
+  "lon": 34.800772,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -36.54399871826172
+ }
+]

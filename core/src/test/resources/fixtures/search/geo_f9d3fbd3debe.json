@@ -1,0 +1,520 @@
+[
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "קריית אריה",
+  "id": "node/12181809601",
+  "lat": 32.0968304,
+  "lon": 34.8557179,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -60.79719924926758
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "פארק פתח תקווה",
+  "id": "way/1545754337",
+  "lat": 32.0915729,
+  "lon": 34.8685082,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -56.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "סקייטפארק פתח תקווה",
+  "id": "way/1560561373",
+  "lat": 32.1025241,
+  "lon": 34.8652806,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -55.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "קרית אריה",
+  "id": "il-Israel-MOT_37354",
+  "lat": 32.106274,
+  "lon": 34.863205,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.573486328125,
+  "modes": [
+   "REGIONAL_RAIL",
+   "TRAM"
+  ],
+  "importance": 0.00021340315288398415
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "ארומה",
+  "id": "node/4742715958",
+  "lat": 32.0926555,
+  "lon": 34.8650408,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -51.04719924926758
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "גרינלוג פתח תקווה",
+  "id": "way/1387876726",
+  "lat": 32.0954952,
+  "lon": 34.8512336,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה קריית אריה",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -50.0
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "קריית אלון",
+  "id": "node/530261222",
+  "lat": 32.0890601,
+  "lon": 34.90498,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "יוספטל - קריית אלון - קריית אלעזר",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -49.29719924926758
+ },
+ {
+  "type": "PLACE",
+  "category": "supermarket_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    8.0
+   ],
+   [
+    20.0,
+    6.0
+   ],
+   [
+    27.0,
+    10.0
+   ]
+  ],
+  "name": "קרפור סיטי",
+  "id": "node/2188971353",
+  "lat": 32.0851704,
+  "lon": 34.8867907,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -41.086673736572266
+ }
+]

@@ -1,0 +1,439 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer Sheva",
+  "id": "node/738723480",
+  "lat": 31.2457442,
+  "lon": 34.7925181,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Alef",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -14.79800033569336
+ },
+ {
+  "type": "PLACE",
+  "category": "alcohol_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer Shak",
+  "id": "node/5374039392",
+  "lat": 53.5542484,
+  "lon": -113.9359486,
+  "country": "CA",
+  "tz": "America/Edmonton",
+  "areas": [
+   {
+    "name": "Canada",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Alberta",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Spruce Grove",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Spruce Ridge",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.75
+ },
+ {
+  "type": "PLACE",
+  "category": "alcohol_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer Shack",
+  "id": "node/2011781542",
+  "lat": 40.7665668,
+  "lon": -73.9163203,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New York",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Queens County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Queens",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.5
+ },
+ {
+  "type": "PLACE",
+  "category": "convenience_14",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer Shack",
+  "id": "way/402570635",
+  "lat": 36.6044021,
+  "lon": -76.0273943,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Virginia",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Virginia Beach",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer-Sheba",
+  "id": "way/675627797",
+  "lat": 31.2879582,
+  "lon": 34.7976265,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.055000305175781
+ },
+ {
+  "type": "PLACE",
+  "category": "village",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Beer Shabeel",
+  "id": "node/1404226039",
+  "lat": 3.25961,
+  "lon": 44.16964,
+  "country": "SO",
+  "tz": "Africa/Nairobi",
+  "areas": [
+   {
+    "name": "Somalia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South West",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bay",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Baidoa District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.0
+ },
+ {
+  "type": "PLACE",
+  "category": "beverages_14",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "The Beer Shak",
+  "id": "node/5794009749",
+  "lat": 40.6826623,
+  "lon": -76.2546357,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Pennsylvania",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Schuylkill County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Branch Township",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.0
+ },
+ {
+  "type": "PLACE",
+  "category": "bar_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    4.0
+   ]
+  ],
+  "name": "Shake's Beer",
+  "id": "node/12778632119",
+  "lat": 45.6102148,
+  "lon": 0.0954698,
+  "country": "FR",
+  "zip": "16400",
+  "tz": "Europe/Paris",
+  "areas": [
+   {
+    "name": "France",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Metropolitan France",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nouvelle-Aquitaine",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Charente",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Angoulême",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "La Couronne",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.0
+ }
+]

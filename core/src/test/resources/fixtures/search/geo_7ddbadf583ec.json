@@ -1,0 +1,378 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem",
+  "id": "node/29090735",
+  "lat": 31.7788472,
+  "lon": 35.2257856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.0
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Inn",
+  "id": "node/3930363769",
+  "lat": 31.7823087,
+  "lon": 35.2209839,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.75
+ },
+ {
+  "type": "PLACE",
+  "category": "gift_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Gift",
+  "id": "node/13884849093",
+  "lat": 31.7882409,
+  "lon": 35.2187826,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.75
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Dan Jerusalem",
+  "id": "way/218578878",
+  "lat": 31.7972935,
+  "lon": 35.2361028,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.75
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Hotel",
+  "id": "node/710205517",
+  "lat": 31.7844598,
+  "lon": 35.2285995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.5
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Gate",
+  "id": "way/258481880",
+  "lat": 31.7901949,
+  "lon": 35.2008264,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.5
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Tower",
+  "id": "node/343668818",
+  "lat": 31.7804898,
+  "lon": 35.218122,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.25
+ },
+ {
+  "type": "PLACE",
+  "category": "police_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ]
+  ],
+  "name": "Police, Jerusalem",
+  "id": "node/2493259941",
+  "lat": 31.784116,
+  "lon": 35.2327631,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.25
+ }
+]

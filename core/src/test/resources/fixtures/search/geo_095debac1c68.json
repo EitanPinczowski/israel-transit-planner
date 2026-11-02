@@ -1,0 +1,493 @@
+[
+ {
+  "type": "PLACE",
+  "category": "rendering_railway_tram_stop_mapnik",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "תחנת הרכבת ירושלים – יצחק נבון",
+  "id": "way/11926359",
+  "lat": 31.7880522,
+  "lon": 35.2022611,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.75
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "תחנת רכבת קריית גת/יציאה",
+  "id": "il-Israel-MOT_43878",
+  "lat": 31.603615,
+  "lon": 34.777702000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קרית גת",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.565507202234585e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "ביה''ס רונה רמון/יצחק נבון",
+  "id": "il-Israel-MOT_50493",
+  "lat": 32.063140000000004,
+  "lon": 34.84042699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קריית אונו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.34999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.2235600428975886e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "תחנת רכבת ראש העין צפון/הורדה",
+  "id": "il-Israel-MOT_50681",
+  "lat": 32.12133800000001,
+  "lon": 34.934635,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית דרום השרון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.849999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.6802095817402005e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "בית ספר יצחק נבון",
+  "id": "il-Israel-MOT_49058",
+  "lat": 32.85015,
+  "lon": 35.084163999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קרית מוצקין",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -6.599999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.3346521516032226e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "יצחק נבון/שבי ציון",
+  "id": "il-Israel-MOT_49608",
+  "lat": 32.689068,
+  "lon": 35.23512000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הצפון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת יזרעאל",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מגדל העמק",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -6.099999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8532207377575105e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "שבי ציון/יצחק נבון",
+  "id": "il-Israel-MOT_49623",
+  "lat": 32.689045,
+  "lon": 35.23603000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הצפון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת יזרעאל",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מגדל העמק",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -6.099999904632568,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    8.0
+   ],
+   [
+    27.0,
+    8.0
+   ]
+  ],
+  "name": "יצחק נבון/יצחק שמיר",
+  "id": "il-Israel-MOT_50495",
+  "lat": 32.063457,
+  "lon": 34.842003,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קריית אונו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -5.599999904632568,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.2235600428975886e-06
+ }
+]

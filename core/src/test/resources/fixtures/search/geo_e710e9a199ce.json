@@ -1,0 +1,413 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "כפר סבא",
+  "id": "node/278478760",
+  "lat": 32.1773471,
+  "lon": 34.907459,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.41699981689453
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "כפר סבא",
+  "id": "il-Israel-MOT_37304",
+  "lat": 32.167370000000005,
+  "lon": 34.91742699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "הוד השרון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.599998474121094,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.00019706784223672003
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "כפר סבא",
+  "id": "way/53796999",
+  "lat": 32.1914595,
+  "lon": 34.8909561,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.54499816894531
+ },
+ {
+  "type": "PLACE",
+  "category": "shop_other_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "מטווח כפר סבא",
+  "id": "way/1230952433",
+  "lat": 32.1838384,
+  "lon": 34.9215921,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.5
+ },
+ {
+  "type": "PLACE",
+  "category": "town_hall_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "עיריית כפר סבא",
+  "id": "node/1385646704",
+  "lat": 32.1746487,
+  "lon": 34.9123102,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.0
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "זוזוברה כפר סבא",
+  "id": "node/1854109442",
+  "lat": 32.1710877,
+  "lon": 34.9272511,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.0
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "כפר סבא הירוקה",
+  "id": "way/112977897",
+  "lat": 32.1887879,
+  "lon": 34.8985751,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -43.0
+ },
+ {
+  "type": "PLACE",
+  "category": "shop_other_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    6.0
+   ]
+  ],
+  "name": "קניון G כפר סבא",
+  "id": "way/28303307",
+  "lat": 32.1710535,
+  "lon": 34.9265606,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "כפר סבא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.75
+ }
+]

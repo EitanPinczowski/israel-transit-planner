@@ -1,0 +1,434 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "פתח תקווה",
+  "id": "node/1683305965",
+  "lat": 32.0877639,
+  "lon": 34.8859985,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -52.04800033569336
+ },
+ {
+  "type": "PLACE",
+  "category": "marketplace_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "שוק פתח תקווה",
+  "id": "way/172910476",
+  "lat": 32.0910107,
+  "lon": 34.8819209,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.5
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "פתח תקווה",
+  "id": "way/242464393",
+  "lat": 32.0818135,
+  "lon": 34.9203342,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית דרום השרון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -47.18000030517578
+ },
+ {
+  "type": "PLACE",
+  "category": "police_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "משטרת פתח תקווה",
+  "id": "way/172915908",
+  "lat": 32.0930605,
+  "lon": 34.8870418,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -46.5
+ },
+ {
+  "type": "PLACE",
+  "category": "office_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "תאוריה פתח תקווה",
+  "id": "node/10175842630",
+  "lat": 32.0911436,
+  "lon": 34.8567365,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "איזור תעשייה רמת סיב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -46.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "תחנה מרכזית פתח תקווה",
+  "id": "il-Israel-MOT_48754",
+  "lat": 32.094692,
+  "lon": 34.88654,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "קרול",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -45.599998474121094,
+  "modes": [
+   "TRAM"
+  ],
+  "importance": 1.8016698959399946e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "מד\"א פתח תקווה",
+  "id": "way/212136176",
+  "lat": 32.0974884,
+  "lon": 34.8869643,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שיפר",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -44.25
+ },
+ {
+  "type": "PLACE",
+  "category": "theatre_16",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    10.0
+   ]
+  ],
+  "name": "היכל התרבות פתח תקווה",
+  "id": "node/1927361283",
+  "lat": 32.0945252,
+  "lon": 34.8890365,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "פתח תקווה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.0
+ }
+]

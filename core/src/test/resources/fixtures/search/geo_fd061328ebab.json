@@ -1,0 +1,381 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "אשדוד",
+  "id": "node/196303399",
+  "lat": 31.7977314,
+  "lon": 34.6529922,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -45.628997802734375
+ },
+ {
+  "type": "PLACE",
+  "category": "doctors_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "טרם אשדוד",
+  "id": "node/8300216637",
+  "lat": 31.7997761,
+  "lon": 34.6624002,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -41.0
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "אשדוד",
+  "id": "way/36876347",
+  "lat": 31.7693288,
+  "lon": 34.6174565,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.630001068115234
+ },
+ {
+  "type": "PLACE",
+  "category": "theatre_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "אמפי אשדוד",
+  "id": "way/709683715",
+  "lat": 31.7984575,
+  "lon": 34.6353931,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "ת. מרכזית אשדוד",
+  "id": "il-Israel-MOT_37420",
+  "lat": 31.790235999999997,
+  "lon": 34.639343000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.349998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.8173737266333774e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "doctors_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "אסותא אשדוד",
+  "id": "node/2457891610",
+  "lat": 31.7841304,
+  "lon": 34.6527406,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.0
+ },
+ {
+  "type": "PLACE",
+  "category": "shop_other_16",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "קניון אשדוד",
+  "id": "way/100621790",
+  "lat": 31.8100364,
+  "lon": 34.641035,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -40.0
+ },
+ {
+  "type": "PLACE",
+  "category": "post_office_14",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ]
+  ],
+  "name": "אשדוד רובע ד",
+  "id": "node/2517245374",
+  "lat": 31.8013014,
+  "lon": 34.6411483,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשדוד",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -39.75
+ }
+]

@@ -1,0 +1,429 @@
+[
+ {
+  "type": "PLACE",
+  "category": "cinema_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "Lev Dizengof לב דיזנגוף",
+  "id": "node/9965475692",
+  "lat": 32.0748102,
+  "lon": 34.7753592,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.75
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/ש\"ץ",
+  "id": "il-Israel-MOT_13652",
+  "lat": 32.083659999999995,
+  "lon": 34.774082,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.850000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.4344186385860667e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/בזל",
+  "id": "il-Israel-MOT_13684",
+  "lat": 32.091442,
+  "lon": 34.77601200000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.705311115074437e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/הרצל",
+  "id": "il-Israel-MOT_338",
+  "lat": 32.329605,
+  "lon": 34.85431,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "HaSharon Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Netanya",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8691717968977173e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "איילה/דיזנגוף",
+  "id": "il-Israel-MOT_21342",
+  "lat": 31.930374,
+  "lon": 34.831978,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramla Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beer Yaakov",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.3348976507550105e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/איילה",
+  "id": "il-Israel-MOT_21671",
+  "lat": 31.929802,
+  "lon": 34.83202,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramla Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beer Yaakov",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.4074021136329975e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/יודפת",
+  "id": "il-Israel-MOT_29490",
+  "lat": 32.085445,
+  "lon": 34.774623999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.033002915093675e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    14.0
+   ]
+  ],
+  "name": "דיזנגוף/צידון",
+  "id": "il-Sababus_13879",
+  "lat": 32.09687,
+  "lon": 34.775887,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.59999942779541,
+  "modes": [],
+  "importance": 0.0
+ }
+]

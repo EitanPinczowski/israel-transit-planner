@@ -1,0 +1,458 @@
+[
+ {
+  "type": "PLACE",
+  "category": "artwork_14",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Technion Obelisk",
+  "id": "way/194197832",
+  "lat": 32.7769672,
+  "lon": 35.0228674,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot Neve Sha'anan District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Qiriyat Hatechnion",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -39.305877685546875
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Hadarion Building (Technion)",
+  "id": "way/1119263838",
+  "lat": 32.8082386,
+  "lon": 34.9954162,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Hadar District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramat Hadar",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -39.305877685546875
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Technion Swimming pool",
+  "id": "way/98221331",
+  "lat": 32.7799463,
+  "lon": 35.0198973,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot Neve Sha'anan District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Qiriyat Hatechnion",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -35.055877685546875
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Technion Sports Center",
+  "id": "way/101686736",
+  "lat": 32.7791183,
+  "lon": 35.0198942,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot Neve Sha'anan District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Qiriyat Hatechnion",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -35.055877685546875
+ },
+ {
+  "type": "PLACE",
+  "category": "hostel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "HI Haifa",
+  "id": "node/3824958373",
+  "lat": 32.7941567,
+  "lon": 34.9694481,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "West Haifa District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -29.0
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Bucht von Haifa",
+  "id": "way/28582043",
+  "lat": 32.8364721,
+  "lon": 34.9828943,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "West Haifa District",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -24.149999618530273
+ },
+ {
+  "type": "PLACE",
+  "category": "hotel_16",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Haifa Hotel",
+  "id": "node/4516610089",
+  "lat": 32.4068747,
+  "lon": 35.3463773,
+  "tz": "Asia/Hebron",
+  "areas": [
+   {
+    "name": "West Bank",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Area A",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    9.0
+   ],
+   [
+    10.0,
+    5.0
+   ]
+  ],
+  "name": "Technoda",
+  "id": "way/369389150",
+  "lat": 32.4390269,
+  "lon": 34.8885667,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Haifa District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hadera Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.5
+ }
+]

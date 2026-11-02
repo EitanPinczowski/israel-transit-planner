@@ -1,0 +1,489 @@
+[
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "האוניברסיטה העברית - קמפוס גבעת רם",
+  "id": "way/44139761",
+  "lat": 31.7787145,
+  "lon": 35.1971946,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -45.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "שד' האוניברסיטה העברית/בר לב",
+  "id": "il-Israel-MOT_10498",
+  "lat": 31.799191999999998,
+  "lon": 35.233450000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.850000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 6.941602350707399e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "שד' האוניברסיטה העברית/קציר",
+  "id": "il-Israel-MOT_9682",
+  "lat": 31.796768,
+  "lon": 35.235043000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.850000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.20530364458682e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "האוניברסיטה העברית/שד' צ'רצ'יל",
+  "id": "il-Israel-MOT_9501",
+  "lat": 31.79626,
+  "lon": 35.241776,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.850000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.191338277654722e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "האוניברסיטה הפתוחה",
+  "id": "way/172584790",
+  "lat": 32.7784744,
+  "lon": 34.9954991,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע רמות הכרמל",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "גבעת דאונס",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -18.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ]
+  ],
+  "name": "האוניברסיטה העברית בירושלים",
+  "id": "node/673465602",
+  "lat": 31.7918555,
+  "lon": 35.244723,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.0
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ]
+  ],
+  "name": "שדרות האוניברסיטה העברית",
+  "id": "",
+  "lat": 31.7967147,
+  "lon": 35.2353065,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    22.0
+   ],
+   [
+    23.0,
+    12.0
+   ],
+   [
+    36.0,
+    8.0
+   ],
+   [
+    45.0,
+    4.0
+   ]
+  ],
+  "name": "ת. רכבת האוניברסיטה/רוקח",
+  "id": "il-Israel-MOT_39045",
+  "lat": 32.103300000000004,
+  "lon": 34.805282999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.349999904632568,
+  "modes": [],
+  "importance": 0.0
+ }
+]

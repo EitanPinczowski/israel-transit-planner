@@ -95,9 +95,10 @@ internal fun ColumnScope.TimetableBody(t: TimetableUi, vm: MainActions) {
         t.rows.isEmpty() && !t.canLoadMore -> EmptyNote(stringResource(if (t.savedAt != null) R.string.timetable_none_left else R.string.timetable_none))
         else -> {
             val grid = DayTimetable.grid(t.rows, t.now)
-            val list = rememberLazyListState()
-            // Open at the hour of the next departure, with the hour before it in view.
+            // Open at the hour of the next departure, with the hour before it in view. The list starts there (not scrolled
+            // there by an effect afterwards), so the first frame is the same every time: the Paparazzi goldens depend on it.
             val nextHour = grid.indexOfFirst { h -> h.cells.any { it.next } }
+            val list = rememberLazyListState(initialFirstVisibleItemIndex = (nextHour - 1).coerceAtLeast(0))
             LaunchedEffect(t.line, t.headsign, t.tomorrow, nextHour >= 0) { if (nextHour > 0) list.scrollToItem(nextHour - 1) }
             LazyColumn(Modifier.weight(1f, fill = false), state = list) {
                 items(grid, key = { it.hour }) { h -> HourRow(h) }

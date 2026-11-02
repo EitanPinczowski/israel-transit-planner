@@ -1,0 +1,431 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרצל/רוטרי",
+  "id": "il-Israel-MOT_15435",
+  "lat": 31.893194,
+  "lon": 34.812065,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.630043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.1838422981090844e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "יעקבי/הרצל",
+  "id": "il-Israel-MOT_22998",
+  "lat": 31.882272999999998,
+  "lon": 34.815163,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.630043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 4.666404038289329e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "pub_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרצל בר",
+  "id": "node/4995607122",
+  "lat": 31.901908,
+  "lon": 34.8086732,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.5300407409668
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "גורדון/הרצל",
+  "id": "il-Israel-MOT_35326",
+  "lat": 31.901519999999998,
+  "lon": 34.80991,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.130043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.678324563021306e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרצל/אברבנאל",
+  "id": "il-Israel-MOT_15433",
+  "lat": 31.886729999999996,
+  "lon": 34.81432699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.130043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8200134945800528e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרצל/ארלוזורוב",
+  "id": "il-Israel-MOT_16089",
+  "lat": 31.89076,
+  "lon": 34.81271,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.130043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.6929852790781297e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרצל/וייצמן",
+  "id": "il-Israel-MOT_16062",
+  "lat": 31.897757000000002,
+  "lon": 34.810689999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.130043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.4577651856816374e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    12.0
+   ]
+  ],
+  "name": "הרשנזון/הרצל",
+  "id": "il-Israel-MOT_16834",
+  "lat": 31.890993,
+  "lon": 34.81212,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.130043029785156,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.8073829980712617e-06
+ }
+]

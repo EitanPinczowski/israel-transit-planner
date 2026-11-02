@@ -373,6 +373,19 @@ dropped (the phone's Geocoder is also asked inside the box).
   was blocked from the cloud session: only `טבנקין 15 רעננה` is replayed; rows the phone's Geocoder
   answers in the app are known gaps here (the emulator `AddressCorpusTest` covers that chain).
 
+- **Search corpus (Phase 11 T9, `SearchCorpusTest`, every `core test`):** `fixtures/search/search_corpus.tsv`, 115 real queries (cities,
+  transliterations, typos, niqqud, acronyms, streets, rail / light rail / bus stations, landmarks, mixed, backup) typed key by key through
+  `TypingSearch` + `PlaceSearch` with every answer replayed: Transitous from `fixtures/search/geo_<hash>.json` (105 recordings, 2026-11-02,
+  1.5 s apart, our User-Agent; **106 live calls in all**), the phone's Geocoder from `phone_geocoder.tsv` (a stub with the 2026-10-07
+  emulator answers), Photon from `photon_replay.tsv` (older recordings; Photon is unreachable from cloud containers, 0 new Photon calls).
+  Per row: an acceptable answer (name + area) in the top 3, which source gave the first one, and ≤ 1 request per source per typing pause.
+  A row marked `BAD` is a real answer that is wrong; the test pins that it still is (a fix flips it to OK). Findings of the first run
+  (11 `BAD`): the index has no English street names (Herzl / Jaffa Road / Allenby + town answer only the town); English "train station" /
+  "bus station" queries answer stations in other countries; "Chaifa", "TLV" and the prefix "ירושלי" answer places abroad or elsewhere.
+  **Adding a row:** append it; a new search text fails the test and prints the `record_fixture.py` commands between `=== SEARCH-MISSING ===`
+  markers on stdout (also to `SEARCH_MISSING_OUT` if set; `core/build` is unreadable to agents, so CI logs carry them too).
+  `SearchRankingEdgeTest` pins the phone-side ranking (`LocalFirst`, `Recents`).
+
 **Ways in (Phase 10 D6), ≤ 1 request per use:**
 - **Stop numbers are not in Transitous's geocoder** (2026-10-12, 2 live calls, `geocode_stopcode_13907`,
   `…_stop` with `type=STOP`): "13907" (Be'er Sheva central's intercity platforms) near Be'er Sheva answers

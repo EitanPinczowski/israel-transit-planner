@@ -1,0 +1,475 @@
+[
+ {
+  "type": "PLACE",
+  "category": "aerodrome",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "נמל התעופה בן-גוריון",
+  "id": "way/198356187",
+  "lat": 32.021939,
+  "lon": 34.8965554,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -41.5
+ },
+ {
+  "type": "PLACE",
+  "category": "tower_freestanding",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "מגדל פיקוח שדה התעופה בן גוריון",
+  "id": "way/293272283",
+  "lat": 32.0018272,
+  "lon": 34.8704146,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -21.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "בן גוריון/מודעי",
+  "id": "il-Israel-MOT_24943",
+  "lat": 32.297127,
+  "lon": 34.84364299999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.629410743713379,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.0005651347455569e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "aerodrome",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "נמל התעופה רמון",
+  "id": "way/664123394",
+  "lat": 29.7148636,
+  "lon": 35.0014296,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אילת",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "בן גוריון/בלומנפלד",
+  "id": "il-Israel-MOT_24944",
+  "lat": 32.297450000000005,
+  "lon": 34.84414699999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נתניה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.129410743713379,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.002825673727784e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "פינס/בן גוריון",
+  "id": "il-Israel-MOT_25378",
+  "lat": 31.804830000000003,
+  "lon": 34.776638000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "גדרה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.073683738708496,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.876422288660251e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "בן גוריון/בן עמר",
+  "id": "il-Israel-MOT_26992",
+  "lat": 31.669884000000003,
+  "lon": 34.555347,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת אשקלון",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אשקלון",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.573683738708496,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.758079745035502e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    12.0
+   ],
+   [
+    20.0,
+    4.0
+   ],
+   [
+    25.0,
+    12.0
+   ]
+  ],
+  "name": "בן גוריון/הבנים",
+  "id": "il-Israel-MOT_22537",
+  "lat": 31.924538,
+  "lon": 34.808197,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נס ציונה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.573683738708496,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.6107353480474558e-06
+ }
+]
