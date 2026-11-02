@@ -21,7 +21,10 @@ import java.io.IOException
  * ISO/IEC 7816-4's command layouts (never from a real card).
  */
 class RavKavReaderTest {
-    private fun hex(s: String): ByteArray = s.replace(" ", "").chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+    private fun hex(s: String): ByteArray {
+        val digits = s.replace(" ", "")
+        return ByteArray(digits.length / 2) { digits.substring(2 * it, 2 * it + 2).toInt(16).toByte() }
+    }
 
     private val sw9000 = hex("9000")
 
@@ -58,6 +61,8 @@ class RavKavReaderTest {
         }
     }
 
+    private fun CardReport.Answered.file(f: CardFile) = files.single { it.file == f }
+
     private fun clock(vararg ns: Long): () -> Long {
         val it = ns.iterator()
         return { it.next() }
@@ -76,10 +81,17 @@ class RavKavReaderTest {
     }
 
     @Test fun builderRejectsOutOfRangeArguments() {
-        listOf(
-            { Apdu.readRecord(0, 9) }, { Apdu.readRecord(255, 9) }, { Apdu.readRecord(1, 0) }, { Apdu.readRecord(1, 31) },
-            { Apdu.readRecord(1, 9, le = 256) }, { Apdu.readRecord(1, 9, le = -1) }, { Apdu.selectByName(ByteArray(0)) }, { Apdu.selectByName(ByteArray(17)) },
-        ).forEach { f ->
+        val bad: List<() -> Unit> = listOf(
+            { Apdu.readRecord(0, 9) },
+            { Apdu.readRecord(255, 9) },
+            { Apdu.readRecord(1, 0) },
+            { Apdu.readRecord(1, 31) },
+            { Apdu.readRecord(1, 9, le = 256) },
+            { Apdu.readRecord(1, 9, le = -1) },
+            { Apdu.selectByName(ByteArray(0)) },
+            { Apdu.selectByName(ByteArray(17)) },
+        )
+        bad.forEach { f ->
             try {
                 f()
                 throw AssertionError("expected a rejection")
@@ -122,7 +134,8 @@ class RavKavReaderTest {
         assertEquals(FileOutcome.NEEDS_KEYS, byFile.getValue(CardFile.COUNTERS).outcome)
         assertEquals(FileOutcome.NOT_FOUND, byFile.getValue(CardFile.SPECIAL_EVENTS).outcome)
         // No READ RECORD ever names SFI 07 (environment + holder), and only plain commands are sent.
-        val readSfis = card.sent.filter { (it[1].toInt() and 0xFF) == 0xB2 }.map { (it[3].toInt() and 0xFF) shr 3 }.toSet()
+        val reads = card.sent.filter { (it[1].toInt() and 0xFF) == 0xB2 }
+        val readSfis = reads.map { (it[3].toInt() and 0xFF) shr 3 }.toSet()
         assertFalse(CardFile.HOLDER_SFI in readSfis)
         assertEquals(CardFile.entries.map { it.sfi }.toSet(), readSfis)
         assertTrue(card.sent.all { (it[1].toInt() and 0xFF) in setOf(0xA4, 0xB2) })
@@ -140,19 +153,19 @@ class RavKavReaderTest {
         val card = FakeCard(files = mapOf(0x09 to listOf(hex("42"))), cla = Apdu.CLA_CALYPSO)
         val r = RavKavReader(card::answer).read() as CardReport.Answered
         assertEquals(Apdu.CLA_CALYPSO, r.cla)
-        assertEquals(1, r.files.single { it.file == CardFile.CONTRACTS }.records.size)
+        assertEquals(1, r.file(CardFile.CONTRACTS).records.size)
     }
 
     @Test fun retriesOnceWithTheLengthTheCardAsksFor() {
         val card = FakeCard(files = mapOf(0x09 to listOf(hex("0102"))), wantLe = 0x1D)
         val r = RavKavReader(card::answer).read() as CardReport.Answered
-        assertArrayEquals(hex("0102"), r.files.single { it.file == CardFile.CONTRACTS }.records.single())
+        assertArrayEquals(hex("0102"), r.file(CardFile.CONTRACTS).records.single())
     }
 
     @Test fun stopsAtMaxRecords() {
         val card = FakeCard(files = mapOf(0x08 to List(40) { hex("01") }))
         val r = RavKavReader(card::answer).read() as CardReport.Answered
-        assertEquals(RavKavReader.MAX_RECORDS, r.files.single { it.file == CardFile.EVENT_LOG }.records.size)
+        assertEquals(RavKavReader.MAX_RECORDS, r.file(CardFile.EVENT_LOG).records.size)
     }
 
     @Test fun selectFailsButAFileAnswers() {
@@ -171,14 +184,14 @@ class RavKavReaderTest {
         assertEquals(CardReport.CantRead, RavKavReader({ ByteArray(1) }).read())
         assertEquals(CardReport.CantRead, RavKavReader({ throw IOException("tag lost") }).read())
         // SELECT fine, then a one-byte answer to READ RECORD.
-        var n = 0
-        assertEquals(CardReport.CantRead, RavKavReader({ if (n++ == 0) sw9000 else ByteArray(1) }).read())
+        val okThenShort = listOf(sw9000, ByteArray(1)).iterator()
+        assertEquals(CardReport.CantRead, RavKavReader({ okThenShort.next() }).read())
         // Asks for a new length, then answers garbage.
-        n = 0
-        assertEquals(CardReport.CantRead, RavKavReader({ if (n++ == 0) sw9000 else if (n == 2) hex("6C10") else ByteArray(0) }).read())
+        val lengthThenGarbage = listOf(sw9000, hex("6C10"), ByteArray(0)).iterator()
+        assertEquals(CardReport.CantRead, RavKavReader({ lengthThenGarbage.next() }).read())
         // The Calypso-class SELECT answers garbage.
-        n = 0
-        assertEquals(CardReport.CantRead, RavKavReader({ if (n++ == 0) hex("6E00") else ByteArray(0) }).read())
+        val wrongClassThenGarbage = listOf(hex("6E00"), ByteArray(0)).iterator()
+        assertEquals(CardReport.CantRead, RavKavReader({ wrongClassThenGarbage.next() }).read())
     }
 
     @Test fun hexGroupsOfFourBytes() {

@@ -201,9 +201,10 @@ private fun FileCard(f: FileRead) {
             val sw = f.status.toString()
             Text(
                 when (f.outcome) {
-                    FileOutcome.READ -> pluralStringResource(
-                        R.plurals.labs_outcome_read, f.records.size, f.records.size, f.records.joinToString(", ") { it.size.toString() },
-                    )
+                    FileOutcome.READ -> {
+                        val n = f.records.size
+                        pluralStringResource(R.plurals.labs_outcome_read, n, n, f.records.joinToString(", ") { it.size.toString() })
+                    }
                     FileOutcome.EMPTY -> stringResource(R.string.labs_outcome_empty, sw)
                     FileOutcome.NOT_FOUND -> stringResource(R.string.labs_outcome_not_found, sw)
                     FileOutcome.NEEDS_KEYS -> stringResource(R.string.labs_outcome_needs_keys, sw)
