@@ -125,7 +125,9 @@ class MockNetwork(
      * reads [base] on every call, so it follows the server across "offline"; each case of the rain
      * screen asks for another cell, so its 1 h cache never hides a request.
      */
-    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("$base/meteo", http).rain(cell) }, clock, usage = usage)
+    // `this.base`: in a property initializer a bare `base` is the constructor parameter, the first server's URL. After
+    // "offline" every forecast then went to the dead port and failed silently (T4's finding 3, reproduced by F6).
+    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("${this.base}/meteo", http).rain(cell) }, clock, usage = usage)
 
     private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock, usage = usage))
 

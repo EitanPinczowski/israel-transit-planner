@@ -274,10 +274,24 @@ class A11yJourneysTest {
         // Compose -> the AndroidView -> MapView; [injectLongPress] sends exactly that path (a DOWN, held 1.2 s, an UP) at
         // screen coordinates, and must drop a pin: blocking.
         val (sx, sy) = onScreen(x, y)
+        val seen = watchMapTouches()
         injectLongPress(sx, sy, moves = false)
         val viaFinger = awaitPin()
-        Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger")
-        assertTrue("$lang: a long-press at screen ($sx, $sy), between the panels, dropped no pin", viaFinger)
+        val evidence = "top=$top bottom=$bottom; MapView got [${seen.joinToString()}]; windows:\n" +
+            shell("dumpsys window windows").lines().filter { "Window #" in it || "mCurrentFocus" in it || "mFrame=" in it || "mTouchableInsets" in it }.take(40).joinToString("\n")
+        Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger $evidence")
+        if (!viaFinger) {
+            // The same press at the MapView's own centre, through the input system: is it the point or the path?
+            seen.clear()
+            val (cx, cy) = mapCentreOnScreen()
+            injectLongPress(cx, cy, moves = false)
+            val atCentre = awaitPin()
+            Log.i("A11yJourney", "A11Y-MAP $lang: at the MapView centre ($cx, $cy) pin=$atCentre MapView got [${seen.joinToString()}]")
+            onMain { it.closePin() }
+            unwatchMapTouches()
+            throw AssertionError("$lang: a long-press at screen ($sx, $sy), between the panels, dropped no pin (at the MapView centre ($cx, $cy): $atCentre). $evidence")
+        }
+        unwatchMapTouches()
         onMain { it.closePin() }
         compose.waitForIdle()
         // What `input swipe x y x y 1200` sends instead: the same DOWN and UP with a MOVE every few ms in between.
@@ -307,6 +321,35 @@ class A11yJourneysTest {
         val until = SystemClock.uptimeMillis() + 10_000
         while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
         return ui.places.pin != null
+    }
+
+    /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
+    private fun AppDriver.watchMapTouches(): MutableList<String> {
+        val seen = java.util.Collections.synchronizedList(mutableListOf<String>())
+        val map = mapView()
+        inst.runOnMainSync {
+            map.setOnTouchListener { _, e ->
+                seen += "${MotionEvent.actionToString(e.actionMasked)}@${e.x.toInt()},${e.y.toInt()}"
+                false
+            }
+        }
+        return seen
+    }
+
+    private fun AppDriver.unwatchMapTouches() {
+        val map = mapView()
+        inst.runOnMainSync { map.setOnTouchListener(null) }
+    }
+
+    private fun AppDriver.mapCentreOnScreen(): Pair<Int, Int> {
+        val map = mapView()
+        val at = IntArray(2)
+        var size = 0 to 0
+        inst.runOnMainSync {
+            map.getLocationOnScreen(at)
+            size = map.width to map.height
+        }
+        return (at[0] + size.first / 2) to (at[1] + size.second / 2)
     }
 
     /** A point of the window ([boundsInWindow]) on the screen, where the input system delivers a finger. */
