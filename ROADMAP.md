@@ -367,7 +367,7 @@ package. Tick only your own package's lines.
 
 ### F7 — Rider follow-ups (`claude/p11-followups-f7`, 0 requests)
 - [x] Ride alert waits for a late bus: the leg stays open while the rider waits at the stop or rides the route, ≤ 30 min past its end (GPS replay 5/10/20 min late)
-- [ ] Font scale 2.0: stop-sheet headsigns wrap (full text to TalkBack); compact Park & ride header
+- [x] Font scale 2.0: stop-sheet headsigns wrap (full text to TalkBack); compact Park & ride header and way-back row
 
 ### Close-out (boss)
 - [ ] `docs/releases/v0.9.1.md` after Wave 4 (if the owner releases it)
