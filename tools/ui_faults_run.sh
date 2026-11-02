@@ -49,7 +49,7 @@ echo "::endgroup::"
 cases=$(wc -l < "$OUT/cases.txt")
 echo "$cases cases ($SCREENS screens x $FAULTS faults expected)"
 [[ $cases -ge $((SCREENS * FAULTS)) ]] || fail "the fault matrix ran $cases of $((SCREENS * FAULTS)) cases"
-TESTS=$(grep -c "@Test fun" "$SRC") # the screens plus the F6 tests beside them
+TESTS=$(grep -cE "^[[:space:]]*@Test fun" "$SRC") # the screens plus the F6 tests beside them
 grep -q "^OK ($TESTS tests)" <(tr -d '\r' < "$OUT/instrument-faults.txt") || fail "not all $TESTS fault-matrix tests passed"
 {
   echo "### Network-fault matrix (API $API)"

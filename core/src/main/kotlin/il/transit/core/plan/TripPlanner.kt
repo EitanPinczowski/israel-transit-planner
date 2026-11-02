@@ -95,7 +95,7 @@ class TripPlanner(private val api: TransitApi) {
      * phone's time is used for a Now search) and keep MOTIS's answer as it is.
      */
     suspend fun plan(q: TripQuery, now: Instant? = null): TripResult {
-        val time = if (q.timeMode == TimeMode.NOW) now ?: Instant.now() else requireNotNull(q.time) { "time needed for ${q.timeMode}" }
+        val time = if (q.timeMode == TimeMode.NOW) SearchTime.of(now ?: Instant.now()) else requireNotNull(q.time) { "time needed for ${q.timeMode}" }
         val resp = api.plan(request(q, time))
         val shown = now?.let { notDeparted(resp.itineraries, q, time, it) } ?: resp.itineraries
         val sorted = TripPages.order(TripPages.sane(shown), q.timeMode == TimeMode.ARRIVE_BY)

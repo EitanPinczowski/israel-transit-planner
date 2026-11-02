@@ -34,6 +34,7 @@ import il.transit.core.plan.LastRide
 import il.transit.core.plan.LastRideFinder
 import il.transit.core.plan.MissedIt
 import il.transit.core.plan.PlanCache
+import il.transit.core.plan.SearchTime
 import il.transit.core.plan.TabResult
 import il.transit.core.plan.TimeMode
 import il.transit.core.plan.TripPlanner
@@ -590,7 +591,7 @@ class MainViewModel(
                     AppMode.TRIP -> if (s.chainStops.isNotEmpty()) {
                         val r = ChainPlanner(BudgetedTransitApi(api, ChainPlanner.BUDGET)).plan(
                             from, s.chainStops, to,
-                            departAt = s.time?.takeIf { s.timeMode != TimeMode.NOW } ?: clock.instant(),
+                            departAt = s.time?.takeIf { s.timeMode != TimeMode.NOW } ?: SearchTime.of(clock.instant()),
                             settings = s.settings, language = language,
                         )
                         _state.update {
@@ -638,7 +639,7 @@ class MainViewModel(
                             BetterStartQuery(
                                 origin = from,
                                 dest = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: SearchTime.of(clock.instant()),
                                 maxDriveMin = s.maxDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -655,7 +656,7 @@ class MainViewModel(
                                 a = from,
                                 b = requireNotNull(driverTo),
                                 c = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: SearchTime.of(clock.instant()),
                                 maxDetourMin = s.maxDetourMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -670,7 +671,7 @@ class MainViewModel(
                             PickUpQuery(
                                 me = from,
                                 home = to,
-                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: clock.instant(),
+                                departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: SearchTime.of(clock.instant()),
                                 maxDriveMin = s.maxPickUpDriveMin,
                                 preferences = s.settings.preferences(),
                                 language = language,
@@ -681,7 +682,7 @@ class MainViewModel(
                         keepTab(tabKey, TabResult.PickUp(r), empty)
                     }
                     AppMode.PARK_RIDE -> {
-                        val r = planParkRide(api, s, from, to, language, clock.instant())
+                        val r = planParkRide(api, s, from, to, language, SearchTime.of(clock.instant()))
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null).arranged() }
                         keepTab(tabKey, TabResult.ParkRide(r, from), empty)

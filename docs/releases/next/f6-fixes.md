@@ -1,5 +1,5 @@
-- **Park & ride: searching again right away no longer asks the server again.** A repeat of the same search within a minute is answered from the phone, as on the other tabs.
+- **Searching again right away no longer asks the server again.** The same "now" search repeated within the same minute is answered from the phone, on every tab (Park & ride included).
 
 ---
 
-- **חנה וסע: חיפוש חוזר מיד כבר לא פונה שוב לשרת.** חיפוש זהה בתוך דקה נענה מהטלפון, כמו בשאר הלשוניות.
+- **חיפוש חוזר מיד כבר לא פונה שוב לשרת.** אותו חיפוש "עכשיו" שחוזר בתוך אותה דקה נענה מהטלפון, בכל הלשוניות (כולל חנה וסע).

@@ -252,6 +252,9 @@ endpoint and every case is held to the feature's budget constant (×2 where a 42
 the cache time to 0 (skill `ui-testing`). `RoutingInvariantsTest` checks times, ride details, fares,
 traffic and Pareto fronts over every `plan_*` fixture and each feature's output; a new fixture is covered automatically.
 
+A "Now" search sends its time rounded down to the minute (`plan/SearchTime`, F6): the guard keys a request by its query,
+time included, so with seconds in it a repeat a few seconds later never met the cache. Explicit times stay exact.
+
 The "Keep transfers at least" setting (Phase 10 D1) sends no request of its own: it adds
 `additionalTransferTime` (minutes) to every `plan`, so it is part of the cache key (`TransfersTest`).
 

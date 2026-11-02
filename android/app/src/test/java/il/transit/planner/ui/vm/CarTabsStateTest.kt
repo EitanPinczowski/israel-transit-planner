@@ -268,6 +268,35 @@ class CarTabsStateTest : VmTest() {
         assertTrue(phase(vm.state.value) in ends)
     }
 
+    /** A clock the test moves forward, like the phone's: seconds pass between two taps. */
+    private class Ticking(var now: java.time.Instant) : java.time.Clock() {
+        override fun getZone(): java.time.ZoneId = java.time.ZoneOffset.UTC
+
+        override fun withZone(zone: java.time.ZoneId?): java.time.Clock = this
+
+        override fun instant(): java.time.Instant = now
+    }
+
+    @Test fun `a Now search repeated 20 s later in the same minute sends 0 on every tab, under a real-time clock`() {
+        // Phase 11 F6 (review of PR #118): the guard keys a request by its query, time included. With the time to the
+        // second, two Now searches seconds apart never met the cache; the Now departure is rounded to the minute.
+        for (mode in listOf(AppMode.TRIP, AppMode.BETTER_START, AppMode.PICK_UP, AppMode.PARK_RIDE)) {
+            val clock = Ticking(NOW.plusSeconds(10))
+            val api = ScriptedApi(replay())
+            val vm = newVm(GuardedTransitApi(api, clock), clock = clock)
+            vm.setMode(mode)
+            vm.choose(Field.FROM, "Start", if (mode == AppMode.PICK_UP) TEL_AVIV else MEITAR)
+            vm.choose(Field.TO, "End", if (mode == AppMode.PICK_UP) MEITAR else TEL_AVIV)
+            assertTrue("$mode: ${phase(vm.state.value)}", phase(vm.state.value) in ends)
+            assertTrue("$mode: the Now departure is whole minutes", api.planRequests.any { it.time == NOW })
+            val sent = api.total
+            assertTrue("$mode sent nothing", sent > 0)
+            clock.now = NOW.plusSeconds(30)
+            vm.plan()
+            assertEquals("$mode: the same search 20 s later", sent, api.total)
+        }
+    }
+
     // --- Errands ------------------------------------------------------------------------------------------------
 
     private val soroka = LatLon(31.2589, 34.7992)
