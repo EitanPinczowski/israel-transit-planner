@@ -163,6 +163,7 @@ import java.util.Locale
 import kotlin.math.roundToInt
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.heading
+import il.transit.planner.labs.LabsRow
 
 @Composable
 internal fun SettingsDialog(state: UiState, vm: MainActions, actions: ScreenActions, onShowTour: () -> Unit = {}) {
@@ -273,6 +274,7 @@ internal fun SettingsContent(
         item { QuickTileSection() }
         item { OfflineSection(actions, s.lowData) }
         item { CrashLogSection(actions.crashLog) }
+        item { LabsRow() } // Phase 11 E6: debug builds only; empty in release and uitest
         item { UpdateSettingsRow(state.updateState, vm) }
         item { Text(stringResource(R.string.saved), style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { heading() }) }
         item { SaveHereRow(vm) }

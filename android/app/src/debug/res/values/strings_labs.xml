@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E6: the Rav-Kav lab, debug builds only. -->
+<resources>
+    <string name="labs_title">Labs (debug build)</string>
+    <string name="labs_ravkav_open">Read my Rav-Kav</string>
+    <string name="labs_ravkav_title">Rav-Kav lab</string>
+    <string name="labs_ravkav_privacy">Read on this phone only. Nothing is saved, logged or sent. The holder\'s name and ID number are never read.</string>
+    <string name="labs_ravkav_close">Close</string>
+    <string name="labs_ravkav_no_nfc">This phone has no NFC.</string>
+    <string name="labs_ravkav_nfc_off">NFC is off. Turn it on in the phone\'s settings, then tap Try again.</string>
+    <string name="labs_ravkav_retry">Try again</string>
+    <string name="labs_ravkav_hold">Hold your Rav-Kav flat against the back of the phone.</string>
+    <string name="labs_ravkav_reading">Reading… keep the card still.</string>
+    <string name="labs_ravkav_cant_read">Can\'t read this card. Hold it still and try again.</string>
+    <string name="labs_ravkav_again">Tap the card again to read it a second time.</string>
+    <string name="labs_ravkav_summary">Read in ⁨%1$d⁩ ms · SELECT ⁨%2$s⁩ · class ⁨%3$s⁩</string>
+    <string name="labs_ravkav_skipped">Environment and holder (SFI 07): not read, on purpose.</string>
+    <string name="labs_file_contract_list">Contract list</string>
+    <string name="labs_file_contracts">Contracts</string>
+    <string name="labs_file_counters">Counters</string>
+    <string name="labs_file_event_log">Event log</string>
+    <string name="labs_file_special_events">Special events</string>
+    <string name="labs_file_header">%1$s (SFI ⁨%2$s⁩)</string>
+    <plurals name="labs_outcome_read">
+        <item quantity="one">Answered: ⁨%1$d⁩ record (⁨%2$s⁩ bytes)</item>
+        <item quantity="other">Answered: ⁨%1$d⁩ records (⁨%2$s⁩ bytes)</item>
+    </plurals>
+    <string name="labs_outcome_empty">Answered, no records (⁨%1$s⁩)</string>
+    <string name="labs_outcome_not_found">Not on this card (⁨%1$s⁩)</string>
+    <string name="labs_outcome_needs_keys">Needs a key or a secure session (⁨%1$s⁩)</string>
+    <string name="labs_outcome_refused">Refused (⁨%1$s⁩)</string>
+</resources>

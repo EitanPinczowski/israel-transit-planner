@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phase 11 E6 (debug builds only): the Rav-Kav lab reads the card over NFC. Release and uitest
+     builds never ask for NFC, and phones without it can still install the debug APK. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+</manifest>

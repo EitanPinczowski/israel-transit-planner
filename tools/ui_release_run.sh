@@ -28,9 +28,11 @@ grep -q "^package: name='$PKG' " "$OUT/badging.txt" || fail "app id is not $PKG"
 grep -q "versionName='$WANT_NAME'" "$OUT/badging.txt" || fail "versionName is not $WANT_NAME"
 grep -q "versionCode='$WANT_CODE'" "$OUT/badging.txt" || fail "versionCode is not $WANT_CODE"
 grep -q "application-debuggable" "$OUT/badging.txt" && fail "the release APK is debuggable"
+# Phase 11 E6: the Rav-Kav lab is debug-only; a release that asks for NFC would mean it leaked in.
+grep -q "uses-permission: name='android.permission.NFC'" "$OUT/badging.txt" && fail "the release APK asks for NFC (the Rav-Kav lab is debug-only)"
 # No test build in a release: UiTestApp, the probes, the replay assets, LeakCanary.
 unzip -p "$APK" 'classes*.dex' | strings > "$OUT/dex-strings.txt"
-for needle in "UiTestApp" "ProcessDeathProbe" "UpgradeProbe" "PerfProbe" "leakcanary" "uitest_network"; do
+for needle in "UiTestApp" "ProcessDeathProbe" "UpgradeProbe" "PerfProbe" "leakcanary" "uitest_network" "RavKavLab"; do
   grep -q "$needle" "$OUT/dex-strings.txt" && fail "the release APK contains $needle"
 done
 unzip -l "$APK" | grep -qE "assets/(fixtures|uitest)/" && fail "the release APK carries the uitest assets"
