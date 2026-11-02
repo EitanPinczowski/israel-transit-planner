@@ -13,14 +13,14 @@
     <string name="labs_ravkav_reading">קורא… לא להזיז את הכרטיס.</string>
     <string name="labs_ravkav_cant_read">אי אפשר לקרוא את הכרטיס הזה. יש להחזיק אותו יציב ולנסות שוב.</string>
     <string name="labs_ravkav_again">אפשר להצמיד את הכרטיס שוב כדי לקרוא אותו פעם נוספת.</string>
-    <string name="labs_ravkav_summary">נקרא ב־⁨%1$d⁩ מ״ש · SELECT ⁨%2$s⁩ · class ⁨%3$s⁩</string>
-    <string name="labs_ravkav_skipped">סביבה ובעל הכרטיס (SFI 07): לא נקראו, בכוונה.</string>
+    <string name="labs_ravkav_summary">נקרא ב־⁨%1$d⁩ מ״ש · ⁨SELECT %2$s⁩ · ⁨class %3$s⁩</string>
+    <string name="labs_ravkav_skipped">סביבה ובעל הכרטיס (⁨SFI 07⁩): לא נקראו, בכוונה.</string>
     <string name="labs_file_contract_list">רשימת חוזים</string>
     <string name="labs_file_contracts">חוזים</string>
     <string name="labs_file_counters">מונים</string>
     <string name="labs_file_event_log">יומן אירועים</string>
     <string name="labs_file_special_events">אירועים מיוחדים</string>
-    <string name="labs_file_header">%1$s (SFI ⁨%2$s⁩)</string>
+    <string name="labs_file_header">%1$s (⁨SFI %2$s⁩)</string>
     <plurals name="labs_outcome_read">
         <item quantity="one">ענה: רשומה ⁨%1$d⁩ (⁨%2$s⁩ בתים)</item>
         <item quantity="two">ענה: ⁨%1$d⁩ רשומות (⁨%2$s⁩ בתים)</item>
