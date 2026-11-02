@@ -214,8 +214,16 @@ internal fun PlaceRow(
         }
         return
     }
+    // Phase 11 E5: the row says its own words ("To, Choose destination"), so it keeps a label even while a
+    // layout change clips its texts.
+    val said = stringResource(labelRes) + ", " + (value ?: stringResource(placeholderRes))
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 8.dp),
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 44.dp)
+            .semantics { contentDescription = said }
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
