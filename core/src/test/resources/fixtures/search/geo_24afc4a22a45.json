@@ -1,0 +1,530 @@
+[
+ {
+  "type": "PLACE",
+  "category": "amenity_bus_station",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Bus Station",
+  "id": "node/1329731042",
+  "lat": 15.3879737,
+  "lon": 120.9416675,
+  "country": "PH",
+  "tz": "Asia/Manila",
+  "areas": [
+   {
+    "name": "Philippines",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Luzon",
+    "adminLevel": 3.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nueva Ecija",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "San Leonardo",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.597801208496094
+ },
+ {
+  "type": "PLACE",
+  "category": "amenity_bus_station",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Bus Station",
+  "id": "way/153486477",
+  "lat": 15.7731225,
+  "lon": 119.9052252,
+  "country": "PH",
+  "tz": "Asia/Manila",
+  "areas": [
+   {
+    "name": "Philippines",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Luzon",
+    "adminLevel": 3.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Zambales",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Santa Cruz",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.597801208496094
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Niš Bus Station",
+  "id": "al-ShowMeBus_station-137",
+  "lat": 43.3252,
+  "lon": 21.890880000000003,
+  "country": "RS",
+  "tz": "Europe/Belgrade",
+  "areas": [
+   {
+    "name": "Serbia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Serbia",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nisava Administrative District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Niš",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Градска општина Црвени Крст",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ниш (Црвени Крст)",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.581318855285645,
+  "modes": [
+   "COACH"
+  ],
+  "importance": 3.654238025774248e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Belgrade bus station",
+  "id": "al-ShowMeBus_station-231",
+  "lat": 44.806118000000005,
+  "lon": 20.415311999999997,
+  "country": "RS",
+  "tz": "Europe/Belgrade",
+  "areas": [
+   {
+    "name": "Serbia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Serbia",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Belgrade",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Belgrade",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "New Belgrade Urban Municipality",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "New Belgrade",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sava Quay",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.133893966674805,
+  "modes": [
+   "COACH"
+  ],
+  "importance": 0.0004236088425386697
+ },
+ {
+  "type": "PLACE",
+  "category": "amenity_bus_station",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Bus station",
+  "id": "node/13518302312",
+  "lat": 9.7421698,
+  "lon": 124.5734921,
+  "country": "PH",
+  "tz": "Asia/Manila",
+  "areas": [
+   {
+    "name": "Philippines",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Visayas",
+    "adminLevel": 3.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bohol",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Anda",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Poblacion",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -12.828160285949707
+ },
+ {
+  "type": "PLACE",
+  "category": "amenity_bus_station",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Baturaden Bus Station",
+  "id": "node/2021359794",
+  "lat": -7.3138146,
+  "lon": 109.2295109,
+  "country": "ID",
+  "tz": "Asia/Jakarta",
+  "areas": [
+   {
+    "name": "Indonesia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Java",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Banyumas",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.413280487060547
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Belgrade Bus Station",
+  "id": "eu-blablacar-bus_BEL",
+  "lat": 44.810089999999995,
+  "lon": 20.454275000000003,
+  "country": "RS",
+  "tz": "Europe/Belgrade",
+  "areas": [
+   {
+    "name": "Serbia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Serbia",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Belgrade",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "City of Belgrade",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Savski Venac Urban Municipality",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Београд (Савски венац)",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "МЗ Слободан Пенезић-Крцун",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -12.331318855285645,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "amenity_bus_station",
+  "tokens": [
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ],
+   [
+    17.0,
+    3.0
+   ],
+   [
+    21.0,
+    7.0
+   ]
+  ],
+  "name": "Bus station",
+  "id": "node/4763212489",
+  "lat": -2.6740379,
+  "lon": 111.6526669,
+  "country": "ID",
+  "tz": "Asia/Jakarta",
+  "areas": [
+   {
+    "name": "Indonesia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Kalimantan",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "West Kotawaringin",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.306960105895996
+ }
+]

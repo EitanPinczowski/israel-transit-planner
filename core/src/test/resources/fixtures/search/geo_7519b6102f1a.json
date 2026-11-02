@@ -1,0 +1,544 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "באר שבע מרכז",
+  "id": "il-Israel-MOT_37312",
+  "lat": 31.242886,
+  "lon": 34.79854600000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "מרכז העיר",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -14.026287078857422,
+  "modes": [
+   "REGIONAL_RAIL"
+  ],
+  "importance": 0.00020917612710036337
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "גשר רכבת",
+  "id": "node/2465810345",
+  "lat": 30.9010907,
+  "lon": 34.5388956,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית רמת נגב",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "מרכז",
+  "id": "il-Israel-MOT_28755",
+  "lat": 31.164953000000004,
+  "lon": 35.036877,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ערערה בנגב",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.988079475268023e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "doityourself_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "מרכז האני",
+  "id": "node/4839038021",
+  "lat": 31.228731,
+  "lon": 34.8069628,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "אזור התעשייה עמק שרה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -12.043999671936035
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "מרכז חן/אינשטיין",
+  "id": "il-Israel-MOT_26078",
+  "lat": 31.255111999999997,
+  "lon": 34.79144,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.643999099731445,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.0045957828406245e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "מרכז חן/ביאליק",
+  "id": "il-Israel-MOT_41086",
+  "lat": 31.254757,
+  "lon": 34.79223000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -11.643999099731445,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "PLACE",
+  "category": "fire_station_16",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "תחנת כיבוי אש ספיר",
+  "id": "node/5179065484",
+  "lat": 30.6129114,
+  "lon": 35.1879173,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית הערבה התיכונה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.5
+ },
+ {
+  "type": "PLACE",
+  "category": "dentist_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    6.0
+   ],
+   [
+    32.0,
+    8.0
+   ]
+  ],
+  "name": "תחנת פיס לבריאות השן",
+  "id": "way/1559025548",
+  "lat": 30.9331772,
+  "lon": 35.3777116,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.0
+ }
+]

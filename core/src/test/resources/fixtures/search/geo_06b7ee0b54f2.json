@@ -1,0 +1,510 @@
+[
+ {
+  "type": "PLACE",
+  "category": "town_hall_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva City Hall",
+  "id": "way/10786151",
+  "lat": 31.2493545,
+  "lon": 34.7995315,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "City Center",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -26.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva",
+  "id": "node/738723480",
+  "lat": 31.2457442,
+  "lon": 34.7925181,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Alef",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -25.34200096130371
+ },
+ {
+  "type": "PLACE",
+  "category": "theatre_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva Fringe Theatre",
+  "id": "way/372519437",
+  "lat": 31.2374384,
+  "lon": 34.7883933,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -25.0
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva",
+  "id": "node/4645271291",
+  "lat": 31.2591077,
+  "lon": 34.7837358,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Vav",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -21.79400062561035
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva",
+  "id": "way/675627797",
+  "lat": 31.2879582,
+  "lon": 34.7976265,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -20.349000930786133
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Assuta Be'er Sheva",
+  "id": "way/1561679487",
+  "lat": 31.2445217,
+  "lon": 34.8024357,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "City Center",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -20.29400062561035
+ },
+ {
+  "type": "PLACE",
+  "category": "charging_station_16",
+  "tokens": [
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er Sheva Supercharger",
+  "id": "node/9611398117",
+  "lat": 31.2472063,
+  "lon": 34.8120183,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Beersheba Industrial Area",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -19.04400062561035
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    2.0
+   ],
+   [
+    9.0,
+    5.0
+   ],
+   [
+    15.0,
+    5.0
+   ]
+  ],
+  "name": "Be'er-Sheva River Park",
+  "id": "way/864294893",
+  "lat": 31.234842,
+  "lon": 34.8154093,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Beersheba Industrial Area",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -18.0
+ }
+]

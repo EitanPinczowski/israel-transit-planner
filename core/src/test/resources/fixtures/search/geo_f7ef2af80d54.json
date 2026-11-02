@@ -1,0 +1,464 @@
+[
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Road 22",
+  "id": "way/1010168715",
+  "lat": 31.8032208,
+  "lon": 35.2142843,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -30.0
+ },
+ {
+  "type": "PLACE",
+  "category": "monument_16",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem Road Brakethroughers",
+  "id": "node/1000693660",
+  "lat": 31.8022414,
+  "lon": 35.0786501,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mate Yehuda Regional Council",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.75
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "9710 Jerusalem Road",
+  "id": "",
+  "lat": 41.6383785,
+  "lon": -83.3143735,
+  "street": "Jerusalem Road",
+  "houseNumber": "9710",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ohio",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lucas County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Township",
+    "adminLevel": 7.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "9715 Jerusalem Road",
+  "id": "",
+  "lat": 41.6391192,
+  "lon": -83.3141349,
+  "street": "Jerusalem Road",
+  "houseNumber": "9715",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ohio",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lucas County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Township",
+    "adminLevel": 7.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.25
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    5.0
+   ],
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "9731 Jerusalem Road",
+  "id": "",
+  "lat": 41.6390078,
+  "lon": -83.313586,
+  "street": "Jerusalem Road",
+  "houseNumber": "9731",
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ohio",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lucas County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Township",
+    "adminLevel": 7.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.25
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "Jerusalem",
+  "id": "node/29090735",
+  "lat": 31.7788472,
+  "lon": 35.2257856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.5
+ },
+ {
+  "type": "PLACE",
+  "category": "bank_16",
+  "tokens": [
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "Bank of Jerusalem",
+  "id": "node/1702561096",
+  "lat": 31.7729889,
+  "lon": 35.2199922,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "muslim_16",
+  "tokens": [
+   [
+    6.0,
+    4.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    9.0
+   ]
+  ],
+  "name": "Temple of Jerusalem",
+  "id": "way/4709536",
+  "lat": 31.7782462,
+  "lon": 35.2353611,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Old City",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.0
+ }
+]

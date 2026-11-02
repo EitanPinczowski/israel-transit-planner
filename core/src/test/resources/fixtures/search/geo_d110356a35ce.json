@@ -1,0 +1,546 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הרצל 126",
+  "id": "",
+  "lat": 31.243249,
+  "lon": 34.7914968,
+  "street": "הרצל",
+  "houseNumber": "126",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -54.04399871826172
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "רמב''ם/הרצל",
+  "id": "il-Israel-MOT_26472",
+  "lat": 31.243008,
+  "lon": 34.79075600000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -48.64399719238281,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.2115538993384689e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "העצמאות/הרצל",
+  "id": "il-Israel-MOT_26138",
+  "lat": 31.240375999999998,
+  "lon": 34.78947,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -48.14399719238281,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.516218799224589e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הרצל/יאיר אברהם שטרן",
+  "id": "il-Israel-MOT_25656",
+  "lat": 31.242088,
+  "lon": 34.79017000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -44.64399719238281,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.516218799224589e-05
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הצבי 123",
+  "id": "",
+  "lat": 31.2520378,
+  "lon": 34.773528,
+  "street": "הצבי",
+  "houseNumber": "123",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -42.29399871826172
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הרצל",
+  "id": "",
+  "lat": 31.2436801,
+  "lon": 34.7928457,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "העיר העתיקה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -40.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הרצל רוזנבלום",
+  "id": "",
+  "lat": 31.2342933,
+  "lon": 34.7665806,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "נווה זאב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נאות אברהם",
+    "adminLevel": 11.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -36.04399871826172
+ },
+ {
+  "type": "PLACE",
+  "category": "artwork_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    2.0
+   ],
+   [
+    12.0,
+    6.0
+   ],
+   [
+    19.0,
+    6.0
+   ]
+  ],
+  "name": "הנבל",
+  "id": "node/14142650713",
+  "lat": 31.2525657,
+  "lon": 34.7974383,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ב",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -36.0
+ }
+]

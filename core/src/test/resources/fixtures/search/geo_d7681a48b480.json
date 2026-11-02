@@ -1,0 +1,541 @@
+[
+ {
+  "type": "PLACE",
+  "category": "doctors_14",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "תחנה לבריאות המשפחה רוממה",
+  "id": "node/1002015034",
+  "lat": 32.7857197,
+  "lon": 34.996869,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע רמות הכרמל",
+    "adminLevel": 9.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת בן גוריון",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -7.399999618530273
+ },
+ {
+  "type": "PLACE",
+  "category": "aerodrome",
+  "tokens": [
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "נמל התעופה בן-גוריון",
+  "id": "way/198356187",
+  "lat": 32.021939,
+  "lon": 34.8965554,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -2.75
+ },
+ {
+  "type": "PLACE",
+  "category": "tower_freestanding",
+  "tokens": [
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "מגדל פיקוח שדה התעופה בן גוריון",
+  "id": "way/293272283",
+  "lat": 32.0018272,
+  "lon": 34.8704146,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.75
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "ת. רכבת דימונה",
+  "id": "il-Israel-MOT_12742",
+  "lat": 31.069129999999998,
+  "lon": 35.012276,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "דימונה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 8.65000057220459,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.1322039717451844e-07
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת התרעננות/יטבתה",
+  "id": "il-Israel-MOT_44351",
+  "lat": 29.893576,
+  "lon": 35.064316000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית חבל אילות",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 10.40000057220459,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "נמל תעופה רמון/יציאה",
+  "id": "il-Israel-MOT_44390",
+  "lat": 29.712933,
+  "lon": 35.00105,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אילת",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 10.600001335144043,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.582863650488434e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "נמל תעופה רמון/רציפים",
+  "id": "il-Israel-MOT_42898",
+  "lat": 29.726226999999998,
+  "lon": 35.006083999999994,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אילת",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 11.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.7551795938052237e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ],
+   [
+    9.0,
+    8.0
+   ],
+   [
+    18.0,
+    6.0
+   ],
+   [
+    25.0,
+    12.0
+   ],
+   [
+    38.0,
+    4.0
+   ],
+   [
+    43.0,
+    12.0
+   ]
+  ],
+  "name": "תחנת התרעננות/עין בוקק",
+  "id": "il-Israel-MOT_49353",
+  "lat": 31.203028,
+  "lon": 35.359318,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית תמר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 11.399999618530273,
+  "modes": [],
+  "importance": 0.0
+ }
+]

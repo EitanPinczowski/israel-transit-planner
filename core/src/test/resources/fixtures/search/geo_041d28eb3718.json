@@ -1,0 +1,370 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "אגרה,  -",
+  "id": "node/567267943",
+  "lat": 27.1752554,
+  "lon": 78.0098161,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "הודו",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Uttar Pradesh",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Agra",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Agra",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "זגרב",
+  "id": "node/1551865419",
+  "lat": 45.8130967,
+  "lon": 15.9772795,
+  "areas": [
+   {
+    "name": "Grad Zagreb",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "זאגרב",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gradska četvrt Gornji grad - Medveščak",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mjesni odbor \"August Cesarec\"",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "ריגה",
+  "id": "node/26707967",
+  "lat": 56.9493977,
+  "lon": 24.1051846,
+  "country": "LV",
+  "tz": "Europe/Riga",
+  "areas": [
+   {
+    "name": "לטביה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ריגה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Latgales apkaime",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "וקריגה",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.194000244140625
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "רגוזה",
+  "id": "node/67253706",
+  "lat": 36.9257118,
+  "lon": 14.7307524,
+  "country": "IT",
+  "zip": "97100",
+  "tz": "Europe/Rome",
+  "areas": [
+   {
+    "name": "איטליה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "סיציליה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ragusa",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ragusa",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.618000030517578
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "רגאן",
+  "id": "node/429501667",
+  "lat": 26.7207267,
+  "lon": 0.1751507,
+  "country": "DZ",
+  "zip": "01000",
+  "tz": "Africa/Algiers",
+  "areas": [
+   {
+    "name": "אלג'יריה",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "أدرار ⴰⴷⵔⴰⵔ",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "دائرة رقان ⴰⴷⴷⴰⵢⵔⵜ ⵏ ⵔⴻⴳⴳⴰⵏ",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "رقان",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -9.35200023651123
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "אגר",
+  "id": "node/26757722",
+  "lat": 47.8989887,
+  "lon": 20.3743665,
+  "zip": "3300",
+  "areas": [
+   {
+    "name": "Heves megye",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Egri járás",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Eger",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.246999740600586
+ },
+ {
+  "type": "PLACE",
+  "category": "place_capital_8",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "סגרש",
+  "id": "node/143908278",
+  "lat": 37.0078288,
+  "lon": -8.941924,
+  "country": "PT",
+  "tz": "Europe/Lisbon",
+  "areas": [
+   {
+    "name": "פורטוגל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Faro",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Vila do Bispo",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sagres",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -8.008999824523926
+ },
+ {
+  "type": "PLACE",
+  "category": "village",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ]
+  ],
+  "name": "רגבה",
+  "id": "node/278472738",
+  "lat": 32.9779642,
+  "lon": 35.0996706,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הצפון",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת עכו",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית מטה אשר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -7.5
+ }
+]

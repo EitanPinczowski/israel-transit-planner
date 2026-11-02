@@ -1,0 +1,425 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "יד ושם",
+  "id": "il-Israel-MOT_11748",
+  "lat": 31.774157000000002,
+  "lon": 35.177273,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -21.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.318946477927966e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "museum_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "יד ושם",
+  "id": "way/73989602",
+  "lat": 31.7742923,
+  "lon": 35.1724725,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "וולקני/יד ושם",
+  "id": "il-Israel-MOT_24819",
+  "lat": 31.890182,
+  "lon": 34.79539500000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.6937103737291181e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "jewish_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "היכל יד ושם",
+  "id": "way/516638290",
+  "lat": 32.0992383,
+  "lon": 34.9405101,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת פתח תקווה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ראש העין",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "דרך השלום/יד ושם",
+  "id": "il-Israel-MOT_25769",
+  "lat": 31.252914,
+  "lon": 34.804382,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז הדרום",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת באר שבע",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר שבע",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "שכונה ג",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -17.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 6.90099977873615e-06
+ },
+ {
+  "type": "PLACE",
+  "category": "monument_16",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "אנדרטת יד ושם",
+  "id": "node/7188238686",
+  "lat": 32.3984398,
+  "lon": 34.912967,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית עמק חפר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.5
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "יד ושם",
+  "id": "way/1007687567",
+  "lat": 32.3986712,
+  "lon": 34.9131422,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת השרון",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית עמק חפר",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.5
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    6.0
+   ]
+  ],
+  "name": "יד ושם",
+  "id": "",
+  "lat": 31.8897482,
+  "lon": 34.7956131,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רחובות",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רחובות",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -14.5
+ }
+]

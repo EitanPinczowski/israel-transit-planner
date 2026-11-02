@@ -1,0 +1,423 @@
+[
+ {
+  "type": "PLACE",
+  "category": "marketplace_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "שוק מחנה יהודה",
+  "id": "way/44123755",
+  "lat": 31.784006,
+  "lon": 35.2124742,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -32.0
+ },
+ {
+  "type": "PLACE",
+  "category": "marketplace_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "שוק מחנה יהודה",
+  "id": "way/1078567519",
+  "lat": 31.7857276,
+  "lon": 35.2127714,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -32.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "שוק מחנה יהודה/אגריפס",
+  "id": "il-Israel-MOT_10587",
+  "lat": 31.783775,
+  "lon": 35.213078,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -30.600000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.0380930184037425e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "חצ'אפוריה שוק מחנה יהודה",
+  "id": "node/6653239687",
+  "lat": 31.784895,
+  "lon": 35.2118099,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "ירושלים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -28.75
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "מחנה דורי",
+  "id": "il-Israel-MOT_25138",
+  "lat": 32.03617500000001,
+  "lon": 34.846012,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "אור יהודה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.2728929505101405e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "מחנה מבוא שילה",
+  "id": "il-Israel-MOT_7860",
+  "lat": 32.029180000000004,
+  "lon": 35.365948,
+  "level": 0.0,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.600000381469727,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "מחנה ישי",
+  "id": "il-Israel-MOT_38849",
+  "lat": 31.800725999999997,
+  "lon": 35.31805,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מעלה אדומים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -18.100000381469727,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.7073263026977656e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    6.0
+   ],
+   [
+    7.0,
+    8.0
+   ],
+   [
+    16.0,
+    10.0
+   ]
+  ],
+  "name": "מחנה אפיק",
+  "id": "il-Israel-MOT_8028",
+  "lat": 32.070374,
+  "lon": 35.395996000000004,
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "יהודה ושומרון",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "שטח C",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מעלה אפרים",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -17.600000381469727,
+  "modes": [],
+  "importance": 0.0
+ }
+]

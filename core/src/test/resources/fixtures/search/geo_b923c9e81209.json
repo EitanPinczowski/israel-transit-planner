@@ -1,0 +1,580 @@
+[
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    4.0
+   ],
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Berlin - Central Train Station",
+  "id": "at-Railway-Current-Reference-Data-2026_de:11000:900003200:2:52",
+  "lat": 52.52499,
+  "lon": 13.369186000000003,
+  "level": -2.0,
+  "country": "DE",
+  "zip": "10557",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Berlin",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Mitte",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Moabit",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -13.653959274291992,
+  "modes": [
+   "HIGHSPEED_RAIL",
+   "LONG_DISTANCE",
+   "COACH",
+   "NIGHT_RAIL",
+   "REGIONAL_RAIL",
+   "SUBURBAN",
+   "SUBWAY",
+   "TRAM",
+   "BUS"
+  ],
+  "importance": 0.010136433877050877
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Zoo Train Station",
+  "id": "way/113879532",
+  "lat": 39.7683671,
+  "lon": -86.1817225,
+  "country": "US",
+  "tz": "America/Indiana/Indianapolis",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Indiana",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Marion County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Center Township",
+    "adminLevel": 7.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Indianapolis",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -5.25
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Leipzig central train station",
+  "id": "de-DELFI_de:14713:8010205",
+  "lat": 51.34547,
+  "lon": 12.382064000000002,
+  "level": 1.0,
+  "country": "DE",
+  "zip": "04109",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Saxony",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Leipzig",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Mitte",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Centre East",
+    "adminLevel": 10.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -3.545924186706543,
+  "modes": [
+   "HIGHSPEED_RAIL",
+   "LONG_DISTANCE",
+   "COACH",
+   "REGIONAL_RAIL",
+   "SUBURBAN",
+   "TRAM",
+   "BUS"
+  ],
+  "importance": 0.005326494108885527
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "GMCR Visitor's Center/Train Station",
+  "id": "us-Amtrak_WAB",
+  "lat": 44.335010000000004,
+  "lon": -72.75181,
+  "country": "US",
+  "tz": "America/New_York",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Vermont",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Washington County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Waterbury",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -3.3500001430511475,
+  "modes": [
+   "LONG_DISTANCE",
+   "BUS"
+  ],
+  "importance": 0.00013296061661094427
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Union Station Transit Center",
+  "id": "us-Amtrak_CHI",
+  "lat": 41.878685,
+  "lon": -87.63944,
+  "country": "US",
+  "tz": "America/Chicago",
+  "areas": [
+   {
+    "name": "United States",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Illinois",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cook County",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "West Chicago Township",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Chicago",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Near West Side",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -0.5950044393539429,
+  "modes": [
+   "LONG_DISTANCE",
+   "COACH",
+   "REGIONAL_RAIL",
+   "BUS"
+  ],
+  "importance": 0.005353919696062803
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Hof central train station",
+  "id": "eu-flixbus_dcbc0833-9603-11e6-9066-549f350fcb0c",
+  "lat": 50.30841,
+  "lon": 11.924688,
+  "country": "DE",
+  "zip": "95028",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bavaria",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Upper Franconia",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hof",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -0.24897661805152893,
+  "modes": [
+   "COACH",
+   "REGIONAL_RAIL",
+   "BUS",
+   "ODM"
+  ],
+  "importance": 0.0012278261128813028
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Frankfurt central train station",
+  "id": "at-Railway-Current-Reference-Data-2026_de:06412:10:16:16",
+  "lat": 50.106293,
+  "lon": 8.661960999999998,
+  "level": 0.0,
+  "country": "DE",
+  "zip": "60329",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Hesse",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Regierungsbezirk Darmstadt",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Frankfurt",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Innenstadt 1",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Gallus",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -0.12730446457862854,
+  "modes": [
+   "HIGHSPEED_RAIL",
+   "LONG_DISTANCE",
+   "COACH",
+   "NIGHT_RAIL",
+   "REGIONAL_RAIL",
+   "SUBURBAN",
+   "SUBWAY",
+   "TRAM",
+   "BUS"
+  ],
+  "importance": 0.015212923288345337
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Lübeck central train station",
+  "id": "eu-flixbus_dcbbeac7-9603-11e6-9066-549f350fcb0c",
+  "lat": 53.86618,
+  "lon": 10.669183,
+  "country": "DE",
+  "zip": "23558",
+  "tz": "Europe/Berlin",
+  "areas": [
+   {
+    "name": "Germany",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Schleswig-Holstein",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Lübeck",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Sankt Lorenz Süd",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -0.12472953647375107,
+  "modes": [
+   "COACH",
+   "REGIONAL_RAIL",
+   "BUS"
+  ],
+  "importance": 0.003958875313401222
+ }
+]

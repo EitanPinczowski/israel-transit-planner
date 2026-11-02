@@ -1,0 +1,473 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jerusalem",
+  "id": "node/29090735",
+  "lat": 31.7788472,
+  "lon": 35.2257856,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalem",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.75
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jerusalem",
+  "id": "node/262720715",
+  "lat": -25.1972222,
+  "lon": 31.1138889,
+  "country": "ZA",
+  "tz": "Africa/Johannesburg",
+  "areas": [
+   {
+    "name": "South Africa",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mpumalanga",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ehlanzeni District Municipality",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mbombela",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Mbombela Ward 9",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.544000625610352
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Praça Jerusalém ,  -",
+  "id": "br-rio-de-janeiro_3099O00009C0",
+  "lat": -22.818860000000004,
+  "lon": -43.2016,
+  "level": 0.0,
+  "country": "BR",
+  "tz": "America/Sao_Paulo",
+  "areas": [
+   {
+    "name": "Brazil",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Southeast Region",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rio de Janeiro",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Região Metropolitana do Rio de Janeiro",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Rio de Janeiro",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Jardim Guanabara",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.526287078857422,
+  "modes": [
+   "COACH",
+   "BUS"
+  ],
+  "importance": 0.002036554738879204
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jerusalén",
+  "id": "node/703168467",
+  "lat": 4.5623901,
+  "lon": -74.6942067,
+  "country": "CO",
+  "tz": "America/Bogota",
+  "areas": [
+   {
+    "name": "Colombia",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "RAP (Especial) Central",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cundinamarca",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Alto Magdalena",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalén",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.51099967956543
+ },
+ {
+  "type": "PLACE",
+  "category": "town",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jerusalén ,  -",
+  "id": "node/4406340947",
+  "lat": 13.6534724,
+  "lon": -88.9005366,
+  "country": "SV",
+  "tz": "America/El_Salvador",
+  "areas": [
+   {
+    "name": "El Salvador",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "La Paz",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "La Paz Centro",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Jerusalén",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "JERUSALEM",
+  "id": "fr-fichiers-gtfs-eurometropole-de-metz_1:JERUS",
+  "lat": 49.09183,
+  "lon": 6.167212999999999,
+  "country": "FR",
+  "zip": "57950",
+  "tz": "Europe/Paris",
+  "areas": [
+   {
+    "name": "France",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Metropolitan France",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Grand Est",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Moselle",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Metz",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Montigny-lès-Metz",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.3949909316579578e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jérusalem",
+  "id": "fr-angers-loire-metropole-reseau-irigo-gtfs-gtfs-rt-siri_JERUSALE",
+  "lat": 47.473053,
+  "lon": -0.530246,
+  "country": "FR",
+  "zip": "49100",
+  "tz": "Europe/Paris",
+  "areas": [
+   {
+    "name": "France",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Metropolitan France",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Pays de la Loire",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Maine-et-Loire",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Angers",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Angers",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Deux-Croix - Banchais",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 5.5089089983084705e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    8.0
+   ]
+  ],
+  "name": "Jérusalem",
+  "id": "fr-horaires-theoriques-et-temps-reel-du-reseau-buss-saintes-gtfs-gtfs-rt_zenbus:StopPoint:SP:572300044:LOC",
+  "lat": 45.77068,
+  "lon": -0.617558,
+  "level": 0.0,
+  "country": "FR",
+  "zip": "17100",
+  "tz": "Europe/Paris",
+  "areas": [
+   {
+    "name": "France",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Metropolitan France",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Nouvelle-Aquitaine",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Charente-Maritime",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Saintes",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Fontcouverte",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.09999942779541,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.7459137779951561e-06
+ }
+]

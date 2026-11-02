@@ -1,0 +1,442 @@
+[
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/278472603",
+  "lat": 32.0852997,
+  "lon": 34.7818064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.676761627197266
+ },
+ {
+  "type": "PLACE",
+  "category": "parking_16",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Namal Tel Aviv",
+  "id": "way/37573581",
+  "lat": 32.0954936,
+  "lon": 34.7722674,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.587760925292969
+ },
+ {
+  "type": "PLACE",
+  "category": "parking_16",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Namal Tel Aviv",
+  "id": "way/37573583",
+  "lat": 32.0961923,
+  "lon": 34.7724594,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.587760925292969
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Namal Tel Aviv",
+  "id": "way/803404214",
+  "lat": 32.1018609,
+  "lon": 34.7762938,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -13.587760925292969
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "DUO Tel Aviv",
+  "id": "way/133142911",
+  "lat": 32.0861247,
+  "lon": 34.7828932,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.337760925292969
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "G Tel Aviv",
+  "id": "way/204417076",
+  "lat": 32.0757447,
+  "lon": 34.7824217,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.337760925292969
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Namal Tel Aviv",
+  "id": "node/275585099",
+  "lat": 32.0974496,
+  "lon": 34.773062,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.237760543823242
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    2.0
+   ],
+   [
+    11.0,
+    3.0
+   ],
+   [
+    15.0,
+    4.0
+   ]
+  ],
+  "name": "Namal Tel Aviv",
+  "id": "way/1181998026",
+  "lat": 32.0987978,
+  "lon": 34.7728034,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.237760543823242
+ }
+]

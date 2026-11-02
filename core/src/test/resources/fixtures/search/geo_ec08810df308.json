@@ -1,0 +1,461 @@
+[
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "Ben Gurion University of the Negev",
+  "id": "way/135310095",
+  "lat": 31.2634837,
+  "lon": 34.7984152,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gimel",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -22.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "Ben Gurion University north campus",
+  "id": "way/355320610",
+  "lat": 31.2643942,
+  "lon": 34.8054299,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Ramot",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -22.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "Ben Gurion University Eilat Campus",
+  "id": "way/959763900",
+  "lat": 29.5681677,
+  "lon": 34.9515777,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Eilat",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Neve Midbar",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -22.25
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "Ben Gurion University Bergman Campus",
+  "id": "way/369561057",
+  "lat": 31.2518563,
+  "lon": 34.8017455,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "South District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beersheba Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Be’er-Sheva",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "Gimel",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -21.75
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "Geetam University,  -",
+  "id": "in-ka-BMTC_40456",
+  "lat": 13.285490000000001,
+  "lon": 77.59654,
+  "level": 0.0,
+  "country": "IN",
+  "zip": "562163",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Karnataka",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bengaluru North",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Doddaballapura taluk",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -12.199999809265137,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.0768253307323903e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "University HECM",
+  "id": "node/9759156617",
+  "lat": 9.3577214,
+  "lon": 2.6179345,
+  "country": "BJ",
+  "tz": "Africa/Porto-Novo",
+  "areas": [
+   {
+    "name": "Bénin",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Borgou Department",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Parakou",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.794360160827637
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "HILL University",
+  "id": "way/798056658",
+  "lat": 6.3719302,
+  "lon": 2.4630756,
+  "country": "BJ",
+  "tz": "Africa/Porto-Novo",
+  "areas": [
+   {
+    "name": "Bénin",
+    "adminLevel": 2.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Littoral Department",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Cotonou",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "1er Arrondissement",
+    "adminLevel": 7.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "N'vènamèdé",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.794360160827637
+ },
+ {
+  "type": "PLACE",
+  "category": "doctors_14",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    6.0
+   ],
+   [
+    11.0,
+    10.0
+   ]
+  ],
+  "name": "University Clinic",
+  "id": "node/4393341095",
+  "lat": 32.0576582,
+  "lon": 20.0503578,
+  "country": "LY",
+  "tz": "Africa/Tripoli",
+  "areas": [
+   {
+    "name": "Libya",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Benghazi",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -11.5
+ }
+]

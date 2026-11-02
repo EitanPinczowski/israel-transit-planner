@@ -1,0 +1,504 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "זאב ז'בוטינסקי 20",
+  "id": "",
+  "lat": 32.0830701,
+  "lon": 34.8063733,
+  "street": "זאב ז'בוטינסקי",
+  "houseNumber": "20",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.782920837402344
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "ז'בוטינסקי/רמב''ם",
+  "id": "il-Israel-MOT_24211",
+  "lat": 32.073524,
+  "lon": 34.849895,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -50.38291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.566972059663385e-05
+ },
+ {
+  "type": "PLACE",
+  "category": "barrier_gate",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "שער ז'בוטינסקי",
+  "id": "node/1497347248",
+  "lat": 32.0738832,
+  "lon": 34.8483198,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.782920837402344
+ },
+ {
+  "type": "PLACE",
+  "category": "barrier_gate",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "שער ז'בוטינסקי",
+  "id": "node/7982624721",
+  "lat": 32.073906,
+  "lon": 34.8482038,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.782920837402344
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "דרך ז'בוטינסקי/גלעד",
+  "id": "il-Israel-MOT_13332",
+  "lat": 32.083675,
+  "lon": 34.806419999999996,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "תל בנימין",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -49.38291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.1343792215920985e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "דרך ז'בוטינסקי/הרצל",
+  "id": "il-Israel-MOT_38940",
+  "lat": 32.089,
+  "lon": 34.816019999999995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.38291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 3.558531898306683e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "דרך ז'בוטינסקי/רש''י",
+  "id": "il-Israel-MOT_13101",
+  "lat": 32.08965,
+  "lon": 34.818459999999995,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "נחלת גנים",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -49.38291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 7.554412150057033e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    19.0
+   ],
+   [
+    20.0,
+    2.0
+   ],
+   [
+    23.0,
+    6.0
+   ],
+   [
+    30.0,
+    4.0
+   ]
+  ],
+  "name": "הרצל/דרך ז'בוטינסקי",
+  "id": "il-Israel-MOT_13934",
+  "lat": 32.087635,
+  "lon": 34.81489599999999,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "רמת גן",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -49.38291931152344,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.3751246115134563e-05
+ }
+]

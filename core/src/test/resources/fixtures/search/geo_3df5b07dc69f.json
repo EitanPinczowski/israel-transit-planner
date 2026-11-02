@@ -1,0 +1,434 @@
+[
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Tel Aviv Savidor Center",
+  "id": "way/95194629",
+  "lat": 32.0834123,
+  "lon": 34.7974291,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.75
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Tel Aviv Center Savidor (Northern Entrance)",
+  "id": "way/380886042",
+  "lat": 32.0844122,
+  "lon": 34.7986373,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.75
+ },
+ {
+  "type": "PLACE",
+  "category": "place_6",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Tel Aviv",
+  "id": "node/278472603",
+  "lat": 32.0852997,
+  "lon": 34.7818064,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -15.676759719848633
+ },
+ {
+  "type": "PLACE",
+  "category": "office_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "SOK Tel Aviv",
+  "id": "node/8615828051",
+  "lat": 32.0658477,
+  "lon": 34.7859941,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.5
+ },
+ {
+  "type": "PLACE",
+  "category": "cafe_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Tel Aviv Cafe",
+  "id": "node/417031639",
+  "lat": 47.4981037,
+  "lon": 19.0626017,
+  "zip": "1075",
+  "areas": [
+   {
+    "name": "Budapest",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Budapest",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "7th district",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Erzsébetváros",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "restaurant_14",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Tel Aviv Food",
+  "id": "node/10069640820",
+  "lat": 7.3596452,
+  "lon": -2.347211,
+  "country": "GH",
+  "tz": "Africa/Abidjan",
+  "areas": [
+   {
+    "name": "Ghana",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Bono Region",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Sunyani West District",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "doityourself_16",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "ACE Tel-Aviv",
+  "id": "way/182458734",
+  "lat": 32.0640142,
+  "lon": 34.7910154,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ },
+ {
+  "type": "PLACE",
+  "category": "suburb",
+  "tokens": [
+   [
+    0.0,
+    3.0
+   ],
+   [
+    4.0,
+    4.0
+   ],
+   [
+    9.0,
+    7.0
+   ]
+  ],
+  "name": "Lev Tel Aviv",
+  "id": "way/34798197",
+  "lat": 32.073995,
+  "lon": 34.764123,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -10.25
+ }
+]

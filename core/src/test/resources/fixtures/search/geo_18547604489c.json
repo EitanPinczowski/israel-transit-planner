@@ -1,0 +1,439 @@
+[
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Ichilov Hospital",
+  "id": "way/26599740",
+  "lat": 32.0812473,
+  "lon": 34.7889795,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -56.83776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Rafael Hospital",
+  "id": "way/97462937",
+  "lat": 32.1143162,
+  "lon": 34.8433467,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -19.08776092529297
+ },
+ {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ],
+   [
+    22.0,
+    4.0
+   ]
+  ],
+  "name": "Children's Hospital",
+  "id": "way/295751889",
+  "lat": 32.0478518,
+  "lon": 34.8439884,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "Israel",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel-Aviv District",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramat Gan",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -16.0
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "Tel Chiha Hospital",
+  "id": "way/302980705",
+  "lat": 33.8414545,
+  "lon": 35.9051885,
+  "country": "LB",
+  "tz": "Asia/Beirut",
+  "areas": [
+   {
+    "name": "Lebanon",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Beqaa Governorate",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Zahlé District",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -3.5
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "RKP Hospital,  -",
+  "id": "node/6830428568",
+  "lat": 18.74938,
+  "lon": 79.51087,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Peddapalli",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ramagundam mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.25
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "RMP Hospital,  -",
+  "id": "node/6830428379",
+  "lat": 18.34273,
+  "lon": 80.43025,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Mulugu",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Eturnagaram mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.25
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "NNR Hospital,  -",
+  "id": "node/6830428385",
+  "lat": 17.9795931,
+  "lon": 79.6010242,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Warangal",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Warangal mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.25
+ },
+ {
+  "type": "PLACE",
+  "category": "hospital_14",
+  "tokens": [
+   [
+    0.0,
+    7.0
+   ],
+   [
+    8.0,
+    9.0
+   ],
+   [
+    18.0,
+    3.0
+   ]
+  ],
+  "name": "ESR Hospital,  -",
+  "id": "node/6830428429",
+  "lat": 17.33186,
+  "lon": 77.90768,
+  "country": "IN",
+  "tz": "Asia/Kolkata",
+  "areas": [
+   {
+    "name": "India",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Telangana",
+    "adminLevel": 4.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Vikarabad",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Vikarabad mandal",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": 1.25
+ }
+]

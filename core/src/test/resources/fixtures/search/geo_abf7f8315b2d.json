@@ -1,0 +1,542 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "העצמאות 5",
+  "id": "",
+  "lat": 32.8171896,
+  "lon": 35.0023559,
+  "street": "העצמאות",
+  "houseNumber": "5",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "עיר תחתית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -55.055877685546875
+ },
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "העצמאות 59",
+  "id": "",
+  "lat": 32.8204683,
+  "lon": 34.9978267,
+  "street": "העצמאות",
+  "houseNumber": "59",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "עיר תחתית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -53.305877685546875
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "נמל/דרך העצמאות",
+  "id": "il-Israel-MOT_3973",
+  "lat": 32.824142,
+  "lon": 34.992493,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "המושבה הגרמנית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -47.655879974365234,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 2.1011869648646098e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "דרך העצמאות/סלזיאן",
+  "id": "il-Israel-MOT_3838",
+  "lat": 32.822520000000004,
+  "lon": 34.994976,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "עיר תחתית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -46.155879974365234,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "דרך העצמאות/שער פלמר",
+  "id": "il-Israel-MOT_3841",
+  "lat": 32.819515,
+  "lon": 34.99906,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "עיר תחתית",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -45.65587615966797,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "קריית הממשלה/העצמאות",
+  "id": "il-Israel-MOT_2384",
+  "lat": 32.816241999999995,
+  "lon": 35.003170000000004,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "חיפה",
+    "adminLevel": 8.0,
+    "matched": true,
+    "unique": true,
+    "default": true
+   },
+   {
+    "name": "רובע העיר התחתית",
+    "adminLevel": 9.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קריית הממשלה ע\"ש רבין",
+    "adminLevel": 10.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   }
+  ],
+  "score": -45.15587615966797,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.1351339708198793e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "העצמאות",
+  "id": "il-Israel-MOT_35752",
+  "lat": 32.812916,
+  "lon": 35.104805,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "קרית אתא",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.011295898933895e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    14.0
+   ],
+   [
+    15.0,
+    1.0
+   ],
+   [
+    17.0,
+    8.0
+   ]
+  ],
+  "name": "הרצל/העצמאות",
+  "id": "il-Israel-MOT_1774",
+  "lat": 32.762066000000004,
+  "lon": 34.97282,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז חיפה",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת חיפה",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "טירת הכרמל",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -42.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.1505049769766629e-05
+ }
+]

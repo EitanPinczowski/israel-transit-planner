@@ -1,0 +1,490 @@
+[
+ {
+  "type": "ADDRESS",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "אלנבי 40",
+  "id": "",
+  "lat": 32.072365,
+  "lon": 34.768784,
+  "street": "אלנבי",
+  "houseNumber": "40",
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -55.5
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "אלנבי/גאולה",
+  "id": "il-Israel-MOT_13298",
+  "lat": 32.071396,
+  "lon": 34.76961000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "אלנבי/ביאליק",
+  "id": "il-Israel-MOT_13324",
+  "lat": 32.07052,
+  "lon": 34.77019000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.099998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "הירקון/אלנבי",
+  "id": "il-Israel-MOT_44467",
+  "lat": 32.073730000000005,
+  "lon": 34.76630800000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.8942584574688226e-05
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "הכובשים/אלנבי",
+  "id": "il-Israel-MOT_13549",
+  "lat": 32.072598000000006,
+  "lon": 34.767788,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 9.876593139779288e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "פינסקר/אלנבי",
+  "id": "il-Israel-MOT_13553",
+  "lat": 32.073166,
+  "lon": 34.76901000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -48.099998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 9.876593139779288e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "יונה הנביא/אלנבי",
+  "id": "il-Israel-MOT_49940",
+  "lat": 32.07185,
+  "lon": 34.769127000000005,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -46.599998474121094,
+  "modes": [],
+  "importance": 0.0
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    10.0
+   ],
+   [
+    11.0,
+    2.0
+   ],
+   [
+    14.0,
+    4.0
+   ],
+   [
+    19.0,
+    8.0
+   ]
+  ],
+  "name": "אלנבי",
+  "id": "il-Israel-MOT_48725",
+  "lat": 32.06279000000001,
+  "lon": 34.77513000000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז תל אביב",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת תל אביב",
+    "adminLevel": 5.0,
+    "matched": true,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "תל־אביב–יפו",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -44.099998474121094,
+  "modes": [
+   "TRAM"
+  ],
+  "importance": 3.435201142565347e-05
+ }
+]
