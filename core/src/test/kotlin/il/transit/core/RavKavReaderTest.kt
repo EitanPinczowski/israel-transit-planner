@@ -38,10 +38,14 @@ class RavKavReaderTest {
         val cla: Int = Apdu.CLA_ISO,
         val selectSw: Int = 0x9000,
         val wantLe: Int? = null,
+        /** How long each command takes, on [now] (nanoseconds). */
+        val stepNs: Long = 10_000_000,
     ) {
         val sent = ArrayList<ByteArray>()
+        var now = 0L
         fun answer(c: ByteArray): ByteArray {
             sent += c
+            now += stepNs
             fun sw(v: Int) = byteArrayOf((v shr 8).toByte(), v.toByte())
             if ((c[0].toInt() and 0xFF) != cla) return sw(0x6E00)
             return when (c[1].toInt() and 0xFF) {
@@ -62,11 +66,6 @@ class RavKavReaderTest {
     }
 
     private fun CardReport.Answered.file(f: CardFile) = files.single { it.file == f }
-
-    private fun clock(vararg ns: Long): () -> Long {
-        val it = ns.iterator()
-        return { it.next() }
-    }
 
     @Test fun selectByNameMatchesIso7816Layout() {
         assertArrayEquals(hex("00 A4 04 00 08 31 54 49 43 2E 49 43 41 00"), Apdu.selectByName(Apdu.CALYPSO_AID))
@@ -90,6 +89,7 @@ class RavKavReaderTest {
             { Apdu.readRecord(1, 9, le = -1) },
             { Apdu.selectByName(ByteArray(0)) },
             { Apdu.selectByName(ByteArray(17)) },
+            { Apdu.readRecord(1, CardFile.HOLDER_SFI) },
         )
         bad.forEach { f ->
             try {
@@ -107,6 +107,7 @@ class RavKavReaderTest {
         assertEquals(0x6C, StatusWord(0x6C1D).sw1)
         assertEquals(0x1D, StatusWord(0x6C1D).sw2)
         assertTrue(StatusWord(0x6C1D).wrongLength)
+        assertFalse(StatusWord(0x6C00).wrongLength)
         assertEquals(SwMeaning.OK, StatusWord(0x9000).meaning)
         assertEquals(SwMeaning.NOT_FOUND, StatusWord(0x6A82).meaning)
         assertEquals(SwMeaning.NO_RECORD, StatusWord(0x6A83).meaning)
@@ -121,10 +122,10 @@ class RavKavReaderTest {
             files = mapOf(0x1E to listOf(hex("AA")), 0x09 to listOf(contract, contract), 0x08 to listOf(hex("0B"), hex("0C"), hex("0D")), 0x07 to listOf(hex("FF"))),
             refuse = mapOf(0x19 to 0x6982),
         )
-        val r = RavKavReader(card::answer, clock(0, 412_000_000)).read() as CardReport.Answered
+        val r = RavKavReader(card::answer) { card.now }.read() as CardReport.Answered
         assertEquals(StatusWord(0x9000), r.selectStatus)
         assertEquals(Apdu.CLA_ISO, r.cla)
-        assertEquals(412L, r.millis)
+        assertEquals(10L * card.sent.size, r.millis)
         val byFile = r.files.associateBy { it.file }
         assertEquals(CardFile.entries.toSet(), byFile.keys)
         assertEquals(2, byFile.getValue(CardFile.CONTRACTS).records.size)
@@ -139,6 +140,8 @@ class RavKavReaderTest {
         assertFalse(CardFile.HOLDER_SFI in readSfis)
         assertEquals(CardFile.entries.map { it.sfi }.toSet(), readSfis)
         assertTrue(card.sent.all { (it[1].toInt() and 0xFF) in setOf(0xA4, 0xB2) })
+        // Every SELECT is by name (P1 04) of the Calypso application, nothing else.
+        card.sent.filter { (it[1].toInt() and 0xFF) == 0xA4 }.forEach { assertArrayEquals(Apdu.selectByName(Apdu.CALYPSO_AID, it[0].toInt() and 0xFF), it) }
     }
 
     @Test fun emptyFileAndOtherRefusals() {
@@ -168,10 +171,37 @@ class RavKavReaderTest {
         assertEquals(RavKavReader.MAX_RECORDS, r.file(CardFile.EVENT_LOG).records.size)
     }
 
-    @Test fun selectFailsButAFileAnswers() {
+    @Test fun noCalypsoApplicationMeansNoReadRecordAtAll() {
+        // A bank card or a passport: SELECT 1TIC.ICA fails, so not one READ RECORD is sent.
         val card = FakeCard(files = mapOf(0x09 to listOf(hex("01"))), selectSw = 0x6A82)
+        assertEquals(CardReport.CantRead, RavKavReader(card::answer).read())
+        assertEquals(1, card.sent.size)
+        assertTrue(card.sent.none { (it[1].toInt() and 0xFF) == 0xB2 })
+    }
+
+    @Test fun stopsAtTheDeadline() {
+        // Every command takes a second: the read gives up after 5 s instead of draining the field.
+        val card = FakeCard(files = mapOf(0x08 to List(16) { hex("01") }), stepNs = 1_000_000_000)
+        assertEquals(CardReport.CantRead, RavKavReader(card::answer) { card.now }.read())
+        assertEquals((RavKavReader.DEADLINE_MS / 1_000).toInt() + 1, card.sent.size)
+    }
+
+    @Test fun wrongLengthTwiceOrWithoutALengthIsARefusal() {
+        val card = FakeCard(files = mapOf(0x09 to listOf(hex("01"))), refuse = mapOf(0x09 to 0x6C1D, 0x08 to 0x6C00))
         val r = RavKavReader(card::answer).read() as CardReport.Answered
-        assertEquals(StatusWord(0x6A82), r.selectStatus)
+        assertEquals(FileOutcome.REFUSED, r.file(CardFile.CONTRACTS).outcome)
+        assertEquals(StatusWord(0x6C1D), r.file(CardFile.CONTRACTS).status)
+        assertEquals(FileOutcome.REFUSED, r.file(CardFile.EVENT_LOG).outcome)
+        fun readsOf(sfi: Int) = card.sent.count { (it[1].toInt() and 0xFF) == 0xB2 && (it[3].toInt() and 0xFF) shr 3 == sfi }
+        assertEquals(2, readsOf(0x09)) // one retry with the length asked for, then stop
+        assertEquals(1, readsOf(0x08)) // 6C00 names no length: no retry
+    }
+
+    @Test fun cardLostMidFile() {
+        val card = FakeCard(files = mapOf(0x1E to listOf(hex("01")), 0x09 to List(4) { hex("02") }))
+        var n = 0
+        val r = RavKavReader({ if (++n > 4) throw IOException("tag lost") else card.answer(it) }).read()
+        assertEquals(CardReport.CantRead, r)
     }
 
     @Test fun cantReadWhenEverythingIsRefused() {

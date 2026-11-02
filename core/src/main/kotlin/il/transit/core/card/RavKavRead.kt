@@ -2,7 +2,7 @@ package il.transit.core.card
 
 /**
  * One file the lab may read. [sfi] is its short file identifier inside the Calypso application.
- * The SFIs follow the public descriptions of the Calypso Intercode structure; the card's own
+ * The SFIs come from general knowledge of the public Calypso Intercode layout (see [Apdu]); the card's own
  * status words say whether each one is there.
  */
 enum class CardFile(val sfi: Int) {
@@ -60,33 +60,46 @@ sealed interface CardReport {
  * [transceive] sends one command and returns the card's answer (data + status word); on the
  * phone it is `IsoDep.transceive`. Any exception it throws ends the read as [CardReport.CantRead],
  * and no exception message ever carries card bytes, so nothing reaches the crash log.
- * Only the [CardFile] list is read; [CardFile.HOLDER_SFI] never is.
+ * Only the [CardFile] list is read, and only after SELECT of the Calypso application answers 9000;
+ * [CardFile.HOLDER_SFI] never is. The whole read stops after [DEADLINE_MS].
  */
 class RavKavReader(
     private val transceive: (ByteArray) -> ByteArray,
     private val nanoTime: () -> Long = System::nanoTime,
 ) {
+    private var start = 0L
+
     fun read(): CardReport {
-        val start = nanoTime()
+        start = nanoTime()
         return try {
-            readAll(start)
+            readAll()
         } catch (_: Exception) {
             CardReport.CantRead
         }
     }
 
-    private fun readAll(start: Long): CardReport {
+    private fun readAll(): CardReport {
         var cla = Apdu.CLA_ISO
         var select = send(Apdu.selectByName(Apdu.CALYPSO_AID, cla)) ?: return CardReport.CantRead
         if (select.meaning == SwMeaning.WRONG_CLASS) {
             cla = Apdu.CLA_CALYPSO
             select = send(Apdu.selectByName(Apdu.CALYPSO_AID, cla)) ?: return CardReport.CantRead
         }
+        // No Calypso application (a bank card, a passport…): read nothing at all.
+        if (!select.ok) return CardReport.CantRead
         val files = CardFile.entries.map { readFile(it, cla) ?: return CardReport.CantRead }
-        // Only refusals everywhere: not a Calypso card we can read.
-        if (!select.ok && files.none { it.outcome == FileOutcome.READ }) return CardReport.CantRead
-        return CardReport.Answered(select, cla, files, (nanoTime() - start) / 1_000_000)
+        return CardReport.Answered(select, cla, files, elapsedMs())
     }
+
+    private fun elapsedMs(): Long = (nanoTime() - start) / 1_000_000
+
+    /** Every command goes through here: past [DEADLINE_MS] the read stops (caught in [read] as CantRead). */
+    private fun exchange(command: ByteArray): ByteArray {
+        if (elapsedMs() > DEADLINE_MS) throw DeadlineException()
+        return transceive(command)
+    }
+
+    private class DeadlineException : Exception()
 
     /** Records 1, 2, … until the card says there are no more, at most [MAX_RECORDS]. Null: a malformed answer. */
     private fun readFile(file: CardFile, cla: Int): FileRead? {
@@ -94,10 +107,10 @@ class RavKavReader(
         val records = ArrayList<ByteArray>()
         var last = StatusWord(0x9000)
         for (n in 1..MAX_RECORDS) {
-            var answer = transceive(Apdu.readRecord(n, file.sfi, cla))
+            var answer = exchange(Apdu.readRecord(n, file.sfi, cla))
             var sw = StatusWord.of(answer) ?: return null
             if (sw.wrongLength) {
-                answer = transceive(Apdu.readRecord(n, file.sfi, cla, le = sw.sw2))
+                answer = exchange(Apdu.readRecord(n, file.sfi, cla, le = sw.sw2))
                 sw = StatusWord.of(answer) ?: return null
             }
             last = sw
@@ -107,11 +120,14 @@ class RavKavReader(
         return FileRead(file, last, records)
     }
 
-    private fun send(command: ByteArray): StatusWord? = StatusWord.of(transceive(command))
+    private fun send(command: ByteArray): StatusWord? = StatusWord.of(exchange(command))
 
     companion object {
         /** Calypso files hold a handful of records; this only stops a card that never says "no more". */
         const val MAX_RECORDS = 16
+
+        /** The whole read, all commands: a card held at the edge of the field can answer slowly forever. */
+        const val DEADLINE_MS = 5_000L
     }
 }
 

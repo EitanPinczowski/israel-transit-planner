@@ -5,6 +5,11 @@ package il.transit.core.card
  * commands only: no GET CHALLENGE, no OPEN SECURE SESSION, no keys.
  *
  * Source: ISO/IEC 7816-4:2020, 11.2.2 (SELECT, INS A4) and 11.3.3 (READ RECORD(S), INS B2).
+ *
+ * Provenance of the Calypso values ([CALYPSO_AID], [CLA_CALYPSO], and the SFIs in [CardFile]):
+ * general knowledge of the publicly described Calypso Intercode layout, not any decoder's source
+ * (no GPL code was opened). They are only what we ask for: the card's own status words are the
+ * evidence of what is there and what is readable.
  */
 object Apdu {
     /** ISO class byte (inter-industry). */
@@ -29,6 +34,7 @@ object Apdu {
     fun readRecord(record: Int, sfi: Int, cla: Int = CLA_ISO, le: Int = 0): ByteArray {
         require(record in 1..254) { "record numbers are 1 to 254" }
         require(sfi in 1..30) { "short file identifiers are 1 to 30" }
+        require(sfi != CardFile.HOLDER_SFI) { "the holder file is never read" }
         require(le in 0..255)
         return byteArrayOf(cla.toByte(), 0xB2.toByte(), record.toByte(), ((sfi shl 3) or 0x04).toByte(), le.toByte())
     }
@@ -42,7 +48,7 @@ value class StatusWord(val value: Int) {
     val ok: Boolean get() = value == 0x9000
 
     /** 6Cxx: wrong Le, the card says the right one in SW2. */
-    val wrongLength: Boolean get() = sw1 == 0x6C
+    val wrongLength: Boolean get() = sw1 == 0x6C && sw2 != 0
 
     val meaning: SwMeaning
         get() = when {
