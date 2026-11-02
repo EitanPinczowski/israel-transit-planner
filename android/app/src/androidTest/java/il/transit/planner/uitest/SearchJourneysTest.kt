@@ -1,5 +1,6 @@
 package il.transit.planner.uitest
 
+import android.content.pm.ActivityInfo
 import android.os.SystemClock
 import android.util.Log
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -143,6 +144,52 @@ class SearchJourneysTest {
             val selection = node.config.getOrNull(SemanticsProperties.TextSelectionRange)
             assertNotNull(selection)
             assertEquals(typed.length, selection!!.end)
+        }
+    }
+
+    // -- rotation (Phase 11 F8: T9's finding) ----------------------------------------------------------------
+
+    /**
+     * Rotating with the search open keeps the field open, the typed text and its answers, and sends no request (the
+     * ViewModel keeps them; before F8 the field's focus loss on re-creation closed the search). Hebrew and English: the
+     * faults job runs this class in both. Closing it afterwards still works.
+     */
+    @Test fun rotating_with_the_search_open_keeps_the_text_and_answers() {
+        journey { d ->
+            d.type("רגר")
+            d.awaitAnswer()
+            // The field has focus (as it has when typed into), so its loss on re-creation is what is tested.
+            d.awaitNode(hasSetTextAction(), 10_000)
+            compose.waitUntil(WAIT_MS) {
+                compose.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().any { it.config.getOrNull(SemanticsProperties.Focused) == true }
+            }
+            val shown = d.st.suggestions
+            mock.settle(1_000)
+            val sent = mock.count("geocode")
+            try {
+                for (back in listOf(false, true)) {
+                    d.inst.runOnMainSync {
+                        d.activity.requestedOrientation = if (back) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    }
+                    SystemClock.sleep(1_500)
+                    d.refreshActivity()
+                    compose.waitForIdle()
+                    val turn = if (back) "back to portrait" else "to landscape"
+                    assertEquals("the search is still open after turning $turn", Field.TO, d.st.editing)
+                    assertEquals("the typed text after turning $turn", "רגר", d.st.query)
+                    assertEquals("the answers after turning $turn", shown, d.st.suggestions)
+                    d.awaitNode(hasSetTextAction(), 10_000)
+                }
+                mock.settle(1_000)
+                assertEquals("rotation sent no request: server=${mock.counts()}", sent, mock.count("geocode"))
+                // Back (or tapping away) still closes it.
+                d.onMain { it.cancelEditing() }
+                compose.waitForIdle()
+                assertNull(d.st.editing)
+            } finally {
+                d.inst.runOnMainSync { d.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
+                d.refreshActivity()
+            }
         }
     }
 

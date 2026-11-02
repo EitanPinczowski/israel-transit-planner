@@ -30,7 +30,8 @@ import java.security.MessageDigest
  * Replay: an answer is found by what was sent, normalized ([key]: no marks, commas or extra
  * spaces, + the language), so variants that search the same text share one recording ("ת״א",
  * "ת'א" and "תל אביב" all send "תל אביב"). The bias is not part of the key: each recording was made
- * with the bias the app sends for it (the typed town's or neighbourhood's centre, else none).
+ * with the bias the app sends for it (the typed town's or neighbourhood's centre, else none; since F8 the app sends
+ * Israel's centre in that last case, and the older recordings stand in for it).
  * Transitous answers are `corpus/geo_<hash>.json`, Photon's `corpus/photon_<hash>.json`; an
  * unrecorded backup answer is a backup failure (the search goes on without it, as in the app).
  *

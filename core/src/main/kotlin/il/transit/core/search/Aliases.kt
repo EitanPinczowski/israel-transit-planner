@@ -29,12 +29,33 @@ object Aliases {
         Alias(listOf("ברזילי", "barzilai"), "ברזילי אשקלון", "Barzilai Medical Center, Ashkelon"),
         Alias(listOf("בית חולים העמק", "haemek hospital"), "בית החולים העמק עפולה", "HaEmek Medical Center, Afula"),
         Alias(listOf("הלל יפה", "hillel yaffe"), "הלל יפה חדרה", "Hillel Yaffe Medical Center, Hadera"),
-        Alias(listOf("נתבג", "נמל התעופה בן גוריון", "ben gurion airport", "tlv airport"), "נמל התעופה בן גוריון", "Ben Gurion Airport"),
+        Alias(listOf("נתבג", "נמל התעופה בן גוריון", "ben gurion airport", "tlv airport", "tel aviv airport"), "נמל התעופה בן גוריון", "Ben Gurion Airport"),
         Alias(listOf("הטכניון", "technion"), "הטכניון חיפה", "Technion, Haifa"),
         Alias(listOf("האוניברסיטה העברית", "hebrew university"), "האוניברסיטה העברית הר הצופים ירושלים", "Hebrew University Mount Scopus, Jerusalem"),
         Alias(listOf("עזריאלי תל אביב", "מרכז עזריאלי", "azrieli center"), "מרכז עזריאלי תל אביב", "Azrieli Center, Tel Aviv"),
-        Alias(listOf("התחנה המרכזית החדשה", "תחנה מרכזית חדשה"), "התחנה המרכזית החדשה תל אביב", "Tel Aviv Central Bus Station, Tel Aviv"),
+        // The index has the station's stops as "ת. מרכזית תל אביב/לוינסקי", "ת.מרכזית תל אביב קומה 7…" (live, 2026-11-02);
+        // "התחנה המרכזית החדשה תל אביב" answered a shelter inside it, and the English name bus stations abroad (F8).
+        // The English one sends the Hebrew name too: no English name of these stops finds them.
+        Alias(
+            listOf("התחנה המרכזית החדשה", "תחנה מרכזית חדשה", "tel aviv central bus station", "tel aviv new central bus station", "new central bus station"),
+            "ת. מרכזית תל אביב", "ת. מרכזית תל אביב",
+        ),
     )
+
+    /**
+     * Short forms of a town in Latin letters (F8): an airport code, a common misspelling. One word each, read as
+     * the town wherever it is typed ("TLV", "Dizengoff 50 TLV"); the Hebrew ones (ת"א, ב"ש) are [ACRONYMS].
+     * Keep it tiny: every entry is a word that is never anything else.
+     */
+    private val SHORT_FORMS = mapOf(
+        "tlv" to Acronym("תל אביב", "Tel Aviv"),
+        "jlm" to Acronym("ירושלים", "Jerusalem"),
+        "chaifa" to Acronym("חיפה", "Haifa"),
+        "khaifa" to Acronym("חיפה", "Haifa"),
+    )
+
+    /** The town [word] is a short form of ([SHORT_FORMS]), in English or Hebrew; null for any other word. */
+    fun shortForm(word: String, english: Boolean): String? = SHORT_FORMS[PlaceSearch.normalize(word)]?.let { if (english) it.en else it.he }
 
     private class Acronym(val he: String, val en: String, val bare: Boolean = false)
 

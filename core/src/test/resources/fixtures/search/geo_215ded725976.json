@@ -52,7 +52,7 @@
     "default": true
    }
   ],
-  "score": -22.5
+  "score": -32.5
  },
  {
   "type": "PLACE",
@@ -107,10 +107,11 @@
     "default": true
    }
   ],
-  "score": -22.5
+  "score": -32.5
  },
  {
-  "type": "STOP",
+  "type": "PLACE",
+  "category": "police_16",
   "tokens": [
    [
     0.0,
@@ -125,70 +126,43 @@
     7.0
    ]
   ],
-  "name": "NEW RAILWAY STATION",
-  "id": "gr-Thessaloniki-Metro_sa:979",
-  "lat": 40.64396,
-  "lon": 22.928751,
-  "level": -2.0,
-  "country": "GR",
-  "tz": "Europe/Athens",
+  "name": "Rehovot Police Station",
+  "id": "node/6060243591",
+  "lat": 31.8998335,
+  "lon": 34.8103633,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
   "areas": [
    {
-    "name": "Greece",
+    "name": "Israel",
     "adminLevel": 2.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Macedonia and Thrace",
+    "name": "Center District",
     "adminLevel": 4.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Central Macedonia",
+    "name": "Rehovot Subdistrict",
     "adminLevel": 5.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Thessaloniki Regional Unit",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Municipality of Thessaloniki",
-    "adminLevel": 7.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Thessaloniki Municipal Unit",
+    "name": "Rehovot",
     "adminLevel": 8.0,
     "matched": false,
     "unique": true,
     "default": true
-   },
-   {
-    "name": "2nd District of Thessaloniki",
-    "adminLevel": 9.0,
-    "matched": false,
-    "unique": false,
-    "default": false
    }
   ],
-  "score": -20.188060760498047,
-  "modes": [
-   "SUBWAY",
-   "BUS"
-  ],
-  "importance": 0.017132004722952843
+  "score": -24.75
  },
  {
   "type": "STOP",
@@ -228,14 +202,15 @@
     "default": true
    }
   ],
-  "score": -19.145004272460938,
+  "score": -24.145004272460938,
   "modes": [
    "BUS"
   ],
   "importance": 0.005298853851854801
  },
  {
-  "type": "STOP",
+  "type": "PLACE",
+  "category": "amenity_bus_station",
   "tokens": [
    [
     0.0,
@@ -250,66 +225,47 @@
     7.0
    ]
   ],
-  "name": "Central Railway Station",
-  "id": "bg-sofia_M206St",
-  "lat": 42.710167,
-  "lon": 23.322229999999998,
-  "country": "BG",
-  "tz": "Europe/Sofia",
+  "name": "Rehovot Central Bus Station",
+  "id": "node/549246596",
+  "lat": 31.8928763,
+  "lon": 34.8063404,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
   "areas": [
    {
-    "name": "Bulgaria",
+    "name": "Israel",
     "adminLevel": 2.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Sofia-City",
+    "name": "Center District",
     "adminLevel": 4.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Stolichna",
+    "name": "Rehovot Subdistrict",
     "adminLevel": 5.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Serdika District",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Sofia",
+    "name": "Rehovot",
     "adminLevel": 8.0,
     "matched": false,
     "unique": true,
     "default": true
-   },
-   {
-    "name": "Centre",
-    "adminLevel": 9.0,
-    "matched": false,
-    "unique": false,
-    "default": false
    }
   ],
-  "score": -19.101016998291016,
-  "modes": [
-   "SUBWAY",
-   "TRAM",
-   "BUS"
-  ],
-  "importance": 0.007780611049383879
+  "score": -23.75
  },
  {
-  "type": "STOP",
+  "type": "PLACE",
+  "category": "none",
   "tokens": [
    [
     0.0,
@@ -324,73 +280,47 @@
     7.0
    ]
   ],
-  "name": "KR Pura Railway Station,  -",
-  "id": "in-flixbus_32ab92f9-027d-4e62-90cd-0126a913c8de",
-  "lat": 13.000145,
-  "lon": 77.67683999999998,
-  "country": "IN",
-  "zip": "560016",
-  "tz": "Asia/Kolkata",
+  "name": "Lod Railway Station",
+  "id": "way/611842342",
+  "lat": 31.947489,
+  "lon": 34.8791945,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
   "areas": [
    {
-    "name": "India",
+    "name": "Israel",
     "adminLevel": 2.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Karnataka",
+    "name": "Center District",
     "adminLevel": 4.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Bengaluru Urban",
+    "name": "Ramla Subdistrict",
     "adminLevel": 5.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Bangalore East",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Bengaluru",
-    "adminLevel": 7.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Bengaluru East City Corporation",
+    "name": "Lod",
     "adminLevel": 8.0,
     "matched": false,
     "unique": true,
     "default": true
-   },
-   {
-    "name": "A Narayanapura",
-    "adminLevel": 10.0,
-    "matched": false,
-    "unique": false,
-    "default": false
    }
   ],
-  "score": -18.664348602294922,
-  "modes": [
-   "COACH",
-   "BUS"
-  ],
-  "importance": 0.003451717784628272
+  "score": -22.5
  },
  {
-  "type": "STOP",
+  "type": "PLACE",
+  "category": "none",
   "tokens": [
    [
     0.0,
@@ -405,51 +335,47 @@
     7.0
    ]
   ],
-  "name": "Hove Railway Station",
-  "id": "au-sa-Adelaide-Metro_50012",
-  "lat": -35.01222,
-  "lon": 138.52393,
-  "country": "AU",
-  "zip": "5048",
-  "tz": "Australia/Adelaide",
+  "name": "Rehovot fire station",
+  "id": "way/108234277",
+  "lat": 31.8966471,
+  "lon": 34.7973703,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
   "areas": [
    {
-    "name": "Australia",
+    "name": "Israel",
     "adminLevel": 2.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "South Australia",
+    "name": "Center District",
     "adminLevel": 4.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "City of Holdfast Bay",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": true,
-    "default": true
-   },
-   {
-    "name": "Hove",
-    "adminLevel": 9.0,
+    "name": "Rehovot Subdistrict",
+    "adminLevel": 5.0,
     "matched": false,
     "unique": false,
     "default": false
+   },
+   {
+    "name": "Rehovot",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
    }
   ],
-  "score": -18.49897575378418,
-  "modes": [
-   "REGIONAL_RAIL"
-  ],
-  "importance": 0.0012026358162984252
+  "score": -22.25
  },
  {
-  "type": "STOP",
+  "type": "PLACE",
+  "category": "none",
   "tokens": [
    [
     0.0,
@@ -464,48 +390,42 @@
     7.0
    ]
   ],
-  "name": "Adelaide Railway Station",
-  "id": "au-sa-Adelaide-Metro_6665",
-  "lat": -34.9209,
-  "lon": 138.59679,
-  "country": "AU",
-  "zip": "5000",
-  "tz": "Australia/Adelaide",
+  "name": "Jaffa Railway Station",
+  "id": "node/3526806079",
+  "lat": 32.0588594,
+  "lon": 34.7618031,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
   "areas": [
    {
-    "name": "Australia",
+    "name": "Israel",
     "adminLevel": 2.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "South Australia",
+    "name": "Tel-Aviv District",
     "adminLevel": 4.0,
     "matched": false,
     "unique": false,
     "default": false
    },
    {
-    "name": "Adelaide City Council",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": true,
-    "default": true
-   },
-   {
-    "name": "Adelaide",
-    "adminLevel": 9.0,
+    "name": "Tel Aviv Subdistrict",
+    "adminLevel": 5.0,
     "matched": false,
     "unique": false,
     "default": false
+   },
+   {
+    "name": "Tel-Aviv",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
    }
   ],
-  "score": -18.47166633605957,
-  "modes": [
-   "REGIONAL_RAIL",
-   "TRAM"
-  ],
-  "importance": 0.007239601109176874
+  "score": -22.0
  }
 ]

@@ -36,6 +36,8 @@ data class SavedUi(
     val maxDetourMin: Int = UiState().maxDetourMin,
     val maxPickUpDriveMin: Int = UiState().maxPickUpDriveMin,
     val maxParkRideMin: Int = ParkRideUi().maxDriveMin,
+    /** The search field open at the time, its text and answers (Phase 11 F8); null = none open. */
+    val search: SavedSearch? = null,
 ) {
     /** The sheet over the results: a ride of the selected option, or a stop's departures. */
     sealed interface Sheet {
@@ -66,6 +68,7 @@ data class SavedUi(
         set(MAX_DETOUR, maxDetourMin)
         set(MAX_PICK_UP, maxPickUpDriveMin)
         set(MAX_PARK_RIDE, maxParkRideMin)
+        SavedSearch.write(search, set)
     }
 
     companion object {
@@ -130,6 +133,7 @@ data class SavedUi(
                 maxDetourMin = get(MAX_DETOUR) as? Int ?: SavedUi().maxDetourMin,
                 maxPickUpDriveMin = get(MAX_PICK_UP) as? Int ?: SavedUi().maxPickUpDriveMin,
                 maxParkRideMin = get(MAX_PARK_RIDE) as? Int ?: SavedUi().maxParkRideMin,
+                search = SavedSearch.read(get),
             )
         }
 
@@ -171,6 +175,7 @@ data class SavedUi(
             maxDetourMin = s.maxDetourMin,
             maxPickUpDriveMin = s.maxPickUpDriveMin,
             maxParkRideMin = s.parkRide.maxDriveMin,
+            search = SavedSearch.of(s),
         )
     }
 }

@@ -24,12 +24,13 @@ import java.security.MessageDigest
 /**
  * Phase 11 T9: about a hundred real Israeli place queries (`fixtures/search/search_corpus.tsv`, a file the owner can
  * add rows to) typed through [TypingSearch] and [PlaceSearch] with every answer REPLAYED: Transitous from recordings
- * (`fixtures/search/geo_<hash>.json`), the phone's Geocoder from `phone_geocoder.tsv` (a stub: it is an Android
+ * (`fixtures/search/geo_<hash>.json`; keyed by the text sent, not the bias: the 2026-11-02 recordings of texts with no town were
+ * made without one, the app sends Israel's centre since F8, and the rows F8 fixed were re-recorded with it), the phone's Geocoder from `phone_geocoder.tsv` (a stub: it is an Android
  * class), Photon from `photon_replay.tsv` (names of older recordings). Nothing touches the network.
  *
  * A row: id | query | lang | acceptable names | acceptable area S,W,N,E | source | status | note.
  * For each row: an acceptable answer (a name contains one of the alternatives, and lies in the area) is among the
- * first 3 shown; the FIRST acceptable one came from `source`; and one typing pause sent at most 1 Transitous geocode,
+ * first 3 shown; the FIRST acceptable one came from `source` (`BUNDLED`: the app's own station list, F8); and one typing pause sent at most 1 Transitous geocode,
  * 1 phone Geocoder and 1 Photon request, even with the query typed key by key. `BAD` rows are real answers that
  * are wrong: the test pins that they still are (a fix flips the row to OK) and the reason is in the note.
  */
@@ -138,6 +139,7 @@ class SearchCorpusTest {
             val hit = top.firstOrNull { acceptable(r, it) }
             val source = when {
                 hit == null -> "NONE"
+                o.answer != null && hit in o.answer.stations -> "BUNDLED"
                 o.answer != null && hit in o.answer.backup -> if (o.counts.phone > 0 && hit.id.startsWith("phone:")) "PHONE" else "PHOTON"
                 else -> "TRANSITOUS"
             }
@@ -190,6 +192,6 @@ class SearchCorpusTest {
         for (kind in listOf("cities", "translit", "typo", "niqqud", "abbr", "street", "citystreet", "rail", "lr", "bus", "lm", "amb", "mixed", "backup")) {
             assertTrue("no $kind rows", rows.any { it.id.startsWith("$kind-") })
         }
-        assertTrue(rows.all { it.source in setOf("TRANSITOUS", "PHONE", "PHOTON", "NONE") })
+        assertTrue(rows.all { it.source in setOf("TRANSITOUS", "PHONE", "PHOTON", "BUNDLED", "NONE") })
     }
 }

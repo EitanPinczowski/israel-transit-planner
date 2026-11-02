@@ -44,6 +44,28 @@ class SavedUiTest {
         assertEquals(s, roundTrip(s))
     }
 
+    @Test fun `an open search with its text and answers (F8)`() {
+        val answers = listOf(
+            Suggestion("שדרות רגר", "באר שבע", LatLon(31.25, 34.79), saved = false, isStop = false),
+            Suggestion("רגר/יצחק", null, LatLon(31.251, 34.791), saved = false, isStop = true, backup = true),
+            Suggestion("הרצל", "באר שבע", LatLon(31.24, 34.79), saved = false, isStop = false, closest = true, match = il.transit.core.search.MatchNote(il.transit.core.search.MatchLevel.STREET, "12")),
+            Suggestion("Home", null, LatLon(31.2, 34.8), saved = true, isStop = false, home = true),
+            Suggestion("רמות", "באר שבע", LatLon(31.28, 34.81), saved = false, isStop = false, refine = "רמות, באר שבע"),
+            Suggestion("47899", null, LatLon(31.24, 34.79), saved = false, isStop = true, stopId = "il-Israel-MOT_1"),
+        )
+        val s = SavedUi(to = savidor, search = SavedSearch(Field.FROM, "רגר", answers, searchHint = true, backupShown = true, notFound = false, offline = true))
+        assertEquals(s, roundTrip(s))
+    }
+
+    @Test fun `a closed search is cleared, and answers past the cap are dropped`() {
+        val bundle = HashMap<String, Any?>()
+        val many = (1..40).map { Suggestion("p$it", null, LatLon(31.0, 34.0 + it / 100.0), saved = false, isStop = false) }
+        SavedUi(search = SavedSearch(Field.TO, "p", many)).write { k, v -> bundle[k] = v }
+        assertEquals(many.take(SavedSearch.MAX_ANSWERS), SavedUi.read { bundle[it] }!!.search!!.answers)
+        SavedUi(search = null).write { k, v -> bundle[k] = v }
+        assertNull(SavedUi.read { bundle[it] }!!.search)
+    }
+
     @Test fun `nothing saved is a fresh start`() {
         assertNull(SavedUi.read { null })
     }
