@@ -84,17 +84,15 @@ object Atf {
 
     private fun inside(l: Int, t: Int, r: Int, b: Int, box: android.graphics.Rect) = l >= box.left - 2 && t >= box.top - 2 && r <= box.right + 2 && b <= box.bottom + 2
 
-    /** The Compose node(s) at [b] on screen, for a finding ATF can only place by its bounds. Main thread only. */
+    /**
+     * The Compose node(s) the size of [b], for a finding ATF can only place by its bounds (matched by size:
+     * a window's offset on screen differs between phones). Main thread only.
+     */
     private fun composeAt(roots: List<View>, b: android.graphics.Rect): String {
         val found = mutableListOf<String>()
         fun walk(n: SemanticsNode) {
-            val p = n.positionOnScreen
-            val l = p.x.toInt()
-            val t = p.y.toInt()
-            val corner = kotlin.math.abs(l - b.left) <= 3 && kotlin.math.abs(t - b.top) <= 3
-            val size = kotlin.math.abs(l + n.size.width - b.right) <= 3 && kotlin.math.abs(t + n.size.height - b.bottom) <= 3
-            val near = corner && size
-            if (near) found += "#${n.id} ${n.config}".replace("\n", " ").take(220)
+            val near = kotlin.math.abs(n.size.width - b.width()) <= 2 && kotlin.math.abs(n.size.height - b.height()) <= 2
+            if (near) found += "#${n.id} at ${n.positionOnScreen} ${n.config}".replace("\n", " ").take(260)
             n.children.forEach(::walk)
         }
         roots.forEach { root -> composeRoots(root).forEach { walk(it.semanticsOwner.unmergedRootSemanticsNode) } }
@@ -129,7 +127,8 @@ object Atf {
             val texts = listOfNotNull(e.text?.toString(), e.contentDescription?.toString())
             val words = texts.filter { it.isNotBlank() }.joinToString(" / ").take(60)
             val b = e.boundsInScreen
-            return "${e.className} $b \"$words\"" + composeAt(roots, android.graphics.Rect(b.left, b.top, b.right, b.bottom))
+            val flags = "clickable=${e.isClickable} focusable=${e.isFocusable} srFocusable=${e.isScreenReaderFocusable} important=${e.isImportantForAccessibility}"
+            return "${e.className} $b \"$words\" $flags" + composeAt(roots, android.graphics.Rect(b.left, b.top, b.right, b.bottom))
         }
         val v = r.view ?: return "?"
         return "${v.javaClass.simpleName} ${v.width}x${v.height} \"${v.contentDescription ?: ""}\""
