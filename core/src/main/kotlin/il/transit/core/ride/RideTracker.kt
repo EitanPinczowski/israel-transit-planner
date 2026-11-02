@@ -81,10 +81,10 @@ class RideTracker(
 
     /** Per transit leg: the line the vehicle drives (its polyline, else its stops), for "still on the route". */
     private val routes: List<List<LatLon>> = legs.mapIndexed { k, leg ->
-        leg.legGeometry?.let { g -> runCatching { Geo.decodePolyline(g.points, g.precision) }.getOrNull() }
-            ?.takeIf { it.size >= 2 }
-            ?.let { listOf(leg.from.latLon) + it + listOf(leg.to.latLon) }
-            ?: stops[k].map { it.latLon }
+        val line = leg.legGeometry
+            ?.let { g -> runCatching { Geo.decodePolyline(g.points, g.precision) }.getOrNull() }
+            .orEmpty()
+        if (line.size >= 2) listOf(leg.from.latLon) + line + listOf(leg.to.latLon) else stops[k].map { it.latLon }
     }
 
     /** Current leg: since when the fixes have been off its route; null while on it. Never seen on it = [Instant.MIN]. */
