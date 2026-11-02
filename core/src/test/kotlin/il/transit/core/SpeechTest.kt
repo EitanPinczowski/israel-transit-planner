@@ -183,7 +183,7 @@ class SpeechTest {
     }
 
     @Test
-    fun `zero minutes are never said: a short walk is 1 minute, no slack is no time to spare`() {
+    fun `zero minutes are never said, a short walk is 1 minute and no slack is no time to spare`() {
         val walk = leg("WALK", stop("a"), stop("b"), at("2026-10-05T05:00:00Z"), at("2026-10-05T05:00:20Z"))
         assertEquals("Walk 1 minute, to b", Speech.leg(walk).render(en::say))
         assertEquals("Walk 1 minute", Speech.chip(LegChip(LegKind.WALK, null, 0, false, "#888888")).render(en::say))
