@@ -147,7 +147,11 @@ class SearchCorpusTest {
         val out = File("build").apply { mkdirs() }
         File(out, "search-missing.sh").writeText(missing.values.joinToString("\n", postfix = "\n"))
         File(out, "search-observed.tsv").writeText(observed.joinToString("\n", postfix = "\n"))
-        assertTrue("${failures.size} of ${rows.size} rows fail:\n" + failures.joinToString("\n"), failures.isEmpty())
+        assertTrue(
+            "${failures.size} of ${rows.size} rows fail:\n" + failures.joinToString("\n") +
+                (if (missing.isEmpty()) "" else "\nRECORD (≥ 1.5 s apart; ${missing.size} new searches):\n" + missing.values.joinToString("\n")),
+            failures.isEmpty(),
+        )
     }
 
     @Test fun `corpus is about a hundred rows in both languages with all the kinds`() {
