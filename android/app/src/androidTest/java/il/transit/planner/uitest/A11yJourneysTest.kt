@@ -30,7 +30,6 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.uiautomator.UiDevice
 import il.transit.core.present.LegKind
 import il.transit.core.present.Speech
 import il.transit.core.present.Spoken
@@ -269,8 +268,10 @@ class A11yJourneysTest {
         val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
         val x = ((top.left + top.right) / 2).toInt()
         val y = ((top.bottom + bottom.top) / 2).toInt()
-        UiDevice.getInstance(inst).swipe(x, y, x, y, 200) // held about a second: a long-press
-        compose.waitUntil(10_000) { ui.places.pin != null }
+        shell("input swipe $x $y $x $y 1200") // a finger held 1.2 s: a long-press, as a sighted user does it
+        val until = SystemClock.uptimeMillis() + 10_000
+        while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
+        assertTrue("$lang: a long-press on the map at ($x, $y) between $top and $bottom dropped no pin", ui.places.pin != null)
         onMain { it.closePin() }
         onMain { it.clearResults() }
         compose.waitForIdle()
