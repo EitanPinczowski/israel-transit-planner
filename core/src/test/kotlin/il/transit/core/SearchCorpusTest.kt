@@ -39,13 +39,15 @@ class SearchCorpusTest {
     private val dir = "/fixtures/search"
     private val missing = linkedMapOf<String, String>()
 
-    private fun key(text: String, language: String) =
-        PlaceSearch.normalize(text).replace(",", " ").replace(Regex("\\s+"), " ").trim() + "|" + language
+    private fun key(text: String, language: String): String {
+        val words = PlaceSearch.normalize(text).replace(",", " ")
+        return words.replace(Regex("\\s+"), " ").trim() + "|" + language
+    }
 
-    private fun hash(key: String) = MessageDigest.getInstance("SHA-1")
-        .digest(key.toByteArray())
-        .joinToString("") { "%02x".format(it) }
-        .take(12)
+    private fun hash(key: String): String {
+        val digest = MessageDigest.getInstance("SHA-1").digest(key.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }.take(12)
+    }
     private fun resource(path: String) = javaClass.getResource(path)?.readText()
     private fun table(name: String) = resource("$dir/$name")!!.lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }
 
@@ -57,14 +59,15 @@ class SearchCorpusTest {
             val name = "geo_" + hash(key(text, language))
             val body = resource("$dir/$name.json")
             if (body == null) {
-                val url = "http://x/api/v1/geocode".toHttpUrl().newBuilder()
-                    .addQueryParameter("text", text)
-                    .addQueryParameter("language", language)
-                    .addQueryParameter("numResults", max.toString())
-                    .apply {
-                        near?.let { addQueryParameter("place", it.comma()); addQueryParameter("placeBias", MotisClient.PLACE_BIAS.toString()) }
-                    }
-                    .build()
+                val builder = "http://x/api/v1/geocode".toHttpUrl().newBuilder()
+                builder.addQueryParameter("text", text)
+                builder.addQueryParameter("language", language)
+                builder.addQueryParameter("numResults", max.toString())
+                near?.let {
+                    builder.addQueryParameter("place", it.comma())
+                    builder.addQueryParameter("placeBias", MotisClient.PLACE_BIAS.toString())
+                }
+                val url = builder.build()
                 missing.putIfAbsent(name, "python tools/record_fixture.py search/$name '${url.encodedPath}?${url.encodedQuery}' && sleep 1.5  # ${key(text, language)}")
                 throw IOException("not recorded: $text")
             }
