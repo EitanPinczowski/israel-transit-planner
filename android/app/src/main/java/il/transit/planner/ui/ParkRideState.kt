@@ -36,13 +36,16 @@ data class ParkRideUi(
     }
 }
 
-/** One park & ride search, under its own request budget. */
-suspend fun planParkRide(api: TransitApi, s: UiState, from: LatLon, to: LatLon, language: String): ParkRideResult =
+/**
+ * One park & ride search, under its own request budget. [now] is the ViewModel's clock, like every other tab's:
+ * with `Instant.now()` each search had a new time, missed the guard's cache and sent its requests again (F6).
+ */
+suspend fun planParkRide(api: TransitApi, s: UiState, from: LatLon, to: LatLon, language: String, now: Instant): ParkRideResult =
     ParkRidePlanner(BudgetedTransitApi(api, ParkRidePlanner.BUDGET), s.settings.traffic()).plan(
         ParkRideQuery(
             origin = from,
             dest = to,
-            departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: Instant.now(),
+            departAt = s.time?.takeIf { s.timeMode == TimeMode.DEPART_AT } ?: now,
             maxDriveMin = s.parkRide.maxDriveMin,
             preferences = s.settings.preferences(),
             language = language,

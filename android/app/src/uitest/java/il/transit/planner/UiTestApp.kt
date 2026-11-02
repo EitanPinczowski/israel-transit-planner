@@ -69,7 +69,7 @@ class UiTestApp : TransitApp() {
     @Volatile var network: MockNetwork? = null
 
     /** Starts the fault mode against the mock server at [base] (the emulator's localhost). */
-    fun useMockServer(base: String): MockNetwork = MockNetwork(replay, clock, base).also { network = it }
+    fun useMockServer(base: String): MockNetwork = MockNetwork(replay, clock, base, usage).also { network = it }
 
     /** No outside geocoder in UI tests: they never touch the network (the fault mode: Photon on the mock server). */
     override val backupGeocoder: BackupGeocoder? get() = network?.backup

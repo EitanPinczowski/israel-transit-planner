@@ -681,7 +681,7 @@ class MainViewModel(
                         keepTab(tabKey, TabResult.PickUp(r), empty)
                     }
                     AppMode.PARK_RIDE -> {
-                        val r = planParkRide(api, s, from, to, language)
+                        val r = planParkRide(api, s, from, to, language, clock.instant())
                         val empty = r.options.isEmpty() && r.baseline == null
                         _state.update { it.copy(loading = false, parkRide = it.parkRide.copy(result = r, origin = from), error = if (empty) UiError.NO_RESULTS else null).arranged() }
                         keepTab(tabKey, TabResult.ParkRide(r, from), empty)

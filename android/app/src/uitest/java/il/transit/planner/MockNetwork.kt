@@ -2,6 +2,7 @@ package il.transit.planner
 
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.GuardedTransitApi
+import il.transit.core.api.UsageMeter
 import il.transit.core.api.Itinerary
 import il.transit.core.api.MotisClient
 import il.transit.core.api.MotisJson
@@ -43,7 +44,13 @@ import java.util.concurrent.atomic.AtomicLong
  * Read timeouts are [TIMEOUT_S] (live: 20 s), so "the server never answers" costs the matrix seconds,
  * not minutes. [clearCaches] starts fresh guards, so each fault case sends its own requests.
  */
-class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock, base: String) {
+class MockNetwork(
+    private val replay: ReplayTransitApi,
+    private val clock: Clock,
+    base: String,
+    /** The app's data card counter (Phase 11 E4), so a test can hold its numbers to the server's (F6). */
+    private val usage: UsageMeter = UsageMeter.NONE,
+) {
     /** The server's root URL; moved when the test restarts the server after "offline". */
     @Volatile var base: String = base.trimEnd('/')
         set(value) {
@@ -109,7 +116,7 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
             }
     }
 
-    @Volatile private var guard: TransitApi = GuardedTransitApi(wire, clock)
+    @Volatile private var guard: TransitApi = GuardedTransitApi(wire, clock, usage = usage)
 
     @Volatile private var geocoder: BackupGeocoder = photon()
 
@@ -118,13 +125,13 @@ class MockNetwork(private val replay: ReplayTransitApi, private val clock: Clock
      * reads [base] on every call, so it follows the server across "offline"; each case of the rain
      * screen asks for another cell, so its 1 h cache never hides a request.
      */
-    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("$base/meteo", http).rain(cell) }, clock)
+    val weather: GuardedWeather = GuardedWeather({ cell -> OpenMeteoClient("$base/meteo", http).rain(cell) }, clock, usage = usage)
 
-    private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock))
+    private fun photon(): BackupGeocoder = FallbackGeocoder(null, GuardedGeocoder(PhotonClient("$base/photon"), clock, usage = usage))
 
     /** Fresh Transitous and Photon guards (empty caches) on the current [base]; see [weather] for Open-Meteo. */
     fun clearCaches() {
-        guard = GuardedTransitApi(wire, clock)
+        guard = GuardedTransitApi(wire, clock, usage = usage)
         geocoder = photon()
     }
 

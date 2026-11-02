@@ -270,11 +270,30 @@ class A11yJourneysTest {
         val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
         val x = ((top.left + top.right) / 2).toInt()
         val y = ((top.bottom + bottom.top) / 2).toInt()
-        shell("input swipe $x $y $x $y 1200") // a finger held 1.2 s: a long-press, as a sighted user does it
+        // F6 (A11Y-MAP): the same point on the screen. A finger's long-press there goes InputDispatcher -> our window ->
+        // Compose -> the AndroidView -> MapView; [injectLongPress] sends exactly that path (a DOWN, held 1.2 s, an UP) at
+        // screen coordinates, and must drop a pin: blocking.
+        val (sx, sy) = onScreen(x, y)
+        injectLongPress(sx, sy, moves = false)
+        val viaFinger = awaitPin()
+        Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger")
+        assertTrue("$lang: a long-press at screen ($sx, $sy), between the panels, dropped no pin", viaFinger)
+        onMain { it.closePin() }
+        compose.waitForIdle()
+        // What `input swipe x y x y 1200` sends instead: the same DOWN and UP with a MOVE every few ms in between.
+        // Report-only, to name what the shell probe below trips on.
+        injectLongPress(sx, sy, moves = true)
+        val viaMoves = awaitPin()
+        Log.i("A11yJourney", "A11Y-MAP $lang: with a MOVE stream pin=$viaMoves")
+        Findings.expect("A11Y-MAP-MOVES", viaMoves, "$lang: a long-press with a MOVE stream (as `input swipe` sends) at ($sx, $sy) dropped no pin")
+        onMain { it.closePin() }
+        compose.waitForIdle()
+        shell("input swipe $sx $sy $sx $sy 1200") // the shell's own long-press, report-only (E5's finding)
         val viaScreen = awaitPin()
-        Findings.expect("A11Y-MAP", viaScreen, "$lang: a long-press at ($x, $y), between the panels, dropped no pin on this emulator")
+        Log.i("A11yJourney", "A11Y-MAP $lang: shell input swipe pin=$viaScreen")
+        Findings.expect("A11Y-MAP", viaScreen, "$lang: `input swipe` at ($sx, $sy), between the panels, dropped no pin on this emulator")
+        // The hiding only changes what accessibility services see: the MapView itself must still take a long-press.
         if (!viaScreen) {
-            // The hiding only changes what accessibility services see: the MapView itself must still take a long-press.
             longPressOn(mapView())
             assertTrue("$lang: the MapView took no long-press while hidden from TalkBack", awaitPin())
         }
@@ -288,6 +307,36 @@ class A11yJourneysTest {
         val until = SystemClock.uptimeMillis() + 10_000
         while (ui.places.pin == null && SystemClock.uptimeMillis() < until) SystemClock.sleep(200)
         return ui.places.pin != null
+    }
+
+    /** A point of the window ([boundsInWindow]) on the screen, where the input system delivers a finger. */
+    private fun AppDriver.onScreen(x: Int, y: Int): Pair<Int, Int> {
+        val at = IntArray(2)
+        inst.runOnMainSync { activity.window.decorView.getLocationOnScreen(at) }
+        return (x + at[0]) to (y + at[1])
+    }
+
+    /**
+     * A touchscreen long-press injected through the input system (UiAutomation, as `input` does, but with no
+     * shell between): a DOWN, held 1.2 s, an UP. With [moves], a MOVE on the same point every 10 ms in between,
+     * as `input swipe x y x y 1200` sends.
+     */
+    private fun AppDriver.injectLongPress(x: Int, y: Int, moves: Boolean) {
+        val ui = inst.uiAutomation
+        val down = SystemClock.uptimeMillis()
+        fun send(action: Int, at: Long) {
+            val e = MotionEvent.obtain(down, at, action, x.toFloat(), y.toFloat(), 0)
+            e.source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+            assertTrue("injecting $action was refused", ui.injectInputEvent(e, true))
+            e.recycle()
+        }
+        send(MotionEvent.ACTION_DOWN, down)
+        val end = down + 1_200
+        while (SystemClock.uptimeMillis() < end) {
+            SystemClock.sleep(10)
+            if (moves) send(MotionEvent.ACTION_MOVE, SystemClock.uptimeMillis())
+        }
+        send(MotionEvent.ACTION_UP, SystemClock.uptimeMillis())
     }
 
     /** A finger held 1.2 s in the middle of [v], sent to the view itself. */

@@ -12,9 +12,10 @@ OUT=$3
 PKG=il.transit.planner.uitest
 RUNNER=$PKG.test/androidx.test.runner.AndroidJUnitRunner
 CLASS=il.transit.planner.uitest.FaultMatrixTest
-# Every test is one screen and runs every fault: a run that saw fewer cases did not test them.
+# Every matrix screen runs every fault: a run that saw fewer cases did not test them. Tests that are not a
+# screen of the matrix (F6: rain after offline, data card vs server) don't call matrix() and add no 9 cases.
 SRC="$(dirname "$0")/../android/app/src/androidTest/java/il/transit/planner/uitest/FaultMatrixTest.kt"
-SCREENS=$(grep -c "@Test fun" "$SRC")
+SCREENS=$(grep -cE "= matrix\(|^[[:space:]]*matrix\(" "$SRC")
 FAULTS=9
 mkdir -p "$OUT"
 : > "$OUT/crash.txt"

@@ -1,6 +1,7 @@
 package il.transit.planner.ui.vm
 
 import il.transit.core.api.BudgetExceededException
+import il.transit.core.api.GuardedTransitApi
 import il.transit.core.api.PlanResponse
 import il.transit.core.features.BetterStartPlanner
 import il.transit.core.features.DropOffPlanner
@@ -247,6 +248,23 @@ class CarTabsStateTest : VmTest() {
         assertEquals("error:NETWORK", phase(vm.state.value))
         api.fault = { _, _ -> null }
         vm.plan()
+        assertTrue(phase(vm.state.value) in ends)
+    }
+
+    @Test fun `park and ride - plans from the injected clock, so a second identical search sends 0 through the guard`() {
+        // Phase 11 F6 (T4): park & ride read Instant.now(), so every search had a new time, missed the guard's cache
+        // and sent 4 requests again where every other tab sent 0.
+        val api = ScriptedApi(replay())
+        val vm = newVm(GuardedTransitApi(api, CLOCK))
+        vm.setMode(AppMode.PARK_RIDE)
+        vm.choose(Field.FROM, "Start", MEITAR) // time: now
+        vm.choose(Field.TO, "Tel Aviv", TEL_AVIV)
+        assertTrue(phase(vm.state.value) in ends)
+        assertEquals(NOW, api.planRequests.first().time)
+        val sent = api.total
+        assertTrue(sent > 0)
+        vm.plan()
+        assertEquals(sent, api.total)
         assertTrue(phase(vm.state.value) in ends)
     }
 
