@@ -103,6 +103,8 @@ object Stations {
         )
     }
 
+    private fun capital(word: String): String = word.replaceFirstChar(Char::uppercase)
+
     /** "באר שבע מרכז" → "Beersheba Center" (the town table's English name); a name with other Hebrew words stays as it is. */
     private fun english(name: String, town: Town): String {
         val prefix = town.names.firstOrNull { n -> n.any { it in 'א'..'ת' } && name.startsWith(n) } ?: return name
@@ -113,7 +115,7 @@ object Stations {
             .filter { it.isNotEmpty() }
         val back = PARTS.entries
             .groupBy { it.value }
-            .mapValues { it.value.first().key.replaceFirstChar(Char::uppercase) }
+            .mapValues { (_, words) -> capital(words[0].key) }
         if (rest.any { it !in back }) return name
         return (listOf(town.displayName("en")) + rest.map { back.getValue(it) }).joinToString(" ")
     }
