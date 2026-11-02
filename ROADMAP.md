@@ -337,7 +337,7 @@ package. Tick only your own package's lines.
 ### R2 RideTracker alert fixes (`claude/p11-ride-alerts`, 0 requests; owner 2026-10-20)
 - [x] "Get off at the next stop" waits for boarding and fires at most 20 min before the stop: T5's `bus_loop_line` and `plan_three_buses` asserted
 - [x] Review: an earlier bus than planned (or a second bus caught early) alerts on time, armed by its listed stops passed in order
-- [ ] Follow-up (pre-existing, not R2): ride alert: extend `legGrace` while the rider is still on the route (a bus > 3 min late loses its alert)
+- [x] Follow-up (pre-existing, not R2; done in F7): ride alert: extend `legGrace` while the rider is still on the route (a bus > 3 min late loses its alert)
 
 ### E4 — Pay with… + data card (`claude/p11-pay-data`, 0 requests)
 - [x] "Pay with…" opens the user's payment app or its store page (Rav-Kav Online, Rav-Pass, Moovit; ANY WAY ended in 2022)
@@ -364,6 +364,10 @@ package. Tick only your own package's lines.
 
 ### E6 — NFC Rav-Kav spike (`claude/p11-nfc-spike`, optional, 0 requests)
 - [ ] Debug-only read of the owner's own card, clean room; owner's go/no-go
+
+### F7 — Rider follow-ups (`claude/p11-followups-f7`, 0 requests)
+- [x] Ride alert waits for a late bus: the leg stays open while the rider waits at the stop or rides the route, ≤ 30 min past its end (GPS replay 5/10/20 min late)
+- [ ] Font scale 2.0: stop-sheet headsigns wrap (full text to TalkBack); compact Park & ride header
 
 ### Close-out (boss)
 - [ ] `docs/releases/v0.9.1.md` after Wave 4 (if the owner releases it)

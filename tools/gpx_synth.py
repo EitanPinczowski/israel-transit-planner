@@ -97,11 +97,17 @@ def offset(p: tuple[float, float], north: float, east: float) -> tuple[float, fl
 
 def fixes(leg: dict, rnd: random.Random, *, sigma: float = 5.0, outliers: float = 0.0, interval: int = INTERVAL,
           dwell: bool = False, gaps: list[tuple[float, float]] = (), jumps: list[tuple[float, float]] = (),
-          sparse_from: float | None = None, loop: bool = False) -> list[tuple[datetime, float, float]]:
+          sparse_from: float | None = None, loop: bool = False, late: int = 0) -> list[tuple[datetime, float, float]]:
     """One leg ridden start to end (+ 20 s). `gaps`: (from, to) fractions of the ride with no fixes;
-    `jumps`: (fraction, metres) one fix thrown that far north; `sparse_from`: fixes 30 s apart after it."""
+    `jumps`: (fraction, metres) one fix thrown that far north; `sparse_from`: fixes 30 s apart after it;
+    `late`: minutes the vehicle is late, waited at the boarding stop, then the whole ride shifted by it."""
     path = Path(leg)
     t0, t1 = when(leg["startTime"]), when(leg["endTime"])
+    waiting = []
+    for k in range(late * 60 // interval):
+        lat, lon = offset(path.at(0.0), rnd.gauss(0, sigma), rnd.gauss(0, sigma))
+        waiting.append((t0 + timedelta(seconds=k * interval), lat, lon))
+    t0, t1 = t0 + timedelta(minutes=late), t1 + timedelta(minutes=late)
     total = (t1 - t0).total_seconds()
     # progress(t): constant speed, or moving/dwelling in turns (stop-and-go) rescaled to fill the leg
     if dwell:
@@ -143,7 +149,7 @@ def fixes(leg: dict, rnd: random.Random, *, sigma: float = 5.0, outliers: float 
             return stop[0] + (a[0] - stop[0]) * u, stop[1] + (a[1] - stop[1]) * u
         return path.at(0.5 + (frac - 0.8) / 0.2 * 0.5)
 
-    out, s = [], 0.0
+    out, s = waiting, 0.0
     while s <= total + 20:
         frac = progress(min(s, total))
         lat, lon = route(frac)
@@ -177,6 +183,9 @@ SCENARIOS: dict[str, tuple[str, int | None, int, dict]] = {
     "bus_gps_jump_300m": ("trip_bus_470", None, 6, dict(sigma=10, jumps=[(0.2, 300), (0.5, 300)])),
     "bus_skipped_stop": ("trip_bus_470", None, 7, dict(sigma=10, sparse_from=0.75)),
     "bus_loop_line": ("trip_bus_470", None, 8, dict(sigma=10, loop=True)),
+    "bus_late_5": ("trip_bus_470", None, 11, dict(sigma=10, late=5)),
+    "bus_late_10": ("trip_bus_470", None, 12, dict(sigma=10, late=10)),
+    "bus_late_20": ("trip_bus_470", None, 13, dict(sigma=25, outliers=0.08, late=20)),
     "plan_three_buses": ("plan_bgu_telaviv", 0, 9, dict(sigma=15)),
     "plan_train_walks": ("plan_bgu_telaviv", 1, 10, dict(sigma=12)),
 }

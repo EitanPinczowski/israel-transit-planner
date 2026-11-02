@@ -144,8 +144,12 @@ description: The "time to leave" reminder (exact alarms, real-time re-check, boo
     whose stop is near the origin stays quiet during the walk.
   When the next leg is armed by stop progress the tracker moves on to it, so a second bus caught early is
   not held behind the first. Ending a leg by time (`leg.end + 3 min`) is unchanged. Cost: on a leg listing
-  < 3 stops, a bus more than the leg's length early (or > 20 min) alerts late, at its stop, or not at all;
-  a bus > 3 min late loses its alert (pre-existing, ROADMAP follow-up). Pinned by `RideTrackerArmingTest`
+  < 3 stops, a bus more than the leg's length early (or > 20 min) alerts late, at its stop, or not at all.
+- **A late vehicle keeps its alert** (F7): past `leg.end + 3 min` the leg stays open while the fixes are within
+  200 m of its route (`legGeometry`, else its stops; the boarding stop counts, so waiting for it does too), up
+  to `RideTracker.MAX_LATE` (30 min, the same as the trip's own `tripGrace`) past the planned end. Off the route
+  for 60 s (one GPS jump is not leaving), or never seen on it, ends the leg as before. Pinned by
+  `RideTrackerLateTest` and the `bus_late_5/10/20` replays. Pinned by `RideTrackerArmingTest`
   and `prop/RideTrackerPropertyTest` (safety on stopless legs; liveness for a whole trip ridden 0–20 min
   early). The uitest clock is frozen before the train boards, so journey J12 moves it to 5 min before the
   train is due (`UiTestApp.clockShift`, reset by `reset()`) before it feeds the fixes.
