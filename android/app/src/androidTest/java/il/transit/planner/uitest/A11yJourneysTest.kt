@@ -278,7 +278,24 @@ class A11yJourneysTest {
         val seen = watchMapTouches()
         injectLongPress(sx, sy, moves = false)
         val viaFinger = awaitPin()
-        val evidence = "top=$top bottom=$bottom; MapView got [${seen.joinToString()}]; compose dialogs=" +
+        // Control: a DOWN then CANCEL (no click) injected the same way on the search card. Does ANY injected touch reach
+        // our window, or only none in the map band? And is touch exploration on (a finger then arrives as hover)?
+        val bandSeen = seen.toList()
+        seen.clear()
+        val (tx, ty) = onScreen(((top.left + top.right) / 2).toInt(), ((top.top + top.bottom) / 2).toInt())
+        injectDownCancel(tx, ty)
+        SystemClock.sleep(300)
+        val controlSeen = seen.toList()
+        seen.clear()
+        var exploring = false
+        inst.runOnMainSync {
+            val am = activity.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
+            exploring = am.isTouchExplorationEnabled
+        }
+        val a11y = shell("dumpsys accessibility").lines().filter { "touchExploration" in it || "Bound services" in it || "Enabled services" in it }
+        val evidence = "band: [${bandSeen.joinToString()}]; control on the search card ($tx, $ty): [${controlSeen.joinToString()}]; " +
+            "touchExploration=$exploring ${a11y.take(6).joinToString(" | ") { it.trim().take(300) }}; " +
+            "top=$top bottom=$bottom; compose dialogs=" +
             "${compose.onAllNodes(isDialog()).fetchSemanticsNodes().size} popups=${compose.onAllNodes(isPopup()).fetchSemanticsNodes().size}; " +
             "our windows:\n" + ourWindows()
         Log.i("A11yJourney", "A11Y-MAP $lang: injected long-press at screen ($sx, $sy) pin=$viaFinger $evidence")
@@ -341,6 +358,18 @@ class A11yJourneysTest {
         val lines = shell("dumpsys input").lines().filter { l -> wanted.any { it in l } }
         val input = lines.take(30).joinToString("\n") { it.trim().take(400) }
         return "$me\n" + out.toString().take(3_000) + "\ninput:\n" + input
+    }
+
+    /** A touch that starts and is cancelled: reaches the window like a finger, clicks nothing. */
+    private fun AppDriver.injectDownCancel(x: Int, y: Int) {
+        val ui = inst.uiAutomation
+        val down = SystemClock.uptimeMillis()
+        for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_CANCEL)) {
+            val e = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x.toFloat(), y.toFloat(), 0)
+            e.source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+            ui.injectInputEvent(e, true)
+            e.recycle()
+        }
     }
 
     /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
