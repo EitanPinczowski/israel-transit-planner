@@ -75,18 +75,29 @@ internal fun ParkRideList(state: UiState, result: ParkRideResult, vm: MainAction
 private fun ParkRideCard(row: ParkRideRow, selected: Boolean, onClick: () -> Unit, onNavigate: () -> Unit) {
     Column(Modifier.option(selected, onClick)) {
         Text(stringResource(R.string.park_at, row.station, row.driveMin), style = MaterialTheme.typography.titleSmall)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.you_arrive, row.arrive), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            val transfers = if (row.transfers == 0) stringResource(R.string.direct) else pluralStringResource(R.plurals.transfers, row.transfers, row.transfers)
-            Text(transfers, style = MaterialTheme.typography.labelLarge)
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.park_ride_leave, row.leave, row.board), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-            val gains = listOfNotNull(
-                row.savedMin?.takeIf { it > 0 }?.let { stringResource(R.string.saves_min, it) },
-                row.transfersSaved?.takeIf { it > 0 }?.let { stringResource(R.string.fewer_transfers) },
-            )
-            if (gains.isNotEmpty()) Text(gains.joinToString(" · "), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+        val transfers = if (row.transfers == 0) stringResource(R.string.direct) else pluralStringResource(R.plurals.transfers, row.transfers, row.transfers)
+        val gains = listOfNotNull(
+            row.savedMin?.takeIf { it > 0 }?.let { stringResource(R.string.saves_min, it) },
+            row.transfersSaved?.takeIf { it > 0 }?.let { stringResource(R.string.fewer_transfers) },
+        )
+        if (largeFont()) {
+            // F7: at large fonts each line takes the whole width (side by side, the leave line broke into 4 lines
+            // around the gains); transfers and gains share the last one and wrap as a whole.
+            Text(stringResource(R.string.you_arrive, row.arrive), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.park_ride_leave, row.leave, row.board), style = MaterialTheme.typography.bodyMedium)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(transfers, style = MaterialTheme.typography.labelLarge)
+                if (gains.isNotEmpty()) Text(gains.joinToString(" · "), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+            }
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.you_arrive, row.arrive), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Text(transfers, style = MaterialTheme.typography.labelLarge)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.park_ride_leave, row.leave, row.board), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                if (gains.isNotEmpty()) Text(gains.joinToString(" · "), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+            }
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(vertical = 4.dp)) {
             row.summary.chips.forEach { LegChipView(it) }

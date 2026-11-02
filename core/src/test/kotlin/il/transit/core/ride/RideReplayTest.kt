@@ -65,12 +65,12 @@ class RideReplayTest {
     }
 
     /** What every track must satisfy, whoever made it. */
-    private fun assertAlertsOnce(t: Track, jitterM: Double) {
+    private fun assertAlertsOnce(t: Track, jitterM: Double, late: Duration = Duration.ZERO) {
         val transit = t.itinerary.legs.filter { it.isTransit }
         val alerts = replay(t)
         assertEquals("${t.name}: one alert per transit leg", transit.size, alerts.size)
         alerts.forEachIndexed { k, (f, a) ->
-            val leg = transit[k]
+            val leg = transit[k].let { it.copy(startTime = (it.start + late).toString(), endTime = (it.end + late).toString()) }
             val at = "${t.name} leg $k (${leg.to.name})"
             assertEquals("$at: alert order", k, a.legIndex)
             assertEquals("$at: alert names the wrong stop", leg.to.name, a.stopName)
@@ -109,6 +109,13 @@ class RideReplayTest {
     @Test fun `a loop line passing the stop early alerts only on the last pass`() = assertAlertsOnce(track("bus_loop_line"), 60.0)
 
     @Test fun `a one-minute first bus near the origin does not alert during the walk`() = assertAlertsOnce(track("plan_three_buses"), 60.0)
+
+    // F7: a late bus kept its alert only 3 min past the planned end; now while the rider waits at the stop or rides it.
+    @Test fun `a bus 5 min late still alerts before the stop`() = assertAlertsOnce(track("bus_late_5"), 60.0, Duration.ofMinutes(5))
+
+    @Test fun `a bus 10 min late still alerts before the stop`() = assertAlertsOnce(track("bus_late_10"), 60.0, Duration.ofMinutes(10))
+
+    @Test fun `a bus 20 min late in urban canyon jitter still alerts before the stop`() = assertAlertsOnce(track("bus_late_20"), 150.0, Duration.ofMinutes(20))
 
     @Test fun `every real recorded ride alerts once`() {
         real.forEach { assertAlertsOnce(it, 100.0) }

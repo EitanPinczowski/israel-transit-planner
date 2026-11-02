@@ -124,6 +124,10 @@ description: Hebrew right-to-left and English UI rules, plus the design system (
 - Insets: edge-to-edge everywhere. Overlays pad with `WindowInsets.safeDrawing` (bars +
   camera cutout + keyboard); sheets pad their content with bars + cutout but paint under
   the nav bar. The notch is on a SIDE in landscape: never pad only the top.
+- **Large fonts** (F7, `largeFont()` in `screens/Common.kt`: font ≥ ×1.3, the top step on many pre-14 phones): a row that puts a name beside
+  other texts stacks them instead of squeezing the name to a word: stop-sheet departures put the headsign
+  on its own line (≤ 2 lines) under badge and time, the stop title takes 2 lines, the Park & ride card puts
+  arrive, leave and transfers/gains on full-width lines, and "Way back after" puts its 1 h · 2 h · 3 h under the label. Never shrink the text; TalkBack keeps the whole name.
 - Sizes: nothing fixed in height. Sheets cap at 50% of the screen (less if needed so 30% stays map) and lists inside take
   `weight(1f, fill = false)`; on phones (and any window under 700dp tall) the search card
   folds to one line while results show, and the search column ends where the bottom part

@@ -381,6 +381,8 @@ class PanelsTest(private val v: Variant) {
                 dark = true,
                 rtl = true,
             ),
+            // F7: the same in English and light, so font ×2.0 is seen in both languages and both themes.
+            Variant("en_light_font2", DeviceConfig.NEXUS_5.copy(fontScale = 2.0f), dark = false, rtl = false),
         )
     }
 }

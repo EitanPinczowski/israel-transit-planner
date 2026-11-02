@@ -40,7 +40,18 @@ sealed interface RideEvent {
  *  - within [approachM] of the alighting stop, or
  *  - within [passedStopM] of the stop before it (when MOTIS listed intermediate stops) —
  *    "your stop is next" is what people on Israeli buses actually need.
- * A leg is done once you are at its stop, or its planned end is [legGrace] behind you.
+ * A leg is done once you are at its stop, or its planned end is [legGrace] behind you and the rider
+ * is off its route (F7): a late bus keeps its alert while the fixes stay within [routeM] of the leg's
+ * route (its polyline, else its stops; the boarding stop included, so waiting there counts), up to
+ * [maxLate] past the planned end. Off the route means [offRouteFor] of fixes away from it (one GPS
+ * jump is not leaving), or never seen on it; once off, the rider is back on only within [routeM] − 50 m.
+ * While a leg is extended like this:
+ *  - it alerts only after [PROGRESS_M] of progress along its route since the extension began (or its stops
+ *    passed in order), so a rider still waiting at a short hop's stop, or on a bus the other way, is not told
+ *    to get off;
+ *  - it ends when the rider goes [PROGRESS_M] back along the route (got off and walks back, the other
+ *    direction), when the distance to its stop grows [PROGRESS_M] past its least since the alert (passed the
+ *    stop), or, once alerted, at the next leg's boarding stop (a transfer along the same street).
  *
  * Both location checks wait until the leg is [armed] (R2), by either of:
  *  - **stop progress**, on a leg listing at least [MIN_STOPS] intermediate stops: the rider passed
@@ -60,6 +71,9 @@ class RideTracker(
     private val tripGrace: Duration = Duration.ofMinutes(30),
     private val earliestAlert: Duration = Duration.ofMinutes(20),
     private val matchM: Double = 150.0,
+    private val routeM: Double = 200.0,
+    private val offRouteFor: Duration = Duration.ofSeconds(60),
+    private val maxLate: Duration = MAX_LATE,
 ) {
     private val legs: List<Leg> = itinerary.legs.filter { it.isTransit }
     private val destination: LatLon = itinerary.legs.last().to.latLon
@@ -71,7 +85,29 @@ class RideTracker(
 
     /** Per transit leg: the furthest stop of [stops] passed in order (0 = boarding); never moves backwards. */
     private val matched = IntArray(legs.size)
+
+    /** Per transit leg: the line the vehicle drives (its polyline, else its stops), for "still on the route". */
+    private val routes: List<List<LatLon>> = legs.mapIndexed { k, leg ->
+        val line = leg.legGeometry
+            ?.let { g -> runCatching { Geo.decodePolyline(g.points, g.precision) }.getOrNull() }
+            .orEmpty()
+        if (line.size >= 2) listOf(leg.from.latLon) + line + listOf(leg.to.latLon) else stops[k].map { it.latLon }
+    }
+
+    /** Current leg: since when the fixes have been off its route; null while on it. Never seen on it = [Instant.MIN]. */
+    private var offRouteSince: Instant? = Instant.MIN
     private var alerted = false
+
+    /** Current leg, metres along its route of this fix while within [routeM] of it, else null. */
+    private var along: Double? = null
+
+    /** Current leg, since its extension began: least and furthest [along], and whether it moved on [PROGRESS_M]. */
+    private var extMin = Double.MAX_VALUE
+    private var extMax = -Double.MAX_VALUE
+    private var extProgress = false
+
+    /** Current leg: the least distance to its stop since the alert. */
+    private var closestSinceAlert = Double.MAX_VALUE
 
     /** Furthest stop-to-stop segment reached on the current leg; never moves backwards. */
     private var segment = 0
@@ -91,13 +127,26 @@ class RideTracker(
                 }
             }
             val leg = legs[index]
+            trackRoute(pos, now)
             val toStop = Geo.distanceM(pos, leg.to.latLon)
+            val extended = now.isAfter(leg.end.plus(legGrace))
+            if (extended) {
+                if (alerted && atNextBoarding(pos, now)) {
+                    next()
+                    continue
+                }
+                trackExtension()
+            }
             val armed = onRoute(index) || timeArmed(leg, now)
-            if (armed && !alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
+            val mayAlert = armed && (!extended || onRoute(index) || extProgress)
+            if (mayAlert && !alerted && (toStop <= approachM || passedPenultimate(leg, pos))) {
                 alerted = true
+                closestSinceAlert = toStop
                 return RideEvent.Approaching(index, leg.to.name, isLastLeg = index == legs.size - 1)
             }
-            val legOver = (armed && toStop <= atStopM) || now.isAfter(leg.end.plus(legGrace))
+            if (alerted) closestSinceAlert = minOf(closestSinceAlert, toStop)
+            val leftRide = extended && (wentBack() || toStop > closestSinceAlert + PROGRESS_M)
+            val legOver = (armed && toStop <= atStopM) || timedOut(leg, now) || leftRide
             if (!legOver) return null
             next()
         }
@@ -163,6 +212,51 @@ class RideTracker(
         index++
         alerted = false
         segment = 0
+        offRouteSince = Instant.MIN
+        along = null
+        extMin = Double.MAX_VALUE
+        extMax = -Double.MAX_VALUE
+        extProgress = false
+        closestSinceAlert = Double.MAX_VALUE
+    }
+
+    /** Updates [offRouteSince] and [along] for the current leg with this fix. */
+    private fun trackRoute(pos: LatLon, now: Instant) {
+        val d = Geo.distanceToLineM(pos, routes[index])
+        along = if (d <= routeM) Geo.alongLineM(pos, routes[index]) else null
+        when {
+            d <= routeM - ROUTE_HYSTERESIS_M -> offRouteSince = null
+            d > routeM -> if (offRouteSince == null) offRouteSince = now
+            // in between: unchanged, so a rider hovering about [routeM] off does not reset the timer
+        }
+    }
+
+    /** Extension of the current leg: the least and furthest point along its route, and the progress made. */
+    private fun trackExtension() {
+        val a = along ?: return
+        extMin = minOf(extMin, a)
+        extMax = maxOf(extMax, a)
+        if (a - extMin >= PROGRESS_M) extProgress = true
+    }
+
+    /** [PROGRESS_M] back along the current leg's route from its furthest point in the extension. */
+    private fun wentBack(): Boolean = along?.let { it < extMax - PROGRESS_M } ?: false
+
+    /** At the next leg's boarding stop, at or after its planned start: a transfer, maybe along the same street. */
+    private fun atNextBoarding(pos: LatLon, now: Instant): Boolean {
+        val next = legs.getOrNull(index + 1) ?: return false
+        return !now.isBefore(next.start) && Geo.distanceM(pos, next.from.latLon) <= matchM
+    }
+
+    /**
+     * The leg's planned end is [legGrace] behind and the rider is not waiting for it or riding it: off the
+     * route for [offRouteFor] (or never on it). Hard bound: [maxLate] past the planned end, whatever the fixes.
+     */
+    private fun timedOut(leg: Leg, now: Instant): Boolean {
+        if (!now.isAfter(leg.end.plus(legGrace))) return false
+        if (now.isAfter(leg.end.plus(maxLate))) return true
+        val off = offRouteSince ?: return false
+        return off == Instant.MIN || !now.isBefore(off.plus(offRouteFor))
     }
 
     /** Moves leg [k]'s [matched] stop on when [pos] is at the next stop or the one after it. */
@@ -187,8 +281,21 @@ class RideTracker(
         return Geo.distanceM(pos, before.latLon) <= passedStopM
     }
 
-    private companion object {
+    companion object {
         /** Fewer listed stops than this and a leg is armed by time only: two passes in order prove little. */
-        const val MIN_STOPS = 3
+        private const val MIN_STOPS = 3
+
+        /** Extension (F7): progress needed to alert, and the way back / past the stop that ends the leg. */
+        const val PROGRESS_M = 150.0
+
+        /** Off the route, a rider is back on only this much inside [routeM]. */
+        private const val ROUTE_HYSTERESIS_M = 50.0
+
+        /**
+         * The longest a late vehicle keeps its leg's alert (F7): the trip's own end ([tripGrace]) is 30 min past
+         * the planned arrival, so a leg never outlives it; a bus later than this has, in practice, been replaced
+         * by the next one on the line, whose schedule the rider should look up instead.
+         */
+        val MAX_LATE: Duration = Duration.ofMinutes(30)
     }
 }
