@@ -42,7 +42,7 @@ niqqud-bs	בְּאֵר שֶׁבַע	he	באר שבע	31.20,34.70,31.32,34.88	TRA
 final-letters-ta	תל אבים	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 abbr-ta1	ת"א	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 abbr-ta2	ת״א	he	תל אביב	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
-abbr-tlv	TLV	en	Tel Aviv|תל אביב|Ben Gurion|נתב	31.9,34.7,32.05,35.0	TRANSITOUS	OK	F8 (2026-11-02): was BAD (St Petersburg, Budapest, London); TLV is read as Tel Aviv (Aliases.shortForm).
+abbr-tlv	TLV	en	Tel Aviv|תל אביב|Ben Gurion|נתב	31.9,34.7,32.15,35.0	TRANSITOUS	OK	F8 (2026-11-02): was BAD (St Petersburg, Budapest, London); TLV is read as Tel Aviv (Aliases.shortForm); the box now reaches Tel Aviv (it was the airport's alone).
 abbr-bs	ב"ש	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
 abbr-jm	י-ם	he	ירושלים	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
 abbr-pt	פ"ת	he	פתח תקווה|פתח תקוה	32.05,34.84,32.12,34.93	TRANSITOUS	OK	
