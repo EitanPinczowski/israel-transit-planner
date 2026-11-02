@@ -124,6 +124,7 @@ class A11yJourneysTest {
             assertTrue("$lang: the trip sheet has no heading", compose.onAllNodes(isHeading).fetchSemanticsNodes().isNotEmpty())
             Espresso.pressBack()
             compose.waitForIdle()
+            d.reminderChecks(lang)
 
             // Stop sheet.
             d.onMain { it.openStop(FaultMatrixTest.STOP_ID, "תחנה מרכזית") }
@@ -190,8 +191,7 @@ class A11yJourneysTest {
     private fun AppDriver.say(s: Spoken) = s.render { say(activity.resources, it) }
 
     /**
-     * The selected card: it says "selected", its tight-change chips say core's words, and a reminder
-     * set on it is announced by itself (a polite live region).
+     * The selected card: it says "selected", and its tight-change chips say core's words.
      */
     private fun AppDriver.selectedCardChecks(lang: String, buffer: Int?) {
         val card = compose.onNode(hasTestTag(UiTags.SELECTED)).fetchSemanticsNode("the selected card")
@@ -202,7 +202,10 @@ class A11yJourneysTest {
         val got = compose.onAllNodes(hasTestTag(TIGHT_CHIP) and inCard, useUnmergedTree = true).fetchSemanticsNodes().map(::desc)
         assertEquals("$lang: tight-change chips", want, got)
         Log.i(TAG, "$lang: ${got.size} tight-change chips checked")
+    }
 
+    /** A reminder set on the selected option is announced by itself (a polite live region). */
+    private fun AppDriver.reminderChecks(lang: String) {
         tapInResults(str(R.string.action_remind))
         compose.waitUntil(10_000) { ui.reminder != null }
         val leave = hhmm(ui.reminder!!.leaveAt)

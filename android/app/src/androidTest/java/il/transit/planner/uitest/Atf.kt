@@ -91,8 +91,9 @@ object Atf {
             val p = n.positionOnScreen
             val l = p.x.toInt()
             val t = p.y.toInt()
-            val near = kotlin.math.abs(l - b.left) <= 3 && kotlin.math.abs(t - b.top) <= 3 &&
-                kotlin.math.abs(l + n.size.width - b.right) <= 3 && kotlin.math.abs(t + n.size.height - b.bottom) <= 3
+            val corner = kotlin.math.abs(l - b.left) <= 3 && kotlin.math.abs(t - b.top) <= 3
+            val size = kotlin.math.abs(l + n.size.width - b.right) <= 3 && kotlin.math.abs(t + n.size.height - b.bottom) <= 3
+            val near = corner && size
             if (near) found += "#${n.id} ${n.config}".replace("\n", " ").take(220)
             n.children.forEach(::walk)
         }
