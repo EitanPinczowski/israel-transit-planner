@@ -331,9 +331,12 @@ class A11yJourneysTest {
         var ours = false
         for (line in shell("dumpsys window windows").lines()) {
             if (line.trimStart().startsWith("Window #")) ours = "il.transit.planner" in line || "PopupWindow" in line
-            if (ours && line.isNotBlank()) out.append(line.trim().take(300)).append('\n')
+            val keep = listOf("Window #", "mActivityRecord", "ty=", "Frames:", "isVisible", "mHasSurface", "mViewVisibility")
+            if (ours && keep.any { it in line }) out.append(line.trim().take(200)).append('\n')
         }
-        return out.toString().take(6_000)
+        var me = ""
+        inst.runOnMainSync { me = "the test's activity: $activity task=${activity.taskId} state=${activity.lifecycle.currentState} finishing=${activity.isFinishing}" }
+        return "$me\n" + out.toString().take(6_000)
     }
 
     /** The touch events the MapView receives from now on (a listener that only records: MapLibre still gets them). */
