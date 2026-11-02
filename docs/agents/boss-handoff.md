@@ -4,43 +4,47 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-11-02, 10:35 Israel time)
+## State (2026-11-02, 15:20 Israel time)
 - **Released:** v0.9.2 (2026-10-31). **Next: v0.10.0. The owner said "wait on the release" (2026-11-02)**: ask before releasing.
   Before it: join `docs/releases/next/*` into `v0.10.0.md`, the owner runs `docs/testing/bug-bash.md` on the Pixel,
   then add the 0.10.0 saved-data sample after the tag (the `release-apk` skill).
-- **Boss:** `session_011uenNPuCQdDbxyhH4S3ibu`, context 515k at writing. **The next boss should be started by the
-  owner from claude.ai/code** (lineage depth, see Gotchas). The owner kept this boss going past 400k on purpose.
+- **Boss:** `session_01DH799Fr9pdL4XLVsi4uqeJ` (depth 0, started by the owner), took over 2026-11-02 from
+  `session_011uenNPuCQdDbxyhH4S3ibu`. Hand over around 400k context.
 - **Phase 11 is all merged**, and main is green after each merge:
   - E4 #105, T4 #106, T6 #110 (6 security fixes), T8 #109 (release smoke, startup gate, upgrade test, LeakCanary,
     MoreJourneys, bug-bash list), F2 #104, F3 #112 (4 flakes), F5 #111 (own actions via a non-exported alias),
     #113 (nightly perf jobs + the flake log skips cancelled jobs), F4 #114 (Compose 1.8.3 + Paparazzi 2.0.0-alpha02;
-    the Settings race fixed, 144/144), E5 #115 (a11y + TalkBack), E6 #116 (NFC lab, **debug build only**).
+    the Settings race fixed, 144/144), E5 #115 (a11y + TalkBack), E6 #116 (NFC lab, **debug build only**),
+    F6 #118 (follow-up bugs, ~$16; a "now" search is rounded to the minute so repeats hit the cache on every tab;
+    A11Y-MAP: injected touches don't reach the app on the API 35 emulator, so the MapView-dispatched long-press
+    blocks and the band press is report-only).
 - **Owner decisions this round:**
   - E4: the payment apps confirmed on the Pixel; the revised low-data rule accepted.
   - No v0.9.3; the next release is v0.10.0.
   - The APK +2.28% from F4 accepted.
   - E6: go.
   - Release: wait.
-- **In flight: F6, follow-up bugs** (`session_01DH799FQG5w3wJjq4auHyxz`, Opus, ~$12, branch `claude/p11-followups-f6`):
-  - Park & ride uses `Instant.now()` (a cache miss);
-  - Photon asked again after a 429;
-  - the rain note after offline;
-  - E4 data card == server counts;
-  - j12 LeakCanary OOM on API 29;
-  - A11Y-MAP long-press in the band between panels.
-  
-  When it's green: a Sonnet logic pass, one fix round, merge.
-- **Waiting on the owner: E6's two-scan Pixel test** (steps in PR #116's body). With the result, write the go/no-go:
-  - **go:** a follow-up package finds the end-date bits by comparing the scans with Rav-Kav Online;
-  - **no-go:** a `dead-ends` row, and remove the lab.
-  
-  Then tick ROADMAP E6.
-- **Follow-ups not yet packaged:** at font 2.0, stop-sheet headsigns are cut and the park & ride header breaks into 6 lines
-  (E5's PR body); the timetable golden depends on its scroll slice (F4 review nit).
+- **In flight:** nothing.
+- **Waiting on the owner:**
+  - E6's two-scan Pixel test (steps in PR #116's body). With the result, write the go/no-go:
+    - **go:** a follow-up package finds the end-date bits by comparing the scans with Rav-Kav Online;
+    - **no-go:** a `dead-ends` row, and remove the lab.
+    
+    Then tick ROADMAP E6.
+  - The word on v0.10.0, plus the bug-bash run. The bug-bash should include F6's Pixel check: a finger long-press
+    on the map between the search card and the results drops a pin.
+- **Follow-ups not yet packaged:**
+  - at font 2.0, stop-sheet headsigns are cut and the park & ride header breaks into 6 lines (E5's PR body);
+  - the timetable golden depends on its scroll slice (F4 review nit);
+  - input injection (shell `input`, `UiAutomation.injectInputEvent`) doesn't reach apps on the API 35
+    `google_apis` emulator (F6, run 41437345486). When fixed, restore the blocking A11Y-MAP band check (TODO in
+    `A11yJourneysTest`);
+  - `tools/ui_faults_run.sh` counts screens by matching `matrix(` text (F6 review nit).
 - **Limits:** the 7-day limit reads `allowed_warning` until ~8 Nov (resetsAt 1794150000): one agent at a time.
 - **Open owner to-dos:**
   - uninstall the Gemini GitHub app;
-  - delete stale branches (#100's list, plus `scratch/p11-f3-evidence-1..3` and `claude/p11-compose-f4-ev1..3`);
+  - delete stale branches (#100's list, plus `scratch/p11-f3-evidence-1..3` and `claude/p11-compose-f4-ev1..3`,
+    and now `claude/p11-followups-f6`);
   - set up the Test Lab Spark project.
 
 ## Owner standing orders
