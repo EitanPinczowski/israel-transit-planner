@@ -38,7 +38,8 @@ object Aliases {
         // The English one sends the Hebrew name too: no English name of these stops finds them.
         Alias(
             listOf("התחנה המרכזית החדשה", "תחנה מרכזית חדשה", "tel aviv central bus station", "tel aviv new central bus station", "new central bus station"),
-            "ת. מרכזית תל אביב", "ת. מרכזית תל אביב",
+            "ת. מרכזית תל אביב",
+            "ת. מרכזית תל אביב",
         ),
     )
 

@@ -30,9 +30,18 @@ object Stations {
 
     /** Typed words for the parts of a station's name ("Be'er Sheva Center" is באר שבע מרכז). */
     private val PARTS = mapOf(
-        "center" to "מרכז", "centre" to "מרכז", "central" to "מרכז", "merkaz" to "מרכז",
-        "north" to "צפון", "tzafon" to "צפון", "south" to "דרום", "darom" to "דרום",
-        "east" to "מזרח", "mizrah" to "מזרח", "west" to "מערב", "maarav" to "מערב",
+        "center" to "מרכז",
+        "centre" to "מרכז",
+        "central" to "מרכז",
+        "merkaz" to "מרכז",
+        "north" to "צפון",
+        "tzafon" to "צפון",
+        "south" to "דרום",
+        "darom" to "דרום",
+        "east" to "מזרח",
+        "mizrah" to "מזרח",
+        "west" to "מערב",
+        "maarav" to "מערב",
         "university" to "האוניברסיטה",
     )
 
@@ -59,10 +68,16 @@ object Stations {
         val parts = (rest.subList(0, start) + rest.subList(start + len, rest.size)).map { PARTS[it] ?: it }
         val prefixes = town.names.map(PlaceSearch::normalize).filter { n -> n.any { it in 'א'..'ת' } }
         fun named(p: Place) = prefixes.any { PlaceSearch.normalize(p.name).startsWith(it) }
-        val inTown = rail.filter(::named).ifEmpty { rail.filter { town.contains(LatLon(it.lat, it.lon)) } }
-        fun fits(p: Place) = parts.isNotEmpty() && words(p.name).let { n -> parts.all { it in n } }
-        return inTown.sortedWith(compareByDescending<Place>(::fits).thenByDescending { it.importance ?: 0.0 })
-            .take(MAX).map { answer(it, town, language) }
+        val byName = rail.filter(::named)
+        val inTown = byName.ifEmpty { rail.filter { town.contains(LatLon(it.lat, it.lon)) } }
+        fun fits(p: Place): Boolean {
+            val n = words(p.name)
+            return parts.isNotEmpty() && parts.all { it in n }
+        }
+        return inTown
+            .sortedWith(compareByDescending<Place>(::fits).thenByDescending { it.importance ?: 0.0 })
+            .take(MAX)
+            .map { answer(it, town, language) }
     }
 
     /** The longest run of [ws] that names a town: (town, start, length). */
@@ -91,8 +106,14 @@ object Stations {
     /** "באר שבע מרכז" → "Beersheba Center" (the town table's English name); a name with other Hebrew words stays as it is. */
     private fun english(name: String, town: Town): String {
         val prefix = town.names.firstOrNull { n -> n.any { it in 'א'..'ת' } && name.startsWith(n) } ?: return name
-        val rest = name.removePrefix(prefix).trim().split(' ').filter { it.isNotEmpty() }
-        val back = PARTS.entries.groupBy { it.value }.mapValues { it.value.first().key.replaceFirstChar(Char::uppercase) }
+        val rest = name
+            .removePrefix(prefix)
+            .trim()
+            .split(' ')
+            .filter { it.isNotEmpty() }
+        val back = PARTS.entries
+            .groupBy { it.value }
+            .mapValues { it.value.first().key.replaceFirstChar(Char::uppercase) }
         if (rest.any { it !in back }) return name
         return (listOf(town.displayName("en")) + rest.map { back.getValue(it) }).joinToString(" ")
     }

@@ -50,7 +50,8 @@ data class SearchAnswer(
      * Answers that are what was typed ([MatchLevel.isAnswer]); only these may be shown as the answer.
      * One named exactly as typed first: "רמות" before "רמות אשכול".
      */
-    val exact: List<GeocodeMatch> get() = ordered.filter { level(it).isAnswer }
+    val exact: List<GeocodeMatch> get() = ordered
+        .filter { level(it).isAnswer }
         .sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
 
     /** A station asked for ("תחנה מרכזית…", "… train station"): stops and stations before a shelter or shop of that name (F8). */
@@ -60,7 +61,8 @@ data class SearchAnswer(
      * The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest
      * matches", the typed street first, then the town, then the others.
      */
-    val closest: List<GeocodeMatch> get() = ordered.filterNot { level(it).isAnswer }
+    val closest: List<GeocodeMatch> get() = ordered
+        .filterNot { level(it).isAnswer }
         .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst))
 
     val all: List<GeocodeMatch> get() = exact + closest
@@ -122,7 +124,8 @@ class PlaceSearch(
         val house = houseOf(q)
         // A train station by name ("Rehovot railway station"): from the bundled list, first (0 requests).
         val stations = Stations.find(q, language)
-        val found = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)
+        val found = rankByTypedTown(transit.geocode(q, language, bias, max))
+            .filter(::inTown)
             // Israel only, from every source: the index knows the world (F8).
             .filter { inIsrael(LatLon(it.lat, it.lon)) }
             .filter { m -> stations.none { it.id == m.id || sameAnswer(it, m) } }
@@ -296,7 +299,10 @@ class PlaceSearch(
             // Town words aren't the place's name, unless typed as its name ("מודיעין" in "ת. רכבת מודיעין מרכז").
             // A town typed one letter short ("ירושלי") is typed as the name too (F8).
             val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet() - words.toSet() -
-                words.filter { it.length >= 4 }.map { w -> answerTowns(m).flatMap(::tokens).firstOrNull { t -> t.length == w.length + 1 && t.startsWith(w) } }.filterNotNull().toSet()
+                words
+                    .filter { it.length >= 4 }
+                    .mapNotNull { w -> answerTowns(m).flatMap(::tokens).firstOrNull { t -> t.length == w.length + 1 && t.startsWith(w) } }
+                    .toSet()
             val isTypedTown = typed != null && Towns.named(m.name.substringBefore(',')) == typed
             val town = if (isTypedTown) MatchLevel.TOWN else MatchLevel.NONE
             if (names.isEmpty()) {
