@@ -1,0 +1,30 @@
+# Writes a release's saved-data sample (skill release-apk) on CI, for sessions whose Gradle can't build a tag.
+# Runs on PRs that touch the generator, and by hand with a tag. Prints the JSON between markers in the log;
+# copy it to core/src/test/resources/fixtures/userdata/<version>.json (never edit a sample by hand).
+name: Saved-data sample
+on:
+  workflow_dispatch:
+    inputs:
+      tag: { description: "Release tag, e.g. v0.10.0", required: true }
+  pull_request:
+    paths: [tools/userdata_gen/**, .github/workflows/userdata-sample.yml]
+permissions: { contents: read }
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Generate
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          tag="${TAG:-$(git tag --sort=-v:refname | head -n1)}"
+          bash tools/gen_userdata_sample.sh "$tag"
+          f="core/src/test/resources/fixtures/userdata/${tag#v}.json"
+          echo "=== USERDATA-SAMPLE BEGIN $tag ==="
+          cat "$f"
+          echo "=== USERDATA-SAMPLE END ==="
