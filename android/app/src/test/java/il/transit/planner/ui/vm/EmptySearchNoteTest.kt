@@ -49,7 +49,8 @@ class EmptySearchNoteTest : VmTest() {
         vm.startEditing(Field.TO)
         vm.onQuery("Herzl 12 Be'er Sheva")
         advance(400) // Transitous's interim answer; the phone is still asked
-        vm.pick(vm.state.value.suggestions.first())
+        val first = vm.state.value.suggestions[0]
+        vm.pick(first)
         advance(2_000)
         vm.startEditing(Field.FROM)
         vm.cancelEditing()
