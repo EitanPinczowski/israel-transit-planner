@@ -133,6 +133,8 @@ class SmokeTest {
         val until = SystemClock.uptimeMillis() + 10_000
         var drawn: Boolean? = null
         while (drawn != true && SystemClock.uptimeMillis() < until) {
+            // The test rule drives Compose's frames: without this the pin effect never runs (F9, API 26-35).
+            compose.waitForIdle()
             inst.runOnMainSync { drawn = activity.pinOnMap() }
             if (drawn != true) SystemClock.sleep(200)
         }
