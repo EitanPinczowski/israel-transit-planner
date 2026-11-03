@@ -1,44 +1,47 @@
 package il.transit.planner.uitest
 
-import android.location.Geocoder
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import il.transit.core.api.GeocodeMatch
+import il.transit.core.api.GuardedTransitApi
+import il.transit.core.api.MotisClient
+import il.transit.core.geo.LatLon
+import il.transit.core.search.BackupGeocoder
+import il.transit.core.search.FallbackGeocoder
+import il.transit.core.search.GuardedGeocoder
 import il.transit.core.search.PlaceSearch
-import il.transit.core.search.Towns
 import il.transit.planner.data.AndroidGeocoder
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Locale
 
-/** F9 scratch probe (never merged): what the phone's Geocoder answers for the owner's English addresses. Phone Geocoder only. */
+/** F9 scratch probe 2 (never merged): the app's own chain (async Geocoder, deadlines), Photon stubbed. 6 Transitous requests. */
 @RunWith(AndroidJUnit4::class)
 class GeocoderProbeTest {
-    @Suppress("DEPRECATION")
-    @Test fun probe() {
+    private class NoPhoton : BackupGeocoder {
+        var calls = 0
+        override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> { calls++; return emptyList() }
+    }
+
+    @Test fun probe() = runBlocking {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        Log.i(TAG, "present=${Geocoder.isPresent()}")
-        val queries = listOf(
-            "Herzl 12 Be'er Sheva" to "en", "Jaffa Road 97 Jerusalem" to "en", "Allenby 40 Tel Aviv" to "en",
-            "הרצל 12 באר שבע" to "he", "Herzl 12 Beersheba" to "en", "Herzl 12 Be'er Sheva" to "he",
-            "Jaffa Road 97 Jerusalem" to "he", "Allenby 40 Tel Aviv" to "he", "Jaffa Street 97 Jerusalem" to "en",
-        )
-        for ((q, lang) in queries) {
-            for (bounded in listOf(true, false)) {
-                val g = Geocoder(ctx, AndroidGeocoder.localeOf(lang))
-                val res = try {
-                    if (bounded) g.getFromLocationName(q, 5, 29.45, 34.2, 33.35, 35.95) else g.getFromLocationName(q, 5)
-                } catch (e: Exception) {
-                    Log.i(TAG, "Q[$q|$lang|bounded=$bounded] ERROR $e"); null
-                }
-                Log.i(TAG, "Q[$q|$lang|bounded=$bounded] n=${res?.size}")
-                res.orEmpty().forEachIndexed { i, a ->
-                    Log.i(TAG, "  #$i feature=${a.featureName} thoroughfare=${a.thoroughfare} sub=${a.subThoroughfare} locality=${a.locality} subLocality=${a.subLocality} admin=${a.adminArea} subAdmin=${a.subAdminArea} country=${a.countryName} line0=${a.getAddressLine(0)} lat=${a.latitude} lon=${a.longitude} premises=${a.premises}")
-                    val m = AndroidGeocoder.toMatch(a)
-                    val town = Towns.typedIn(q).firstOrNull()
-                    Log.i(TAG, "     match=$m level=${m?.let { PlaceSearch.level(q, it, town) }} town=${town?.name} holds=${m?.let { mm -> town?.let { Towns.holds(it, mm) } }} inIsrael=${m?.let { PlaceSearch.inIsrael(il.transit.core.geo.LatLon(it.lat, it.lon)) }}")
-                }
-                Thread.sleep(1000)
+        val queries = listOf("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv")
+        for (lang in listOf("en", "he")) {
+            for (q in queries) {
+                // A fresh chain each time, like a first search after the app starts.
+                val photon = NoPhoton()
+                val search = PlaceSearch(GuardedTransitApi(MotisClient()), FallbackGeocoder(GuardedGeocoder(AndroidGeocoder(ctx)), photon))
+                val t0 = System.nanoTime()
+                val raw = try { AndroidGeocoder(ctx).search(q, lang, null, 5).map { it.name } } catch (e: Throwable) { listOf("ERR $e") }
+                val t1 = System.nanoTime()
+                val a = search.search(q, lang, null)
+                val t2 = System.nanoTime()
+                Log.i(TAG, "Q[$q|$lang] async-phone ${(t1 - t0) / 1_000_000} ms: $raw")
+                Log.i(TAG, "  search ${(t2 - t1) / 1_000_000} ms missed=${a.missed} photonCalls=${photon.calls} notFound=${a.notFound}")
+                Log.i(TAG, "  primary=${a.primary.map { it.name + "/" + it.type }} backup=${a.backup.map { it.name }}")
+                Log.i(TAG, "  all=${a.all.map { it.name + "=" + a.level(it) }}")
+                Thread.sleep(1500)
             }
         }
     }
