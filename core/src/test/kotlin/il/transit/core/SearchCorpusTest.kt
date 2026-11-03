@@ -80,7 +80,8 @@ class SearchCorpusTest {
     private inner class Phone(val counts: Counts) : BackupGeocoder {
         private val stubs = table("phone_geocoder.tsv").associate {
             // Columns 5-7 (F9): street, house, locality, as AndroidGeocoder.toMatch fills them.
-            val areas = listOfNotNull(it.getOrNull(6)?.takeIf(String::isNotBlank)?.let { town -> il.transit.core.api.GeocodeArea(town, 8.0, default = true) })
+            val locality = it.getOrNull(6)?.takeIf(String::isNotBlank)
+            val areas = listOfNotNull(locality?.let { town -> il.transit.core.api.GeocodeArea(town, 8.0, default = true) })
             it[0] to GeocodeMatch("ADDRESS", it[1], "phone:" + it[1], it[2].toDouble(), it[3].toDouble(), street = it.getOrNull(4), houseNumber = it.getOrNull(5), areas = areas)
         }
         override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
