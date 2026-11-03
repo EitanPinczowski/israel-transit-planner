@@ -71,6 +71,13 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   owner's home) near Ra'anana returns 8 other Ra'anana places and no טבנקין, with or without the
   number: the street is not in the index. Fixed by the map pin, "save my current location" and
   the Photon backup (below), not by re-ranking.
+- **English street + number, phone Geocoder (F9, 2026-11-03, google_apis emulator, probe runs
+  41596558603 / 41599177172, 0 Photon):** Transitous answers only the town; Google's Geocoder answers
+  "Herzl Street 12" (Be'er Sheva), "Allenby Street 40" (Tel Aviv-Yafo) and, for "Jaffa Road 97
+  Jerusalem", **"Yafo 97"** ("יפו 97" in Hebrew), each in 0.2–0.8 s; the whole search takes 0.7–2 s.
+  So a street's English exonym can differ from its Hebrew name: `PlaceSearch.EXONYMS` (jaffa → yafo).
+  The keyboard's Search key waits for the backup's answer and never picks a closest match
+  (`MainViewModel.searchAction`): it used to pick the interim list's first row, the town.
 - **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
   first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
   Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street

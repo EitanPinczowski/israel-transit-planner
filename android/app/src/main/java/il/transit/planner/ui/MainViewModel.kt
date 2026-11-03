@@ -369,14 +369,41 @@ class MainViewModel(
         _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
     }
 
+    /** The text whose search is still running (typed, not yet fully answered: Transitous's `pending` answer aside); null = none. */
+    private var inFlight: String? = null
+
+    /** The keyboard's Search was pressed for this text while its search was still running (F9). */
+    private var pickWhenAnswered: String? = null
+
+    /**
+     * The keyboard's Search key (F9, owner's bug bash): the first suggestion that is the answer, never a closest
+     * match. While the backup geocoder is still being asked, Transitous's interim list holds only the town for
+     * "Herzl 12 Be'er Sheva"; picking its first row picked the town. Then it waits for the full answer and picks
+     * from that; with no answer at all nothing is picked and the list says "not found".
+     */
+    fun searchAction() {
+        val s = _state.value
+        val q = s.query.trim()
+        if (q.isNotEmpty() && inFlight == q) {
+            pickWhenAnswered = q
+            return
+        }
+        firstAnswer(s)?.let(::pick)
+    }
+
+    private fun firstAnswer(s: UiState): Suggestion? = s.suggestions.firstOrNull { !it.closest }
+
     /** Saved places and recent picks at once; Transitous (then, on a miss, Photon) once typing pauses. */
     fun onQuery(text: String) {
+        pickWhenAnswered = null
+        inFlight = text.trim().takeIf { it.length >= TypingSearch.MIN_CHARS }
         _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
         typing.onText(text, language, locationProvider)
     }
 
     /** [failed]: no answer at all (offline, Transitous down): said as such, never "not found". */
     private fun showAnswer(q: String, answer: SearchAnswer, failed: Boolean) {
+        if (!answer.pending && inFlight == q) inFlight = null
         _state.update { st ->
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
@@ -393,6 +420,11 @@ class MainViewModel(
                     offline = failed,
                 ),
             )
+        }
+        if (!answer.pending && pickWhenAnswered == q) {
+            pickWhenAnswered = null
+            val s = _state.value
+            if (s.editing != null && s.query.trim() == q) firstAnswer(s)?.let(::pick)
         }
     }
 

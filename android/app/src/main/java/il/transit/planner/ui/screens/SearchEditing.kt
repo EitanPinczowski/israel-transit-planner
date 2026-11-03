@@ -91,7 +91,7 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
         singleLine = true,
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { state.suggestions.firstOrNull()?.let(vm::pick) }),
+        keyboardActions = KeyboardActions(onSearch = { vm.searchAction() }),
         // The mic while the box is empty, ✕ once something is typed: two icons would leave a small
         // phone's field (~200 dp beside its label) almost no room to type. Back, or tapping away,
         // still closes an empty search.

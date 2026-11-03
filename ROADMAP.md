@@ -218,7 +218,7 @@ merges. Tick only your own package's lines.
 
 ### F9 — Bug-bash fixes (`claude/p11-bugbash-f9`, 0 requests; owner's v0.10.0 bug bash on the Pixel)
 - [x] A long-press on the map draws a pin where the finger pressed (light and dark, Hebrew and English); a `SmokeTest` journey asserts the pin is rendered and not under a panel
-- [ ] English street addresses ("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv") found through the phone Geocoder / Photon fallback
+- [x] English street addresses ("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv"): Google's phone Geocoder answers all three (emulator probe); "Jaffa" is now matched to Google's "Yafo"/"יפו", and the keyboard's Search key waits for the backup's answer instead of picking the interim list's town
 
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed

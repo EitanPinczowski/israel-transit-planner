@@ -26,6 +26,9 @@ interface MainActions {
     fun cancelEditing()
     fun onQuery(text: String)
     fun pick(s: Suggestion)
+
+    /** The keyboard's Search key: the first answer, once the search has answered (F9). */
+    fun searchAction() = Unit
     fun pickMyLocation()
     fun swap()
     fun setTime(mode: TimeMode, time: Instant?)
@@ -104,6 +107,7 @@ class ViewModelActions(private val vm: MainViewModel) : MainActions {
     override fun cancelEditing() { vm.cancelEditing() }
     override fun onQuery(text: String) { vm.onQuery(text) }
     override fun pick(s: Suggestion) { vm.pick(s) }
+    override fun searchAction() { vm.searchAction() }
     override fun pickMyLocation() { vm.pickMyLocation() }
     override fun swap() { vm.swap() }
     override fun setTime(mode: TimeMode, time: Instant?) { vm.setTime(mode, time) }
