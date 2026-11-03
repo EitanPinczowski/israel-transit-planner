@@ -58,6 +58,7 @@ import il.transit.core.search.StopCode
 import il.transit.core.search.BackupGeocoder
 import il.transit.core.search.LocalFirst
 import il.transit.core.search.LocalHit
+import il.transit.core.search.MapCentre
 import il.transit.core.search.PlaceSearch
 import il.transit.core.search.SearchAnswer
 import il.transit.core.search.TypingSearch
@@ -400,14 +401,15 @@ class MainViewModel(
         pickWhenAnswered = null
         inFlight = text.trim().takeIf { it.length >= TypingSearch.MIN_CHARS }
         _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
-        typing.onText(text, language, ::searchNear)
+        // The fix is where the search is read; where the user moved the map only orders a generic text's answers (F10).
+        typing.onText(text, language, locationProvider) { mapCentre.centre }
     }
 
-    /** The map's centre at the last pan or zoom: where a search is read when there is no fix (location off, F10). */
-    private var viewCentre: LatLon? = null
+    /** Where the user moved the map (not where it opened or the app moved it): "תחנה מרכזית" without a fix (F10). */
+    private val mapCentre = MapCentre()
 
-    /** Where a search is read: the fix, else the map's centre (F10: "תחנה מרכזית" is the nearest one). */
-    private fun searchNear(): LatLon? = locationProvider() ?: viewCentre
+    /** The user began moving the map with a finger (MapLibre's gesture reason). */
+    fun onMapGesture() = mapCentre.onUserMove()
 
     /** [failed]: no answer at all (offline, Transitous down): said as such, never "not found". */
     private fun showAnswer(q: String, answer: SearchAnswer, failed: Boolean) {
@@ -416,7 +418,7 @@ class MainViewModel(
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
             // A generic text ("תחנה מרכזית"): a saved or recent place farther than the nearest answer goes after the answers (F10).
-            val (localFirst, localLater) = LocalFirst.aroundSplit(local, answer.exact, answer.around)
+            val (localFirst, localLater) = LocalFirst.aroundSplit(local, answer.exact, answer.around, q)
             st.copy(
                 // Exact answers first (Transitous's, or the backup's after a miss), then the closest, labelled.
                 suggestions = localFirst.map { toSuggestion(it) } +
@@ -1053,7 +1055,7 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
-        viewCentre = LatLon((view.min.lat + view.max.lat) / 2, (view.min.lon + view.max.lon) / 2).takeIf(PlaceSearch::inIsrael)
+        mapCentre.onIdle(view)
         // Phase 11 E4: low data shows stops from zoom 16 and asks only when a tile under the screen is missing.
         val lowData = _state.value.settings.lowData
         if (zoom < LowData.stopsMinZoom(lowData)) {

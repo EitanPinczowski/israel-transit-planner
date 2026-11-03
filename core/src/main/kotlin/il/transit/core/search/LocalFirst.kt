@@ -44,12 +44,20 @@ object LocalFirst {
     /**
      * A generic search ([SearchAnswer.around] set: "תחנה מרכזית"): the local hits no farther from [around] than the nearest
      * [exact] answer (shown before the answers), and the rest, nearest first (shown after them). A recent pick of Kiryat
-     * Shmona's central station must not be the first row near Be'er Sheva (F10). With no [around], all come first.
+     * Shmona's central station must not be the first row near Be'er Sheva (F10). Home and the saved places the user named
+     * as typed ([text]) stay first wherever they are: a name the user gave is theirs, a recent's name is the stop's
+     * (Rosh Pina's stop is named "תחנה מרכזית" too). With no [around], all come first.
      */
-    fun aroundSplit(local: List<LocalHit>, exact: List<GeocodeMatch>, around: LatLon?): Pair<List<LocalHit>, List<LocalHit>> {
+    fun aroundSplit(
+        local: List<LocalHit>,
+        exact: List<GeocodeMatch>,
+        around: LatLon?,
+        text: String = "",
+    ): Pair<List<LocalHit>, List<LocalHit>> {
         if (around == null) return local to emptyList()
         val nearest = exact.minOfOrNull { Geo.distanceM(around, LatLon(it.lat, it.lon)) } ?: return local to emptyList()
-        val (before, after) = local.partition { Geo.distanceM(around, it.place.latLon) <= nearest }
+        fun named(h: LocalHit) = h.kind != LocalHit.Kind.RECENT && PlaceSearch.normalize(h.place.name) == PlaceSearch.normalize(text)
+        val (before, after) = local.partition { named(it) || Geo.distanceM(around, it.place.latLon) <= nearest }
         return before to after.sortedBy { Geo.distanceM(around, it.place.latLon) }
     }
 

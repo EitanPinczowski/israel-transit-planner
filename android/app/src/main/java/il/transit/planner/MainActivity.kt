@@ -407,6 +407,10 @@ class MainActivity : ComponentActivity() {
             val option = c.optionAt(p) ?: return@addOnMapClickListener false
             MapGuard.run("route tap") { vm.selectFromMap(option) } != null
         }
+        // Only a finger's move says where the user is looking (F10): not the opening camera or the app's own moves.
+        m.addOnCameraMoveStartedListener { reason ->
+            if (reason == MapLibreMap.OnCameraMoveStartedListener.REASON_API_GESTURE) vm.onMapGesture()
+        }
         m.addOnCameraIdleListener {
             MapGuard.run("camera idle") {
                 val b = m.projection.visibleRegion.latLngBounds

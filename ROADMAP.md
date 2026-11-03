@@ -221,7 +221,7 @@ merges. Tick only your own package's lines.
 - [x] English street addresses ("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv"): Google's phone Geocoder answers all three (emulator probe); "Jaffa" is now matched to Google's "Yafo"/"יפו", and the keyboard's Search key waits for the backup's answer instead of picking the interim list's town
 
 ### F10 — Nearest central station (`claude/p11-bugbash-f10`, 4 Transitous requests, 0 Photon; owner's v0.10.0 bug bash on the Pixel)
-- [x] A generic text with no town ("תחנה מרכזית", "central station", "Central Bus Station") ranks by distance from the fix, else the map's centre: Be'er Sheva's stop "שדרות דוד חכם/תחנה מרכזית" is an answer and first; a far saved or recent place of that name goes after the nearer answers; corpus rows typed from Be'er Sheva, tests near Be'er Sheva, Haifa and Jerusalem
+- [x] A generic text with no town ("תחנה מרכזית", "central station", "Central Bus Station") ranks by distance from the fix, else where the user moved the map (never the opening camera; only the order, never the bias): Be'er Sheva's stop "שדרות דוד חכם/תחנה מרכזית" is an answer and first; a far saved or recent place of that name goes after the nearer answers; corpus rows typed from Be'er Sheva, tests near Be'er Sheva, Haifa and Jerusalem
 
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed

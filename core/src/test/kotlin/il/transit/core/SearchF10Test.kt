@@ -4,11 +4,13 @@ import il.transit.core.api.GeocodeArea
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisJson
 import il.transit.core.api.TransitApi
+import il.transit.core.geo.BBox
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
 import il.transit.core.search.Aliases
 import il.transit.core.search.LocalFirst
 import il.transit.core.search.LocalHit
+import il.transit.core.search.MapCentre
 import il.transit.core.search.MatchLevel
 import il.transit.core.search.PlaceSearch
 import il.transit.core.search.SearchAnswer
@@ -54,8 +56,8 @@ class SearchF10Test {
 
     private val nearBeerSheva = Replay { lang -> recorded(if (lang == "en") "3f5021c9068a" else "5d2702b537ad") }
 
-    private fun search(api: TransitApi, text: String, lang: String, near: LatLon?): SearchAnswer =
-        runBlocking { PlaceSearch(api, backup = null).search(text, lang, near) }
+    private fun search(api: TransitApi, text: String, lang: String, near: LatLon?, rankFrom: LatLon? = null): SearchAnswer =
+        runBlocking { PlaceSearch(api, backup = null).search(text, lang, near, rankFrom = rankFrom) }
 
     private fun at(m: GeocodeMatch) = LatLon(m.lat, m.lon)
 
@@ -135,5 +137,59 @@ class SearchF10Test {
         assertNull(search(Replay(nearBeerSheva.answers), "תחנה מרכזית באר שבע", "he", beerSheva).around)
         // No fix and no map: Transitous's order (with Israel's centre as its bias), nothing re-ranked.
         assertNull(search(Replay(nearBeerSheva.answers), "תחנה מרכזית", "he", null).around)
+    }
+
+    // --- review round (boss, F10) -------------------------------------------------------------------------------------
+
+    @Test fun `the map's centre orders a generic text only, and is never the request's bias`() {
+        // No fix, the user moved the map to Haifa: Haifa's station first, but Transitous is still asked around Israel's centre.
+        val api = Replay { recorded("1cffe54e16d0") + cities }
+        val a = search(api, "תחנה מרכזית", "he", near = null, rankFrom = haifa)
+        assertEquals(haifa, a.around)
+        assertEquals("ת. מרכזית חוף הכרמל", a.exact.first().name)
+        assertEquals(PlaceSearch.ISRAEL_CENTRE, api.sent.single().third)
+        // Any other text: the map's centre changes nothing at all.
+        val other = Replay { recorded("1cffe54e16d0") }
+        assertNull(search(other, "הרצל", "he", near = null, rankFrom = haifa).around)
+        assertEquals(PlaceSearch.ISRAEL_CENTRE, other.sent.single().third)
+        // With a fix, the fix wins.
+        assertEquals(beerSheva, search(Replay(nearBeerSheva.answers), "תחנה מרכזית", "he", beerSheva, rankFrom = haifa).around)
+    }
+
+    @Test fun `only a map the user moved counts, not where it opened or the app moved it`() {
+        val haifaView = BBox(LatLon(32.77, 34.97), LatLon(32.81, 35.01))
+        val abroad = BBox(LatLon(41.0, 28.9), LatLon(41.1, 29.0))
+        val m = MapCentre()
+        // The opening camera (Be'er Sheva) and the app's own moves come to rest with no gesture: nothing.
+        m.onIdle(BBox(LatLon(31.24, 34.78), LatLon(31.28, 34.82)))
+        assertNull(m.centre)
+        m.onUserMove()
+        m.onIdle(haifaView)
+        assertEquals(32.79, m.centre!!.lat, 1e-9)
+        assertEquals(34.99, m.centre!!.lon, 1e-9)
+        // The app moving the map afterwards (to a trip) keeps the user's place.
+        m.onIdle(BBox(LatLon(31.0, 34.0), LatLon(31.1, 34.1)))
+        assertEquals(32.79, m.centre!!.lat, 1e-9)
+        // Moved abroad: no place to rank from.
+        m.onUserMove()
+        m.onIdle(abroad)
+        assertNull(m.centre)
+    }
+
+    @Test fun `the name typed exactly breaks a tie in distance, never beats a nearer station`() {
+        val here = GeocodeMatch("STOP", "שדרות דוד חכם/תחנה מרכזית", "a", 31.2417, 34.7965, modes = listOf("BUS"))
+        val sameSpot = GeocodeMatch("STOP", "תחנה מרכזית", "b", 31.2417, 34.7965, modes = listOf("BUS"))
+        val ashdod = GeocodeMatch("STOP", "תחנה מרכזית", "c", 31.791, 34.641, modes = listOf("BUS"))
+        val a = search(Replay { listOf(ashdod, here, sameSpot) }, "תחנה מרכזית", "he", beerSheva)
+        assertEquals(listOf("b", "a", "c"), a.exact.map { it.id })
+    }
+
+    @Test fun `a saved place the user named as typed stays first, a far recent of that name does not`() {
+        val a = search(Replay(nearBeerSheva.answers), "תחנה מרכזית", "he", beerSheva)
+        val saved = LocalHit(SavedPlace("תחנה מרכזית", 32.970, 35.550), LocalHit.Kind.SAVED)
+        val recent = LocalHit(SavedPlace("תחנה מרכזית", 33.210, 35.570), LocalHit.Kind.RECENT)
+        val (first, later) = LocalFirst.aroundSplit(listOf(saved, recent), a.exact, a.around, "תחנה מרכזית")
+        assertEquals(listOf(saved), first)
+        assertEquals(listOf(recent), later)
     }
 }
