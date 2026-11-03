@@ -21,6 +21,7 @@ class GeocoderProbeTest {
         val queries = listOf(
             "Herzl 12 Be'er Sheva" to "en", "Jaffa Road 97 Jerusalem" to "en", "Allenby 40 Tel Aviv" to "en",
             "הרצל 12 באר שבע" to "he", "Herzl 12 Beersheba" to "en", "Herzl 12 Be'er Sheva" to "he",
+            "Jaffa Road 97 Jerusalem" to "he", "Allenby 40 Tel Aviv" to "he", "Jaffa Street 97 Jerusalem" to "en",
         )
         for ((q, lang) in queries) {
             for (bounded in listOf(true, false)) {
