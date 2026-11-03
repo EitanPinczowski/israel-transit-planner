@@ -43,7 +43,8 @@ class SearchTrace(val query: String, val language: String, val hasFix: Boolean) 
 
     /** One line, for the crash log's share text. */
     fun line(at: Instant, zone: ZoneId): String = buildString {
-        append(TIME.format(at.atZone(zone))).append(" · \"").append(query.take(MAX_QUERY)).append("\" · ").append(language)
+        append(TIME.format(at.atZone(zone)))
+        append(" · \"${query.take(MAX_QUERY)}\" · $language")
         append(" · fix ").append(if (hasFix) "yes" else "no")
         append(" · Transitous ")
         append(
@@ -56,7 +57,7 @@ class SearchTrace(val query: String, val language: String, val hasFix: Boolean) 
         append(" · stations ").append(stations)
         append(" · local ").append(local)
         append(" · backup ").append(backup?.let { b -> backupKept?.let { "$b ($it kept)" } ?: b } ?: "not asked")
-        append(" · ").append(ms).append(" ms · ").append(outcome).append(" · shown ").append(shown)
+        append(" · $ms ms · $outcome · shown $shown")
     }
 
     companion object {

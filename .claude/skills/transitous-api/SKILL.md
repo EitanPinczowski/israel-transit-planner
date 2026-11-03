@@ -78,6 +78,12 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   So a street's English exonym can differ from its Hebrew name: `PlaceSearch.EXONYMS` (jaffa → yafo).
   The keyboard's Search key waits for the backup's answer and never picks a closest match
   (`MainViewModel.searchAction`): it used to pick the interim list's first row, the town.
+- **Empty search on the Pixel (F11, 2026-11-03, bug bash A4, probe runs 41715891804 / 41715940251):**
+  "TLV", "Rehovot railway station", "Tel Aviv Central Bus Station" with location off: found in the real UI
+  against the live services under every condition tried (`SearchUiProbeTest` on branch
+  `corpus-run/probe-f11`). A Transitous failure now keeps the bundled stations; any other failure is still
+  the search's. `SearchTrace`: the last empty search's stages (counts, error class, no location) go to
+  Settings → Crash log as one line, so the next one explains itself.
 - **Geocode, calendar locations (2026-10-04, n=3):** "הרצל 12, באר שבע" → **הרצל 126**
   first (same street, house number matched loosely); English "Herzl St 12, Be'er Sheva,
   Israel" and "Herzl 12, Be'er Sheva" → only the city (PLACE "Be'er Sheva"): English street
