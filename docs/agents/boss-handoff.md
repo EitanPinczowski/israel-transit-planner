@@ -39,7 +39,6 @@ decisions already recorded.
   - The APK +2.28% from F4 accepted.
   - E6: go.
   - Release: wait.
-- **In flight:** nothing.
 - **Waiting on the owner:**
   - E6's two-scan Pixel test (steps in PR #116's body). With the result, write the go/no-go:
     - **go:** a follow-up package finds the end-date bits by comparing the scans with Rav-Kav Online;
