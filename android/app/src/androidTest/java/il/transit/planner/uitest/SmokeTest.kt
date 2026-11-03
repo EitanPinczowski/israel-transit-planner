@@ -91,7 +91,10 @@ class SmokeTest {
 
             // The other language (Hebrew <-> English): the Activity is recreated, the pin stays.
             var lang: String? = null
-            d.inst.runOnMainSync { lang = if (d.activity.resources.configuration.locales[0].language in setOf("iw", "he")) "en" else "iw" }
+            d.inst.runOnMainSync {
+                val now = d.activity.resources.configuration
+                lang = if (now.locales[0].language in setOf("iw", "he")) "en" else "iw"
+            }
             d.inst.runOnMainSync { AppLocale.apply(d.activity, lang) }
             d.afterConfigChange()
             d.awaitPinDrawn("after the language flipped to $lang")

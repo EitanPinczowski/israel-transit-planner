@@ -430,11 +430,17 @@ class MainActivity : ComponentActivity() {
         return s.getSource(LocationComponentConstants.LOCATION_SOURCE) != null
     }
 
+    /** The long-press pin while its card is open (F9 test hooks). */
+    private fun openPin(): LatLon? {
+        val places = vm.state.value.places
+        return places.pin?.at
+    }
+
     /** F9: what the map holds and draws for the open pin, for a UI test's failure message. */
     @VisibleForTesting
     fun pinReport(): String {
         val c = controller.value ?: return "no controller"
-        val at = vm.state.value.places.pin?.at ?: return "no pin"
+        val at = openPin() ?: return "no pin"
         return c.pinReport(at)
     }
 
@@ -442,7 +448,7 @@ class MainActivity : ComponentActivity() {
     @VisibleForTesting
     fun pinInWindow(): android.graphics.PointF? {
         val c = controller.value ?: return null
-        val at = vm.state.value.places.pin?.at ?: return null
+        val at = openPin() ?: return null
         val p = c.onScreen(at) ?: return null
         val origin = IntArray(2)
         mapView.getLocationInWindow(origin)
@@ -460,7 +466,7 @@ class MainActivity : ComponentActivity() {
     @VisibleForTesting
     fun pinOnMap(): Boolean? {
         val c = controller.value ?: return null
-        val at = vm.state.value.places.pin?.at ?: return null
+        val at = openPin() ?: return null
         return c.pinDrawnAt(at)
     }
 

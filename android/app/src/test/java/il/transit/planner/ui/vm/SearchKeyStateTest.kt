@@ -79,7 +79,8 @@ class SearchKeyStateTest : VmTest() {
         vm.startEditing(Field.TO)
         vm.onQuery("Herzl 12 Be'er Sheva")
         advance(1_000)
-        assertTrue(vm.state.value.places.notFound)
+        val places = vm.state.value.places
+        assertTrue(places.notFound)
         vm.searchAction()
         assertEquals(Field.TO, vm.state.value.editing)
         assertNull(vm.state.value.to as? PlaceRef.Point)
@@ -90,7 +91,8 @@ class SearchKeyStateTest : VmTest() {
         vm.startEditing(Field.TO)
         vm.onQuery("Herzl 12 Be'er Sheva")
         advance(1_000)
-        assertEquals("Herzl Street 12", vm.state.value.suggestions.first().name)
+        val shown = vm.state.value.suggestions
+        assertEquals("Herzl Street 12", shown.first().name)
         vm.searchAction()
         assertEquals("Herzl Street 12", (vm.state.value.to as PlaceRef.Point).name)
     }
