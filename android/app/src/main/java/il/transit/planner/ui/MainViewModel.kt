@@ -61,6 +61,7 @@ import il.transit.core.search.LocalHit
 import il.transit.core.search.MapCentre
 import il.transit.core.search.PlaceSearch
 import il.transit.core.search.SearchAnswer
+import il.transit.core.search.SearchTrace
 import il.transit.core.search.TypingSearch
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
@@ -288,6 +289,8 @@ class MainViewModel(
     private val saved: SavedStateHandle? = null,
     /** What the car tabs and errands showed, read back only after process death (Phase 11 R1). */
     private val tabCache: PlanCacheStore<TabResult>? = null,
+    /** The last search that showed nothing, as one line for Settings → Crash log (F11, [SearchTrace]); no-op by default. */
+    private val noteEmptySearch: (String) -> Unit = {},
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -366,6 +369,14 @@ class MainViewModel(
     }
 
     fun cancelEditing() {
+        // Closed while its search was still running: say so in the diagnostic (F11), the search itself is dropped.
+        inFlight?.let { q ->
+            noteEmptySearch(
+                SearchTrace(q, language, locationProvider() != null)
+                    .apply { local = localHits(q).size; outcome = "closed before the answer"; shown = _state.value.suggestions.size }
+                    .line(clock.instant(), java.time.ZoneId.systemDefault()),
+            )
+        }
         typing.cancel()
         inFlight = null
         pickWhenAnswered = null
@@ -434,11 +445,24 @@ class MainViewModel(
                 ),
             )
         }
+        if (!answer.pending) traceIfEmpty(q, answer, failed)
         if (!answer.pending && pickWhenAnswered == q) {
             pickWhenAnswered = null
             val s = _state.value
             if (s.editing != null && s.query.trim() == q) firstAnswer(s)?.let(::pick)
         }
+    }
+
+    /** No exact answer (or none at all): the stages' line goes to Settings → Crash log, replacing the last one (F11). */
+    private fun traceIfEmpty(q: String, answer: SearchAnswer, failed: Boolean) {
+        if (!failed && !answer.notFound) return
+        val s = _state.value
+        if (s.editing == null || s.query.trim() != q) return
+        val trace = typing.lastTrace?.takeIf { it.query == q } ?: return
+        trace.local = localHits(q).size
+        trace.shown = s.suggestions.size
+        if (!failed && trace.outcome == "answer") trace.outcome = "not found"
+        noteEmptySearch(trace.line(clock.instant(), java.time.ZoneId.systemDefault()))
     }
 
     fun pick(s: Suggestion) {
@@ -1589,7 +1613,7 @@ class MainViewModel(
                 val saved = createSavedStateHandle()
                 // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
                 Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved, app.tabCache)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved, app.tabCache, app.crashLog::noteSearch)
             }
         }
     }

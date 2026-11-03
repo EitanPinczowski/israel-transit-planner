@@ -21,6 +21,21 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
     /** How many crashes are kept; Settings shows Share/Clear only when there are some. */
     val count: StateFlow<Int> = _count.asStateFlow()
 
+    private val searchFile = File(file.parentFile, "last_empty_search.txt")
+    private val _lastSearch = MutableStateFlow<String?>(null)
+
+    /**
+     * The last search that showed nothing, as one line of its stages (F11, [il.transit.core.search.SearchTrace]): the query
+     * and counts, no location. Shared with the crashes; Clear removes it too.
+     */
+    val lastSearch: StateFlow<String?> = _lastSearch.asStateFlow()
+
+    /** Replaces the last empty search's line; a write failure is never the search's problem. */
+    fun noteSearch(line: String) {
+        _lastSearch.value = line
+        Thread { runCatching { synchronized(this) { searchFile.writeText(line) } } }.start()
+    }
+
     /** Records the crash, then lets the previous handler (Android's "app stopped") run as usual. */
     fun install() {
         val previous = Thread.getDefaultUncaughtExceptionHandler()
@@ -39,14 +54,30 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
         tmp.renameTo(file)
     }
 
-    suspend fun refresh() = withContext(Dispatchers.IO) { _count.value = CrashLog.entries(readOrNull()).size }
+    suspend fun refresh() = withContext(Dispatchers.IO) {
+        _count.value = CrashLog.entries(readOrNull()).size
+        _lastSearch.value = runCatching { searchFile.takeIf { it.exists() }?.readText()?.trim()?.ifEmpty { null } }.getOrNull()
+    }
 
     /** The text for the share sheet, newest first; null when there is nothing. */
-    suspend fun report(): String? = withContext(Dispatchers.IO) { CrashLog.report(readOrNull(), appVersion) }
+    suspend fun report(): String? = withContext(Dispatchers.IO) {
+        val search = _lastSearch.value?.let { "Last search that found nothing: $it\n" }
+        val crashes = CrashLog.report(readOrNull(), appVersion)
+        when {
+            crashes == null && search == null -> null
+            crashes == null -> "Israel Transit Planner $appVersion\n$search"
+            search == null -> crashes
+            else -> "$crashes\n$search"
+        }
+    }
 
     suspend fun clear() = withContext(Dispatchers.IO) {
-        synchronized(this@CrashLogStore) { file.delete() }
+        synchronized(this@CrashLogStore) {
+            file.delete()
+            searchFile.delete()
+        }
         _count.value = 0
+        _lastSearch.value = null
     }
 
     private fun readOrNull(): String? = runCatching { file.takeIf { it.exists() }?.readText() }.getOrNull()
