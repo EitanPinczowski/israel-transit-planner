@@ -145,7 +145,13 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
     fun setPlaces(geoJson: String) = setSource(PLACES_SRC, geoJson)
 
     /** The long-press pin (`MapData.pin`): drawn while the pin panel is open. */
-    fun setPin(geoJson: String) = setSource(PIN_SRC, geoJson)
+    fun setPin(geoJson: String) {
+        pinSet = geoJson
+        setSource(PIN_SRC, geoJson)
+    }
+
+    /** The last GeoJSON [setPin] was given (UI tests' report). */
+    private var pinSet: String? = null
 
     /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
     fun setVehicle(geoJson: String) = setSource(VEHICLE_SRC, geoJson)
@@ -211,6 +217,8 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
      * leave a visible pin, F9). False until the style has loaded and the frame is drawn.
      */
     fun pinDrawnAt(at: LatLon): Boolean = MapGuard.run("pinDrawnAt") {
+        // Queries read the last frame drawn; ask for a new one, so the next poll sees the newest data.
+        map.triggerRepaint()
         style.isFullyLoaded && map.queryRenderedFeatures(map.projection.toScreenLocation(LatLng(at.lat, at.lon)), PIN_LAYER).isNotEmpty()
     } ?: false
 
@@ -224,7 +232,8 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         "loaded=${style.isFullyLoaded} view=${w.toInt()}x${h.toInt()} at=(${p.x.toInt()},${p.y.toInt()}) zoom=${map.cameraPosition.zoom} " +
             "layer=${layer != null} visibility=${layer?.visibility?.value} top=${style.layers.lastOrNull()?.id} " +
             "source=${style.getSourceAs<GeoJsonSource>(PIN_SRC)?.querySourceFeatures(null)?.size} " +
-            "renderedPin=${map.queryRenderedFeatures(all, PIN_LAYER).size} renderedAny=${map.queryRenderedFeatures(all).size}"
+            "renderedPin=${map.queryRenderedFeatures(all, PIN_LAYER).size} renderedAny=${map.queryRenderedFeatures(all).size} " +
+            "set=${pinSet?.take(160)}"
     } ?: "report failed"
 
     private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
