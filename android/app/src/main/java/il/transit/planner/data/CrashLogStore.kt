@@ -2,6 +2,7 @@ package il.transit.planner.data
 
 import android.os.Build
 import il.transit.core.diag.CrashLog
+import il.transit.core.search.SearchTrace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +11,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
 import java.time.ZoneId
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * The last [CrashLog.MAX_ENTRIES] crashes, as plain text in `filesDir`. Written by the
@@ -34,10 +37,10 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
     @Volatile private var keptClosed = false
 
     /** Bumped by [clear]: a write queued before it is dropped. */
-    private val generation = java.util.concurrent.atomic.AtomicInteger()
+    private val generation = AtomicInteger()
 
     /** One writer, in order: a later line never lands before an earlier one. */
-    private val writer = java.util.concurrent.Executors.newSingleThreadExecutor { r -> Thread(r, "search-trace").apply { isDaemon = true } }
+    private val writer = Executors.newSingleThreadExecutor { r -> Thread(r, "search-trace").apply { isDaemon = true } }
 
     /**
      * Replaces the last empty search's line, unless it is the same, or [closed] ("closed before the answer") would replace
@@ -79,7 +82,7 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
             // A line noted since the app started is newer than the file.
             if (_lastSearch.value == null && saved != null) {
                 _lastSearch.value = saved
-                keptClosed = " · ${il.transit.core.search.SearchTrace.CLOSED} · " in saved
+                keptClosed = " · ${SearchTrace.CLOSED} · " in saved
             }
         }
     }
