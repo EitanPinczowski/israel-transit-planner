@@ -59,7 +59,9 @@ class SearchCorpusTest {
         override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
             counts.geocode++
             // A row typed from a place (column 9, F10) replays the recording made with that bias, when there is one.
-            val biased = near?.let { "geo_" + hash(key(text, language) + "|" + it.comma()) }?.takeIf { resource("$dir/$it.json") != null }
+            val biased = near
+                ?.let { "geo_" + hash(key(text, language) + "|" + it.comma()) }
+                ?.takeIf { resource("$dir/$it.json") != null }
             val name = biased ?: ("geo_" + hash(key(text, language)))
             val body = resource("$dir/$name.json")
             if (body == null) {
@@ -110,7 +112,9 @@ class SearchCorpusTest {
                 .takeIf { it.isNotBlank() }
                 ?.split(',')
                 ?.let { (a, b) -> LatLon(a.trim().toDouble(), b.trim().toDouble()) }
-            Row(i + 1, c[0], c[1], c[2], c[3].split('|').filter { it.isNotBlank() && it != "-" }, c[4].split(',').map { it.toDouble() }.toDoubleArray(), c[5], c[6] == "BAD", c[7], near)
+            val names = c[3].split('|').filter { it.isNotBlank() && it != "-" }
+            val box = c[4].split(',').map { it.toDouble() }.toDoubleArray()
+            Row(i + 1, c[0], c[1], c[2], names, box, c[5], c[6] == "BAD", c[7], near)
         }
 
     private fun acceptable(r: Row, m: GeocodeMatch): Boolean {
