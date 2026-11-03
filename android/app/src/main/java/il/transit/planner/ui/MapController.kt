@@ -182,6 +182,36 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom), 600)
     }
 
+    /**
+     * F9 (bug bash): keeps the long-press pin in the part of the map the panels leave visible. On a small phone
+     * the pin card opens over the lower half of the map, and the search card resizes: a pin pressed there ended
+     * up under the card. Then the camera eases so the pin sits in the middle of the visible part; a pin already
+     * visible is not moved.
+     */
+    fun keepInView(at: LatLon, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
+        MapGuard.run("keepInView") { keepInViewNow(at, covered, marginPx, viewWidth, viewHeight) }
+    }
+
+    private fun keepInViewNow(at: LatLon, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
+        if (viewWidth <= 0 || viewHeight <= 0) return
+        val left = covered.left + marginPx
+        val right = viewWidth - covered.right - marginPx
+        val top = covered.top + marginPx
+        val bottom = viewHeight - covered.bottom - marginPx
+        if (right <= left || bottom <= top) return // no visible map to speak of
+        val p = map.projection.toScreenLocation(LatLng(at.lat, at.lon))
+        if (p.x in left.toFloat()..right.toFloat() && p.y in top.toFloat()..bottom.toFloat()) return
+        if (map.locationComponent.isLocationComponentActivated) map.locationComponent.cameraMode = CameraMode.NONE
+        // The camera target is the view's centre: move it by how far the pin is from the visible part's centre.
+        val dx = p.x - (left + right) / 2f
+        val dy = p.y - (top + bottom) / 2f
+        val target = map.projection.fromScreenLocation(android.graphics.PointF(viewWidth / 2f + dx, viewHeight / 2f + dy))
+        map.easeCamera(CameraUpdateFactory.newLatLng(target), 300)
+    }
+
+    /** Where [at] is on the map view now (UI tests). */
+    fun onScreen(at: LatLon): android.graphics.PointF? = MapGuard.run("onScreen") { map.projection.toScreenLocation(LatLng(at.lat, at.lon)) }
+
     /** Scales two paddings down so at least a fifth of [size] stays for the route. */
     private fun squeeze(a: Int, b: Int, size: Int): Pair<Int, Int> {
         val max = (size * 0.8).toInt()

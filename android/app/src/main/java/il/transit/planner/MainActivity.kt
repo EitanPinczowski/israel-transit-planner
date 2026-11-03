@@ -228,6 +228,11 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
                 // F9: the long-press pin, while its panel is open (it was never drawn before).
                 LaunchedEffect(ctl, state.places.pin?.at) { ctl?.setPin(MapData.pin(state.places.pin?.at)) }
+                // ...and never under the pin card or the search card, which resize as it opens (small phones).
+                LaunchedEffect(ctl, state.places.pin?.at, pad) {
+                    val at = state.places.pin?.at ?: return@LaunchedEffect
+                    ctl?.keepInView(at, pad, (24 * resources.displayMetrics.density).toInt(), mapView.width, mapView.height)
+                }
                 LaunchedEffect(state.savedPlaces) { Shortcuts.update(this@MainActivity, state.savedPlaces) }
                 // An app-icon shortcut opened us: once the saved places are loaded, act on it.
                 LaunchedEffect(state.savedPlaces, pendingShortcut) {
@@ -431,6 +436,17 @@ class MainActivity : ComponentActivity() {
         val c = controller.value ?: return "no controller"
         val at = vm.state.value.places.pin?.at ?: return "no pin"
         return c.pinReport(at)
+    }
+
+    /** F9: where the open pin is now, in window pixels; null with no pin or no style. */
+    @VisibleForTesting
+    fun pinInWindow(): android.graphics.PointF? {
+        val c = controller.value ?: return null
+        val at = vm.state.value.places.pin?.at ?: return null
+        val p = c.onScreen(at) ?: return null
+        val origin = IntArray(2)
+        mapView.getLocationInWindow(origin)
+        return android.graphics.PointF(p.x + origin[0], p.y + origin[1])
     }
 
     /** F9: the map style has loaded and its layers exist (UI tests wait for it). */

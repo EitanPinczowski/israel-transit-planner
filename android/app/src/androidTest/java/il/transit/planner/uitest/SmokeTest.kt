@@ -79,13 +79,10 @@ class SmokeTest {
             val (x, y) = d.freeMapPoint()
             d.longPressMap(x, y)
             d.awaitPinDrawn("after a long-press at ($x, $y)")
-            // The pin panel opened: the pressed point must not be under it or under the search card.
-            val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
-            val top = compose.onNode(hasTestTag(UiTags.TOP)).fetchSemanticsNode().boundsInWindow
-            val px = x.toFloat()
-            val py = y.toFloat()
-            val covered = (py >= bottom.top && px in bottom.left..bottom.right) || (py <= top.bottom && px in top.left..top.right)
-            assertFalse("the pin at ($x, $y) is under a panel (top $top, bottom $bottom)", covered)
+            // The pin card opened (and the search card resized): the pin must not be under either; the map
+            // moves it into view when it would be (a small phone's pin card covers the lower half, F9).
+            d.awaitPinUncovered()
+            d.awaitPinDrawn("after the pin was kept in view")
 
             // The other theme: a new map style, so a new controller; the pin is pushed again.
             d.shell("cmd uimode night ${if (nightBefore) "no" else "yes"}")
@@ -126,6 +123,25 @@ class SmokeTest {
         refreshActivity()
         compose.waitForIdle()
         awaitController()
+    }
+
+    /** Until the open pin's point is in the map between the panels (the camera may ease it there). */
+    private fun AppDriver.awaitPinUncovered() {
+        val until = SystemClock.uptimeMillis() + 5_000
+        var last = ""
+        while (SystemClock.uptimeMillis() < until) {
+            compose.waitForIdle()
+            val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
+            val top = compose.onNode(hasTestTag(UiTags.TOP)).fetchSemanticsNode().boundsInWindow
+            var p: android.graphics.PointF? = null
+            inst.runOnMainSync { p = activity.pinInWindow() }
+            val at = checkNotNull(p) { "no pin on the map" }
+            val covered = (at.y >= bottom.top && at.x in bottom.left..bottom.right) || (at.y <= top.bottom && at.x in top.left..top.right)
+            if (!covered) return
+            last = "the pin at (${at.x.toInt()}, ${at.y.toInt()}) is under a panel (top $top, bottom $bottom)"
+            SystemClock.sleep(200)
+        }
+        throw AssertionError(last)
     }
 
     /** Until the open pin is rendered at its point; fails with [what] if it never is. */

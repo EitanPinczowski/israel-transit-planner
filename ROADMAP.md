@@ -217,7 +217,7 @@ merges. Tick only your own package's lines.
 - [x] Corpus: 11 → 3 `BAD` rows (English street names: the backups' answers are not replayable here)
 
 ### F9 — Bug-bash fixes (`claude/p11-bugbash-f9`, 0 requests; owner's v0.10.0 bug bash on the Pixel)
-- [x] A long-press on the map draws a pin where the finger pressed (light and dark, Hebrew and English); a `SmokeTest` journey asserts the pin is rendered and not under a panel
+- [x] A long-press on the map draws a pin where the finger pressed (light and dark, Hebrew and English), and the map moves it out from under the pin card on small phones; a `SmokeTest` journey asserts the pin is rendered and not under a panel
 - [x] English street addresses ("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv"): Google's phone Geocoder answers all three (emulator probe); "Jaffa" is now matched to Google's "Yafo"/"יפו", and the keyboard's Search key waits for the backup's answer instead of picking the interim list's town
 
 ### Close-out (boss)
