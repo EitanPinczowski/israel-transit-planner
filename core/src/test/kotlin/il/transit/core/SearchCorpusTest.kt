@@ -1,5 +1,6 @@
 package il.transit.core
 
+import il.transit.core.api.GeocodeArea
 import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisClient
 import il.transit.core.api.MotisJson
@@ -81,7 +82,7 @@ class SearchCorpusTest {
         private val stubs = table("phone_geocoder.tsv").associate {
             // Columns 5-7 (F9): street, house, locality, as AndroidGeocoder.toMatch fills them.
             val locality = it.getOrNull(6)?.takeIf(String::isNotBlank)
-            val areas = listOfNotNull(locality?.let { town -> il.transit.core.api.GeocodeArea(town, 8.0, default = true) })
+            val areas = listOfNotNull(locality?.let { town -> GeocodeArea(town, 8.0, default = true) })
             it[0] to GeocodeMatch("ADDRESS", it[1], "phone:" + it[1], it[2].toDouble(), it[3].toDouble(), street = it.getOrNull(4), houseNumber = it.getOrNull(5), areas = areas)
         }
         override suspend fun search(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
