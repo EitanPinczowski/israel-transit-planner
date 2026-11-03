@@ -58,11 +58,14 @@ data class SearchAnswer(
      */
     val exact: List<GeocodeMatch> get() = ordered
         .filter { level(it).isAnswer }
-        .let { list ->
-            // Every answer to a generic text is "the" answer somewhere: the nearest one is the user's.
-            if (around != null) list.sortedBy(::distance)
-            else list.sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
-        }
+        .sortedWith(if (around != null) byDistance else byName)
+
+    /** Every answer to a generic text is "the" answer somewhere: the nearest one is the user's (F10). */
+    private val byDistance: Comparator<GeocodeMatch> get() = compareBy(::distance)
+
+    private val byName: Comparator<GeocodeMatch>
+        get() = compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }
+            .thenByDescending(::transitFirst)
 
     /** Metres from [around] (0 without it: the order stays). */
     private fun distance(m: GeocodeMatch): Double = around?.let { Geo.distanceM(it, LatLon(m.lat, m.lon)) } ?: 0.0
@@ -76,7 +79,11 @@ data class SearchAnswer(
      */
     val closest: List<GeocodeMatch> get() = ordered
         .filterNot { level(it).isAnswer }
-        .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst).thenBy(::distance))
+        .sortedWith(
+            compareBy<GeocodeMatch> { level(it).ordinal }
+                .thenByDescending(::transitFirst)
+                .thenBy(::distance),
+        )
 
     val all: List<GeocodeMatch> get() = exact + closest
 
@@ -323,11 +330,11 @@ class PlaceSearch(
             if (names.isEmpty()) {
                 if (kinds.isEmpty()) return if (!isTypedTown) MatchLevel.NONE else if (house == null) MatchLevel.PLACE else MatchLevel.TOWN
                 val needed = kinds.filter { it !in WEAK && it.removePrefix("ה") !in WEAK }
-                val named = (needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true) ||
-                    // A stop named by its street and the place ("שדרות דוד חכם/תחנה מרכזית", Be'er Sheva's central station, F10).
-                    (m.type == "STOP" && '/' in m.name && m.name.split('/').drop(1).any { part ->
-                        tokens(part).let { h -> needed.all { k -> h.any { same(k, it) } } } && lead(part, towns)?.let(::isGeneric) == true
-                    })
+                fun namedBy(words: List<String>, name: String) =
+                    needed.all { k -> words.any { same(k, it) } } && lead(name, towns)?.let(::isGeneric) == true
+                // Or a stop named by its street and the place ("שדרות דוד חכם/תחנה מרכזית", Be'er Sheva's central station, F10).
+                val stopParts = if (m.type == "STOP") m.name.split('/').drop(1) else emptyList()
+                val named = namedBy(hay, m.name) || stopParts.any { namedBy(tokens(it), it) }
                 return if (named && houseOk) MatchLevel.PLACE else town
             }
             if (!names.all { w -> hay.any { same(w, it) } }) return town

@@ -106,7 +106,10 @@ class SearchCorpusTest {
         resource("$dir/search_corpus.tsv")!!.lines().mapIndexedNotNull { i, line ->
             if (line.isBlank() || line.startsWith("#")) return@mapIndexedNotNull null
             val c = line.split('\t') + List(9) { "" }
-            val near = c[8].takeIf { it.isNotBlank() }?.split(',')?.let { (a, b) -> LatLon(a.trim().toDouble(), b.trim().toDouble()) }
+            val near = c[8]
+                .takeIf { it.isNotBlank() }
+                ?.split(',')
+                ?.let { (a, b) -> LatLon(a.trim().toDouble(), b.trim().toDouble()) }
             Row(i + 1, c[0], c[1], c[2], c[3].split('|').filter { it.isNotBlank() && it != "-" }, c[4].split(',').map { it.toDouble() }.toDoubleArray(), c[5], c[6] == "BAD", c[7], near)
         }
 
