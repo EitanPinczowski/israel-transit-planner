@@ -5,6 +5,7 @@ import il.transit.core.api.GeocodeMatch
 import il.transit.core.api.MotisJson
 import il.transit.core.api.TransitApi
 import il.transit.core.geo.LatLon
+import il.transit.core.present.SharedPlace
 import il.transit.core.search.Aliases
 import il.transit.core.search.BackupGeocoder
 import il.transit.core.search.MatchLevel
@@ -151,7 +152,7 @@ class SearchF8Test {
         assertEquals(null, Aliases.shortForm("TLV1", english = true))
         assertEquals("Tel Aviv", Aliases.shortForm("Tlv", english = true))
         // IntentFuzzTest#send_huge_text's text, as SharedPlace reads it: refused, as before F8.
-        assertEquals(il.transit.core.present.SharedPlace.Unreadable, il.transit.core.present.SharedPlace.parse("שלום ".repeat(20_000)))
+        assertEquals(SharedPlace.Unreadable, SharedPlace.parse("שלום ".repeat(20_000)))
     }
 
     @Test fun `TLV and Chaifa search what Tel Aviv and Haifa search - one request`() = runBlocking {
