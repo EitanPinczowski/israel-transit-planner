@@ -137,7 +137,9 @@ class SmokeTest {
             if (drawn != true) SystemClock.sleep(200)
         }
         assertNotNull("$what: no pin was set (the long-press did not reach the app)", drawn)
-        assertTrue("$what: the pin is set but not drawn on the map", drawn == true)
+        var report = ""
+        if (drawn != true) inst.runOnMainSync { report = activity.pinReport() }
+        assertTrue("$what: the pin is set but not drawn on the map: $report", drawn == true)
     }
 
     /**

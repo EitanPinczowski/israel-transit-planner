@@ -429,6 +429,14 @@ class MainActivity : ComponentActivity() {
      * F9: whether the open long-press pin is drawn on the map at its point; null with no pin or no
      * style yet. UI tests check a long-press leaves a visible pin.
      */
+    /** F9: what the map holds and draws for the open pin, for a UI test's failure message. */
+    @VisibleForTesting
+    fun pinReport(): String {
+        val c = controller.value ?: return "no controller"
+        val at = vm.state.value.places.pin?.at ?: return "no pin"
+        return c.pinReport(at)
+    }
+
     @VisibleForTesting
     fun mapReadyForTest(): Boolean = controller.value != null
 

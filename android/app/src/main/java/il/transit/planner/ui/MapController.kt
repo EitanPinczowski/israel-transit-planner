@@ -214,6 +214,19 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         style.isFullyLoaded && map.queryRenderedFeatures(map.projection.toScreenLocation(LatLng(at.lat, at.lon)), PIN_LAYER).isNotEmpty()
     } ?: false
 
+    /** Why [pinDrawnAt] says no (UI tests' failure message): what the map has and draws. */
+    fun pinReport(at: LatLon): String = MapGuard.run("pinReport") {
+        val p = map.projection.toScreenLocation(LatLng(at.lat, at.lon))
+        val w = map.width
+        val h = map.height
+        val all = android.graphics.RectF(0f, 0f, w, h)
+        val layer = style.getLayer(PIN_LAYER)
+        "loaded=${style.isFullyLoaded} view=${w.toInt()}x${h.toInt()} at=(${p.x.toInt()},${p.y.toInt()}) zoom=${map.cameraPosition.zoom} " +
+            "layer=${layer != null} visibility=${layer?.visibility?.value} top=${style.layers.lastOrNull()?.id} " +
+            "source=${style.getSourceAs<GeoJsonSource>(PIN_SRC)?.querySourceFeatures(null)?.size} " +
+            "renderedPin=${map.queryRenderedFeatures(all, PIN_LAYER).size} renderedAny=${map.queryRenderedFeatures(all).size}"
+    } ?: "report failed"
+
     private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
 
     companion object {
