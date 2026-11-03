@@ -539,8 +539,8 @@ class TypingSearch(
     private var job: Job? = null
     private val seq = AtomicInteger()
 
-    /** [rankFrom]: where the user moved the map, for a generic text's order only ([PlaceSearch.search]). */
-    fun onText(text: String, language: String, near: () -> LatLon?, rankFrom: () -> LatLon? = { null }) {
+    /** [rankFrom]: where the user moved the map, for a generic text's order only ([PlaceSearch.search]); [near] stays last for callers' lambdas. */
+    fun onText(text: String, language: String, rankFrom: () -> LatLon? = { null }, near: () -> LatLon?) {
         job?.cancel()
         val mine = seq.incrementAndGet()
         val q = text.trim()

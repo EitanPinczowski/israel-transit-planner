@@ -402,7 +402,7 @@ class MainViewModel(
         inFlight = text.trim().takeIf { it.length >= TypingSearch.MIN_CHARS }
         _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
         // The fix is where the search is read; where the user moved the map only orders a generic text's answers (F10).
-        typing.onText(text, language, locationProvider) { mapCentre.centre }
+        typing.onText(text, language, rankFrom = { mapCentre.centre }, near = locationProvider)
     }
 
     /** Where the user moved the map (not where it opened or the app moved it): "תחנה מרכזית" without a fix (F10). */
