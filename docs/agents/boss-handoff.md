@@ -4,23 +4,29 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-11-03, 09:25 Israel time)
+## State (2026-11-03, 17:20 Israel time)
 - **Released: v0.10.0 (2026-11-03)**, https://github.com/EitanPinczowski/israel-transit-planner/releases/tag/v0.10.0.
-  The owner said "release" before running the bug bash. The 0.10.0 saved-data sample is in PR #125, with a new
-  `userdata-sample.yml` CI job that prints a sample, because cloud Gradle can't build a tag. Merge #125 when green.
-- **Boss:** `session_01DH799Fr9pdL4XLVsi4uqeJ`, context 530k: **hand over now.** The owner starts the next boss from
-  claude.ai/code.
-- **In flight: F9, bug-bash fixes** (`session_01DH799F2uSyfGbCDRPSyGFJ`, Opus, branch `claude/p11-bugbash-f9`).
-  When it's green: a Sonnet logic pass, one fix round, merge. Then a v0.10.1 only on the owner's word.
+  Its saved-data sample is merged (#125).
+- **Boss:** `session_01DH799CRwxjHwK91FsfN9nS` (depth 1, so `send_later` works; started 2026-11-03).
+- **Merged since v0.10.0:** F9 #126 (map pin layer + keepInView; Jaffa→Yafo exonym; the Search key waits for the
+  full answer, ~$19) and F10 #127 (a generic "תחנה מרכזית"/"central station" ranks nearest first from the GPS fix,
+  else the map centre after a finger move; far recents go below; `near` stays the GPS fix only, ~$10). Sonnet
+  reviews: #126 clean; #127 had one fix round (the opening Be'er Sheva camera counted as the user's location).
+  **No v0.10.1 yet: it needs the owner's word.** Nothing is in flight.
 - **Owner's bug bash on v0.10.0 (Pixel), part A, 2026-11-03:**
-  - A1, map long-press: it fills the location but **no pin is visible** → F9;
+  - A1, map long-press shows no pin: fixed by #126;
   - A2, rotate during search: OK;
-  - A3, English street addresses: **not found** → F9;
-  - A4/A5 (searches with location off, central station): the owner didn't understand what to check. Re-explain
-    in plain steps;
-  - A6, font size: the owner couldn't find where to change it (Pixel: Settings → Display & touch → Display size
-    and text → Font size);
-  - The rest of the list (B–G, incl. E6) comes later.
+  - A3, English street addresses: fixed by #126 (Google's Geocoder finds them; our matcher and Search key were wrong);
+  - A4, location off, English "TLV" / "Rehovot railway station" / "Tel Aviv Central Bus Station": **nothing found**
+    on the Pixel. **Open.** F10's SearchProbeTest (run 41632301245, the real chain on an emulator, near=null) finds all
+    three, and release has no R8. Waiting on the owner's screenshot: an empty list, "not found", or the offline note,
+    and whether the Search key was pressed. The owner's screenshot of a far northern "תחנה מרכזית" pick near
+    Be'er Sheva was the F10 bug (fixed);
+  - A5, "תחנה מרכזית חדשה": OK;
+  - A6, font size: the owner looked in the app. It is the phone's Settings → Display & touch → Display size and
+    text → Font size, re-explained; the result is pending;
+  - The rest of the list (B–G, incl. E6) comes later, best on v0.10.1.
+- **Owner to-do added:** delete branch `corpus-run/probe-f10` (the proxy refuses agents a branch delete).
 - **Phase 11 is all merged**, and main is green after each merge:
   - E4 #105, T4 #106, T6 #110 (6 security fixes), T8 #109 (release smoke, startup gate, upgrade test, LeakCanary,
     MoreJourneys, bug-bash list), F2 #104, F3 #112 (4 flakes), F5 #111 (own actions via a non-exported alias),
