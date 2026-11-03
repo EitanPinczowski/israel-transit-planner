@@ -68,17 +68,33 @@ class SearchF8Test {
     }
 
     @Test fun `Jordan and Lebanon are out, the border towns in (review)`() {
-        for ((name, p) in listOf(
-            "Amman" to LatLon(31.95, 35.93), "Salt" to LatLon(32.04, 35.73), "Madaba" to LatLon(31.72, 35.79),
-            "Aqaba" to LatLon(29.53, 35.01), "Tyre" to LatLon(33.27, 35.2), "Naqoura" to LatLon(33.12, 35.14),
+        val abroad = listOf(
+            "Amman" to LatLon(31.95, 35.93),
+            "Salt" to LatLon(32.04, 35.73),
+            "Madaba" to LatLon(31.72, 35.79),
+            "Aqaba" to LatLon(29.53, 35.01),
+            "Tyre" to LatLon(33.27, 35.2),
+            "Naqoura" to LatLon(33.118, 35.14),
             "South Shuna" to LatLon(31.9, 35.62),
-        )) assertFalse(name, PlaceSearch.inIsrael(p))
-        for ((name, p) in listOf(
-            "Metula" to LatLon(33.28, 35.58), "Kiryat Shmona" to LatLon(33.21, 35.57), "Rosh HaNikra" to LatLon(33.09, 35.1),
-            "Eilat" to LatLon(29.55, 34.95), "Katzrin" to LatLon(32.99, 35.69), "Majdal Shams" to LatLon(33.27, 35.77),
-            "Hamat Gader" to LatLon(32.68, 35.66), "Ein Gedi" to LatLon(31.46, 35.39), "Kalia" to LatLon(31.75, 35.47),
-            "Hatzeva" to LatLon(30.78, 35.24), "Yotvata" to LatLon(29.9, 35.06), "Beit She'an" to LatLon(32.5, 35.5),
-        )) assertTrue(name, PlaceSearch.inIsrael(p))
+        )
+        for ((name, p) in abroad) assertFalse(name, PlaceSearch.inIsrael(p))
+        val here = listOf(
+            "Metula" to LatLon(33.28, 35.58),
+            "Kiryat Shmona" to LatLon(33.21, 35.57),
+            "Rosh HaNikra" to LatLon(33.09, 35.1),
+            "Malkia" to LatLon(33.1, 35.51),
+            "Zarit" to LatLon(33.097, 35.287),
+            "Eilat" to LatLon(29.55, 34.95),
+            "Katzrin" to LatLon(32.99, 35.69),
+            "Majdal Shams" to LatLon(33.27, 35.77),
+            "Hamat Gader" to LatLon(32.68, 35.66),
+            "Ein Gedi" to LatLon(31.46, 35.39),
+            "Kalia" to LatLon(31.75, 35.47),
+            "Hatzeva" to LatLon(30.78, 35.24),
+            "Yotvata" to LatLon(29.9, 35.06),
+            "Beit She'an" to LatLon(32.5, 35.5),
+        )
+        for ((name, p) in here) assertTrue(name, PlaceSearch.inIsrael(p))
     }
 
     @Test fun `only answers abroad is a miss - the backup is asked, once`() = runBlocking {

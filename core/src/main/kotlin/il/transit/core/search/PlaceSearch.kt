@@ -401,7 +401,7 @@ class PlaceSearch(
 
         /** Lebanon: the border runs along ~33.1 N from Rosh HaNikra, with the Metula finger up to 33.3 N; the Golan above it. */
         private fun northLimit(lon: Double): Double = when {
-            lon < 35.5 -> 33.12
+            lon < 35.5 -> 33.11
             lon < 35.62 -> 33.3
             else -> 33.4 + ISRAEL_MARGIN
         }
