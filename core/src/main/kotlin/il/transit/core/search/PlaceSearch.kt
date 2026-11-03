@@ -37,6 +37,12 @@ data class SearchAnswer(
     val stopCode: String? = null,
     /** Train stations the text asked for by name, from the bundled list ([Stations], F8): answers, first in [primary]. */
     val stations: List<GeocodeMatch> = emptyList(),
+    /**
+     * Only kind words were typed, no name and no town ("תחנה מרכזית", "central station"; [PlaceSearch.isGenericQuery]):
+     * where the user is (the fix, else where they moved the map to), and the answers go nearest first (F10, owner's bug bash: a far
+     * "תחנה מרכזית" was picked near Be'er Sheva). Null otherwise.
+     */
+    val around: LatLon? = null,
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
@@ -52,7 +58,22 @@ data class SearchAnswer(
      */
     val exact: List<GeocodeMatch> get() = ordered
         .filter { level(it).isAnswer }
-        .sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
+        .sortedWith(if (around != null) byDistance else byName)
+
+    /**
+     * Every answer to a generic text is "the" answer somewhere: the nearest one is the user's (F10). The name typed exactly
+     * is only a tie-break: Ashdod's, Rosh Pina's and Kiryat Shmona's stops are all named "תחנה מרכזית".
+     */
+    private val byDistance: Comparator<GeocodeMatch>
+        get() = compareBy<GeocodeMatch>(::distance)
+            .thenByDescending { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }
+
+    private val byName: Comparator<GeocodeMatch>
+        get() = compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }
+            .thenByDescending(::transitFirst)
+
+    /** Metres from [around] (0 without it: the order stays). */
+    private fun distance(m: GeocodeMatch): Double = around?.let { Geo.distanceM(it, LatLon(m.lat, m.lon)) } ?: 0.0
 
     /** A station asked for ("תחנה מרכזית…", "… train station"): stops and stations before a shelter or shop of that name (F8). */
     private fun transitFirst(m: GeocodeMatch): Boolean = PlaceSearch.isStationQuery(query) && PlaceSearch.isTransit(m)
@@ -63,7 +84,11 @@ data class SearchAnswer(
      */
     val closest: List<GeocodeMatch> get() = ordered
         .filterNot { level(it).isAnswer }
-        .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst))
+        .sortedWith(
+            compareBy<GeocodeMatch> { level(it).ordinal }
+                .thenByDescending(::transitFirst)
+                .thenBy(::distance),
+        )
 
     val all: List<GeocodeMatch> get() = exact + closest
 
@@ -100,6 +125,11 @@ class PlaceSearch(
         near: LatLon?,
         max: Int = 8,
         interim: ((SearchAnswer) -> Unit)? = null,
+        /**
+         * Where the user moved the map, when there is no [near] fix (F10): used only to put a generic text's answers
+         * nearest first ([SearchAnswer.around]), never as the request's bias, a stop number's or a neighbourhood's place.
+         */
+        rankFrom: LatLon? = null,
     ): SearchAnswer {
         // A stop number ("47899", "תחנה 47899"): looked up on the phone, 0 requests (Transitous doesn't index codes).
         StopCode.of(text)?.let { code ->
@@ -131,8 +161,10 @@ class PlaceSearch(
             .filter { m -> stations.none { it.id == m.id || sameAnswer(it, m) } }
             .sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) })
         val primary = stations + found
-        if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations)
-        interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true))
+        // Kind words only ("תחנה מרכזית"): nearest first, from where the user is; never from Israel's centre (F10).
+        val around = (near ?: rankFrom)?.takeIf { town == null && area.isEmpty() && stations.isEmpty() && isGenericQuery(q) }
+        if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations, around = around)
+        interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true, around = around))
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
             withTimeoutOrNull(BACKUP_DEADLINE_MS) { backup.search(q, language, bias?.let(::roundBias), BACKUP_MAX) }.orEmpty()
@@ -146,7 +178,7 @@ class PlaceSearch(
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
-        return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q)
+        return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q, around = around)
     }
 
     /**
@@ -308,7 +340,11 @@ class PlaceSearch(
             if (names.isEmpty()) {
                 if (kinds.isEmpty()) return if (!isTypedTown) MatchLevel.NONE else if (house == null) MatchLevel.PLACE else MatchLevel.TOWN
                 val needed = kinds.filter { it !in WEAK && it.removePrefix("ה") !in WEAK }
-                val named = needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true
+                fun namedBy(words: List<String>, name: String) =
+                    needed.all { k -> words.any { same(k, it) } } && lead(name, towns)?.let(::isGeneric) == true
+                // Or a stop named by its street and the place ("שדרות דוד חכם/תחנה מרכזית", Be'er Sheva's central station, F10).
+                val stopParts = if (m.type == "STOP") m.name.split('/').drop(1) else emptyList()
+                val named = namedBy(hay, m.name) || stopParts.any { namedBy(tokens(it), it) }
                 return if (named && houseOk) MatchLevel.PLACE else town
             }
             if (!names.all { w -> hay.any { same(w, it) } }) return town
@@ -425,6 +461,16 @@ class PlaceSearch(
         /** Words that ask for a station (bus or train), not which one. */
         private val STATION_WORDS = setOf("תחנה", "תחנת", "התחנה", "מרכזית", "המרכזית", "רכבת", "הרכבת", "station", "train", "railway", "bus", "terminal")
 
+        /**
+         * Only words that say what kind of place, no name, no town, no neighbourhood ("תחנה מרכזית", "ת. מרכזית"; "central
+         * station" arrives as the Hebrew, [Aliases]): which one is the nearest (F10).
+         */
+        fun isGenericQuery(query: String): Boolean {
+            val ws = tokens(query).filter { it.length >= 2 && !isNumber(it) && it !in FILLER }
+            val named = Towns.typedIn(query) + Neighbourhoods.typedIn(query)
+            return ws.isNotEmpty() && ws.all(::isGeneric) && named.isEmpty()
+        }
+
         /** The text asks for a station: "תחנה מרכזית…", "ת. רכבת…", "… train station". */
         fun isStationQuery(query: String): Boolean = tokens(query).any { it in STATION_WORDS }
 
@@ -493,7 +539,8 @@ class TypingSearch(
     private var job: Job? = null
     private val seq = AtomicInteger()
 
-    fun onText(text: String, language: String, near: () -> LatLon?) {
+    /** [rankFrom]: where the user moved the map, for a generic text's order only ([PlaceSearch.search]); [near] stays last for callers' lambdas. */
+    fun onText(text: String, language: String, rankFrom: () -> LatLon? = { null }, near: () -> LatLon?) {
         job?.cancel()
         val mine = seq.incrementAndGet()
         val q = text.trim()
@@ -505,7 +552,7 @@ class TypingSearch(
             delay(debounceMs)
             val (result, failed) = try {
                 // Transitous's answers show at once when the backup is asked; then the full answer.
-                search.search(q, language, near(), interim = { answer(it, false) }) to false
+                search.search(q, language, near(), interim = { answer(it, false) }, rankFrom = rankFrom()) to false
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

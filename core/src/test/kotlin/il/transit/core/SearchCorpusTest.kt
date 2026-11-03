@@ -36,7 +36,7 @@ import java.security.MessageDigest
  * are wrong: the test pins that they still are (a fix flips the row to OK) and the reason is in the note.
  */
 class SearchCorpusTest {
-    private data class Row(val line: Int, val id: String, val query: String, val lang: String, val names: List<String>, val box: DoubleArray, val source: String, val bad: Boolean, val note: String)
+    private data class Row(val line: Int, val id: String, val query: String, val lang: String, val names: List<String>, val box: DoubleArray, val source: String, val bad: Boolean, val note: String, val near: LatLon? = null)
 
     private val dir = "/fixtures/search"
     private val missing = linkedMapOf<String, String>()
@@ -58,7 +58,11 @@ class SearchCorpusTest {
     private inner class Replay(val counts: Counts) : TransitApi by FakeTransitApi() {
         override suspend fun geocode(text: String, language: String, near: LatLon?, max: Int): List<GeocodeMatch> {
             counts.geocode++
-            val name = "geo_" + hash(key(text, language))
+            // A row typed from a place (column 9, F10) replays the recording made with that bias, when there is one.
+            val biased = near
+                ?.let { "geo_" + hash(key(text, language) + "|" + it.comma()) }
+                ?.takeIf { resource("$dir/$it.json") != null }
+            val name = biased ?: ("geo_" + hash(key(text, language)))
             val body = resource("$dir/$name.json")
             if (body == null) {
                 counts.unrecorded = true
@@ -103,8 +107,14 @@ class SearchCorpusTest {
     private fun rows(): List<Row> =
         resource("$dir/search_corpus.tsv")!!.lines().mapIndexedNotNull { i, line ->
             if (line.isBlank() || line.startsWith("#")) return@mapIndexedNotNull null
-            val c = line.split('\t') + List(8) { "" }
-            Row(i + 1, c[0], c[1], c[2], c[3].split('|').filter { it.isNotBlank() && it != "-" }, c[4].split(',').map { it.toDouble() }.toDoubleArray(), c[5], c[6] == "BAD", c[7])
+            val c = line.split('\t') + List(9) { "" }
+            val near = c[8]
+                .takeIf { it.isNotBlank() }
+                ?.split(',')
+                ?.let { (a, b) -> LatLon(a.trim().toDouble(), b.trim().toDouble()) }
+            val names = c[3].split('|').filter { it.isNotBlank() && it != "-" }
+            val box = c[4].split(',').map { it.toDouble() }.toDoubleArray()
+            Row(i + 1, c[0], c[1], c[2], names, box, c[5], c[6] == "BAD", c[7], near)
         }
 
     private fun acceptable(r: Row, m: GeocodeMatch): Boolean {
@@ -117,7 +127,7 @@ class SearchCorpusTest {
     private class Outcome(val shown: List<GeocodeMatch>, val answer: SearchAnswer?, val counts: Counts, val answers: Int)
 
     /** Types [query] key by key, 60 ms apart, then waits: what one typing pause does. */
-    private fun type(query: String, lang: String): Outcome {
+    private fun type(query: String, lang: String, near: LatLon? = null): Outcome {
         val counts = Counts()
         var last: SearchAnswer? = null
         var settled = 0
@@ -125,7 +135,7 @@ class SearchCorpusTest {
             val search = PlaceSearch(Replay(counts), FallbackGeocoder(Phone(counts), Photon(counts)))
             val typing = TypingSearch(this, search) { _, a, failed -> if (!a.pending && !failed) { last = a; settled++ } }
             for (i in 1..query.length) {
-                typing.onText(query.substring(0, i), lang) { null }
+                typing.onText(query.substring(0, i), lang) { near }
                 advanceTimeBy(60)
             }
             advanceUntilIdle()
@@ -140,7 +150,7 @@ class SearchCorpusTest {
         val ids = HashSet<String>()
         for (r in rows) {
             if (!ids.add(r.id)) failures += "line ${r.line}: duplicate id ${r.id}"
-            val o = type(r.query, r.lang)
+            val o = type(r.query, r.lang, r.near)
             val top = o.shown.take(3)
             val hit = top.firstOrNull { acceptable(r, it) }
             val source = when {
@@ -189,6 +199,16 @@ class SearchCorpusTest {
                 (if (missing.isEmpty()) "" else "\nRECORD (≥ 1.5 s apart; ${missing.size} new searches):\n" + missing.values.joinToString("\n")),
             failures.isEmpty(),
         )
+    }
+
+    @Test fun `a row typed from a place replays its biased recording`() {
+        // F10: the owner near Be'er Sheva typed "תחנה מרכזית" and got a station in the north; these rows say where they were typed.
+        val typed = rows().filter { it.near != null }
+        assertTrue(typed.size >= 3)
+        for (r in typed) {
+            val bias = PlaceSearch.normalize(if (r.lang == "en") "תחנה מרכזית" else r.query)
+            assertTrue(r.id, resource("$dir/geo_" + hash("$bias|${r.lang}|${r.near!!.comma()}") + ".json") != null)
+        }
     }
 
     @Test fun `corpus is about a hundred rows in both languages with all the kinds`() {

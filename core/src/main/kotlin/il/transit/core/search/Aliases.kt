@@ -41,6 +41,9 @@ object Aliases {
             "ת. מרכזית תל אביב",
             "ת. מרכזית תל אביב",
         ),
+        // No town: whichever central station is nearest (F10). The index has them under Hebrew names only ("תחנה מרכזית
+        // גדרה", "שדרות דוד חכם/תחנה מרכזית"), so the English sends the Hebrew; with a town typed this is not used.
+        Alias(listOf("central station", "central bus station", "the central bus station", "central bus terminal"), "תחנה מרכזית", "תחנה מרכזית"),
     )
 
     /**
