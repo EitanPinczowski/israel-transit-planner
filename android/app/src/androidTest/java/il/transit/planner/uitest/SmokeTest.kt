@@ -82,7 +82,9 @@ class SmokeTest {
             // The pin panel opened: the pressed point must not be under it or under the search card.
             val bottom = compose.onNode(hasTestTag(UiTags.BOTTOM)).fetchSemanticsNode().boundsInWindow
             val top = compose.onNode(hasTestTag(UiTags.TOP)).fetchSemanticsNode().boundsInWindow
-            val covered = (y >= bottom.top && x in bottom.left..bottom.right) || (y <= top.bottom && x in top.left..top.right)
+            val px = x.toFloat()
+            val py = y.toFloat()
+            val covered = (py >= bottom.top && px in bottom.left..bottom.right) || (py <= top.bottom && px in top.left..top.right)
             assertFalse("the pin at ($x, $y) is under a panel (top $top, bottom $bottom)", covered)
 
             // The other theme: a new map style, so a new controller; the pin is pushed again.

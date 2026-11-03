@@ -331,8 +331,18 @@ class PlaceSearch(
         private fun lead(name: String, towns: Set<String>, skipKinds: Boolean = false): String? =
             tokens(name).firstOrNull { it.length >= 2 && !isNumber(it) && it !in FILLER && it !in towns && !(skipKinds && isGeneric(it)) }
 
+        /**
+         * English names of streets that are not their Hebrew name spelled out (F9, owner's bug bash): Google's phone
+         * Geocoder answers "Jaffa Road 97 Jerusalem" with "Yafo 97" (English) or "יפו 97" (Hebrew), probe run
+         * 41596558603. Keep it tiny: only a word that is never anything else.
+         */
+        private val EXONYMS = mapOf("jaffa" to "yafo")
+
+        /** Typed word [w] is answer word [t]: as [sameWord], or by its English name ([EXONYMS]). */
+        private fun same(w: String, t: String): Boolean = sameWord(w, t) || EXONYMS[w]?.let { sameWord(it, t) } == true
+
         /** Typed word [w] is answer word [t]: the same, one prefix letter apart, one letter off (4+), or its Hebrew spelling. */
-        private fun same(w: String, t: String): Boolean =
+        private fun sameWord(w: String, t: String): Boolean =
             w == t ||
                 (t.length == w.length + 1 && t[0] in PREFIX && t.endsWith(w)) ||
                 (w.length == t.length + 1 && w[0] in PREFIX && w.endsWith(t)) ||

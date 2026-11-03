@@ -53,14 +53,14 @@ abbr-tau	את"א	he	אוניברסיטת תל אביב|אוניברסיטת	32.0
 street-dz	דיזנגוף 50 תל אביב	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-dz-abbr	דיזנגוף 50 ת"א	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-herzl-bs	הרצל 12 באר שבע	he	הרצל	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
-street-herzl-bs-en	Herzl 12 Be'er Sheva	en	Herzl|הרצל	31.20,34.70,31.32,34.88	NONE	BAD	English street names are not in the index (see transitous-api, 2026-10-04): 'Herzl 12 Be'er Sheva' returns only the city three times. The Hebrew form is a corpus row that passes. F8: the weak answer (the town only) is a miss, so the phone Geocoder and then Photon are asked (1 each, pinned); neither replay here has this text (the phone stub holds only the 2026-10-07 emulator answers, Photon is unreachable from the cloud). Check on the Pixel.
+street-herzl-bs-en	Herzl 12 Be'er Sheva	en	Herzl|הרצל	31.20,34.70,31.32,34.88	PHONE	OK	Transitous answers only the city (English street names are not in its index, transitous-api 2026-10-04), so the phone Geocoder is asked: on the google_apis emulator Google answers 'Herzl Street 12, Be'er Sheva' (F9 probe run 41596558603), stubbed in phone_geocoder.tsv. F9: our chain shows it first; re-check on the Pixel.
 street-jaffa-jm	יפו 97 ירושלים	he	יפו	31.70,35.12,31.86,35.30	TRANSITOUS	OK	
-street-jaffa-en	Jaffa Road 97 Jerusalem	en	Jaffa|יפו	31.70,35.12,31.86,35.30	NONE	BAD	Same as Herzl: English 'Jaffa Road 97 Jerusalem' answers 'Jerusalem', 'Jerusalem Road 22' and a bank, never the street. F8: the weak answer (the town only) is a miss, so the phone Geocoder and then Photon are asked (1 each, pinned); neither replay here has this text (the phone stub holds only the 2026-10-07 emulator answers, Photon is unreachable from the cloud). Check on the Pixel.
+street-jaffa-en	Jaffa Road 97 Jerusalem	en	Jaffa|Yafo|יפו	31.70,35.12,31.86,35.30	PHONE	OK	Transitous answers 'Jerusalem', 'Jerusalem Road 22' and a bank. Google's phone Geocoder answers 'Yafo 97' (F9 probe run 41596558603); before F9 our matcher did not take 'Jaffa' for 'Yafo'/'יפו' and showed it only as a closest match. Fixed by PlaceSearch EXONYMS.
 street-by	בן יהודה 10 תל אביב	he	בן יהודה	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-roth	שדרות רוטשילד 10 תל אביב	he	רוטשילד	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-roth-en	Rothschild 10 Tel Aviv	en	Rothschild|רוטשילד	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-allenby	אלנבי 40 תל אביב	he	אלנבי	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
-street-allenby-en	Allenby 40 Tel Aviv	en	Allenby|אלנבי	32.03,34.74,32.15,34.83	NONE	BAD	Same: English 'Allenby 40 Tel Aviv' answers the city and Namal Tel Aviv (the port), never Allenby Street. F8: the weak answer (the town only) is a miss, so the phone Geocoder and then Photon are asked (1 each, pinned); neither replay here has this text (the phone stub holds only the 2026-10-07 emulator answers, Photon is unreachable from the cloud). Check on the Pixel.
+street-allenby-en	Allenby 40 Tel Aviv	en	Allenby|אלנבי	32.03,34.74,32.15,34.83	PHONE	OK	Transitous answers the city and Namal Tel Aviv. Google's phone Geocoder answers 'Allenby Street 40, Tel Aviv-Yafo' (F9 probe run 41596558603), stubbed in phone_geocoder.tsv; re-check on the Pixel.
 street-haifa	העצמאות 5 חיפה	he	העצמאות	32.70,34.90,32.88,35.10	TRANSITOUS	OK	
 street-nohouse	דיזנגוף תל אביב	he	דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 street-gap	ז'בוטינסקי 20 רמת גן	he	ז'בוטינסקי|זבוטינסקי	32.04,34.80,32.10,34.84	TRANSITOUS	OK	
