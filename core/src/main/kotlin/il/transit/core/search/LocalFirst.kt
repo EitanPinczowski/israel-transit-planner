@@ -41,6 +41,18 @@ object LocalFirst {
     fun serverAfter(local: List<LocalHit>, server: List<GeocodeMatch>): List<GeocodeMatch> =
         server.filterNot { m -> local.any { same(it.place, SavedPlace(m.name, m.lat, m.lon)) } }
 
+    /**
+     * A generic search ([SearchAnswer.around] set: "תחנה מרכזית"): the local hits no farther from [around] than the nearest
+     * [exact] answer (shown before the answers), and the rest, nearest first (shown after them). A recent pick of Kiryat
+     * Shmona's central station must not be the first row near Be'er Sheva (F10). With no [around], all come first.
+     */
+    fun aroundSplit(local: List<LocalHit>, exact: List<GeocodeMatch>, around: LatLon?): Pair<List<LocalHit>, List<LocalHit>> {
+        if (around == null) return local to emptyList()
+        val nearest = exact.minOfOrNull { Geo.distanceM(around, LatLon(it.lat, it.lon)) } ?: return local to emptyList()
+        val (before, after) = local.partition { Geo.distanceM(around, it.place.latLon) <= nearest }
+        return before to after.sortedBy { Geo.distanceM(around, it.place.latLon) }
+    }
+
     fun matches(text: String, name: String): Boolean {
         val words = text.split(Regex("[\\s,]+")).map(PlaceSearch::normalize).filter { it.isNotEmpty() }
         val n = PlaceSearch.normalize(name)

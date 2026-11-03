@@ -37,6 +37,12 @@ data class SearchAnswer(
     val stopCode: String? = null,
     /** Train stations the text asked for by name, from the bundled list ([Stations], F8): answers, first in [primary]. */
     val stations: List<GeocodeMatch> = emptyList(),
+    /**
+     * Only kind words were typed, no name and no town ("תחנה מרכזית", "central station"; [PlaceSearch.isGenericQuery]):
+     * where the user is (the fix, else the map's centre), and the answers go nearest first (F10, owner's bug bash: a far
+     * "תחנה מרכזית" was picked near Be'er Sheva). Null otherwise.
+     */
+    val around: LatLon? = null,
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
@@ -52,7 +58,14 @@ data class SearchAnswer(
      */
     val exact: List<GeocodeMatch> get() = ordered
         .filter { level(it).isAnswer }
-        .sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
+        .let { list ->
+            // Every answer to a generic text is "the" answer somewhere: the nearest one is the user's.
+            if (around != null) list.sortedBy(::distance)
+            else list.sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
+        }
+
+    /** Metres from [around] (0 without it: the order stays). */
+    private fun distance(m: GeocodeMatch): Double = around?.let { Geo.distanceM(it, LatLon(m.lat, m.lon)) } ?: 0.0
 
     /** A station asked for ("תחנה מרכזית…", "… train station"): stops and stations before a shelter or shop of that name (F8). */
     private fun transitFirst(m: GeocodeMatch): Boolean = PlaceSearch.isStationQuery(query) && PlaceSearch.isTransit(m)
@@ -63,7 +76,7 @@ data class SearchAnswer(
      */
     val closest: List<GeocodeMatch> get() = ordered
         .filterNot { level(it).isAnswer }
-        .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst))
+        .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst).thenBy(::distance))
 
     val all: List<GeocodeMatch> get() = exact + closest
 
@@ -131,8 +144,10 @@ class PlaceSearch(
             .filter { m -> stations.none { it.id == m.id || sameAnswer(it, m) } }
             .sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) })
         val primary = stations + found
-        if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations)
-        interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true))
+        // Kind words only ("תחנה מרכזית"): nearest first, from where the user is; never from Israel's centre (F10).
+        val around = near?.takeIf { town == null && area.isEmpty() && stations.isEmpty() && isGenericQuery(q) }
+        if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations, around = around)
+        interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true, around = around))
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
             withTimeoutOrNull(BACKUP_DEADLINE_MS) { backup.search(q, language, bias?.let(::roundBias), BACKUP_MAX) }.orEmpty()
@@ -146,7 +161,7 @@ class PlaceSearch(
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
-        return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q)
+        return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q, around = around)
     }
 
     /**
@@ -308,7 +323,11 @@ class PlaceSearch(
             if (names.isEmpty()) {
                 if (kinds.isEmpty()) return if (!isTypedTown) MatchLevel.NONE else if (house == null) MatchLevel.PLACE else MatchLevel.TOWN
                 val needed = kinds.filter { it !in WEAK && it.removePrefix("ה") !in WEAK }
-                val named = needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true
+                val named = (needed.all { k -> hay.any { same(k, it) } } && lead(m.name, towns)?.let(::isGeneric) == true) ||
+                    // A stop named by its street and the place ("שדרות דוד חכם/תחנה מרכזית", Be'er Sheva's central station, F10).
+                    (m.type == "STOP" && '/' in m.name && m.name.split('/').drop(1).any { part ->
+                        tokens(part).let { h -> needed.all { k -> h.any { same(k, it) } } } && lead(part, towns)?.let(::isGeneric) == true
+                    })
                 return if (named && houseOk) MatchLevel.PLACE else town
             }
             if (!names.all { w -> hay.any { same(w, it) } }) return town
@@ -424,6 +443,15 @@ class PlaceSearch(
 
         /** Words that ask for a station (bus or train), not which one. */
         private val STATION_WORDS = setOf("תחנה", "תחנת", "התחנה", "מרכזית", "המרכזית", "רכבת", "הרכבת", "station", "train", "railway", "bus", "terminal")
+
+        /**
+         * Only words that say what kind of place, no name, no town, no neighbourhood ("תחנה מרכזית", "ת. מרכזית"; "central
+         * station" arrives as the Hebrew, [Aliases]): which one is the nearest (F10).
+         */
+        fun isGenericQuery(query: String): Boolean {
+            val ws = tokens(query).filter { it.length >= 2 && !isNumber(it) && it !in FILLER }
+            return ws.isNotEmpty() && ws.all(::isGeneric) && Towns.typedIn(query).isEmpty() && Neighbourhoods.typedIn(query).isEmpty()
+        }
 
         /** The text asks for a station: "תחנה מרכזית…", "ת. רכבת…", "… train station". */
         fun isStationQuery(query: String): Boolean = tokens(query).any { it in STATION_WORDS }

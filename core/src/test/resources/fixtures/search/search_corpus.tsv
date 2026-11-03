@@ -1,5 +1,5 @@
 # Search corpus (Phase 11 T9, SearchCorpusTest). Add a row, run `./gradlew -p core test -q`; a new search text fails the test and writes the record commands to core/build/search-missing.sh.
-# id | query | lang | acceptable names (contains, normalized; | = alternatives) | acceptable area S,W,N,E | source (TRANSITOUS PHONE PHOTON BUNDLED NONE) | status (OK, BAD = the real answer is wrong: asserted still wrong) | note
+# id | query | lang | acceptable names (contains, normalized; | = alternatives) | acceptable area S,W,N,E | source (TRANSITOUS PHONE PHOTON BUNDLED NONE) | status (OK, BAD = the real answer is wrong: asserted still wrong) | note | typed near lat,lon (optional, F10: the user's place; replays the recording made with that bias)
 cities-he	באר שבע	he	באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
 cities-en1	Beer Sheva	en	Be'er Sheva|Beer Sheva|Beersheba|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
 cities-en2	Be'er Sheva	en	Be'er Sheva|Beer Sheva|באר שבע	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
@@ -110,6 +110,9 @@ amb-rehovot-st	רחובות	he	רחובות	31.85,34.76,31.92,34.84	TRANSITOUS	O
 amb-weizmann	ויצמן	he	ויצמן	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
 amb-bg	בן גוריון	he	בן גוריון	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
 amb-central	תחנה מרכזית	he	תחנה מרכזית	29.4,34.2,33.4,35.95	TRANSITOUS	OK	
+amb-central-bs	תחנה מרכזית	he	תחנה מרכזית	31.235,34.785,31.250,34.805	TRANSITOUS	OK	F10 owner bug bash: near Be'er Sheva, its central station (שדרות דוד חכם/תחנה מרכזית), not one in the north	31.25,34.79
+amb-central-bs-en	central station	en	תחנה מרכזית	31.235,34.785,31.250,34.805	TRANSITOUS	OK	F10 owner bug bash: near Be'er Sheva, its central station (שדרות דוד חכם/תחנה מרכזית), not one in the north	31.25,34.79
+amb-central-bs-cbs	Central Bus Station	en	תחנה מרכזית	31.235,34.785,31.250,34.805	TRANSITOUS	OK	F10 owner bug bash: near Be'er Sheva, its central station (שדרות דוד חכם/תחנה מרכזית), not one in the north	31.25,34.79
 mixed-dz	Dizengoff דיזנגוף	en	Dizengoff|דיזנגוף	32.03,34.74,32.15,34.83	TRANSITOUS	OK	
 mixed-bs	באר Sheva	he	באר שבע|Be'er Sheva|Beer Sheva	31.20,34.70,31.32,34.88	TRANSITOUS	OK	
 backup-tabenkin	טבנקין 15 רעננה	he	טבנקין	32.16,34.83,32.22,34.90	PHONE	OK	

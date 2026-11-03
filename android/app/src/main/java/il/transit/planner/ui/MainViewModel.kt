@@ -366,6 +366,8 @@ class MainViewModel(
 
     fun cancelEditing() {
         typing.cancel()
+        inFlight = null
+        pickWhenAnswered = null
         _state.update { it.copy(editing = null, query = "", suggestions = emptyList(), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
     }
 
@@ -398,8 +400,14 @@ class MainViewModel(
         pickWhenAnswered = null
         inFlight = text.trim().takeIf { it.length >= TypingSearch.MIN_CHARS }
         _state.update { it.copy(query = text, suggestions = localSuggestions(text), searchHint = false, places = it.places.copy(backupShown = false, notFound = false, offline = false)) }
-        typing.onText(text, language, locationProvider)
+        typing.onText(text, language, ::searchNear)
     }
+
+    /** The map's centre at the last pan or zoom: where a search is read when there is no fix (location off, F10). */
+    private var viewCentre: LatLon? = null
+
+    /** Where a search is read: the fix, else the map's centre (F10: "תחנה מרכזית" is the nearest one). */
+    private fun searchNear(): LatLon? = locationProvider() ?: viewCentre
 
     /** [failed]: no answer at all (offline, Transitous down): said as such, never "not found". */
     private fun showAnswer(q: String, answer: SearchAnswer, failed: Boolean) {
@@ -407,11 +415,14 @@ class MainViewModel(
         _state.update { st ->
             if (st.editing == null || st.query.trim() != q) return@update st
             val local = localHits(q)
+            // A generic text ("תחנה מרכזית"): a saved or recent place farther than the nearest answer goes after the answers (F10).
+            val (localFirst, localLater) = LocalFirst.aroundSplit(local, answer.exact, answer.around)
             st.copy(
                 // Exact answers first (Transitous's, or the backup's after a miss), then the closest, labelled.
-                suggestions = local.map { toSuggestion(it) } +
+                suggestions = localFirst.map { toSuggestion(it) } +
                     answer.choices.map { c -> Suggestion(q, c.town.displayName(language), c.town.centre, saved = false, isStop = false, refine = c.query) } +
                     LocalFirst.serverAfter(local, answer.exact).map { m -> toSuggestion(m).copy(backup = m in answer.backup) } +
+                    localLater.map { toSuggestion(it) } +
                     LocalFirst.serverAfter(local, answer.closest).map { m -> toSuggestion(m).copy(backup = m in answer.backup, closest = true, match = answer.note(m)) },
                 searchHint = needsFullNameHint(q, answer.all.map { it.name }),
                 places = st.places.copy(
@@ -1042,6 +1053,7 @@ class MainViewModel(
     // --- stops ----------------------------------------------------------------------------
 
     fun onViewport(view: BBox, zoom: Double) {
+        viewCentre = LatLon((view.min.lat + view.max.lat) / 2, (view.min.lon + view.max.lon) / 2).takeIf(PlaceSearch::inIsrael)
         // Phase 11 E4: low data shows stops from zoom 16 and asks only when a tile under the screen is missing.
         val lowData = _state.value.settings.lowData
         if (zoom < LowData.stopsMinZoom(lowData)) {
