@@ -6,6 +6,7 @@ import il.transit.core.api.MotisJson
 import il.transit.core.api.TransitApi
 import il.transit.core.geo.Geo
 import il.transit.core.geo.LatLon
+import il.transit.core.search.Aliases
 import il.transit.core.search.LocalFirst
 import il.transit.core.search.LocalHit
 import il.transit.core.search.MatchLevel
@@ -127,9 +128,9 @@ class SearchF10Test {
         assertFalse(PlaceSearch.isGenericQuery("הרצל"))
         assertFalse(PlaceSearch.isGenericQuery("תחנה מרכזית מרכז הכרמל"))
         // The English is sent as the Hebrew only when no town is typed with it.
-        assertEquals("תחנה מרכזית", il.transit.core.search.Aliases.rewrite("Central Bus Station"))
-        assertEquals("Jerusalem central bus station", il.transit.core.search.Aliases.rewrite("Jerusalem central bus station"))
-        assertEquals("ת. מרכזית תל אביב", il.transit.core.search.Aliases.rewrite("Tel Aviv Central Bus Station"))
+        assertEquals("תחנה מרכזית", Aliases.rewrite("Central Bus Station"))
+        assertEquals("Jerusalem central bus station", Aliases.rewrite("Jerusalem central bus station"))
+        assertEquals("ת. מרכזית תל אביב", Aliases.rewrite("Tel Aviv Central Bus Station"))
         // A town typed: the town's answers, no distance ranking.
         assertNull(search(Replay(nearBeerSheva.answers), "תחנה מרכזית באר שבע", "he", beerSheva).around)
         // No fix and no map: Transitous's order (with Israel's centre as its bias), nothing re-ranked.

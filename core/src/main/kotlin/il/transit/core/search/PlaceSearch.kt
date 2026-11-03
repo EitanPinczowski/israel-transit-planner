@@ -457,7 +457,8 @@ class PlaceSearch(
          */
         fun isGenericQuery(query: String): Boolean {
             val ws = tokens(query).filter { it.length >= 2 && !isNumber(it) && it !in FILLER }
-            return ws.isNotEmpty() && ws.all(::isGeneric) && Towns.typedIn(query).isEmpty() && Neighbourhoods.typedIn(query).isEmpty()
+            val named = Towns.typedIn(query) + Neighbourhoods.typedIn(query)
+            return ws.isNotEmpty() && ws.all(::isGeneric) && named.isEmpty()
         }
 
         /** The text asks for a station: "תחנה מרכזית…", "ת. רכבת…", "… train station". */
