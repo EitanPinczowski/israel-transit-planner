@@ -216,6 +216,10 @@ merges. Tick only your own package's lines.
 - [x] Short forms: TLV, JLM, Chaifa (Latin) beside the Hebrew acronyms, tiny and tested
 - [x] Corpus: 11 → 3 `BAD` rows (English street names: the backups' answers are not replayable here)
 
+### F9 — Bug-bash fixes (`claude/p11-bugbash-f9`, 0 requests; owner's v0.10.0 bug bash on the Pixel)
+- [x] A long-press on the map draws a pin where the finger pressed (light and dark, Hebrew and English); a `SmokeTest` journey asserts the pin is rendered and not under a panel
+- [ ] English street addresses ("Herzl 12 Be'er Sheva", "Jaffa Road 97 Jerusalem", "Allenby 40 Tel Aviv") found through the phone Geocoder / Photon fallback
+
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)

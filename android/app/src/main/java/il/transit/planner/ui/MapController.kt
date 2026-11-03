@@ -30,6 +30,7 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         style.addSource(GeoJsonSource(ROUTE_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(PLACES_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(VEHICLE_SRC, MapData.EMPTY))
+        style.addSource(GeoJsonSource(PIN_SRC, MapData.EMPTY))
 
         style.addLayer(
             CircleLayer(STOPS_LAYER, STOPS_SRC).withProperties(
@@ -114,6 +115,24 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
                 PropertyFactory.circleStrokeWidth(3f),
             ),
         )
+        // F9 (bug bash): the long-press pin, above everything. Circles only, so it needs no image
+        // in the style: a soft red halo the size of a fingertip, and a solid dot with a white ring
+        // that reads on the light and the dark map alike.
+        style.addLayer(
+            CircleLayer(PIN_HALO_LAYER, PIN_SRC).withProperties(
+                PropertyFactory.circleRadius(18f),
+                PropertyFactory.circleColor(PIN_COLOR),
+                PropertyFactory.circleOpacity(0.25f),
+            ),
+        )
+        style.addLayer(
+            CircleLayer(PIN_LAYER, PIN_SRC).withProperties(
+                PropertyFactory.circleRadius(9f),
+                PropertyFactory.circleColor(PIN_COLOR),
+                PropertyFactory.circleStrokeColor("#FFFFFF"),
+                PropertyFactory.circleStrokeWidth(3f),
+            ),
+        )
     }
 
     fun setStops(geoJson: String) = setSource(STOPS_SRC, geoJson)
@@ -124,6 +143,9 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
     fun setOthers(geoJson: String) = setSource(OTHERS_SRC, geoJson)
 
     fun setPlaces(geoJson: String) = setSource(PLACES_SRC, geoJson)
+
+    /** The long-press pin (`MapData.pin`): drawn while the pin panel is open. */
+    fun setPin(geoJson: String) = setSource(PIN_SRC, geoJson)
 
     /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
     fun setVehicle(geoJson: String) = setSource(VEHICLE_SRC, geoJson)
@@ -184,6 +206,14 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         return map.queryRenderedFeatures(box, OTHERS_LAYER).firstNotNullOfOrNull { f -> f.getNumberProperty("option")?.toInt() }
     }
 
+    /**
+     * Whether the pin layer has a rendered feature at [at] on screen (UI tests: a long-press must
+     * leave a visible pin, F9). False until the style has loaded and the frame is drawn.
+     */
+    fun pinDrawnAt(at: LatLon): Boolean = MapGuard.run("pinDrawnAt") {
+        style.isFullyLoaded && map.queryRenderedFeatures(map.projection.toScreenLocation(LatLng(at.lat, at.lon)), PIN_LAYER).isNotEmpty()
+    } ?: false
+
     private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
 
     companion object {
@@ -203,6 +233,12 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         private const val PLACES_LAYER = "app-places-layer"
         private const val VEHICLE_SRC = "app-vehicle"
         private const val VEHICLE_LAYER = "app-vehicle-layer"
+        private const val PIN_SRC = "app-pin"
+        private const val PIN_LAYER = "app-pin-layer"
+        private const val PIN_HALO_LAYER = "app-pin-halo-layer"
+
+        /** Red: not a leg colour, not the saved-place amber, not the stop blue. */
+        private const val PIN_COLOR = "#E53935"
         private const val STOPS_MIN_ZOOM = 15f
 
         /** Marker fill (stops, boarding points, saved-place ring), stop ring, walk line, ride halo. */

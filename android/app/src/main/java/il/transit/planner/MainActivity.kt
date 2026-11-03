@@ -226,6 +226,8 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
+                // F9: the long-press pin, while its panel is open (it was never drawn before).
+                LaunchedEffect(ctl, state.places.pin?.at) { ctl?.setPin(MapData.pin(state.places.pin?.at)) }
                 LaunchedEffect(state.savedPlaces) { Shortcuts.update(this@MainActivity, state.savedPlaces) }
                 // An app-icon shortcut opened us: once the saved places are loaded, act on it.
                 LaunchedEffect(state.savedPlaces, pendingShortcut) {
@@ -421,6 +423,20 @@ class MainActivity : ComponentActivity() {
         val s = style ?: return null
         if (!m.locationComponent.isLocationComponentActivated) return null
         return s.getSource(LocationComponentConstants.LOCATION_SOURCE) != null
+    }
+
+    /**
+     * F9: whether the open long-press pin is drawn on the map at its point; null with no pin or no
+     * style yet. UI tests check a long-press leaves a visible pin.
+     */
+    @VisibleForTesting
+    fun mapReadyForTest(): Boolean = controller.value != null
+
+    @VisibleForTesting
+    fun pinOnMap(): Boolean? {
+        val c = controller.value ?: return null
+        val at = vm.state.value.places.pin?.at ?: return null
+        return c.pinDrawnAt(at)
     }
 
     /**
