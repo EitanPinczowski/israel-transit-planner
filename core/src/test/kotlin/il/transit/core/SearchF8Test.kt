@@ -145,6 +145,15 @@ class SearchF8Test {
         assertEquals(Towns.named("תל אביב"), Towns.typedIn(QueryText.expand("Allenby 40 TLV")).first())
     }
 
+    @Test fun `short forms cost nothing for other words - a long shared text is read word by word, prefix by prefix`() {
+        assertEquals(null, Aliases.shortForm("שלום", english = false))
+        assertEquals(null, Aliases.shortForm("x".repeat(100_000), english = true))
+        assertEquals(null, Aliases.shortForm("TLV1", english = true))
+        assertEquals("Tel Aviv", Aliases.shortForm("Tlv", english = true))
+        // IntentFuzzTest#send_huge_text's text, as SharedPlace reads it: refused, as before F8.
+        assertEquals(il.transit.core.present.SharedPlace.Unreadable, il.transit.core.present.SharedPlace.parse("שלום ".repeat(20_000)))
+    }
+
     @Test fun `TLV and Chaifa search what Tel Aviv and Haifa search - one request`() = runBlocking {
         val api = Geo { listOf(m("Tel Aviv-Yafo", 32.085, 34.782, category = "place_6", town = "Tel Aviv-Yafo")) }
         val a = PlaceSearch(api, Backup()).search("TLV", "en", null)

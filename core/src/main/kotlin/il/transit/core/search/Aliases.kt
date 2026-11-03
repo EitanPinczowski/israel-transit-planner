@@ -56,7 +56,14 @@ object Aliases {
     )
 
     /** The town [word] is a short form of ([SHORT_FORMS]), in English or Hebrew; null for any other word. */
-    fun shortForm(word: String, english: Boolean): String? = SHORT_FORMS[PlaceSearch.normalize(word)]?.let { if (english) it.en else it.he }
+    fun shortForm(word: String, english: Boolean): String? {
+        // Called for every word of every prefix of a shared text (SharedPlace.townEnd): no regex, and out at once for
+        // a word that can't be one (F8: a 4 000-character share took seconds on the emulator otherwise).
+        if (word.length !in 3..SHORT_FORM_MAX || !word.all { it in 'a'..'z' || it in 'A'..'Z' }) return null
+        return SHORT_FORMS[word.lowercase()]?.let { if (english) it.en else it.he }
+    }
+
+    private const val SHORT_FORM_MAX = 6
 
     private class Acronym(val he: String, val en: String, val bare: Boolean = false)
 
