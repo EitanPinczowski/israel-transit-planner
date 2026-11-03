@@ -53,6 +53,8 @@ class UserDataSampleGen {
             rainAware = false, //@since 0.9.0
             passEndsOn = "2026-11-01", //@since 0.9.1
             reminderCheckHintShown = true, //@since 0.9.1
+            paymentApp = "com.tranzmate", //@since 0.10.0
+            lowData = true, //@since 0.10.0
         )
         val history = listOf(
             TripRecord(

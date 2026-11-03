@@ -4,12 +4,23 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-11-03, 03:30 Israel time)
-- **Released:** v0.9.2 (2026-10-31). **Next: v0.10.0. The owner said "wait on the release" (2026-11-02)**: ask before releasing.
-  Before it: join `docs/releases/next/*` into `v0.10.0.md`, the owner runs `docs/testing/bug-bash.md` on the Pixel,
-  then add the 0.10.0 saved-data sample after the tag (the `release-apk` skill).
-- **Boss:** `session_01DH799Fr9pdL4XLVsi4uqeJ` (depth 0, started by the owner), took over 2026-11-02 from
-  `session_011uenNPuCQdDbxyhH4S3ibu`. Hand over around 400k context.
+## State (2026-11-03, 09:25 Israel time)
+- **Released: v0.10.0 (2026-11-03)**, https://github.com/EitanPinczowski/israel-transit-planner/releases/tag/v0.10.0.
+  The owner said "release" before running the bug bash. The 0.10.0 saved-data sample is in PR #125, with a new
+  `userdata-sample.yml` CI job that prints a sample, because cloud Gradle can't build a tag. Merge #125 when green.
+- **Boss:** `session_01DH799Fr9pdL4XLVsi4uqeJ`, context 530k: **hand over now.** The owner starts the next boss from
+  claude.ai/code.
+- **In flight: F9, bug-bash fixes** (`session_01DH799F2uSyfGbCDRPSyGFJ`, Opus, branch `claude/p11-bugbash-f9`).
+  When it's green: a Sonnet logic pass, one fix round, merge. Then a v0.10.1 only on the owner's word.
+- **Owner's bug bash on v0.10.0 (Pixel), part A, 2026-11-03:**
+  - A1, map long-press: it fills the location but **no pin is visible** → F9;
+  - A2, rotate during search: OK;
+  - A3, English street addresses: **not found** → F9;
+  - A4/A5 (searches with location off, central station): the owner didn't understand what to check. Re-explain
+    in plain steps;
+  - A6, font size: the owner couldn't find where to change it (Pixel: Settings → Display & touch → Display size
+    and text → Font size);
+  - The rest of the list (B–G, incl. E6) comes later.
 - **Phase 11 is all merged**, and main is green after each merge:
   - E4 #105, T4 #106, T6 #110 (6 security fixes), T8 #109 (release smoke, startup gate, upgrade test, LeakCanary,
     MoreJourneys, bug-bash list), F2 #104, F3 #112 (4 flakes), F5 #111 (own actions via a non-exported alias),
@@ -27,15 +38,14 @@ decisions already recorded.
   - No v0.9.3; the next release is v0.10.0.
   - The APK +2.28% from F4 accepted.
   - E6: go.
-  - Release: wait.
-- **In flight:** nothing.
+  - Release: v0.10.0 released on the owner's "release" (2026-11-03).
 - **Waiting on the owner:**
   - E6's two-scan Pixel test (steps in PR #116's body). With the result, write the go/no-go:
     - **go:** a follow-up package finds the end-date bits by comparing the scans with Rav-Kav Online;
     - **no-go:** a `dead-ends` row, and remove the lab.
     
     Then tick ROADMAP E6.
-  - The word on v0.10.0, plus the bug-bash run (`docs/testing/bug-bash.md` §9 has the F6–F8 phone checks).
+  - The rest of the bug bash (B–G of the list sent 2026-11-03; `docs/testing/bug-bash.md`).
   - The 3 BAD corpus rows (English "street + number") can only be judged on a phone: does the Geocoder find them?
 - **Follow-ups not yet packaged:**
   - input injection (shell `input`, `UiAutomation.injectInputEvent`) doesn't reach apps on the API 35
