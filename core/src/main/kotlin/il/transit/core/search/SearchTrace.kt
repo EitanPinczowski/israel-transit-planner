@@ -41,10 +41,13 @@ class SearchTrace(val query: String, val language: String, val hasFix: Boolean) 
 
     var ms: Long = 0
 
-    /** One line, for the crash log's share text. */
+    /** A "not found" or "failed" line: a later "closed before the answer" never replaces it ([outcome]). */
+    val isClosed: Boolean get() = outcome == CLOSED
+
+    /** One line, for the crash log's share text (whitespace in the query collapsed, so it stays one line). */
     fun line(at: Instant, zone: ZoneId): String = buildString {
         append(TIME.format(at.atZone(zone)))
-        append(" · \"${query.take(MAX_QUERY)}\" · $language")
+        append(" · \"${query.replace(Regex("\\s+"), " ").take(MAX_QUERY)}\" · $language")
         append(" · fix ").append(if (hasFix) "yes" else "no")
         append(" · Transitous ")
         append(
@@ -63,6 +66,8 @@ class SearchTrace(val query: String, val language: String, val hasFix: Boolean) 
     companion object {
         /** A pasted paragraph stays a line. */
         const val MAX_QUERY = 80
+
+        const val CLOSED = "closed before the answer"
         private val TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     }
 }

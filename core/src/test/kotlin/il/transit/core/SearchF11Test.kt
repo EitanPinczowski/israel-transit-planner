@@ -32,6 +32,15 @@ class SearchF11Test {
         assertEquals(1, answer.stations.size)
         assertTrue(answer.exact.isNotEmpty())
         assertFalse(answer.notFound)
+        // The list still says "No connection", with Retry.
+        assertTrue(answer.transitFailed)
+    }
+
+    @Test fun `a trace line stays one line`() {
+        val t = SearchTrace("Herzl\n12\t Be'er  Sheva", "en", hasFix = true)
+        val line = t.line(Instant.parse("2026-11-03T19:05:00Z"), ZoneOffset.UTC)
+        assertFalse(line, line.contains('\n') || line.contains('\t'))
+        assertTrue(line, "\"Herzl 12 Be'er Sheva\"" in line)
     }
 
     @Test fun `a Transitous failure with no station is still the search's failure`() = runTest {

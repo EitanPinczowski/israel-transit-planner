@@ -30,10 +30,28 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
      */
     val lastSearch: StateFlow<String?> = _lastSearch.asStateFlow()
 
-    /** Replaces the last empty search's line; a write failure is never the search's problem. */
-    fun noteSearch(line: String) {
+    /** Whether the kept line is a "closed before the answer" one, which any later line may replace. */
+    @Volatile private var keptClosed = false
+
+    /** Bumped by [clear]: a write queued before it is dropped. */
+    private val generation = java.util.concurrent.atomic.AtomicInteger()
+
+    /** One writer, in order: a later line never lands before an earlier one. */
+    private val writer = java.util.concurrent.Executors.newSingleThreadExecutor { r -> Thread(r, "search-trace").apply { isDaemon = true } }
+
+    /**
+     * Replaces the last empty search's line, unless it is the same, or [closed] ("closed before the answer") would replace
+     * a "not found" or "failed" line. A write failure is never the search's problem.
+     */
+    fun noteSearch(line: String, closed: Boolean) = synchronized(this) {
+        val kept = _lastSearch.value
+        if (kept == line || (closed && kept != null && !keptClosed)) return@synchronized
         _lastSearch.value = line
-        Thread { runCatching { synchronized(this) { searchFile.writeText(line) } } }.start()
+        keptClosed = closed
+        val gen = generation.get()
+        writer.execute {
+            synchronized(this) { if (generation.get() == gen) runCatching { searchFile.writeText(line) } }
+        }
     }
 
     /** Records the crash, then lets the previous handler (Android's "app stopped") run as usual. */
@@ -56,7 +74,14 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
 
     suspend fun refresh() = withContext(Dispatchers.IO) {
         _count.value = CrashLog.entries(readOrNull()).size
-        _lastSearch.value = runCatching { readSearch() }.getOrNull()
+        val saved = runCatching { readSearch() }.getOrNull()
+        synchronized(this@CrashLogStore) {
+            // A line noted since the app started is newer than the file.
+            if (_lastSearch.value == null && saved != null) {
+                _lastSearch.value = saved
+                keptClosed = " · ${il.transit.core.search.SearchTrace.CLOSED} · " in saved
+            }
+        }
     }
 
     /** The text for the share sheet, newest first; null when there is nothing. */
@@ -73,11 +98,13 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
 
     suspend fun clear() = withContext(Dispatchers.IO) {
         synchronized(this@CrashLogStore) {
+            generation.incrementAndGet()
             file.delete()
             searchFile.delete()
+            _lastSearch.value = null
+            keptClosed = false
         }
         _count.value = 0
-        _lastSearch.value = null
     }
 
     private fun readSearch(): String? {

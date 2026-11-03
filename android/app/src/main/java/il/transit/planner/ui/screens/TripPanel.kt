@@ -314,11 +314,11 @@ private fun SuggestionCard(state: UiState, vm: MainActions) {
             }
             if (state.places.offline) {
                 item {
-                    Text(
-                        stringResource(R.string.search_offline),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
+                    // Retry (F11): a Transitous failure can leave only the bundled stations, or nothing.
+                    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.search_offline), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f).padding(vertical = 10.dp))
+                        TextButton(onClick = vm::retrySearch) { Text(stringResource(R.string.retry)) }
+                    }
                 }
             }
             // Not found: one line, and the way out is a button (closes the search; long-press the map).

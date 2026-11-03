@@ -43,6 +43,11 @@ data class SearchAnswer(
      * "תחנה מרכזית" was picked near Be'er Sheva). Null otherwise.
      */
     val around: LatLon? = null,
+    /**
+     * Transitous failed and only the bundled stations answered (F11): the list shows them and still says "No connection",
+     * with Retry. A failure with nothing to show is the search's failure, not this.
+     */
+    val transitFailed: Boolean = false,
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
@@ -166,7 +171,7 @@ class PlaceSearch(
         } catch (e: Exception) {
             trace?.transitError = e.javaClass.simpleName
             if (stations.isEmpty()) throw e
-            emptyList()
+            return SearchAnswer(stations, town = town, query = q, stations = stations, transitFailed = true)
         }
         trace?.transitRaw = raw.size
         val found = rankByTypedTown(raw)
