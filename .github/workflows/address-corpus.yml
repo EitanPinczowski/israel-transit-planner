@@ -1,7 +1,8 @@
 # The address corpus (owner, 2026-10-07: "no address left undefined or wrong"): ~60 real
 # queries through the app's search chain against the LIVE services (Transitous, the phone's
 # Geocoder, Photon), on a google_apis emulator. On demand only, to keep their traffic light:
-# Actions → "Address corpus" → Run, or push a branch named corpus-run/<anything>.
+# Actions → "Address corpus" → Run, or push a branch named corpus-run/<anything>. A branch named
+# corpus-run/probe-<anything> runs the short SearchProbeTest instead (a few queries, logged, F10).
 # The table lands in the job log and the run summary. See .claude/skills/transitous-api.
 name: Address corpus
 
@@ -37,9 +38,7 @@ jobs:
             adb install -r android/app/build/outputs/apk/uitest/app-uitest.apk
             adb install -r android/app/build/outputs/apk/androidTest/uitest/app-uitest-androidTest.apk
             sleep 20
-            adb shell am instrument -w -r -e class il.transit.planner.uitest.AddressCorpusTest il.transit.planner.uitest.test/androidx.test.runner.AndroidJUnitRunner | tee instrument.txt
-            adb pull /sdcard/Android/data/il.transit.planner.uitest/files/address_corpus.md address_corpus.md || true
-            echo "===== address corpus =====" && cat address_corpus.md || true
+            bash tools/probe_f11.sh 2>&1 | tee instrument.txt
       - if: always()
         run: |
           [ -f address_corpus.md ] && cat address_corpus.md >> "$GITHUB_STEP_SUMMARY"
