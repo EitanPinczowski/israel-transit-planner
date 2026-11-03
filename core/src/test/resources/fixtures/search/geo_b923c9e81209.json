@@ -361,6 +361,73 @@
   "importance": 0.005353919696062803
  },
  {
+  "type": "PLACE",
+  "category": "none",
+  "tokens": [
+   [
+    5.0,
+    5.0
+   ],
+   [
+    11.0,
+    6.0
+   ],
+   [
+    18.0,
+    5.0
+   ],
+   [
+    24.0,
+    7.0
+   ]
+  ],
+  "name": "Ankara High-Speed Train Station and Shopping Center",
+  "id": "way/1079040723",
+  "lat": 39.9355301,
+  "lon": 32.8415466,
+  "country": "TR",
+  "zip": "06570",
+  "tz": "Europe/Istanbul",
+  "areas": [
+   {
+    "name": "Turkey",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Central Anatolia Region",
+    "adminLevel": 3.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Ankara",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Çankaya",
+    "adminLevel": 6.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "Eti Mahallesi",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -0.25
+ },
+ {
   "type": "STOP",
   "tokens": [
    [
@@ -511,70 +578,5 @@
    "BUS"
   ],
   "importance": 0.015212923288345337
- },
- {
-  "type": "STOP",
-  "tokens": [
-   [
-    5.0,
-    5.0
-   ],
-   [
-    11.0,
-    6.0
-   ],
-   [
-    18.0,
-    5.0
-   ],
-   [
-    24.0,
-    7.0
-   ]
-  ],
-  "name": "Lübeck central train station",
-  "id": "eu-flixbus_dcbbeac7-9603-11e6-9066-549f350fcb0c",
-  "lat": 53.86618,
-  "lon": 10.669183,
-  "country": "DE",
-  "zip": "23558",
-  "tz": "Europe/Berlin",
-  "areas": [
-   {
-    "name": "Germany",
-    "adminLevel": 2.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Schleswig-Holstein",
-    "adminLevel": 4.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Lübeck",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": true,
-    "default": true
-   },
-   {
-    "name": "Sankt Lorenz Süd",
-    "adminLevel": 9.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   }
-  ],
-  "score": -0.12472953647375107,
-  "modes": [
-   "COACH",
-   "REGIONAL_RAIL",
-   "BUS"
-  ],
-  "importance": 0.003958875313401222
  }
 ]

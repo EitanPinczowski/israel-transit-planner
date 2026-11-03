@@ -2,6 +2,8 @@
 
 package il.transit.planner.ui.screens
 
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -21,23 +23,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import il.transit.core.search.StopCode
 import il.transit.planner.R
 import il.transit.planner.ui.AppMode
@@ -65,11 +70,18 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     val voice = rememberVoiceSearch(vm::onQuery)
     // A stop number no stop on the phone carries (D6): say so under the box; the list offers the map.
     val missingStop = StopCode.of(state.query)?.takeIf { state.places.notFound }
+    val user = rememberUserPresent()
     OutlinedTextField(
         value = state.query,
         onValueChange = vm::onQuery,
         modifier = modifier.focusRequester(focus)
-            .onFocusChanged { f -> if (f.isFocused) hadFocus = true else if (hadFocus) vm.cancelEditing() }
+            .onFocusChanged { f ->
+                if (f.isFocused) {
+                    hadFocus = true
+                } else if (hadFocus && user()) {
+                    vm.cancelEditing()
+                }
+            }
             // Back reaches neither the screen's BackHandler (a focused field takes it) nor the
             // app at all when the keyboard is up (the keyboard takes it to hide itself). This
             // hook sees it before both, keyboard or not: one Back closes the search.
@@ -102,7 +114,27 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
     )
     // No focus target in a screenshot test: nothing to open there.
     LaunchedEffect(field) { runCatching { focus.requestFocus() } }
-    CancelWhenKeyboardCloses(vm)
+    CancelWhenKeyboardCloses(vm, user)
+}
+
+/**
+ * Whether a lost focus or a closed keyboard is the user's doing (tapping away, Back) and should
+ * close the search: only while the screen is resumed. Rotating the phone, a theme or language
+ * switch, or leaving the app pauses the Activity first; its field then loses focus and its
+ * keyboard goes as the old window is torn down, and that must not clear the typed text (Phase 11
+ * F8, T9's rotation finding). The ViewModel keeps the search across the re-creation, and
+ * `SavedUi` across process death.
+ */
+@Composable
+private fun rememberUserPresent(): () -> Boolean {
+    val owner = LocalContext.current.lifecycleOwner()
+    return remember(owner) { { owner == null || owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) } }
+}
+
+private tailrec fun Context.lifecycleOwner(): LifecycleOwner? = when (this) {
+    is LifecycleOwner -> this
+    is ContextWrapper -> baseContext.lifecycleOwner()
+    else -> null
 }
 
 /**
@@ -115,7 +147,7 @@ internal fun PlaceEditor(state: UiState, vm: MainActions, modifier: Modifier) {
  * starts, and that keyboard leaving is not a Back.
  */
 @Composable
-private fun CancelWhenKeyboardCloses(vm: MainActions) {
+private fun CancelWhenKeyboardCloses(vm: MainActions, user: () -> Boolean) {
     val visible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     var seenHidden by remember { mutableStateOf(!visible) }
     var armed by remember { mutableStateOf(false) }
@@ -124,7 +156,7 @@ private fun CancelWhenKeyboardCloses(vm: MainActions) {
             !visible && armed -> {
                 // A hide that is undone at once (the keyboard swapping fields) is not a Back.
                 delay(KEYBOARD_SETTLE_MS)
-                vm.cancelEditing()
+                if (user()) vm.cancelEditing()
             }
             !visible -> seenHidden = true
             seenHidden -> armed = true

@@ -44,7 +44,7 @@
     "default": true
    }
   ],
-  "score": -16.75
+  "score": -26.75
  },
  {
   "type": "STOP",
@@ -90,7 +90,7 @@
     "default": true
    }
   ],
-  "score": -12.84999942779541,
+  "score": -22.849998474121094,
   "modes": [
    "BUS"
   ],
@@ -140,115 +140,11 @@
     "default": true
    }
   ],
-  "score": -12.84999942779541,
+  "score": -22.849998474121094,
   "modes": [
    "BUS"
   ],
   "importance": 1.6806594658191898e-06
- },
- {
-  "type": "STOP",
-  "tokens": [
-   [
-    0.0,
-    12.0
-   ]
-  ],
-  "name": "ירושלים",
-  "id": "il-Israel-MOT_2912",
-  "lat": 32.847249999999995,
-  "lon": 35.074314,
-  "country": "IL",
-  "tz": "Asia/Jerusalem",
-  "areas": [
-   {
-    "name": "ישראל",
-    "adminLevel": 2.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "מחוז חיפה",
-    "adminLevel": 4.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "נפת חיפה",
-    "adminLevel": 5.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "קרית ים",
-    "adminLevel": 8.0,
-    "matched": false,
-    "unique": true,
-    "default": true
-   }
-  ],
-  "score": -12.84999942779541,
-  "modes": [
-   "BUS"
-  ],
-  "importance": 1.6763092389737722e-06
- },
- {
-  "type": "PLACE",
-  "category": "place_6",
-  "tokens": [
-   [
-    0.0,
-    12.0
-   ]
-  ],
-  "name": "ירוסלבל",
-  "id": "node/27505266",
-  "lat": 57.6263877,
-  "lon": 39.8933705,
-  "country": "RU",
-  "tz": "Europe/Moscow",
-  "areas": [
-   {
-    "name": "רוסיה",
-    "adminLevel": 2.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "Центральный федеральный округ",
-    "adminLevel": 3.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "מחוז ירוסלבל",
-    "adminLevel": 4.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   },
-   {
-    "name": "городской округ Ярославль",
-    "adminLevel": 6.0,
-    "matched": false,
-    "unique": true,
-    "default": true
-   },
-   {
-    "name": "Кировский район",
-    "adminLevel": 9.0,
-    "matched": false,
-    "unique": false,
-    "default": false
-   }
-  ],
-  "score": -12.067999839782715
  },
  {
   "type": "STOP",
@@ -294,7 +190,7 @@
     "default": true
    }
   ],
-  "score": -11.34999942779541,
+  "score": -21.349998474121094,
   "modes": [],
   "importance": 0.0
  },
@@ -342,7 +238,7 @@
     "default": true
    }
   ],
-  "score": -11.34999942779541,
+  "score": -21.349998474121094,
   "modes": [
    "BUS"
   ],
@@ -392,10 +288,108 @@
     "default": true
    }
   ],
-  "score": -11.34999942779541,
+  "score": -21.349998474121094,
   "modes": [
    "BUS"
   ],
   "importance": 6.203504199220333e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ]
+  ],
+  "name": "עוף ירושלים",
+  "id": "il-Israel-MOT_11086",
+  "lat": 31.771126,
+  "lon": 34.99815800000001,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז ירושלים",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת ירושלים",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מועצה אזורית מטה יהודה",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -21.349998474121094,
+  "modes": [
+   "BUS"
+  ],
+  "importance": 1.5936537920424598e-06
+ },
+ {
+  "type": "STOP",
+  "tokens": [
+   [
+    0.0,
+    12.0
+   ]
+  ],
+  "name": "שער ירושלים",
+  "id": "il-Israel-MOT_24645",
+  "lat": 31.954899,
+  "lon": 34.845142,
+  "country": "IL",
+  "tz": "Asia/Jerusalem",
+  "areas": [
+   {
+    "name": "ישראל",
+    "adminLevel": 2.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "מחוז המרכז",
+    "adminLevel": 4.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "נפת רמלה",
+    "adminLevel": 5.0,
+    "matched": false,
+    "unique": false,
+    "default": false
+   },
+   {
+    "name": "באר יעקב",
+    "adminLevel": 8.0,
+    "matched": false,
+    "unique": true,
+    "default": true
+   }
+  ],
+  "score": -21.349998474121094,
+  "modes": [],
+  "importance": 0.0
  }
 ]

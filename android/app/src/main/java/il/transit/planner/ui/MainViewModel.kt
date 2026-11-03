@@ -1434,7 +1434,7 @@ class MainViewModel(
                 maxDetourMin = r.maxDetourMin,
                 maxPickUpDriveMin = r.maxPickUpDriveMin,
                 parkRide = it.parkRide.copy(maxDriveMin = r.maxParkRideMin),
-            )
+            ).let { st -> r.search?.let { st.reopened(it) } ?: st }
         }
         (r.sheet as? SavedUi.Sheet.Stop)?.let { openStop(it.stopId, it.name) }
         restoreRide = (r.sheet as? SavedUi.Sheet.Ride)?.legIndex
@@ -1488,6 +1488,15 @@ class MainViewModel(
         AppMode.PICK_UP -> PlanCache.key("PICK_UP-${s.timeMode}-${s.maxPickUpDriveMin}", from, to)
         AppMode.PARK_RIDE -> PlanCache.key("PARK_RIDE-${s.timeMode}-${s.parkRide.maxDriveMin}", from, to)
     }
+
+    /** The search that was open, as it was: its text and answers, no request (Phase 11 F8). */
+    private fun UiState.reopened(q: SavedSearch): UiState = copy(
+        editing = q.field,
+        query = q.query,
+        suggestions = q.answers,
+        searchHint = q.searchHint,
+        places = places.copy(backupShown = q.backupShown, notFound = q.notFound, offline = q.offline),
+    )
 
     /** A car tab's or errands' answer, kept for a restore after process death (0 requests to bring back). */
     private suspend fun keepTab(key: String, r: TabResult, empty: Boolean) {

@@ -51,7 +51,18 @@ Times are ISO-8601 with offset; parse with `parseTime()` (OffsetDateTime), never
   ignored**: Be'er Sheva → Tel Aviv's corridor returned 6,417 stops, mostly buses. Stop ids look like
   `il-Israel-MOT_37314`.
 - **Geocode:** without `placeBias` the `place` bias is weak ("רגר" near Be'er Sheva → Agra,
-  Zagreb, Riga). `placeBias=10` keeps every answer in Israel; `MotisClient` sends it.
+  Zagreb, Riga). `placeBias=10` keeps most answers in Israel; `MotisClient` sends it. With no typed
+  town, neighbourhood or fix, `PlaceSearch` sends Israel's centre (`ISRAEL_CENTRE` 31.5,34.9; F8,
+  live 2026-11-02: "Rehovot railway station" then answers Israeli bus stations, not only Cairo and
+  Thessaloniki). The bias only ranks: answers abroad still come, so `PlaceSearch` **drops every
+  source's answer outside Israel's box** (`inIsrael`, 29.4–33.4 N, 34.2–35.95 E, ±0.05°).
+- **Geocode, stations (F8):** English station names are mostly not in the index ("Beer Sheva Center
+  train station" → Leipzig, Berlin even with the bias). `search/Stations` answers "<town> … train /
+  railway station" and "תחנת רכבת <town> …" from the bundled `RailStations` (0 requests; "center"
+  → מרכז, "north" → צפון; nickname סבידור → תל אביב מרכז), first, and the backup is not asked. The
+  Tel Aviv central bus station's stops are "ת. מרכזית תל אביב/לוינסקי…": the alias for "תחנה מרכזית
+  חדשה" / "Tel Aviv Central Bus Station" searches that (its old text found a shelter inside it). For a
+  station query (`PlaceSearch.isStationQuery`) stops and stations rank above other places.
 - **Geocode, very short words:** matching is loose. Even with the bias, "רגר" → Hagar (הגר),
   Rigba…; Rager Blvd is not in the top 30, while "שדרות רגר" puts it first (2026-10-03, n=1).
   Re-ranking cannot fix a missing answer, so the app shows a "type the full name" hint
@@ -335,7 +346,9 @@ only 2 min, since the phone's Geocoder answers nothing when offline —, ≤ 2 a
 429/503). A search closed while its guard waits out `Retry-After` sends no retry and caches nothing; the same
 text typed later asks once more (one request for that typing pause, after the wait the server asked for): allowed,
 pinned by `PhotonRepeatTest` (F6). A backup failure never fails the search. Every backup answer outside Israel's box is
-dropped (the phone's Geocoder is also asked inside the box).
+dropped (the phone's Geocoder is also asked inside the box); since F8 Transitous's are too. A street and number
+answered only by its town is a miss like any other (`needsBackup`; pinned in `SearchF8Test`), and the town answers
+stay under "Closest matches".
 
 **Search hardening (Phase 10 D2), 0 new requests:**
 - **Stale searches:** `MotisClient` (like `PhotonClient`) enqueues and cancels the OkHttp call with
@@ -347,7 +360,8 @@ dropped (the phone's Geocoder is also asked inside the box).
   (Tel Aviv University), בי"ח (hospital), with `"` `״` `'` `׳` between the letters, also after ב/ל/מ/ו
   ("בת"א", "בי-ם"; the letters as they are first: ב"ב is בני ברק); with no mark
   only ראשלצ/נסצ/הודש/ביח (the others are words). `Aliases.AMBIGUOUS` (ק"א, ק"ב, ק"מ, ר"ה…) is never
-  spelled out. In English text the English name ("Herzl 5, ת"א" → "…, Tel Aviv").
+  spelled out. In English text the English name ("Herzl 5, ת"א" → "…, Tel Aviv"). Latin short forms
+  (F8, `Aliases.shortForm`): TLV, JLM, Chaifa / Khaifa, as one word anywhere ("TLV airport" stays Ben Gurion).
 - **Neighbourhoods** (`Neighbourhoods`, `NeighbourhoodsData` from `tools/gen_neighbourhoods.py` and
   the hand-checked `tools/neighbourhoods_seed.tsv`, ~160): a name and no town ("רמת אביב", not "גילה 5"
   nor "רחוב רמות") biases the one geocode to its town's `Towns` centre (no coordinates of our own);
@@ -382,6 +396,10 @@ dropped (the phone's Geocoder is also asked inside the box).
   A row marked `BAD` is a real answer that is wrong; the test pins that it still is (a fix flips it to OK). Findings of the first run
   (11 `BAD`): the index has no English street names (Herzl / Jaffa Road / Allenby + town answer only the town); English "train station" /
   "bus station" queries answer stations in other countries; "Chaifa", "TLV" and the prefix "ירושלי" answer places abroad or elsewhere.
+  **F8 (2026-11-02): 11 → 3 `BAD`** (the English street rows: the backups are asked, but their answers are not replayable here; check
+  on a phone). Source `BUNDLED` = the app's own station list. Recordings are keyed by the text sent, not the bias: texts with no town
+  recorded before F8 have no bias; the app now sends Israel's centre, and the rows F8 fixed were re-recorded with it (6 recordings,
+  plus 5 live checks).
   **Adding a row:** append it; a new search text fails the test and prints the `record_fixture.py` commands between `=== SEARCH-MISSING ===`
   markers on stdout (also to `SEARCH_MISSING_OUT` if set; `core/build` is unreadable to agents, so CI logs carry them too).
   `SearchRankingEdgeTest` pins the phone-side ranking (`LocalFirst`, `Recents`).

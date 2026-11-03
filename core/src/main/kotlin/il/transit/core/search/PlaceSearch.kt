@@ -35,11 +35,13 @@ data class SearchAnswer(
     val choices: List<TownChoice> = emptyList(),
     /** The text was a stop number ([StopCode]): [primary] holds the known stops with that code, all answers. */
     val stopCode: String? = null,
+    /** Train stations the text asked for by name, from the bundled list ([Stations], F8): answers, first in [primary]. */
+    val stations: List<GeocodeMatch> = emptyList(),
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
     /** How much of [query] [m] is ([PlaceSearch.level]). */
-    fun level(m: GeocodeMatch): MatchLevel = if (stopCode != null) MatchLevel.PLACE else PlaceSearch.level(query, m, town)
+    fun level(m: GeocodeMatch): MatchLevel = if (stopCode != null || m in stations) MatchLevel.PLACE else PlaceSearch.level(query, m, town)
 
     /** What [m]'s row says: its level, and the typed house a street-only answer lacks. */
     fun note(m: GeocodeMatch): MatchNote = level(m).let { l -> MatchNote(l, if (l == MatchLevel.STREET) PlaceSearch.houseOf(query)?.label else null) }
@@ -48,13 +50,20 @@ data class SearchAnswer(
      * Answers that are what was typed ([MatchLevel.isAnswer]); only these may be shown as the answer.
      * One named exactly as typed first: "רמות" before "רמות אשכול".
      */
-    val exact: List<GeocodeMatch> get() = ordered.filter { level(it).isAnswer }.sortedByDescending { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }
+    val exact: List<GeocodeMatch> get() = ordered
+        .filter { level(it).isAnswer }
+        .sortedWith(compareByDescending<GeocodeMatch> { PlaceSearch.normalize(it.name) == PlaceSearch.normalize(query) }.thenByDescending(::transitFirst))
+
+    /** A station asked for ("תחנה מרכזית…", "… train station"): stops and stations before a shelter or shop of that name (F8). */
+    private fun transitFirst(m: GeocodeMatch): Boolean = PlaceSearch.isStationQuery(query) && PlaceSearch.isTransit(m)
 
     /**
      * The rest, near but not it ("שדרות המגינים 100" for שדרות הנשיא 100): shown under "Closest
      * matches", the typed street first, then the town, then the others.
      */
-    val closest: List<GeocodeMatch> get() = ordered.filterNot { level(it).isAnswer }.sortedBy { level(it).ordinal }
+    val closest: List<GeocodeMatch> get() = ordered
+        .filterNot { level(it).isAnswer }
+        .sortedWith(compareBy<GeocodeMatch> { level(it).ordinal }.thenByDescending(::transitFirst))
 
     val all: List<GeocodeMatch> get() = exact + closest
 
@@ -105,15 +114,24 @@ class PlaceSearch(
         val area = if (town == null) Neighbourhoods.typedIn(typed).firstOrNull()?.let { Neighbourhoods.townsByDistance(it, near) }.orEmpty() else emptyList()
         // In several towns ("רמות"): which one first, from the table, 0 requests (owner, 2026-10-12).
         if (area.size > 1) return SearchAnswer(emptyList(), query = q, choices = area.map { TownChoice(it, "$typed, ${it.displayName(language)}") })
-        // A typed town (or a neighbourhood's) says where better than the phone's position does.
-        val bias = town?.centre ?: area.firstOrNull()?.centre ?: near
+        // A typed town (or a neighbourhood's) says where better than the phone's position does; with
+        // neither and no fix, Israel's centre, so a short or foreign-looking text is still read near
+        // here ("TLV", "Rehovot railway station" answered St Petersburg and Thessaloniki, F8).
+        val bias = town?.centre ?: area.firstOrNull()?.centre ?: near ?: ISRAEL_CENTRE
         fun inTown(m: GeocodeMatch) = town == null || Towns.holds(town, m)
         // Answers in the neighbourhood's town first; the rest after (it may be a street name too).
         fun areaRank(m: GeocodeMatch) = area.indexOfFirst { Towns.holds(it, m) }.let { if (it < 0) area.size else it }
         val house = houseOf(q)
-        val primary = rankByTypedTown(transit.geocode(q, language, bias, max)).filter(::inTown)
+        // A train station by name ("Rehovot railway station"): from the bundled list, first (0 requests).
+        val stations = Stations.find(q, language)
+        val found = rankByTypedTown(transit.geocode(q, language, bias, max))
+            .filter(::inTown)
+            // Israel only, from every source: the index knows the world (F8).
+            .filter { inIsrael(LatLon(it.lat, it.lon)) }
+            .filter { m -> stations.none { it.id == m.id || sameAnswer(it, m) } }
             .sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) })
-        if (backup == null || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q)
+        val primary = stations + found
+        if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations)
         interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true))
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
@@ -279,7 +297,12 @@ class PlaceSearch(
             val names = words.filterNot(::isGeneric)
             val hay = tokens(listOfNotNull(m.name, m.street).joinToString(" "))
             // Town words aren't the place's name, unless typed as its name ("מודיעין" in "ת. רכבת מודיעין מרכז").
-            val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet() - words.toSet()
+            // A town typed one letter short ("ירושלי") is typed as the name too (F8).
+            val towns = (answerTowns(m) + typed?.names.orEmpty()).flatMap(::tokens).toSet() - words.toSet() -
+                words
+                    .filter { it.length >= 4 }
+                    .mapNotNull { w -> answerTowns(m).flatMap(::tokens).firstOrNull { t -> t.length == w.length + 1 && t.startsWith(w) } }
+                    .toSet()
             val isTypedTown = typed != null && Towns.named(m.name.substringBefore(',')) == typed
             val town = if (isTypedTown) MatchLevel.TOWN else MatchLevel.NONE
             if (names.isEmpty()) {
@@ -353,8 +376,51 @@ class PlaceSearch(
         fun sameAnswer(a: GeocodeMatch, b: GeocodeMatch): Boolean =
             normalize(a.name) == normalize(b.name) && Geo.distanceM(LatLon(a.lat, a.lon), LatLon(b.lat, b.lon)) <= SAME_PLACE_M
 
-        /** Inside [PhotonClient.ISRAEL_BBOX]: Israel, the Golan and Eilat, a little sea. */
-        fun inIsrael(p: LatLon): Boolean = p.lat in 29.45..33.35 && p.lon in 34.2..35.95
+        /**
+         * Israel's box (29.4,34.2 to 33.4,35.95: Eilat to the Golan, a little sea) and [ISRAEL_MARGIN] around it, less
+         * Jordan and Lebanon ([eastLimit], [northLimit]).
+         * Every source's answers outside it are dropped (the backups since 2026-10-07, Transitous's since F8).
+         */
+        fun inIsrael(p: LatLon): Boolean =
+            p.lat in (29.4 - ISRAEL_MARGIN)..(33.4 + ISRAEL_MARGIN) &&
+                p.lon in (34.2 - ISRAEL_MARGIN)..(35.95 + ISRAEL_MARGIN) &&
+                p.lon <= eastLimit(p.lat) &&
+                p.lat <= northLimit(p.lon)
+
+        /**
+         * The box holds Jordan's west (Amman, Salt, Madaba, Aqaba) and south Lebanon (Tyre): cut by the border, roughly
+         * (review, F8). North of the Yarmouk the Golan to the box's edge; then the Jordan river; the middle of the Dead
+         * Sea; the Arava line from the Dead Sea's south end to Eilat. Hamat Gader, Ein Gedi, Hatzeva and Eilat stay in.
+         */
+        private fun eastLimit(lat: Double): Double = when {
+            lat >= 32.67 -> 35.95 + ISRAEL_MARGIN
+            lat >= 31.77 -> 35.6
+            lat >= 31.0 -> 35.5
+            else -> 34.98 + (lat - 29.5) * (35.47 - 34.98) / 1.5
+        }
+
+        /** Lebanon: the border runs along ~33.1 N from Rosh HaNikra, with the Metula finger up to 33.3 N; the Golan above it. */
+        private fun northLimit(lon: Double): Double = when {
+            lon < 35.5 -> 33.11
+            lon < 35.62 -> 33.3
+            else -> 33.4 + ISRAEL_MARGIN
+        }
+
+        /** About 5 km: a place on the border, or a bias rounded to 0.1°, stays in. */
+        const val ISRAEL_MARGIN = 0.05
+
+        /** The bias with no typed town, no neighbourhood and no fix (F8): in Israel's middle, rounded like any bias. */
+        val ISRAEL_CENTRE = LatLon(31.5, 34.9)
+
+        /** Words that ask for a station (bus or train), not which one. */
+        private val STATION_WORDS = setOf("תחנה", "תחנת", "התחנה", "מרכזית", "המרכזית", "רכבת", "הרכבת", "station", "train", "railway", "bus", "terminal")
+
+        /** The text asks for a station: "תחנה מרכזית…", "ת. רכבת…", "… train station". */
+        fun isStationQuery(query: String): Boolean = tokens(query).any { it in STATION_WORDS }
+
+        /** A stop or station (not a shelter, a shop or a car park that shares its name). */
+        fun isTransit(m: GeocodeMatch): Boolean =
+            m.type == "STOP" || !m.modes.isNullOrEmpty() || m.category.orEmpty().let { c -> c.contains("bus_station") || c.contains("railway") || c == "station" }
 
         /** 0.1° (~10 km): plenty for a bias. */
         fun roundBias(p: LatLon) = LatLon((p.lat * 10).roundToInt() / 10.0, (p.lon * 10).roundToInt() / 10.0)

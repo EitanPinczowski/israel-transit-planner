@@ -102,7 +102,8 @@ object QueryText {
                 isAcronym(token) -> Aliases.acronym(bare, marked = token != bare, english = english)?.plus(comma) ?: raw
                 token in STREET && tokens.size > 1 -> comma.ifEmpty { null }
                 token in BOULEVARD -> "שדרות$comma"
-                else -> raw
+                // "TLV", "Chaifa" (F8): the town's name.
+                else -> Aliases.shortForm(token, english)?.plus(comma) ?: raw
             }
         }
         return unprefix(out.joinToString(" ").trim().trimStart(',').trim())

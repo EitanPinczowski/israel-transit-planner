@@ -62,14 +62,14 @@ Rothschild Blvd 10, ת׳א	en	NONE			English street names are not in Transitous'
 בן יהודה 10 ת״א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
 בן יהודה 10 ת'א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
 בן יהודה 10 ת׳א	he	HOUSE	בן יהודה 10	32.07395,34.76834	
-תחנה מרכזית חדשה תל אביב	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-התחנה המרכזית החדשה	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-תחנה מרכזית חדשה	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-התחנה המרכזית החדשה תל אביב	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-תחנה מרכזית חדשה ת"א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-תחנה מרכזית חדשה ת״א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-תחנה מרכזית חדשה ת'א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
-תחנה מרכזית חדשה ת׳א	he	NONE			Transitous names only the shelter inside it (2026-10-12): never shown as the answer; the phone's Geocoder finds the station
+תחנה מרכזית חדשה תל אביב	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+התחנה המרכזית החדשה	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+תחנה מרכזית חדשה	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+התחנה המרכזית החדשה תל אביב	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+תחנה מרכזית חדשה ת"א	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+תחנה מרכזית חדשה ת״א	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+תחנה מרכזית חדשה ת'א	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
+תחנה מרכזית חדשה ת׳א	he	PLACE	ת. מרכזית|ת.מרכזית	32.0569,34.7791	
 איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
 בית חולים איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	
 בי"ח איכילוב	he	PLACE	בי"ח איכילוב	32.08125,34.78898	

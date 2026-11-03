@@ -490,6 +490,29 @@ class AppStateTest : VmTest() {
         assertEquals(0, api.total)
     }
 
+    @Test fun `saved state - an open search comes back with its text and answers, and no request (F8)`() {
+        val handle = SavedStateHandle()
+        val api = ScriptedApi(replay())
+        val vm = newVm(api, saved = handle)
+        vm.startEditing(Field.TO)
+        vm.onQuery("rager")
+        advance(500)
+        val shown = vm.state.value.suggestions
+        assertTrue(shown.isNotEmpty())
+        assertEquals(1, api.count("geocode"))
+        // Android kills the app; a new ViewModel reads the same handle.
+        val api2 = ScriptedApi(replay())
+        val back = newVm(api2, saved = handle)
+        assertEquals(Field.TO, back.state.value.editing)
+        assertEquals("rager", back.state.value.query)
+        assertEquals(shown, back.state.value.suggestions)
+        advance(1_000)
+        assertEquals(0, api2.total)
+        // Closing it clears the saved search too.
+        back.cancelEditing()
+        assertNull(SavedUi.read { k -> handle.get<Any?>(k) }!!.search)
+    }
+
     @Test fun `saved state - with no saved copy only the fields come back, and nothing is searched`() {
         val handle = SavedStateHandle()
         SavedUi(mode = AppMode.PICK_UP, from = PlaceRef.MyLocation, to = PlaceRef.Point("Savidor", SAVIDOR), timeMode = TimeMode.NOW)

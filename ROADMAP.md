@@ -208,6 +208,14 @@ merges. Tick only your own package's lines.
 - [x] First-run tour of every mode, skippable, shown again from Settings
 - [x] Distinct colours for legs of one trip on the map and the chips (`present/LegPalette`)
 
+### F8 — Search fixes (`claude/p11-search-f8`, ≤ 40 Transitous recordings, 0 Photon; from T9)
+- [x] Rotation keeps the search: the open field, its text and answers survive rotation (ViewModel) and process re-creation (`SavedUi`), 0 extra requests; tap outside / Back still close it; journey in `SearchJourneysTest` (Hebrew and English)
+- [x] Israel only: every source's answers outside Israel's box (+ margin) dropped; Israel's centre as the geocode bias when no town, neighbourhood or fix (checked live)
+- [x] Weak answer falls through: street + number answered only by the town is a miss → phone Geocoder, then Photon (≤ 1 each); the town still shows (pinned)
+- [x] Transit first: for a station query, stops and stations above shelters and other places; the new central station alias searches its stops' name; train stations by name from the bundled `RailStations` (0 requests)
+- [x] Short forms: TLV, JLM, Chaifa (Latin) beside the Hebrew acronyms, tiny and tested
+- [x] Corpus: 11 → 3 `BAD` rows (English street names: the backups' answers are not replayable here)
+
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)
