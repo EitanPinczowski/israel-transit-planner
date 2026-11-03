@@ -425,10 +425,6 @@ class MainActivity : ComponentActivity() {
         return s.getSource(LocationComponentConstants.LOCATION_SOURCE) != null
     }
 
-    /**
-     * F9: whether the open long-press pin is drawn on the map at its point; null with no pin or no
-     * style yet. UI tests check a long-press leaves a visible pin.
-     */
     /** F9: what the map holds and draws for the open pin, for a UI test's failure message. */
     @VisibleForTesting
     fun pinReport(): String {
@@ -437,9 +433,14 @@ class MainActivity : ComponentActivity() {
         return c.pinReport(at)
     }
 
+    /** F9: the map style has loaded and its layers exist (UI tests wait for it). */
     @VisibleForTesting
     fun mapReadyForTest(): Boolean = controller.value != null
 
+    /**
+     * F9: whether the open long-press pin is drawn on the map at its point; null with no pin or no
+     * style yet. UI tests check a long-press leaves a visible pin.
+     */
     @VisibleForTesting
     fun pinOnMap(): Boolean? {
         val c = controller.value ?: return null
