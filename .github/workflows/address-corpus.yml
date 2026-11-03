@@ -38,9 +38,7 @@ jobs:
             adb install -r android/app/build/outputs/apk/uitest/app-uitest.apk
             adb install -r android/app/build/outputs/apk/androidTest/uitest/app-uitest-androidTest.apk
             sleep 20
-            adb shell am instrument -w -r -e class il.transit.planner.uitest.${{ startsWith(github.ref_name, 'corpus-run/probe') && 'SearchProbeTest' || 'AddressCorpusTest' }} il.transit.planner.uitest.test/androidx.test.runner.AndroidJUnitRunner | tee instrument.txt
-            adb pull /sdcard/Android/data/il.transit.planner.uitest/files/address_corpus.md address_corpus.md || true
-            echo "===== address corpus =====" && cat address_corpus.md || true
+            bash tools/probe_f11.sh 2>&1 | tee instrument.txt
       - if: always()
         run: |
           [ -f address_corpus.md ] && cat address_corpus.md >> "$GITHUB_STEP_SUMMARY"

@@ -60,7 +60,12 @@ class UiTestApp : TransitApp() {
             }
         }
     }
-    override val api: TransitApi get() = network?.api ?: slowReplay
+    override val api: TransitApi get() = liveApi ?: network?.api ?: slowReplay
+
+    /** F11 probe only (branch corpus-run/probe-f11*): the live services, set before the Activity starts. */
+    @Volatile var liveApi: TransitApi? = null
+
+    @Volatile var liveBackup: BackupGeocoder? = null
 
     /**
      * Phase 11 T4: the network-fault mode. Set (with the local mock server's URL) before the Activity
@@ -72,7 +77,7 @@ class UiTestApp : TransitApp() {
     fun useMockServer(base: String): MockNetwork = MockNetwork(replay, clock, base, usage).also { network = it }
 
     /** No outside geocoder in UI tests: they never touch the network (the fault mode: Photon on the mock server). */
-    override val backupGeocoder: BackupGeocoder? get() = network?.backup
+    override val backupGeocoder: BackupGeocoder? get() = liveBackup ?: network?.backup
 
     /**
      * A wet morning, 0 requests (Phase 10 D9): 70% every hour around [NOW], so the rain note shows
@@ -120,6 +125,8 @@ class UiTestApp : TransitApp() {
     suspend fun reset(places: List<SavedPlace> = PLACES) {
         replay.failing = false
         network = null
+        liveApi = null
+        liveBackup = null
         planDelayMs = 0
         clockShift = Duration.ZERO
         latestRelease = null
