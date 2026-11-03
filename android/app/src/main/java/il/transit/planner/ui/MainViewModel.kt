@@ -371,11 +371,11 @@ class MainViewModel(
     fun cancelEditing() {
         // Closed while its search was still running: say so in the diagnostic (F11), the search itself is dropped.
         inFlight?.let { q ->
-            noteEmptySearch(
-                SearchTrace(q, language, locationProvider() != null)
-                    .apply { local = localHits(q).size; outcome = "closed before the answer"; shown = _state.value.suggestions.size }
-                    .line(clock.instant(), java.time.ZoneId.systemDefault()),
-            )
+            val trace = SearchTrace(q, language, locationProvider() != null)
+            trace.local = localHits(q).size
+            trace.outcome = "closed before the answer"
+            trace.shown = _state.value.suggestions.size
+            noteEmptySearch(trace.line(clock.instant(), java.time.ZoneId.systemDefault()))
         }
         typing.cancel()
         inFlight = null

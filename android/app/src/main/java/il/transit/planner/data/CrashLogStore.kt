@@ -56,7 +56,7 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
 
     suspend fun refresh() = withContext(Dispatchers.IO) {
         _count.value = CrashLog.entries(readOrNull()).size
-        _lastSearch.value = runCatching { searchFile.takeIf { it.exists() }?.readText()?.trim()?.ifEmpty { null } }.getOrNull()
+        _lastSearch.value = runCatching { readSearch() }.getOrNull()
     }
 
     /** The text for the share sheet, newest first; null when there is nothing. */
@@ -78,6 +78,11 @@ class CrashLogStore(private val file: File, private val appVersion: String) {
         }
         _count.value = 0
         _lastSearch.value = null
+    }
+
+    private fun readSearch(): String? {
+        if (!searchFile.exists()) return null
+        return searchFile.readText().trim().ifEmpty { null }
     }
 
     private fun readOrNull(): String? = runCatching { file.takeIf { it.exists() }?.readText() }.getOrNull()
