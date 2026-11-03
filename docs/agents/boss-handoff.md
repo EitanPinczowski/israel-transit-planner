@@ -38,14 +38,14 @@ decisions already recorded.
   - No v0.9.3; the next release is v0.10.0.
   - The APK +2.28% from F4 accepted.
   - E6: go.
-  - Release: wait.
+  - Release: v0.10.0 released on the owner's "release" (2026-11-03).
 - **Waiting on the owner:**
   - E6's two-scan Pixel test (steps in PR #116's body). With the result, write the go/no-go:
     - **go:** a follow-up package finds the end-date bits by comparing the scans with Rav-Kav Online;
     - **no-go:** a `dead-ends` row, and remove the lab.
     
     Then tick ROADMAP E6.
-  - The word on v0.10.0, plus the bug-bash run (`docs/testing/bug-bash.md` §9 has the F6–F8 phone checks).
+  - The rest of the bug bash (B–G of the list sent 2026-11-03; `docs/testing/bug-bash.md`).
   - The 3 BAD corpus rows (English "street + number") can only be judged on a phone: does the Geocoder find them?
 - **Follow-ups not yet packaged:**
   - input injection (shell `input`, `UiAutomation.injectInputEvent`) doesn't reach apps on the API 35
