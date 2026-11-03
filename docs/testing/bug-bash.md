@@ -56,3 +56,12 @@ Use the **signed APK from the GitHub release**, never a debug or CI build (a dif
 - [ ] For each problem: open an issue with the **bug report** form (version, phone, steps, expected / happened, screenshot, the crash log if there is one). Tick that it holds no home address or personal places.
 - [ ] Friends without a GitHub account: Settings → Crash log → Share crash log over WhatsApp.
 - [ ] Before the release is announced the boss reads the open `bug` issues and names the fixed ones in the notes.
+
+## 9. Fixes since v0.9.2 (F6–F8)
+- [ ] A finger long-press on the map, between the search card and the results, drops a pin.
+- [ ] Largest font (×1.3 or more): a stop's departures show whole destinations, TalkBack reads each once; Park & ride (Meitar → Tel Aviv) and its way-back row read whole.
+- [ ] On a late bus "get off at the next stop" still comes; getting off and walking away ends the ride notification within about a minute.
+- [ ] Open the search, type, rotate both ways: the text and answers stay; Back and tapping away still close it.
+- [ ] "Herzl 12 Be'er Sheva" / "Allenby 40 Tel Aviv": does the phone find the street?
+- [ ] Location off: "TLV", "Rehovot railway station", "Tel Aviv Central Bus Station" give Israeli answers; "Haifa railway museum" is not a station.
+- [ ] "תחנה מרכזית חדשה" lists the station's stops, not the shelter.
