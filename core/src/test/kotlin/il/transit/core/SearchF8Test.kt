@@ -67,6 +67,20 @@ class SearchF8Test {
         assertFalse(PlaceSearch.inIsrael(LatLon(40.64, 22.93))) // Thessaloniki
     }
 
+    @Test fun `Jordan and Lebanon are out, the border towns in (review)`() {
+        for ((name, p) in listOf(
+            "Amman" to LatLon(31.95, 35.93), "Salt" to LatLon(32.04, 35.73), "Madaba" to LatLon(31.72, 35.79),
+            "Aqaba" to LatLon(29.53, 35.01), "Tyre" to LatLon(33.27, 35.2), "Naqoura" to LatLon(33.12, 35.14),
+            "South Shuna" to LatLon(31.9, 35.62),
+        )) assertFalse(name, PlaceSearch.inIsrael(p))
+        for ((name, p) in listOf(
+            "Metula" to LatLon(33.28, 35.58), "Kiryat Shmona" to LatLon(33.21, 35.57), "Rosh HaNikra" to LatLon(33.09, 35.1),
+            "Eilat" to LatLon(29.55, 34.95), "Katzrin" to LatLon(32.99, 35.69), "Majdal Shams" to LatLon(33.27, 35.77),
+            "Hamat Gader" to LatLon(32.68, 35.66), "Ein Gedi" to LatLon(31.46, 35.39), "Kalia" to LatLon(31.75, 35.47),
+            "Hatzeva" to LatLon(30.78, 35.24), "Yotvata" to LatLon(29.9, 35.06), "Beit She'an" to LatLon(32.5, 35.5),
+        )) assertTrue(name, PlaceSearch.inIsrael(p))
+    }
+
     @Test fun `only answers abroad is a miss - the backup is asked, once`() = runBlocking {
         val backup = Backup { listOf(m("ראשון לציון", 31.97, 34.79)) }
         val a = PlaceSearch(Geo { listOf(m("Chaina", 34.5, 108.9)) }, backup).search("Xyzzy town", "en", null)
@@ -173,6 +187,19 @@ class SearchF8Test {
         assertEquals(listOf("תל אביב מרכז"), Stations.find("תחנת רכבת תל אביב סבידור", "he").map { it.name })
         assertEquals("STOP", Stations.find("Rehovot railway station", "en").first().type)
         assertTrue(Stations.find("תחנת רכבת תל אביב", "he").size in 1..Stations.MAX)
+    }
+
+    @Test fun `a place near a station is not the station - every word must name it (review)`() {
+        assertTrue(Stations.find("Haifa Railway Museum", "en").isEmpty())
+        assertTrue(Stations.find("מוזיאון הרכבת חיפה", "he").isEmpty())
+        assertTrue(Stations.find("Rehovot railway station parking", "en").isEmpty())
+        assertTrue(Stations.find("חניון תחנת רכבת רחובות", "he").isEmpty())
+        assertTrue(Stations.find("Israel Railways offices Tel Aviv", "en").isEmpty())
+        assertTrue(Stations.find("Savidor train station parking", "en").isEmpty())
+        // A part no station of the town has is not a station either; one it has is.
+        assertTrue(Stations.find("Beer Sheva West train station", "en").isEmpty())
+        assertEquals(listOf("תל אביב ההגנה"), Stations.find("תחנת רכבת תל אביב ההגנה", "he").map { it.name })
+        assertEquals(listOf("תל אביב מרכז"), Stations.find("Savidor Tel Aviv train station", "he").map { it.name })
     }
 
     @Test fun `not a station query - light rail, no town, no rail word`() {

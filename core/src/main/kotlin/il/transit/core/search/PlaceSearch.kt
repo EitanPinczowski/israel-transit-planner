@@ -377,11 +377,34 @@ class PlaceSearch(
             normalize(a.name) == normalize(b.name) && Geo.distanceM(LatLon(a.lat, a.lon), LatLon(b.lat, b.lon)) <= SAME_PLACE_M
 
         /**
-         * Israel's box (29.4,34.2 to 33.4,35.95: Eilat to the Golan, a little sea) and [ISRAEL_MARGIN] around it.
+         * Israel's box (29.4,34.2 to 33.4,35.95: Eilat to the Golan, a little sea) and [ISRAEL_MARGIN] around it, less
+         * Jordan and Lebanon ([eastLimit], [northLimit]).
          * Every source's answers outside it are dropped (the backups since 2026-10-07, Transitous's since F8).
          */
         fun inIsrael(p: LatLon): Boolean =
-            p.lat in (29.4 - ISRAEL_MARGIN)..(33.4 + ISRAEL_MARGIN) && p.lon in (34.2 - ISRAEL_MARGIN)..(35.95 + ISRAEL_MARGIN)
+            p.lat in (29.4 - ISRAEL_MARGIN)..(33.4 + ISRAEL_MARGIN) &&
+                p.lon in (34.2 - ISRAEL_MARGIN)..(35.95 + ISRAEL_MARGIN) &&
+                p.lon <= eastLimit(p.lat) &&
+                p.lat <= northLimit(p.lon)
+
+        /**
+         * The box holds Jordan's west (Amman, Salt, Madaba, Aqaba) and south Lebanon (Tyre): cut by the border, roughly
+         * (review, F8). North of the Yarmouk the Golan to the box's edge; then the Jordan river; the middle of the Dead
+         * Sea; the Arava line from the Dead Sea's south end to Eilat. Hamat Gader, Ein Gedi, Hatzeva and Eilat stay in.
+         */
+        private fun eastLimit(lat: Double): Double = when {
+            lat >= 32.67 -> 35.95 + ISRAEL_MARGIN
+            lat >= 31.77 -> 35.6
+            lat >= 31.0 -> 35.5
+            else -> 34.98 + (lat - 29.5) * (35.47 - 34.98) / 1.5
+        }
+
+        /** Lebanon: the border runs along ~33.1 N from Rosh HaNikra, with the Metula finger up to 33.3 N; the Golan above it. */
+        private fun northLimit(lon: Double): Double = when {
+            lon < 35.5 -> 33.12
+            lon < 35.62 -> 33.3
+            else -> 33.4 + ISRAEL_MARGIN
+        }
 
         /** About 5 km: a place on the border, or a bias rounded to 0.1°, stays in. */
         const val ISRAEL_MARGIN = 0.05

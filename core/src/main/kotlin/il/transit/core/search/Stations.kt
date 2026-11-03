@@ -61,8 +61,13 @@ object Stations {
         val all = words(text)
         if (all.none { it in RAIL } || all.any { it in LIGHT }) return emptyList()
         val rest = all.filterNot { it in KIND }
-        rest.firstNotNullOfOrNull { NICKNAMES[it] }?.let { name ->
-            return rail.filter { it.name == name }.map { answer(it, null, language) }
+        // Every word must say which station: a town, a part of its name, a nickname. Anything else ("museum",
+        // "parking", "offices") is another place near a station, left to the search (review, F8).
+        rest.firstOrNull { it in NICKNAMES }?.let { nick ->
+            val others = rest.filterNot { it == nick }
+            val leftover = townIn(others)?.let { (_, start, len) -> others.subList(0, start) + others.subList(start + len, others.size) } ?: others
+            if (leftover.isNotEmpty()) return emptyList()
+            return rail.filter { it.name == NICKNAMES.getValue(nick) }.map { answer(it, null, language) }
         }
         val (town, start, len) = townIn(rest) ?: return emptyList()
         val parts = (rest.subList(0, start) + rest.subList(start + len, rest.size)).map { PARTS[it] ?: it }
@@ -74,8 +79,10 @@ object Stations {
             val n = words(p.name)
             return parts.isNotEmpty() && parts.all { it in n }
         }
-        return inTown
-            .sortedWith(compareByDescending<Place>(::fits).thenByDescending { it.importance ?: 0.0 })
+        // Named parts ("Center", "צפון", "ההגנה") must all be in the station's name.
+        val named = if (parts.isEmpty()) inTown else inTown.filter(::fits)
+        return named
+            .sortedByDescending { it.importance ?: 0.0 }
             .take(MAX)
             .map { answer(it, town, language) }
     }

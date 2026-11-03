@@ -3,11 +3,24 @@ package il.transit.planner.ui
 import il.transit.core.geo.LatLon
 import il.transit.core.search.MatchLevel
 import il.transit.core.search.MatchNote
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 
 /**
  * The open search, kept across process death (Phase 11 F8; rotation keeps it in the ViewModel):
  * which field, the typed text and the answers on screen, so the search comes back as it was with
- * no request. Part of [SavedUi]; small values only, one key per answer field, at most [MAX_ANSWERS].
+ * no request. Part of [SavedUi], as ONE string under [KEY] (a small JSON object), at most
+ * [MAX_ANSWERS] rows and [MAX_QUERY] characters of text.
  */
 data class SavedSearch(
     val field: Field,
@@ -18,96 +31,93 @@ data class SavedSearch(
     val notFound: Boolean = false,
     val offline: Boolean = false,
 ) {
-    /** Every key is written, null included, so a search closed since the last save is cleared there too. */
-    fun write(set: (String, Any?) -> Unit) = write(this, set)
-
     companion object {
         /** More than a screen of rows; the rest are dropped (the field still holds the text). */
         const val MAX_ANSWERS = 16
 
-        private const val P = "f8.search."
-        private const val FIELD = P + "field"
-        private const val QUERY = P + "query"
-        private const val FLAGS = P + "flags"
-        private const val COUNT = P + "count"
+        /** A search is a few words; a longer text is cut, so the saved bundle stays small. */
+        const val MAX_QUERY = 200
 
-        private const val HINT = 1
-        private const val BACKUP_SHOWN = 2
-        private const val NOT_FOUND = 4
-        private const val OFFLINE = 8
-
-        private const val SAVED = 1
-        private const val STOP = 2
-        private const val HOME = 4
-        private const val RECENT = 8
-        private const val BACKUP = 16
-        private const val CLOSEST = 32
-
-        private fun bit(on: Boolean, b: Int) = if (on) b else 0
+        const val KEY = "f8.search"
 
         fun of(s: UiState): SavedSearch? = s.editing?.let { f ->
-            SavedSearch(f, s.query, s.suggestions.take(MAX_ANSWERS), s.searchHint, s.places.backupShown, s.places.notFound, s.places.offline)
+            SavedSearch(f, s.query.take(MAX_QUERY), s.suggestions.take(MAX_ANSWERS), s.searchHint, s.places.backupShown, s.places.notFound, s.places.offline)
         }
 
-        /** [s] null clears every key. */
-        fun write(s: SavedSearch?, set: (String, Any?) -> Unit) {
-            set(FIELD, s?.field?.name)
-            set(QUERY, s?.query)
-            set(FLAGS, s?.let { bit(it.searchHint, HINT) or bit(it.backupShown, BACKUP_SHOWN) or bit(it.notFound, NOT_FOUND) or bit(it.offline, OFFLINE) })
-            set(COUNT, s?.answers?.size)
-            for (i in 0 until MAX_ANSWERS) {
-                val a = s?.answers?.getOrNull(i)
-                val k = "${P}a$i."
-                set(k + "name", a?.name)
-                set(k + "detail", a?.detail)
-                set(k + "lat", a?.at?.lat)
-                set(k + "lon", a?.at?.lon)
-                set(
-                    k + "flags",
-                    a?.let { bit(it.saved, SAVED) or bit(it.isStop, STOP) or bit(it.home, HOME) or bit(it.recent, RECENT) or bit(it.backup, BACKUP) or bit(it.closest, CLOSEST) },
-                )
-                set(k + "level", a?.match?.level?.name)
-                set(k + "house", a?.match?.house)
-                set(k + "refine", a?.refine)
-                set(k + "stopId", a?.stopId)
+        /** [s] null clears the key. */
+        fun write(s: SavedSearch?, set: (String, Any?) -> Unit) = set(KEY, s?.let(::encode))
+
+        /** Null when no search was open (or the saved text can't be read). */
+        fun read(get: (String) -> Any?): SavedSearch? = (get(KEY) as? String)?.let { runCatching { decode(it) }.getOrNull() }
+
+        internal fun encode(s: SavedSearch): String = buildJsonObject {
+            put("field", s.field.name)
+            put("query", s.query.take(MAX_QUERY))
+            put("hint", s.searchHint)
+            put("backupShown", s.backupShown)
+            put("notFound", s.notFound)
+            put("offline", s.offline)
+            put(
+                "answers",
+                buildJsonArray {
+                    s.answers.take(MAX_ANSWERS).forEach { a -> add(row(a)) }
+                },
+            )
+        }.toString()
+
+        private fun row(a: Suggestion): JsonObject = buildJsonObject {
+            put("name", a.name)
+            a.detail?.let { put("detail", it) }
+            put("lat", a.at.lat)
+            put("lon", a.at.lon)
+            if (a.saved) put("saved", true)
+            if (a.isStop) put("stop", true)
+            if (a.home) put("home", true)
+            if (a.recent) put("recent", true)
+            if (a.backup) put("backup", true)
+            if (a.closest) put("closest", true)
+            a.match?.let { m ->
+                put("level", m.level.name)
+                m.house?.let { put("house", it) }
             }
+            a.refine?.let { put("refine", it) }
+            a.stopId?.let { put("stopId", it) }
         }
 
-        /** Null when no search was open. */
-        fun read(get: (String) -> Any?): SavedSearch? {
-            val field = (get(FIELD) as? String)?.let { f -> Field.entries.firstOrNull { it.name == f } } ?: return null
-            val flags = get(FLAGS) as? Int ?: 0
-            val n = (get(COUNT) as? Int ?: 0).coerceIn(0, MAX_ANSWERS)
-            val answers = (0 until n).mapNotNull { i ->
-                val k = "${P}a$i."
-                val name = get(k + "name") as? String ?: return@mapNotNull null
-                val lat = get(k + "lat") as? Double ?: return@mapNotNull null
-                val lon = get(k + "lon") as? Double ?: return@mapNotNull null
-                val f = get(k + "flags") as? Int ?: 0
-                val level = (get(k + "level") as? String)?.let { l -> MatchLevel.entries.firstOrNull { it.name == l } }
+        private fun decode(text: String): SavedSearch? {
+            val o = Json.parseToJsonElement(text).jsonObject
+            fun JsonObject.str(k: String) = (this[k] as? JsonPrimitive)?.contentOrNull
+            fun JsonObject.flag(k: String) = (this[k] as? JsonPrimitive)?.booleanOrNull == true
+            val field = o.str("field")?.let { f -> Field.entries.firstOrNull { it.name == f } } ?: return null
+            val rows = (o["answers"] as? JsonArray).orEmpty().take(MAX_ANSWERS).mapNotNull { e ->
+                val r = e as? JsonObject ?: return@mapNotNull null
+                val name = r.str("name") ?: return@mapNotNull null
+                val lat = r["lat"]?.jsonPrimitive?.doubleOrNull ?: return@mapNotNull null
+                val lon = r["lon"]?.jsonPrimitive?.doubleOrNull ?: return@mapNotNull null
+                val level = r.str("level")?.let { l -> MatchLevel.entries.firstOrNull { it.name == l } }
                 Suggestion(
                     name = name,
-                    detail = get(k + "detail") as? String,
+                    detail = r.str("detail"),
                     at = LatLon(lat, lon),
-                    saved = f and SAVED != 0,
-                    isStop = f and STOP != 0,
-                    home = f and HOME != 0,
-                    recent = f and RECENT != 0,
-                    backup = f and BACKUP != 0,
-                    closest = f and CLOSEST != 0,
-                    match = level?.let { MatchNote(it, get(k + "house") as? String) },
-                    refine = get(k + "refine") as? String,
-                    stopId = get(k + "stopId") as? String,
+                    saved = r.flag("saved"),
+                    isStop = r.flag("stop"),
+                    home = r.flag("home"),
+                    recent = r.flag("recent"),
+                    backup = r.flag("backup"),
+                    closest = r.flag("closest"),
+                    match = level?.let { MatchNote(it, r.str("house")) },
+                    refine = r.str("refine"),
+                    stopId = r.str("stopId"),
                 )
             }
             return SavedSearch(
                 field = field,
-                query = get(QUERY) as? String ?: "",
-                answers = answers,
-                searchHint = flags and HINT != 0,
-                backupShown = flags and BACKUP_SHOWN != 0,
-                notFound = flags and NOT_FOUND != 0,
-                offline = flags and OFFLINE != 0,
+                query = o.str("query").orEmpty().take(MAX_QUERY),
+                answers = rows,
+                searchHint = o.flag("hint"),
+                backupShown = o.flag("backupShown"),
+                notFound = o.flag("notFound"),
+                offline = o.flag("offline"),
             )
         }
     }
