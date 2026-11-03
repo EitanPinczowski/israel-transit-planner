@@ -1,4 +1,7 @@
-# normalized query|lang <TAB> name <TAB> lat <TAB> lon: what the phone Geocoder answers (a stub: android.location.Geocoder is an Android class). Values from the 2026-10-07 emulator check in the transitous-api skill.
+# normalized query|lang <TAB> name <TAB> lat <TAB> lon: what the phone Geocoder answers (a stub: android.location.Geocoder is an Android class). Values from the 2026-10-07 emulator check in the transitous-api skill. Optional columns 5-7 (F9): street, house number, locality, as AndroidGeocoder.toMatch reads them; the F9 rows are Google's answers on the google_apis emulator (probe run 41596558603, 2026-11-03).
 tabenkin 15 raanana|en	Tabenkin St 15, Ra'anana, Israel	32.1881065	34.860527
 tabenkin 15 ra'anana|en	Tabenkin St 15, Ra'anana, Israel	32.1881065	34.860527
 טבנקין 15 רעננה|he	טבנקין 15, רעננה, ישראל	32.1881065	34.860527
+herzl 12 beer sheva|en	Herzl Street 12	31.238587	34.7872408	Herzl Street	12	Be'er Sheva
+jaffa road 97 jerusalem|en	Yafo 97	31.784294	35.214896	Yafo	97	Jerusalem
+allenby 40 tel aviv|en	Allenby Street 40	32.0723638	34.7687838	Allenby Street	40	Tel Aviv-Yafo

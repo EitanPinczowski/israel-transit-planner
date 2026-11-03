@@ -30,6 +30,7 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         style.addSource(GeoJsonSource(ROUTE_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(PLACES_SRC, MapData.EMPTY))
         style.addSource(GeoJsonSource(VEHICLE_SRC, MapData.EMPTY))
+        style.addSource(GeoJsonSource(PIN_SRC, MapData.EMPTY))
 
         style.addLayer(
             CircleLayer(STOPS_LAYER, STOPS_SRC).withProperties(
@@ -114,6 +115,24 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
                 PropertyFactory.circleStrokeWidth(3f),
             ),
         )
+        // F9 (bug bash): the long-press pin, above everything. Circles only, so it needs no image
+        // in the style: a soft red halo the size of a fingertip, and a solid dot with a white ring
+        // that reads on the light and the dark map alike.
+        style.addLayer(
+            CircleLayer(PIN_HALO_LAYER, PIN_SRC).withProperties(
+                PropertyFactory.circleRadius(18f),
+                PropertyFactory.circleColor(PIN_COLOR),
+                PropertyFactory.circleOpacity(0.25f),
+            ),
+        )
+        style.addLayer(
+            CircleLayer(PIN_LAYER, PIN_SRC).withProperties(
+                PropertyFactory.circleRadius(9f),
+                PropertyFactory.circleColor(PIN_COLOR),
+                PropertyFactory.circleStrokeColor("#FFFFFF"),
+                PropertyFactory.circleStrokeWidth(3f),
+            ),
+        )
     }
 
     fun setStops(geoJson: String) = setSource(STOPS_SRC, geoJson)
@@ -124,6 +143,15 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
     fun setOthers(geoJson: String) = setSource(OTHERS_SRC, geoJson)
 
     fun setPlaces(geoJson: String) = setSource(PLACES_SRC, geoJson)
+
+    /** The long-press pin (`MapData.pin`): drawn while the pin panel is open. */
+    fun setPin(geoJson: String) {
+        pinSet = geoJson
+        setSource(PIN_SRC, geoJson)
+    }
+
+    /** The last GeoJSON [setPin] was given (UI tests' report). */
+    private var pinSet: String? = null
 
     /** The trip sheet's vehicle (`vehicleGeoJson`), or `MapData.EMPTY`. */
     fun setVehicle(geoJson: String) = setSource(VEHICLE_SRC, geoJson)
@@ -153,6 +181,36 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         val (top, bottom) = squeeze(covered.top + marginPx, covered.bottom + marginPx, viewHeight)
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom), 600)
     }
+
+    /**
+     * F9 (bug bash): keeps the long-press pin in the part of the map the panels leave visible. On a small phone
+     * the pin card opens over the lower half of the map, and the search card resizes: a pin pressed there ended
+     * up under the card. Then the camera eases so the pin sits in the middle of the visible part; a pin already
+     * visible is not moved.
+     */
+    fun keepInView(at: LatLon, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
+        MapGuard.run("keepInView") { keepInViewNow(at, covered, marginPx, viewWidth, viewHeight) }
+    }
+
+    private fun keepInViewNow(at: LatLon, covered: MapPadding, marginPx: Int, viewWidth: Int, viewHeight: Int) {
+        if (viewWidth <= 0 || viewHeight <= 0) return
+        val left = covered.left + marginPx
+        val right = viewWidth - covered.right - marginPx
+        val top = covered.top + marginPx
+        val bottom = viewHeight - covered.bottom - marginPx
+        if (right <= left || bottom <= top) return // no visible map to speak of
+        val p = map.projection.toScreenLocation(LatLng(at.lat, at.lon))
+        if (p.x in left.toFloat()..right.toFloat() && p.y in top.toFloat()..bottom.toFloat()) return
+        if (map.locationComponent.isLocationComponentActivated) map.locationComponent.cameraMode = CameraMode.NONE
+        // The camera target is the view's centre: move it by how far the pin is from the visible part's centre.
+        val dx = p.x - (left + right) / 2f
+        val dy = p.y - (top + bottom) / 2f
+        val target = map.projection.fromScreenLocation(android.graphics.PointF(viewWidth / 2f + dx, viewHeight / 2f + dy))
+        map.easeCamera(CameraUpdateFactory.newLatLng(target), 300)
+    }
+
+    /** Where [at] is on the map view now (UI tests). */
+    fun onScreen(at: LatLon): android.graphics.PointF? = MapGuard.run("onScreen") { map.projection.toScreenLocation(LatLng(at.lat, at.lon)) }
 
     /** Scales two paddings down so at least a fifth of [size] stays for the route. */
     private fun squeeze(a: Int, b: Int, size: Int): Pair<Int, Int> {
@@ -184,6 +242,32 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         return map.queryRenderedFeatures(box, OTHERS_LAYER).firstNotNullOfOrNull { f -> f.getNumberProperty("option")?.toInt() }
     }
 
+    /**
+     * Whether the pin layer has a rendered feature at [at] on screen (UI tests: a long-press must
+     * leave a visible pin, F9). False until the style has loaded and the frame is drawn.
+     */
+    fun pinDrawnAt(at: LatLon): Boolean = MapGuard.run("pinDrawnAt") {
+        // Queries read the last frame drawn; ask for a new one, so the next poll sees the newest data.
+        map.triggerRepaint()
+        style.isFullyLoaded && map.queryRenderedFeatures(map.projection.toScreenLocation(LatLng(at.lat, at.lon)), PIN_LAYER).isNotEmpty()
+    } ?: false
+
+    /** Why [pinDrawnAt] says no (UI tests' failure message): what the map has and draws. */
+    fun pinReport(at: LatLon): String = MapGuard.run("pinReport") {
+        val p = map.projection.toScreenLocation(LatLng(at.lat, at.lon))
+        val all = android.graphics.RectF(0f, 0f, map.width, map.height)
+        val layer = style.getLayer(PIN_LAYER)
+        val visibility = layer?.visibility
+        val top = style.layers.lastOrNull()
+        val source: GeoJsonSource? = style.getSourceAs(PIN_SRC)
+        val inSource = source?.querySourceFeatures(null)
+        val rendered = map.queryRenderedFeatures(all, PIN_LAYER)
+        val any = map.queryRenderedFeatures(all)
+        "loaded=${style.isFullyLoaded} view=${map.width.toInt()}x${map.height.toInt()} at=(${p.x.toInt()},${p.y.toInt()}) " +
+            "zoom=${map.cameraPosition.zoom} layer=${layer != null} visibility=${visibility?.value} top=${top?.id} " +
+            "source=${inSource?.size} renderedPin=${rendered.size} renderedAny=${any.size} set=${pinSet?.take(160)}"
+    } ?: "report failed"
+
     private fun source(id: String): GeoJsonSource? = if (style.isFullyLoaded) style.getSourceAs(id) else null
 
     companion object {
@@ -203,6 +287,12 @@ class MapController(private val map: MapLibreMap, private val style: Style, dark
         private const val PLACES_LAYER = "app-places-layer"
         private const val VEHICLE_SRC = "app-vehicle"
         private const val VEHICLE_LAYER = "app-vehicle-layer"
+        private const val PIN_SRC = "app-pin"
+        private const val PIN_LAYER = "app-pin-layer"
+        private const val PIN_HALO_LAYER = "app-pin-halo-layer"
+
+        /** Red: not a leg colour, not the saved-place amber, not the stop blue. */
+        private const val PIN_COLOR = "#E53935"
         private const val STOPS_MIN_ZOOM = 15f
 
         /** Marker fill (stops, boarding points, saved-place ring), stop ring, walk line, ride halo. */

@@ -68,6 +68,12 @@ object MapData {
         for (p in places) add(feature(point(p.latLon)) { put("name", p.name) })
     }
 
+    /**
+     * The long-press pin (F9): one Point while the pin panel is open, else [EMPTY]. Before F9 the
+     * map had no pin layer at all, so a long-press filled the panel but drew nothing.
+     */
+    fun pin(at: LatLon?): String = if (at == null) EMPTY else collection { add(feature(point(at)) { put("kind", "pin") }) }
+
     /** Every coordinate of an itinerary, for fitting the camera around it. */
     fun bounds(it: Itinerary): List<LatLon> = it.legs.flatMap { leg ->
         leg.legGeometry?.let { g -> Geo.decodePolyline(g.points, g.precision) } ?: listOf(leg.from.latLon, leg.to.latLon)

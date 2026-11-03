@@ -226,6 +226,13 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
                 LaunchedEffect(ctl, state.savedPlaces) { ctl?.setPlaces(MapData.places(state.savedPlaces)) }
+                // F9: the long-press pin, while its panel is open (it was never drawn before).
+                LaunchedEffect(ctl, state.places.pin?.at) { ctl?.setPin(MapData.pin(state.places.pin?.at)) }
+                // ...and never under the pin card or the search card, which resize as it opens (small phones).
+                LaunchedEffect(ctl, state.places.pin?.at, pad) {
+                    val at = state.places.pin?.at ?: return@LaunchedEffect
+                    ctl?.keepInView(at, pad, (24 * resources.displayMetrics.density).toInt(), mapView.width, mapView.height)
+                }
                 LaunchedEffect(state.savedPlaces) { Shortcuts.update(this@MainActivity, state.savedPlaces) }
                 // An app-icon shortcut opened us: once the saved places are loaded, act on it.
                 LaunchedEffect(state.savedPlaces, pendingShortcut) {
@@ -421,6 +428,46 @@ class MainActivity : ComponentActivity() {
         val s = style ?: return null
         if (!m.locationComponent.isLocationComponentActivated) return null
         return s.getSource(LocationComponentConstants.LOCATION_SOURCE) != null
+    }
+
+    /** The long-press pin while its card is open (F9 test hooks). */
+    private fun openPin(): LatLon? {
+        val places = vm.state.value.places
+        return places.pin?.at
+    }
+
+    /** F9: what the map holds and draws for the open pin, for a UI test's failure message. */
+    @VisibleForTesting
+    fun pinReport(): String {
+        val c = controller.value ?: return "no controller"
+        val at = openPin() ?: return "no pin"
+        return c.pinReport(at)
+    }
+
+    /** F9: where the open pin is now, in window pixels; null with no pin or no style. */
+    @VisibleForTesting
+    fun pinInWindow(): android.graphics.PointF? {
+        val c = controller.value ?: return null
+        val at = openPin() ?: return null
+        val p = c.onScreen(at) ?: return null
+        val origin = IntArray(2)
+        mapView.getLocationInWindow(origin)
+        return android.graphics.PointF(p.x + origin[0], p.y + origin[1])
+    }
+
+    /** F9: the map style has loaded and its layers exist (UI tests wait for it). */
+    @VisibleForTesting
+    fun mapReadyForTest(): Boolean = controller.value != null
+
+    /**
+     * F9: whether the open long-press pin is drawn on the map at its point; null with no pin or no
+     * style yet. UI tests check a long-press leaves a visible pin.
+     */
+    @VisibleForTesting
+    fun pinOnMap(): Boolean? {
+        val c = controller.value ?: return null
+        val at = openPin() ?: return null
+        return c.pinDrawnAt(at)
     }
 
     /**
