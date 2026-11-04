@@ -4,7 +4,7 @@ Read `docs/agents/team.md` first: roles, flow, owner stops and token rules. Then
 `docs/agents/phase9.md`: the plan and the briefs to send word for word, with the owner's
 decisions already recorded.
 
-## State (2026-11-03, 17:20 Israel time)
+## State (2026-11-04, 02:05 Israel time)
 - **Released: v0.10.0 (2026-11-03)**, https://github.com/EitanPinczowski/israel-transit-planner/releases/tag/v0.10.0.
   Its saved-data sample is merged (#125).
 - **Boss:** `session_01DH799CRwxjHwK91FsfN9nS` (depth 1, so `send_later` works; started 2026-11-03).
@@ -12,13 +12,16 @@ decisions already recorded.
   full answer, ~$19) and F10 #127 (a generic "תחנה מרכזית"/"central station" ranks nearest first from the GPS fix,
   else the map centre after a finger move; far recents go below; `near` stays the GPS fix only, ~$10). Sonnet
   reviews: #126 clean; #127 had one fix round (the opening Be'er Sheva camera counted as the user's location).
-  **No v0.10.1 yet: it needs the owner's word.** Nothing is in flight.
+  F11 #129 (A4 not reproduced on v0.10.0 or main in any condition, real UI + live services, ~$11; a Transitous
+  failure keeps the bundled station hit with "No connection" + Retry; SearchTrace notes the last empty search in
+  Settings → Crash log: query, counts, error classes, no location). Reviews: one fix round each on #127 and #129.
+  **No v0.10.1 yet: the owner said "don't release yet" (2026-11-03).** Nothing is in flight.
 - **Owner's bug bash on v0.10.0 (Pixel), part A, 2026-11-03:**
   - A1, map long-press shows no pin: fixed by #126;
   - A2, rotate during search: OK;
   - A3, English street addresses: fixed by #126 (Google's Geocoder finds them; our matcher and Search key were wrong);
   - A4, location off, English "TLV" / "Rehovot railway station" / "Tel Aviv Central Bus Station": **nothing found**
-    on the Pixel. **Open.** F10's SearchProbeTest (run 41632301245, the real chain on an emulator, near=null) finds all
+    on the Pixel. **Not reproduced (F11 #129);** on the next build, if it recurs, the Crash log line names the source. F10's SearchProbeTest (run 41632301245, the real chain on an emulator, near=null) finds all
     three, and release has no R8. Waiting on the owner's screenshot: an empty list, "not found", or the offline note,
     and whether the Search key was pressed. The owner's screenshot of a far northern "תחנה מרכזית" pick near
     Be'er Sheva was the F10 bug (fixed);
@@ -26,7 +29,8 @@ decisions already recorded.
   - A6, font size: the owner looked in the app. It is the phone's Settings → Display & touch → Display size and
     text → Font size, re-explained; the result is pending;
   - The rest of the list (B–G, incl. E6) comes later, best on v0.10.1.
-- **Owner to-do added:** delete branch `corpus-run/probe-f10` (the proxy refuses agents a branch delete).
+- **Owner to-do added:** delete branches `corpus-run/probe-f10`, `corpus-run/probe-f11`, `corpus-run/probe-f11-v010`
+  (the proxy refuses agents a branch delete).
 - **Phase 11 is all merged**, and main is green after each merge:
   - E4 #105, T4 #106, T6 #110 (6 security fixes), T8 #109 (release smoke, startup gate, upgrade test, LeakCanary,
     MoreJourneys, bug-bash list), F2 #104, F3 #112 (4 flakes), F5 #111 (own actions via a non-exported alias),
