@@ -222,6 +222,7 @@ class MainActivity : ComponentActivity() {
                 val offlineState by offline.state.collectAsState()
                 val pad by mapPadding.collectAsState()
                 val crashes by app.crashLog.count.collectAsState()
+                val lastEmptySearch by app.crashLog.lastSearch.collectAsState()
                 val ui = remember { ViewModelActions(vm) }
 
                 LaunchedEffect(ctl, stops) { ctl?.setStops(stops) }
@@ -291,7 +292,7 @@ class MainActivity : ComponentActivity() {
                     remind = ::remind,
                     startRide = ::startRide,
                     onMapPadding = { mapPadding.value = it },
-                    crashLog = CrashLogUi(crashes, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
+                    crashLog = CrashLogUi(crashes, lastSearch = lastEmptySearch, share = ::shareCrashLog, clear = { lifecycleScope.launch { app.crashLog.clear() } }),
                     // The sheet and the vehicle dot in the leg's own colour, as on its chip (C6).
                     openLeg = { leg -> tripVm.open(leg, state.selectedItinerary?.let { LegPalette.colorOf(it.legs, leg) }) },
                 )

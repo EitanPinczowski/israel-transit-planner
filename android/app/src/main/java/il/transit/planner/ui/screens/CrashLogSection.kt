@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 /** What Settings needs for the local crash log: how many are kept, and the two buttons. */
 class CrashLogUi(
     val count: Int = 0,
+    /** The last search that found nothing, as one line of its stages (F11); shared with the crashes. */
+    val lastSearch: String? = null,
     /** Opens the share sheet with the log as plain text. The user picks where it goes. */
     val share: () -> Unit = {},
     val clear: () -> Unit = {},
@@ -31,7 +33,10 @@ internal fun CrashLogSection(log: CrashLogUi) {
             else pluralStringResource(R.plurals.crash_log_count, log.count, log.count),
             style = MaterialTheme.typography.bodySmall,
         )
-        if (log.count > 0) {
+        if (log.lastSearch != null) {
+            Text(stringResource(R.string.crash_log_search), style = MaterialTheme.typography.bodySmall)
+        }
+        if (log.count > 0 || log.lastSearch != null) {
             Row {
                 TextButton(onClick = log.share) { Text(stringResource(R.string.crash_log_share)) }
                 TextButton(onClick = log.clear) { Text(stringResource(R.string.crash_log_clear)) }

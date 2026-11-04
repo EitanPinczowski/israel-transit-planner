@@ -43,6 +43,11 @@ data class SearchAnswer(
      * "תחנה מרכזית" was picked near Be'er Sheva). Null otherwise.
      */
     val around: LatLon? = null,
+    /**
+     * Transitous failed and only the bundled stations answered (F11): the list shows them and still says "No connection",
+     * with Retry. A failure with nothing to show is the search's failure, not this.
+     */
+    val transitFailed: Boolean = false,
 ) {
     private val ordered: List<GeocodeMatch> get() = if (missed) backup + primary else primary + backup
 
@@ -130,6 +135,8 @@ class PlaceSearch(
          * nearest first ([SearchAnswer.around]), never as the request's bias, a stop number's or a neighbourhood's place.
          */
         rankFrom: LatLon? = null,
+        /** What each stage answered, for the on-device diagnostic of an empty search ([SearchTrace], F11). */
+        trace: SearchTrace? = null,
     ): SearchAnswer {
         // A stop number ("47899", "תחנה 47899"): looked up on the phone, 0 requests (Transitous doesn't index codes).
         StopCode.of(text)?.let { code ->
@@ -154,23 +161,41 @@ class PlaceSearch(
         val house = houseOf(q)
         // A train station by name ("Rehovot railway station"): from the bundled list, first (0 requests).
         val stations = Stations.find(q, language)
-        val found = rankByTypedTown(transit.geocode(q, language, bias, max))
+        trace?.stations = stations.size
+        // A Transitous failure (offline, 429/503 after the retry, a timeout) never hides the bundled stations (F11, bug bash
+        // A4: "Rehovot railway station" showed nothing); with no station it is still the search's failure.
+        val raw = try {
+            transit.geocode(q, language, bias, max)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            trace?.transitError = e.javaClass.simpleName
+            if (stations.isEmpty()) throw e
+            return SearchAnswer(stations, town = town, query = q, stations = stations, transitFailed = true)
+        }
+        trace?.transitRaw = raw.size
+        val found = rankByTypedTown(raw)
             .filter(::inTown)
             // Israel only, from every source: the index knows the world (F8).
             .filter { inIsrael(LatLon(it.lat, it.lon)) }
             .filter { m -> stations.none { it.id == m.id || sameAnswer(it, m) } }
             .sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) })
+        trace?.transitKept = found.size
         val primary = stations + found
         // Kind words only ("תחנה מרכזית"): nearest first, from where the user is; never from Israel's centre (F10).
         val around = (near ?: rankFrom)?.takeIf { town == null && area.isEmpty() && stations.isEmpty() && isGenericQuery(q) }
         if (backup == null || stations.isNotEmpty() || !needsBackup(q, primary, town)) return SearchAnswer(primary, town = town, query = q, stations = stations, around = around)
         interim?.invoke(SearchAnswer(primary, town = town, query = q, pending = true, around = around))
+        trace?.backup = "asked"
         val extra = try {
             // The bias only needs to say "around here"; rounded, so the day cache hits.
-            withTimeoutOrNull(BACKUP_DEADLINE_MS) { backup.search(q, language, bias?.let(::roundBias), BACKUP_MAX) }.orEmpty()
+            withTimeoutOrNull(BACKUP_DEADLINE_MS) { backup.search(q, language, bias?.let(::roundBias), BACKUP_MAX) }
+                .also { trace?.backup = if (it == null) "timeout" else "${it.size}" }
+                .orEmpty()
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            trace?.backup = e.javaClass.simpleName
             emptyList()
         }.filter { inIsrael(LatLon(it.lat, it.lon)) } // the phone's Geocoder knows the world
         // A town the table doesn't know, but the answers do ("…, Neve Ativ"): the same rule by name.
@@ -178,6 +203,7 @@ class PlaceSearch(
         val kept = extra.filter { b ->
             primary.none { sameAnswer(it, b) } && inTown(b) && (named.isEmpty() || townOf(b) in named)
         }
+        trace?.backupKept = kept.size
         return SearchAnswer(primary, kept.sortedWith(compareBy<GeocodeMatch>(::areaRank).thenByDescending { house != null && house.matches(it) }), town, missed = true, query = q, around = around)
     }
 
@@ -539,6 +565,10 @@ class TypingSearch(
     private var job: Job? = null
     private val seq = AtomicInteger()
 
+    /** The trace of the last search whose full answer was delivered (set just before [onAnswer] gets it, F11). */
+    @Volatile var lastTrace: SearchTrace? = null
+        private set
+
     /** [rankFrom]: where the user moved the map, for a generic text's order only ([PlaceSearch.search]); [near] stays last for callers' lambdas. */
     fun onText(text: String, language: String, rankFrom: () -> LatLon? = { null }, near: () -> LatLon?) {
         job?.cancel()
@@ -550,14 +580,21 @@ class TypingSearch(
         }
         job = scope.launch {
             delay(debounceMs)
+            val fix = near()
+            val trace = SearchTrace(q, language, fix != null)
+            val t0 = System.nanoTime()
             val (result, failed) = try {
                 // Transitous's answers show at once when the backup is asked; then the full answer.
-                search.search(q, language, near(), interim = { answer(it, false) }, rankFrom = rankFrom()) to false
+                search.search(q, language, fix, interim = { answer(it, false) }, rankFrom = rankFrom(), trace = trace) to false
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                trace.transitError = trace.transitError ?: e.javaClass.simpleName
+                trace.outcome = "failed"
                 SearchAnswer(emptyList()) to true
             }
+            trace.ms = (System.nanoTime() - t0) / 1_000_000
+            if (seq.get() == mine) lastTrace = trace
             answer(result, failed)
         }
     }

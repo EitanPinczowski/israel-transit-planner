@@ -223,6 +223,9 @@ merges. Tick only your own package's lines.
 ### F10 — Nearest central station (`claude/p11-bugbash-f10`, 4 Transitous requests, 0 Photon; owner's v0.10.0 bug bash on the Pixel)
 - [x] A generic text with no town ("תחנה מרכזית", "central station", "Central Bus Station") ranks by distance from the fix, else where the user moved the map (never the opening camera; only the order, never the bias): Be'er Sheva's stop "שדרות דוד חכם/תחנה מרכזית" is an answer and first; a far saved or recent place of that name goes after the nearer answers; corpus rows typed from Be'er Sheva, tests near Be'er Sheva, Haifa and Jerusalem
 
+### F11 — Empty search on the Pixel (`claude/p11-bugbash-f11`, ~100 live requests in two emulator probes, ~0 Photon; owner's v0.10.0 bug bash A4)
+- [x] Not reproduced on main or v0.10.0 (live UI probe: location off/on, permission denied, phone Hebrew + app English and the reverse, Search key at once, Transitous 6 s slow): a Transitous failure no longer drops the bundled station, and Settings → Crash log keeps one line of the last empty search's stages (query and counts, no location)
+
 ### Close-out (boss)
 - [x] `docs/releases/v0.8.0.md` assembled from `docs/releases/next/*`; fragments removed
 - [ ] Owner: every Phase 9 feature checked on the Pixel (night refresh after one night)

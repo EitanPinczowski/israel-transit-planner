@@ -9,4 +9,5 @@
     </plurals>
     <string name="crash_log_share">שיתוף יומן הקריסות</string>
     <string name="crash_log_clear">מחיקה</string>
+    <string name="crash_log_search">גם החיפוש האחרון שלא מצא דבר נשמר (מה שחיפשתם ומה ענה כל מקור, בלי מיקום). הוא נשלח עם היומן כשמשתפים אותו.</string>
 </resources>

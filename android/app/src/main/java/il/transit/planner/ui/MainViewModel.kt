@@ -61,6 +61,7 @@ import il.transit.core.search.LocalHit
 import il.transit.core.search.MapCentre
 import il.transit.core.search.PlaceSearch
 import il.transit.core.search.SearchAnswer
+import il.transit.core.search.SearchTrace
 import il.transit.core.search.TypingSearch
 import il.transit.core.present.DepartureRow
 import il.transit.core.present.departureRow
@@ -288,6 +289,11 @@ class MainViewModel(
     private val saved: SavedStateHandle? = null,
     /** What the car tabs and errands showed, read back only after process death (Phase 11 R1). */
     private val tabCache: PlanCacheStore<TabResult>? = null,
+    /**
+     * The last search that showed nothing, as one line for Settings → Crash log (F11, [SearchTrace]); `closed` = the box was
+     * closed before the answer (never replaces a "not found" or "failed" line). No-op by default.
+     */
+    private val noteEmptySearch: (line: String, closed: Boolean) -> Unit = { _, _ -> },
 ) : ViewModel() {
     private val language: String get() = languageOf()
     private val _state = MutableStateFlow(UiState())
@@ -365,7 +371,21 @@ class MainViewModel(
         _state.update { it.copy(editing = field, query = "", suggestions = localSuggestions(""), searchHint = false, places = it.places.copy(pin = null, backupShown = false, notFound = false, offline = false)) }
     }
 
+    /** The user closed the search (✕, Back, tapping away, the keyboard closing): never a pick. */
     fun cancelEditing() {
+        // Closed while its search was still running and nothing picked: say so in the diagnostic (F11).
+        inFlight?.let { q ->
+            val trace = SearchTrace(q, language, locationProvider() != null)
+            trace.local = localHits(q).size
+            trace.outcome = SearchTrace.CLOSED
+            trace.shown = _state.value.suggestions.size
+            noteEmptySearch(trace.line(clock.instant(), java.time.ZoneId.systemDefault()), true)
+        }
+        endEditing()
+    }
+
+    /** Closes the search box and drops its search (a pick, or [cancelEditing]). */
+    private fun endEditing() {
         typing.cancel()
         inFlight = null
         pickWhenAnswered = null
@@ -395,6 +415,11 @@ class MainViewModel(
     }
 
     private fun firstAnswer(s: UiState): Suggestion? = s.suggestions.firstOrNull { !it.closest }
+
+    /** Retry on "No connection": the same text searched again now (Transitous's failures are never cached). */
+    fun retrySearch() {
+        if (_state.value.editing != null) onQuery(_state.value.query)
+    }
 
     /** Saved places and recent picks at once; Transitous (then, on a miss, Photon) once typing pauses. */
     fun onQuery(text: String) {
@@ -430,10 +455,12 @@ class MainViewModel(
                 places = st.places.copy(
                     backupShown = answer.backup.any { it.id.startsWith("photon:") },
                     notFound = !failed && answer.notFound,
-                    offline = failed,
+                    // Transitous failed but a bundled station answered: its rows and "No connection" with Retry (F11).
+                    offline = failed || answer.transitFailed,
                 ),
             )
         }
+        if (!answer.pending) traceIfEmpty(q, answer, failed)
         if (!answer.pending && pickWhenAnswered == q) {
             pickWhenAnswered = null
             val s = _state.value
@@ -441,9 +468,24 @@ class MainViewModel(
         }
     }
 
+    /** No exact answer (or none at all): the stages' line goes to Settings → Crash log, replacing the last one (F11). */
+    private fun traceIfEmpty(q: String, answer: SearchAnswer, failed: Boolean) {
+        if (!failed && !answer.notFound) return
+        val s = _state.value
+        if (s.editing == null || s.query.trim() != q) return
+        val trace = typing.lastTrace?.takeIf { it.query == q } ?: return
+        trace.local = localHits(q).size
+        trace.shown = s.suggestions.size
+        if (!failed && trace.outcome == "answer") trace.outcome = "not found"
+        noteEmptySearch(trace.line(clock.instant(), java.time.ZoneId.systemDefault()), false)
+    }
+
     fun pick(s: Suggestion) {
         s.refine?.let { onQuery(it); return } // which town: search there now (1 request)
-        s.stopId?.let { cancelEditing(); openStop(it, s.name); return } // a typed stop number (D6)
+        // A pick ends the search: its answer is no longer awaited, so no "closed before the answer" later (F11).
+        inFlight = null
+        pickWhenAnswered = null
+        s.stopId?.let { endEditing(); openStop(it, s.name); return } // a typed stop number (D6)
         if (!s.saved) picker.remember(SavedPlace(s.name, s.at.lat, s.at.lon))
         setField(PlaceRef.Point(s.name, s.at))
     }
@@ -1589,7 +1631,7 @@ class MainViewModel(
                 val saved = createSavedStateHandle()
                 // Phase 10 D8: monthly report files live a day in cacheDir/reports/.
                 Thread { il.transit.planner.ui.screens.ReportFiles.prune(app.cacheDir) }.start()
-                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved, app.tabCache)
+                MainViewModel(app.api, app.store, { app.language }, app.planCache, app.reminders, app.rides, app.history, app.updates, app.stopsCache, app.departureCache, app.clock, app.backupGeocoder, app.timetables, app.weather, saved, app.tabCache, app.crashLog::noteSearch)
             }
         }
     }
